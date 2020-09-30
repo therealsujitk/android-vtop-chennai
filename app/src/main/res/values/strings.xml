@@ -1,0 +1,31 @@
+<resources>
+    <string name="app_name">VTOP</string>
+    <string name="app_name_long">VTOP Chennai</string>
+
+
+    <string name="login_background_description">Background image used in activity_login.</string>
+    <string name="logo">Logo of this application.</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="sign_in">Sign In</string>
+    <string name="privacy">Privacy Policy</string>
+
+    <string name="privacy_intro">This VTOP Chennai application is completely free and does not contain any ads. The VTOP Chennai Portal service is provided by VIT Chennai.</string>
+    <string name="privacy_ownership">Ownership</string>
+    <string name="privacy_ownership_content">This application is a third-party service, meaning this application is owned and maintained by an individual and NOT by VIT Chennai.</string>
+    <string name="privacy_data">Information Collection and Use</string>
+    <string name="privacy_data_content">All necessary data such as your VTOP username, password and the data collected from the VTOP Chennai portal is ONLY stored locally on your device. I DO NOT collect or disclose any information entered by you or downloaded from the VTOP Chennai Portal.</string>
+    <string name="privacy_contact">Contact Me</string>
+    <string name="privacy_contact_content">If you have any questions or suggestions, my contact information is available at <a href="https://therealsuji.tk">https://therealsuji.tk</a>.</string>
+
+
+    <string name="avatar_description">Image that shows a users profile picture.</string>
+    <string name="name">Your Name</string>
+    <string name="register_number">20XY4327</string>
+    <string name="credits">Credits: 52</string>
+
+    <string name="upcoming">Upcoming</string>
+    <string name="messages">Class Messages</string>
+    <string name="staff">Staff</string>
+    <string name="faculty">Faculty</string>
+</resources>

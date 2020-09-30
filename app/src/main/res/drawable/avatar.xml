@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@drawable/default_avatar" />
+
+    <item>
+        <shape
+            android:innerRadius="125dp"
+            android:shape="ring"
+            android:thicknessRatio="5"
+            android:useLevel="false">
+            <stroke
+                android:width="5dp"
+                android:color="@color/colorLight" />
+
+            <solid android:color="@color/colorLight" />
+
+            <size
+                android:width="130dp"
+                android:height="130dp" />
+        </shape>
+    </item>
+</layer-list>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorLight">#FFFFFF</color>
+    <color name="colorDark">#333333</color>
+
+    <color name="colorPrimary">#3B7DD8</color>
+    <color name="colorAccent">#4A91F2</color>
+    <color name="colorLightGrey">#F5F5F5</color>
+
+    <color name="colorBlue01">#4A91F2</color>
+    <color name="colorBlue05">#BFD6F6</color>
+    <color name="colorBlue06">#CFE0F8</color>
+    <color name="colorButtonPrimaryPressed">#3873C7</color>
+
+    <color name="colorCreditsBad">#F44336</color>
+    <color name="colorCreditsGood">#4CAF50</color>
+</resources>
