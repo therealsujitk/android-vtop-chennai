@@ -6,61 +6,130 @@
     android:layout_height="match_parent"
     tools:context=".HomeActivity">
 
-    <LinearLayout
-        android:id="@+id/linearLayout2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="40dp"
-        android:layout_marginTop="40dp"
-        android:layout_marginEnd="40dp"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:contentDescription="@string/profile_background"
+        android:scaleType="fitXY"
+        app:layout_constraintBottom_toBottomOf="@+id/profileFooter"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/background_profile" />
 
-        <LinearLayout
+    <ImageView
+        android:id="@+id/avatar"
+        android:layout_width="130dp"
+        android:layout_height="130dp"
+        android:contentDescription="@string/avatar_description"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/avatar" />
+
+    <TextView
+        android:id="@+id/name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:text="@string/name"
+        android:textColor="@color/colorBlue05"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/avatar" />
+
+    <LinearLayout
+        android:id="@+id/profileFooter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingBottom="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/name">
+
+        <TextView
+            android:id="@+id/registerNumber"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="0dp"
-            android:layout_marginTop="0dp"
-            android:orientation="vertical">
+            android:layout_marginEnd="10dp"
+            android:text="@string/register_number"
+            android:textColor="@color/colorLight"
+            android:textSize="18sp" />
 
-            <TextView
-                android:id="@+id/textView2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/name"
-                android:textSize="22sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/textView3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/register_number"
-                android:textColor="@color/colorPrimary"
-                android:textSize="18sp" />
-
-            <TextView
-                android:id="@+id/textView4"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/credits"
-                android:textColor="@color/colorCreditsBad"
-                android:textSize="18sp" />
-        </LinearLayout>
-
-        <ImageView
-            android:id="@+id/avatar"
-            android:layout_width="130dp"
-            android:layout_height="130dp"
-            android:layout_marginStart="40dp"
-            android:layout_marginTop="0dp"
-            android:layout_marginEnd="0dp"
-            android:contentDescription="@string/avatar_description"
-            app:srcCompat="@drawable/avatar" />
+        <TextView
+            android:id="@+id/credits"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:text="@string/credits"
+            android:textColor="@color/colorLight"
+            android:textSize="18sp" />
 
     </LinearLayout>
+
+    <androidx.gridlayout.widget.GridLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        app:columnCount="2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/profileFooter"
+        app:rowCount="2">
+
+        <Button
+            android:id="@+id/upcoming"
+            android:layout_width="150dp"
+            android:layout_height="84.375dp"
+            android:layout_margin="5dp"
+            android:background="@drawable/background_upcoming"
+            android:text="@string/upcoming"
+            android:textColor="@color/colorLight"
+            android:textStyle="bold"
+            app:layout_column="0"
+            app:layout_row="0" />
+
+        <Button
+            android:id="@+id/messages"
+            android:layout_width="150dp"
+            android:layout_height="84.375dp"
+            android:layout_margin="5dp"
+            android:background="@drawable/background_messages"
+            android:text="@string/messages"
+            android:textColor="@color/colorLight"
+            android:textStyle="bold"
+            app:layout_column="1"
+            app:layout_row="0" />
+
+        <Button
+            android:id="@+id/staff"
+            android:layout_width="150dp"
+            android:layout_height="84.375dp"
+            android:layout_margin="5dp"
+            android:background="@drawable/background_staff"
+            android:text="@string/staff"
+            android:textColor="@color/colorLight"
+            android:textStyle="bold"
+            app:layout_column="0"
+            app:layout_row="1" />
+
+        <Button
+            android:id="@+id/faculty"
+            android:layout_width="150dp"
+            android:layout_height="84.375dp"
+            android:layout_margin="5dp"
+            android:background="@drawable/background_faculty"
+            android:text="@string/faculty"
+            android:textColor="@color/colorLight"
+            android:textStyle="bold"
+            app:layout_column="1"
+            app:layout_row="1" />
+    </androidx.gridlayout.widget.GridLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

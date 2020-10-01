@@ -20,12 +20,13 @@
 
 
     <string name="avatar_description">Image that shows a users profile picture.</string>
+    <string name="profile_background">Background image for the profile section.</string>
     <string name="name">Your Name</string>
     <string name="register_number">20XY4327</string>
     <string name="credits">Credits: 52</string>
 
     <string name="upcoming">Upcoming</string>
-    <string name="messages">Class Messages</string>
+    <string name="messages">Messages</string>
     <string name="staff">Staff</string>
     <string name="faculty">Faculty</string>
 </resources>

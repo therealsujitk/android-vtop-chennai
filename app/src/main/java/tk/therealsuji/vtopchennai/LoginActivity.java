@@ -59,10 +59,12 @@ public class LoginActivity extends AppCompatActivity {
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 switch (motionEvent.getAction()) {
                     case MotionEvent.ACTION_DOWN:
-                        signIn.animate().scaleX(0.93f).scaleY(0.93f).setDuration(200);
+                        signIn.animate().scaleX(0.93f).scaleY(0.93f).setDuration(50);
+                        signIn.setAlpha(0.85f);
                         break;
                     case MotionEvent.ACTION_UP:
-                        signIn.animate().scaleX(1f).scaleY(1f).setDuration(200);
+                        signIn.animate().scaleX(1f).scaleY(1f).setDuration(50);
+                        signIn.setAlpha(1f);
                         break;
                 }
                 return false;

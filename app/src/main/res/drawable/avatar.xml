@@ -10,9 +10,21 @@
             android:useLevel="false">
             <stroke
                 android:width="5dp"
-                android:color="@color/colorLight" />
+                android:color="@color/colorPrimary" />
 
-            <solid android:color="@color/colorLight" />
+            <solid android:color="@color/colorPrimary" />
+
+            <size
+                android:width="130dp"
+                android:height="130dp" />
+        </shape>
+    </item>
+
+    <item>
+        <shape android:shape="oval">
+            <stroke
+                android:width="5dp"
+                android:color="@color/colorBlue05" />
 
             <size
                 android:width="130dp"
