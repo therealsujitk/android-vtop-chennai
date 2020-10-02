@@ -154,6 +154,7 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:gravity="center_vertical"
+                android:onClick="openMessages"
                 android:orientation="vertical">
 
                 <ImageView
@@ -188,6 +189,7 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:gravity="center_vertical"
+                android:onClick="openStaff"
                 android:orientation="vertical">
 
                 <ImageView
@@ -222,6 +224,7 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:gravity="center_vertical"
+                android:onClick="openFaculty"
                 android:orientation="vertical">
 
                 <ImageView

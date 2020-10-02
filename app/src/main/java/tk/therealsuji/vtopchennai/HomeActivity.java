@@ -17,6 +17,18 @@ public class HomeActivity extends AppCompatActivity {
         startActivity(new Intent(HomeActivity.this, SpotlightActivity.class));
     }
 
+    public void openMessages(View view) {
+        startActivity(new Intent(HomeActivity.this, MessagesActivity.class));
+    }
+
+    public void openStaff(View view) {
+        startActivity(new Intent(HomeActivity.this, StaffActivity.class));
+    }
+
+    public void openFaculty(View view) {
+        startActivity(new Intent(HomeActivity.this, FacultyActivity.class));
+    }
+
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {

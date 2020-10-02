@@ -51,6 +51,33 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".SpotlightActivity" />
         </activity>
+        <activity
+            android:name=".MessagesActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:label="Messages"
+            android:screenOrientation="portrait">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MessagesActivity" />
+        </activity>
+        <activity
+            android:name=".StaffActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:label="Staff"
+            android:screenOrientation="portrait">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".StaffActivity" />
+        </activity>
+        <activity
+            android:name=".FacultyActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:label="Faculty"
+            android:screenOrientation="portrait">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".FacultyActivity" />
+        </activity>
 
         <meta-data
             android:name="preloaded_fonts"
