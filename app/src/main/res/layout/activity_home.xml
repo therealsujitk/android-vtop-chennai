@@ -119,6 +119,7 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:gravity="center_vertical"
+                android:onClick="openSpotlight"
                 android:orientation="vertical">
 
                 <ImageView

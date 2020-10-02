@@ -42,6 +42,15 @@
             android:configChanges="orientation|keyboardHidden"
             android:label="Home"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".SpotlightActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:label="Spotlight"
+            android:screenOrientation="portrait">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".SpotlightActivity" />
+        </activity>
 
         <meta-data
             android:name="preloaded_fonts"

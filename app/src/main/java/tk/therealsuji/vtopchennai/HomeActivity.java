@@ -1,6 +1,7 @@
 package tk.therealsuji.vtopchennai;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
@@ -11,6 +12,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.util.Objects;
 
 public class HomeActivity extends AppCompatActivity {
+
+    public void openSpotlight(View view) {
+        startActivity(new Intent(HomeActivity.this, SpotlightActivity.class));
+    }
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
