@@ -2,9 +2,10 @@ package tk.therealsuji.vtopchennai;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
+import android.widget.LinearLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -20,76 +21,72 @@ public class HomeActivity extends AppCompatActivity {
 
         Objects.requireNonNull(getSupportActionBar()).setElevation(0f);
 
-        final Button upcoming = findViewById(R.id.upcoming);
-        upcoming.setOnTouchListener(new View.OnTouchListener() {
+        final LinearLayout spotlight = findViewById(R.id.spotlight);
+        spotlight.setOnTouchListener(new View.OnTouchListener() {
 
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 switch (motionEvent.getAction()) {
                     case MotionEvent.ACTION_DOWN:
-                        upcoming.animate().scaleX(0.93f).scaleY(0.93f).setDuration(50);
-                        upcoming.setAlpha(0.85f);
+                        spotlight.setElevation(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 6, view.getResources().getDisplayMetrics()));
                         break;
                     case MotionEvent.ACTION_UP:
-                        upcoming.animate().scaleX(1f).scaleY(1f).setDuration(50);
-                        upcoming.setAlpha(1f);
+                    case MotionEvent.ACTION_CANCEL:
+                        spotlight.setElevation(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 3, view.getResources().getDisplayMetrics()));
                         break;
                 }
                 return false;
             }
         });
 
-        final Button messages = findViewById(R.id.messages);
+        final LinearLayout messages = findViewById(R.id.messages);
         messages.setOnTouchListener(new View.OnTouchListener() {
 
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 switch (motionEvent.getAction()) {
                     case MotionEvent.ACTION_DOWN:
-                        messages.animate().scaleX(0.93f).scaleY(0.93f).setDuration(50);
-                        messages.setAlpha(0.85f);
+                        messages.setElevation(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 6, view.getResources().getDisplayMetrics()));
                         break;
                     case MotionEvent.ACTION_UP:
-                        messages.animate().scaleX(1f).scaleY(1f).setDuration(50);
-                        messages.setAlpha(1f);
+                    case MotionEvent.ACTION_CANCEL:
+                        messages.setElevation(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 3, view.getResources().getDisplayMetrics()));
                         break;
                 }
                 return false;
             }
         });
 
-        final Button staff = findViewById(R.id.staff);
+        final LinearLayout staff = findViewById(R.id.staff);
         staff.setOnTouchListener(new View.OnTouchListener() {
 
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 switch (motionEvent.getAction()) {
                     case MotionEvent.ACTION_DOWN:
-                        staff.animate().scaleX(0.93f).scaleY(0.93f).setDuration(50);
-                        staff.setAlpha(0.85f);
+                        staff.setElevation(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 6, view.getResources().getDisplayMetrics()));
                         break;
                     case MotionEvent.ACTION_UP:
-                        staff.animate().scaleX(1f).scaleY(1f).setDuration(50);
-                        staff.setAlpha(1f);
+                    case MotionEvent.ACTION_CANCEL:
+                        staff.setElevation(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 3, view.getResources().getDisplayMetrics()));
                         break;
                 }
                 return false;
             }
         });
 
-        final Button faculty = findViewById(R.id.faculty);
+        final LinearLayout faculty = findViewById(R.id.faculty);
         faculty.setOnTouchListener(new View.OnTouchListener() {
 
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 switch (motionEvent.getAction()) {
                     case MotionEvent.ACTION_DOWN:
-                        faculty.animate().scaleX(0.93f).scaleY(0.93f).setDuration(50);
-                        faculty.setAlpha(0.85f);
+                        faculty.setElevation(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 6, view.getResources().getDisplayMetrics()));
                         break;
                     case MotionEvent.ACTION_UP:
-                        faculty.animate().scaleX(1f).scaleY(1f).setDuration(50);
-                        faculty.setAlpha(1f);
+                    case MotionEvent.ACTION_CANCEL:
+                        faculty.setElevation(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 3, view.getResources().getDisplayMetrics()));
                         break;
                 }
                 return false;

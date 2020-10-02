@@ -25,8 +25,13 @@
     <string name="register_number">20XY4327</string>
     <string name="credits">Credits: 52</string>
 
-    <string name="upcoming">Upcoming</string>
+    <string name="upcoming">Upcoming Class</string>
+    <string name="spotlight">Spotlight</string>
+    <string name="spotlight_description">Icon for the spotlight button.</string>
     <string name="messages">Messages</string>
+    <string name="messages_description">Icon for the messages button.</string>
     <string name="staff">Staff</string>
+    <string name="staff_description">Icon for the staff button.</string>
     <string name="faculty">Faculty</string>
+    <string name="faculty_description">Icon for the faculty button.</string>
 </resources>

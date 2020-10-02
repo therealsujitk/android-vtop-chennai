@@ -34,9 +34,10 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
         android:text="@string/name"
-        android:textColor="@color/colorBlue05"
+        android:layout_margin="10dp"
         android:textSize="22sp"
         android:textStyle="bold"
+        android:textColor="@color/colorBlue04"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/avatar" />
@@ -73,63 +74,179 @@
 
     </LinearLayout>
 
-    <androidx.gridlayout.widget.GridLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <Button
+        android:id="@+id/upcoming"
+        android:layout_width="match_parent"
+        android:layout_height="65dp"
+        android:layout_marginStart="20dp"
         android:layout_marginTop="20dp"
-        app:columnCount="2"
+        android:layout_marginEnd="20dp"
+        android:background="@drawable/button_card"
+        android:text="@string/upcoming"
+        android:textColor="@color/colorPrimary"
+        android:textSize="14sp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/profileFooter"
-        app:rowCount="2">
+        app:layout_constraintTop_toBottomOf="@+id/profileFooter" />
 
-        <Button
-            android:id="@+id/upcoming"
-            android:layout_width="150dp"
-            android:layout_height="84.375dp"
-            android:layout_margin="5dp"
-            android:background="@drawable/background_upcoming"
-            android:text="@string/upcoming"
-            android:textColor="@color/colorLight"
-            android:textStyle="bold"
-            app:layout_column="0"
-            app:layout_row="0" />
+    <HorizontalScrollView
+        android:id="@+id/horizontalScrollView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:overScrollMode="never"
+        android:scrollbars="none"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/upcoming">
 
-        <Button
-            android:id="@+id/messages"
-            android:layout_width="150dp"
-            android:layout_height="84.375dp"
-            android:layout_margin="5dp"
-            android:background="@drawable/background_messages"
-            android:text="@string/messages"
-            android:textColor="@color/colorLight"
-            android:textStyle="bold"
-            app:layout_column="1"
-            app:layout_row="0" />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/staff"
-            android:layout_width="150dp"
-            android:layout_height="84.375dp"
-            android:layout_margin="5dp"
-            android:background="@drawable/background_staff"
-            android:text="@string/staff"
-            android:textColor="@color/colorLight"
-            android:textStyle="bold"
-            app:layout_column="0"
-            app:layout_row="1" />
+            <LinearLayout
+                android:id="@+id/spotlight"
+                android:layout_width="125dp"
+                android:layout_height="125dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/button_card"
+                android:clickable="true"
+                android:elevation="3dp"
+                android:focusable="true"
+                android:gravity="center_vertical"
+                android:orientation="vertical">
 
-        <Button
-            android:id="@+id/faculty"
-            android:layout_width="150dp"
-            android:layout_height="84.375dp"
-            android:layout_margin="5dp"
-            android:background="@drawable/background_faculty"
-            android:text="@string/faculty"
-            android:textColor="@color/colorLight"
-            android:textStyle="bold"
-            app:layout_column="1"
-            app:layout_row="1" />
-    </androidx.gridlayout.widget.GridLayout>
+                <ImageView
+                    android:id="@+id/imageSpotlight"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="false"
+                    android:contentDescription="@string/spotlight_description"
+                    app:srcCompat="@drawable/ic_spotlight" />
+
+                <TextView
+                    android:id="@+id/textSpotlight"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:clickable="false"
+                    android:text="@string/spotlight"
+                    android:textAlignment="center"
+                    android:textColor="@color/colorPrimary"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/messages"
+                android:layout_width="125dp"
+                android:layout_height="125dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/button_card"
+                android:clickable="true"
+                android:elevation="5dp"
+                android:focusable="true"
+                android:gravity="center_vertical"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/imageMessages"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="false"
+                    android:contentDescription="@string/messages_description"
+                    app:srcCompat="@drawable/ic_messages" />
+
+                <TextView
+                    android:id="@+id/textMessages"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:clickable="false"
+                    android:text="@string/messages"
+                    android:textAlignment="center"
+                    android:textColor="@color/colorPrimary"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/staff"
+                android:layout_width="125dp"
+                android:layout_height="125dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/button_card"
+                android:clickable="true"
+                android:elevation="5dp"
+                android:focusable="true"
+                android:gravity="center_vertical"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/imageStaff"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="false"
+                    android:contentDescription="@string/staff_description"
+                    app:srcCompat="@drawable/ic_staff" />
+
+                <TextView
+                    android:id="@+id/textStaff"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:clickable="false"
+                    android:text="@string/staff"
+                    android:textAlignment="center"
+                    android:textColor="@color/colorPrimary"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/faculty"
+                android:layout_width="125dp"
+                android:layout_height="125dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/button_card"
+                android:clickable="true"
+                android:elevation="5dp"
+                android:focusable="true"
+                android:gravity="center_vertical"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/imageFaculty"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="false"
+                    android:contentDescription="@string/faculty_description"
+                    app:srcCompat="@drawable/ic_faculty" />
+
+                <TextView
+                    android:id="@+id/textFaculty"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:clickable="false"
+                    android:text="@string/faculty"
+                    android:textAlignment="center"
+                    android:textColor="@color/colorPrimary"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </LinearLayout>
+    </HorizontalScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

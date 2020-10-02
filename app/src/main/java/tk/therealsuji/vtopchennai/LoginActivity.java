@@ -63,6 +63,7 @@ public class LoginActivity extends AppCompatActivity {
                         signIn.setAlpha(0.85f);
                         break;
                     case MotionEvent.ACTION_UP:
+                    case MotionEvent.ACTION_CANCEL:
                         signIn.animate().scaleX(1f).scaleY(1f).setDuration(50);
                         signIn.setAlpha(1f);
                         break;
