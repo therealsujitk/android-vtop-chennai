@@ -2,7 +2,6 @@ package tk.therealsuji.vtopchennai;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
-import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -22,17 +21,18 @@ public class HomeActivity extends AppCompatActivity {
         Objects.requireNonNull(getSupportActionBar()).setElevation(0f);
 
         final LinearLayout spotlight = findViewById(R.id.spotlight);
+        spotlight.setElevation(12f);
         spotlight.setOnTouchListener(new View.OnTouchListener() {
 
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 switch (motionEvent.getAction()) {
                     case MotionEvent.ACTION_DOWN:
-                        spotlight.setElevation(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 6, view.getResources().getDisplayMetrics()));
+                        spotlight.setElevation(18f);
                         break;
                     case MotionEvent.ACTION_UP:
                     case MotionEvent.ACTION_CANCEL:
-                        spotlight.setElevation(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 3, view.getResources().getDisplayMetrics()));
+                        spotlight.setElevation(12f);
                         break;
                 }
                 return false;
@@ -40,17 +40,18 @@ public class HomeActivity extends AppCompatActivity {
         });
 
         final LinearLayout messages = findViewById(R.id.messages);
+        messages.setElevation(12f);
         messages.setOnTouchListener(new View.OnTouchListener() {
 
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 switch (motionEvent.getAction()) {
                     case MotionEvent.ACTION_DOWN:
-                        messages.setElevation(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 6, view.getResources().getDisplayMetrics()));
+                        messages.setElevation(18f);
                         break;
                     case MotionEvent.ACTION_UP:
                     case MotionEvent.ACTION_CANCEL:
-                        messages.setElevation(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 3, view.getResources().getDisplayMetrics()));
+                        messages.setElevation(12f);
                         break;
                 }
                 return false;
@@ -58,17 +59,18 @@ public class HomeActivity extends AppCompatActivity {
         });
 
         final LinearLayout staff = findViewById(R.id.staff);
+        staff.setElevation(12f);
         staff.setOnTouchListener(new View.OnTouchListener() {
 
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 switch (motionEvent.getAction()) {
                     case MotionEvent.ACTION_DOWN:
-                        staff.setElevation(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 6, view.getResources().getDisplayMetrics()));
+                        staff.setElevation(18f);
                         break;
                     case MotionEvent.ACTION_UP:
                     case MotionEvent.ACTION_CANCEL:
-                        staff.setElevation(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 3, view.getResources().getDisplayMetrics()));
+                        staff.setElevation(12f);
                         break;
                 }
                 return false;
@@ -76,17 +78,18 @@ public class HomeActivity extends AppCompatActivity {
         });
 
         final LinearLayout faculty = findViewById(R.id.faculty);
+        faculty.setElevation(12f);
         faculty.setOnTouchListener(new View.OnTouchListener() {
 
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 switch (motionEvent.getAction()) {
                     case MotionEvent.ACTION_DOWN:
-                        faculty.setElevation(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 6, view.getResources().getDisplayMetrics()));
+                        faculty.setElevation(18f);
                         break;
                     case MotionEvent.ACTION_UP:
                     case MotionEvent.ACTION_CANCEL:
-                        faculty.setElevation(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 3, view.getResources().getDisplayMetrics()));
+                        faculty.setElevation(12f);
                         break;
                 }
                 return false;

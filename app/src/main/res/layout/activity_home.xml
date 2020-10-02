@@ -117,7 +117,6 @@
                 android:layout_marginBottom="10dp"
                 android:background="@drawable/button_card"
                 android:clickable="true"
-                android:elevation="3dp"
                 android:focusable="true"
                 android:gravity="center_vertical"
                 android:orientation="vertical">
@@ -152,7 +151,6 @@
                 android:layout_marginBottom="10dp"
                 android:background="@drawable/button_card"
                 android:clickable="true"
-                android:elevation="5dp"
                 android:focusable="true"
                 android:gravity="center_vertical"
                 android:orientation="vertical">
@@ -187,7 +185,6 @@
                 android:layout_marginBottom="10dp"
                 android:background="@drawable/button_card"
                 android:clickable="true"
-                android:elevation="5dp"
                 android:focusable="true"
                 android:gravity="center_vertical"
                 android:orientation="vertical">
@@ -222,7 +219,6 @@
                 android:layout_marginBottom="10dp"
                 android:background="@drawable/button_card"
                 android:clickable="true"
-                android:elevation="5dp"
                 android:focusable="true"
                 android:gravity="center_vertical"
                 android:orientation="vertical">
