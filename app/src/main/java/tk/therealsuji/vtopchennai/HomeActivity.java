@@ -6,19 +6,34 @@ import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import java.util.Objects;
-
 public class HomeActivity extends AppCompatActivity {
 
-    public void openSpotlight(View view) {
-        startActivity(new Intent(HomeActivity.this, SpotlightActivity.class));
+    /*
+        The following functions are to open the activities in the "Classes" category
+     */
+
+    public void openTimetable(View view) {
+        startActivity(new Intent(HomeActivity.this, TimetableActivity.class));
+    }
+
+    public void openAttendance(View view) {
+        startActivity(new Intent(HomeActivity.this, AttendanceActivity.class));
     }
 
     public void openMessages(View view) {
         startActivity(new Intent(HomeActivity.this, MessagesActivity.class));
+    }
+
+    /*
+        The following functions are to open the activities in the "Academics" category
+     */
+
+    public void openSpotlight(View view) {
+        startActivity(new Intent(HomeActivity.this, SpotlightActivity.class));
     }
 
     public void openStaff(View view) {
@@ -29,27 +44,53 @@ public class HomeActivity extends AppCompatActivity {
         startActivity(new Intent(HomeActivity.this, FacultyActivity.class));
     }
 
+    /*
+        The following functions are to open the activities in the "Appliaction" category
+     */
+
+    public void share(View view) {
+        Toast.makeText(this, "This will be replaced with a sharing feature", Toast.LENGTH_SHORT).show();
+    }
+
+
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        Objects.requireNonNull(getSupportActionBar()).setElevation(0f);
-
-        final LinearLayout spotlight = findViewById(R.id.spotlight);
-        spotlight.setElevation(12f);
-        spotlight.setOnTouchListener(new View.OnTouchListener() {
+        final LinearLayout timetable = findViewById(R.id.timetable);
+        timetable.setElevation(12f);
+        timetable.setOnTouchListener(new View.OnTouchListener() {
 
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 switch (motionEvent.getAction()) {
                     case MotionEvent.ACTION_DOWN:
-                        spotlight.setElevation(18f);
+                        timetable.setElevation(18f);
                         break;
                     case MotionEvent.ACTION_UP:
                     case MotionEvent.ACTION_CANCEL:
-                        spotlight.setElevation(12f);
+                        timetable.setElevation(12f);
+                        break;
+                }
+                return false;
+            }
+        });
+
+        final LinearLayout attendance = findViewById(R.id.attendance);
+        attendance.setElevation(12f);
+        attendance.setOnTouchListener(new View.OnTouchListener() {
+
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                switch (motionEvent.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        attendance.setElevation(18f);
+                        break;
+                    case MotionEvent.ACTION_UP:
+                    case MotionEvent.ACTION_CANCEL:
+                        attendance.setElevation(12f);
                         break;
                 }
                 return false;
@@ -69,6 +110,25 @@ public class HomeActivity extends AppCompatActivity {
                     case MotionEvent.ACTION_UP:
                     case MotionEvent.ACTION_CANCEL:
                         messages.setElevation(12f);
+                        break;
+                }
+                return false;
+            }
+        });
+
+        final LinearLayout spotlight = findViewById(R.id.spotlight);
+        spotlight.setElevation(12f);
+        spotlight.setOnTouchListener(new View.OnTouchListener() {
+
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                switch (motionEvent.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        spotlight.setElevation(18f);
+                        break;
+                    case MotionEvent.ACTION_UP:
+                    case MotionEvent.ACTION_CANCEL:
+                        spotlight.setElevation(12f);
                         break;
                 }
                 return false;
@@ -107,6 +167,25 @@ public class HomeActivity extends AppCompatActivity {
                     case MotionEvent.ACTION_UP:
                     case MotionEvent.ACTION_CANCEL:
                         faculty.setElevation(12f);
+                        break;
+                }
+                return false;
+            }
+        });
+
+        final LinearLayout share = findViewById(R.id.share);
+        share.setElevation(12f);
+        share.setOnTouchListener(new View.OnTouchListener() {
+
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                switch (motionEvent.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        share.setElevation(18f);
+                        break;
+                    case MotionEvent.ACTION_UP:
+                    case MotionEvent.ACTION_CANCEL:
+                        share.setElevation(12f);
                         break;
                 }
                 return false;

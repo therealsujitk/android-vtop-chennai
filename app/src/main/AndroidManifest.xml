@@ -11,6 +11,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
         <activity
             android:name=".SplashScreenActivity"
             android:configChanges="orientation|keyboardHidden"
@@ -22,12 +23,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".LoginActivity"
             android:configChanges="orientation|keyboardHidden"
             android:label="Login"
             android:screenOrientation="portrait"
-            android:theme="@style/NoActionBarTheme" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustPan" />
+
         <activity
             android:name=".PrivacyActivity"
             android:configChanges="orientation|keyboardHidden"
@@ -37,11 +41,44 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".PrivacyActivity" />
         </activity>
+
         <activity
             android:name=".HomeActivity"
             android:configChanges="orientation|keyboardHidden"
             android:label="Home"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <activity
+            android:name=".TimetableActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:label="Timetable"
+            android:screenOrientation="portrait">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".TimetableActivity" />
+        </activity>
+
+        <activity
+            android:name=".AttendanceActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:label="Attendance"
+            android:screenOrientation="portrait">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".AttendanceActivity" />
+        </activity>
+
+        <activity
+            android:name=".MessagesActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:label="Messages"
+            android:screenOrientation="portrait">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MessagesActivity" />
+        </activity>
+
         <activity
             android:name=".SpotlightActivity"
             android:configChanges="orientation|keyboardHidden"
@@ -52,15 +89,6 @@
                 android:value=".SpotlightActivity" />
         </activity>
         <activity
-            android:name=".MessagesActivity"
-            android:configChanges="orientation|keyboardHidden"
-            android:label="Messages"
-            android:screenOrientation="portrait">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MessagesActivity" />
-        </activity>
-        <activity
             android:name=".StaffActivity"
             android:configChanges="orientation|keyboardHidden"
             android:label="Staff"
@@ -69,6 +97,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".StaffActivity" />
         </activity>
+
         <activity
             android:name=".FacultyActivity"
             android:configChanges="orientation|keyboardHidden"

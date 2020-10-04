@@ -21,17 +21,29 @@
 
     <string name="avatar_description">Image that shows a users profile picture.</string>
     <string name="profile_background">Background image for the profile section.</string>
-    <string name="name">Your Name</string>
+    <string name="name">JOHN DOE</string>
     <string name="register_number">20XY4327</string>
     <string name="credits">Credits: 52</string>
 
     <string name="upcoming">Upcoming Class</string>
-    <string name="spotlight">Spotlight</string>
-    <string name="spotlight_description">Icon for the spotlight button.</string>
+
+    <string name="classes">Classes</string>
+    <string name="timetable">Timetable</string>
+    <string name="timetable_description">Icon for the timetable button.</string>
+    <string name="attendance">Attendance</string>
+    <string name="attendance_description">Icon for the attendance button.</string>
     <string name="messages">Messages</string>
     <string name="messages_description">Icon for the messages button.</string>
+
+    <string name="academics">Academics</string>
+    <string name="spotlight">Spotlight</string>
+    <string name="spotlight_description">Icon for the spotlight button.</string>
     <string name="staff">Staff</string>
     <string name="staff_description">Icon for the staff button.</string>
     <string name="faculty">Faculty</string>
     <string name="faculty_description">Icon for the faculty button.</string>
+
+    <string name="app">Application</string>
+    <string name="share">Share</string>
+    <string name="share_description">Icon for the share button.</string>
 </resources>
