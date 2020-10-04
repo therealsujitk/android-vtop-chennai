@@ -34,4 +34,10 @@
     <string name="staff_description">Icon for the staff button.</string>
     <string name="faculty">Faculty</string>
     <string name="faculty_description">Icon for the faculty button.</string>
+
+    <string name="home">Home</string>
+    <string name="timetable">Timetable</string>
+    <string name="attendance">Attendance</string>
+
+    <string name="share">Share</string>
 </resources>
