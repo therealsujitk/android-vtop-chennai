@@ -19,11 +19,24 @@
     <string name="privacy_contact_content">If you have any questions or suggestions, my contact information is available at <a href="https://therealsuji.tk">https://therealsuji.tk</a>.</string>
 
 
+    <string name="loading">Loading…</string>
+    <string name="downloading_profile">Downloading Profile…</string>
+    <string name="downloading_timetable">Downloading Timetable…</string>
+    <string name="downloading_attendance">Downloading Attendance…</string>
+    <string name="downloading_messages">Downloading Messages…</string>
+    <string name="downloading_spotlight">Downloading Spotlight…</string>
+    <string name="downloading_staff">Downloading Staff Info…</string>
+    <string name="downloading_faculty">Downloading Faculty Info…</string>
+    <string name="captcha">Enter Captcha</string>
+    <string name="captcha_description">Image that shows the captcha code.</string>
+    <string name="submit">Submit</string>
+
+
     <string name="avatar_description">Image that shows a users profile picture.</string>
     <string name="profile_background">Background image for the profile section.</string>
     <string name="name">JOHN DOE</string>
-    <string name="register_number">20XY4327</string>
-    <string name="credits">Credits: 52</string>
+    <string name="register_number">Registration Number</string>
+    <string name="credits">Credits</string>
 
     <string name="upcoming">Upcoming Class</string>
 

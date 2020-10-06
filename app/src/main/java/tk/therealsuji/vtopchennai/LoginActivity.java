@@ -1,21 +1,31 @@
 package tk.therealsuji.vtopchennai;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 public class LoginActivity extends AppCompatActivity {
+    SharedPreferences sharedPreferences;
 
     public void signIn(View view) {
-        Toast.makeText(this, "This should sign you in.", Toast.LENGTH_SHORT).show();
-        startActivity(new Intent(LoginActivity.this, HomeActivity.class));
+        EditText usernameView = findViewById(R.id.username);
+        EditText passwordView = findViewById(R.id.password);
+
+        String username = usernameView.getText().toString();
+        String password = passwordView.getText().toString();
+
+        sharedPreferences.edit().putString("username", username).apply();
+        sharedPreferences.edit().putString("password", password).apply();
+
+        startActivity(new Intent(LoginActivity.this, DownloadActivity.class));
     }
 
     public void openPrivacy(View view) {
@@ -27,6 +37,8 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        sharedPreferences = this.getSharedPreferences("tk.therealsuji.vtopchennai", Context.MODE_PRIVATE);
 
         final EditText username = findViewById(R.id.username);
         username.setOnFocusChangeListener(new View.OnFocusChangeListener() {

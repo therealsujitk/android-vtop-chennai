@@ -5,25 +5,30 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Base64;
+import android.util.Log;
+import android.view.View;
 import android.webkit.ValueCallback;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 public class VTOP {
     Context context;
     WebView webView;
     ImageView captcha;
-    Boolean isOpened;
-    Boolean isLoggedIn;
+    Boolean isOpened, isLoggedIn;
+    LinearLayout captchaLayout, loadingLayout;
     int counter;
 
     @SuppressLint("SetJavaScriptEnabled")
-    public void setVtop(final Context context, WebView webView, ImageView captcha) {
+    public void setVtop(final Context context, WebView webView, ImageView captcha, LinearLayout captchaLayout, LinearLayout loadingLayout) {
         this.context = context;
         this.webView = webView;
         this.captcha = captcha;
+        this.captchaLayout = captchaLayout;
+        this.loadingLayout = loadingLayout;
         this.webView.getSettings().setJavaScriptEnabled(true);
         this.webView.setWebViewClient(new WebViewClient() {
             public void onPageFinished(WebView view, String url) {
@@ -121,6 +126,9 @@ public class VTOP {
                 byte[] decodedString = Base64.decode(src, Base64.DEFAULT);
                 Bitmap decodedImage = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
                 captcha.setImageBitmap(decodedImage);
+
+                loadingLayout.setVisibility(View.INVISIBLE);
+                captchaLayout.setVisibility(View.VISIBLE);
             }
         });
     }
@@ -128,7 +136,7 @@ public class VTOP {
     /*
         Function to sign in to the portal
      */
-    public void signIn(String username, String password, String captcha) {
+    public Boolean signIn(String username, String password, String captcha) {
         webView.evaluateJavascript("(function() {" +
                 "var credentials = 'uname=" + username + "&passwd=' + encodeURIComponent('" + password + "') + '&captchaCheck=" + captcha + "';" +
                 "var successFlag = false;" +
@@ -170,9 +178,39 @@ public class VTOP {
                         Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
                     }
                     isOpened = false;
+                    loadingLayout.setVisibility(View.VISIBLE);
+                    captchaLayout.setVisibility(View.INVISIBLE);
                     reloadPage();
                 }
             }
         });
+
+        return isLoggedIn;
+    }
+
+    public String downloadProfile() {
+        webView.evaluateJavascript("(function() {" +
+                "var data = 'verifyMenu=true&winImage=' + $('#winImage').val() + '&authorizedID=' + $('#authorizedIDX').val() + '&nocache=@(new Date().getTime())';" +
+                "var responseFinal = false;" +
+                "$.ajax({" +
+                "type: 'POST'," +
+                "url : 'studentsRecord/StudentProfileAllView'," +
+                "data : data," +
+                "async: false," +
+                "success: function(response) {" +
+                "if(response.includes('Personal Information')) {" +
+                "responseFinal = unescape(response);" +
+                "}" +
+                "}" +
+                "});" +
+                "return responseFinal;" +
+                "})();", new ValueCallback<String>() {
+            @Override
+            public void onReceiveValue(String response) {
+                Log.i("profile", response);
+            }
+        });
+
+        return "";
     }
 }
