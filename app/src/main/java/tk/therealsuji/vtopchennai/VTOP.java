@@ -2,6 +2,7 @@ package tk.therealsuji.vtopchennai;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Base64;
@@ -20,15 +21,17 @@ public class VTOP {
     ImageView captcha;
     Boolean isOpened, isLoggedIn;
     LinearLayout captchaLayout, loadingLayout;
+    SharedPreferences sharedPreferences;
     int counter;
 
     @SuppressLint("SetJavaScriptEnabled")
-    public void setVtop(final Context context, WebView webView, ImageView captcha, LinearLayout captchaLayout, LinearLayout loadingLayout) {
+    public void setVtop(final Context context, WebView webView, ImageView captcha, LinearLayout captchaLayout, LinearLayout loadingLayout, SharedPreferences sharedPreferences) {
         this.context = context;
         this.webView = webView;
         this.captcha = captcha;
         this.captchaLayout = captchaLayout;
         this.loadingLayout = loadingLayout;
+        this.sharedPreferences = sharedPreferences;
         this.webView.getSettings().setJavaScriptEnabled(true);
         this.webView.setWebViewClient(new WebViewClient() {
             public void onPageFinished(WebView view, String url) {
@@ -65,7 +68,6 @@ public class VTOP {
                 "success: function(response) {" +
                 "if(response.search('___INTERNAL___RESPONSE___') == -1 && response.includes('VTOP Login')) {" +
                 "$('#page_outline').html(response);" +
-                "$.unblockUI();" +
                 "successFlag = true;" +
                 "}" +
                 "}" +
@@ -149,7 +151,6 @@ public class VTOP {
                 "if(response.search('___INTERNAL___RESPONSE___') == -1) {" +
                 "if(response.includes('authorizedIDX')) {" +
                 "$('#page_outline').html(response);" +
-                "$.unblockUI();" +
                 "successFlag = true;" +
                 "} else if(response.includes('Invalid Captcha')) {" +
                 "successFlag = 'Invalid Captcha';" +
@@ -192,6 +193,9 @@ public class VTOP {
         webView.evaluateJavascript("(function() {" +
                 "var data = 'verifyMenu=true&winImage=' + $('#winImage').val() + '&authorizedID=' + $('#authorizedIDX').val() + '&nocache=@(new Date().getTime())';" +
                 "var responseFinal = false;" +
+                "var name = '';" +
+                "var register = '';" +
+                "var j = 0;" +
                 "$.ajax({" +
                 "type: 'POST'," +
                 "url : 'studentsRecord/StudentProfileAllView'," +
@@ -199,7 +203,19 @@ public class VTOP {
                 "async: false," +
                 "success: function(response) {" +
                 "if(response.includes('Personal Information')) {" +
-                "responseFinal = unescape(response);" +
+                "var doc = new DOMParser().parseFromString(response, 'text/html');" +
+                "var cells = doc.getElementsByTagName('td');" +
+                "for(var i = 0; i < cells.length && j < 2; ++i) {" +
+                "if(cells[i].innerHTML.includes('Name')) {" +
+                "name = cells[++i].innerHTML;" +
+                "++j;" +
+                "}" +
+                "if(cells[i].innerHTML.includes('Register')) {" +
+                "register = cells[++i].innerHTML;" +
+                "++j;" +
+                "}" +
+                "}" +
+                "responseFinal = name + '&' + register;" +
                 "}" +
                 "}" +
                 "});" +
@@ -207,6 +223,9 @@ public class VTOP {
                 "})();", new ValueCallback<String>() {
             @Override
             public void onReceiveValue(String response) {
+                /*
+                    response will look like "JOHN DOE&20XY3546" (including the quotes)
+                 */
                 Log.i("profile", response);
             }
         });

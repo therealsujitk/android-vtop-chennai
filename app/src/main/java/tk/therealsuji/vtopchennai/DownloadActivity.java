@@ -47,7 +47,7 @@ public class DownloadActivity extends AppCompatActivity {
         LinearLayout captchaLayout = findViewById(R.id.captchaLayout);
         LinearLayout loadingLayout = findViewById(R.id.loadingLayout);
 
-        vtop.setVtop(this, vtopPortal, captcha, captchaLayout, loadingLayout);
+        vtop.setVtop(this, vtopPortal, captcha, captchaLayout, loadingLayout, sharedPreferences);
 
         final Button submit = findViewById(R.id.submit);
         submit.setOnTouchListener(new View.OnTouchListener() {
