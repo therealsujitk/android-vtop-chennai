@@ -138,7 +138,7 @@ public class VTOP {
     /*
         Function to sign in to the portal
      */
-    public Boolean signIn(String username, String password, String captcha) {
+    public void signIn(String username, String password, String captcha) {
         webView.evaluateJavascript("(function() {" +
                 "var credentials = 'uname=" + username + "&passwd=' + encodeURIComponent('" + password + "') + '&captchaCheck=" + captcha + "';" +
                 "var successFlag = false;" +
@@ -168,6 +168,7 @@ public class VTOP {
             public void onReceiveValue(String value) {
                 if (value.equals("true")) {
                     isLoggedIn = true;
+                    downloadProfile();
                 } else {
                     if (!value.equals("false")) {
                         value = value.substring(1, value.length() - 1);
@@ -185,11 +186,9 @@ public class VTOP {
                 }
             }
         });
-
-        return isLoggedIn;
     }
 
-    public String downloadProfile() {
+    public void downloadProfile() {
         webView.evaluateJavascript("(function() {" +
                 "var data = 'verifyMenu=true&winImage=' + $('#winImage').val() + '&authorizedID=' + $('#authorizedIDX').val() + '&nocache=@(new Date().getTime())';" +
                 "var responseFinal = false;" +
@@ -229,7 +228,5 @@ public class VTOP {
                 Log.i("profile", response);
             }
         });
-
-        return "";
     }
 }

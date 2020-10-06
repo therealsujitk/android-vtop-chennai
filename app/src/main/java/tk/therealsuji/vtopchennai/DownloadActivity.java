@@ -24,13 +24,7 @@ public class DownloadActivity extends AppCompatActivity {
 
         EditText captchaView = findViewById(R.id.captcha);
         String captcha = captchaView.getText().toString();
-        if (vtop.signIn(username, password, captcha)) {
-            downloadProfile();
-        }
-    }
-
-    public void downloadProfile() {
-        String data = vtop.downloadProfile();
+        vtop.signIn(username, password, captcha);
     }
 
     @SuppressLint("ClickableViewAccessibility")
