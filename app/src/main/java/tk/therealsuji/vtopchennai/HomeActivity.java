@@ -212,5 +212,81 @@ public class HomeActivity extends AppCompatActivity {
                 return false;
             }
         });
+
+        final LinearLayout refresh = findViewById(R.id.refresh);
+        refresh.setElevation(12f);
+        refresh.setOnTouchListener(new View.OnTouchListener() {
+
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                switch (motionEvent.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        refresh.setElevation(18f);
+                        break;
+                    case MotionEvent.ACTION_UP:
+                    case MotionEvent.ACTION_CANCEL:
+                        refresh.setElevation(12f);
+                        break;
+                }
+                return false;
+            }
+        });
+
+        final LinearLayout about = findViewById(R.id.about);
+        about.setElevation(12f);
+        about.setOnTouchListener(new View.OnTouchListener() {
+
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                switch (motionEvent.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        about.setElevation(18f);
+                        break;
+                    case MotionEvent.ACTION_UP:
+                    case MotionEvent.ACTION_CANCEL:
+                        about.setElevation(12f);
+                        break;
+                }
+                return false;
+            }
+        });
+
+        final LinearLayout privacy = findViewById(R.id.privacy);
+        privacy.setElevation(12f);
+        privacy.setOnTouchListener(new View.OnTouchListener() {
+
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                switch (motionEvent.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        privacy.setElevation(18f);
+                        break;
+                    case MotionEvent.ACTION_UP:
+                    case MotionEvent.ACTION_CANCEL:
+                        privacy.setElevation(12f);
+                        break;
+                }
+                return false;
+            }
+        });
+
+        final LinearLayout signOut = findViewById(R.id.signOut);
+        signOut.setElevation(12f);
+        signOut.setOnTouchListener(new View.OnTouchListener() {
+
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                switch (motionEvent.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        signOut.setElevation(18f);
+                        break;
+                    case MotionEvent.ACTION_UP:
+                    case MotionEvent.ACTION_CANCEL:
+                        signOut.setElevation(12f);
+                        break;
+                }
+                return false;
+            }
+        });
     }
 }

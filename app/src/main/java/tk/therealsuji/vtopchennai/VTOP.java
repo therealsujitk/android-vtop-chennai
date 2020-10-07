@@ -10,28 +10,39 @@ import android.view.View;
 import android.webkit.ValueCallback;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class VTOP {
     Context context;
     WebView webView;
     ImageView captcha;
     Boolean isOpened, isLoggedIn;
-    LinearLayout captchaLayout, loadingLayout;
+    LinearLayout captchaLayout, loadingLayout, semesterLayout;
+    TextView loading;
+    Spinner selectSemester;
     SharedPreferences sharedPreferences;
     int counter;
 
     @SuppressLint("SetJavaScriptEnabled")
-    public void setVtop(final Context context, WebView webView, ImageView captcha, LinearLayout captchaLayout, LinearLayout loadingLayout, SharedPreferences sharedPreferences) {
+    public void setVtop(final Context context, WebView webView, ImageView captcha, LinearLayout captchaLayout, LinearLayout loadingLayout, TextView loading, LinearLayout semesterLayout, Spinner selectSemester, SharedPreferences sharedPreferences) {
         this.context = context;
         this.webView = webView;
         this.captcha = captcha;
         this.captchaLayout = captchaLayout;
         this.loadingLayout = loadingLayout;
+        this.semesterLayout = semesterLayout;
+        this.loading = loading;
+        this.selectSemester = selectSemester;
         this.sharedPreferences = sharedPreferences;
         this.webView.getSettings().setJavaScriptEnabled(true);
         this.webView.setWebViewClient(new WebViewClient() {
@@ -91,6 +102,10 @@ public class VTOP {
         Function to reload the page using javascript in case of an error
      */
     public void reloadPage() {
+        hideLayouts();
+        loading.setText("Loading");
+        loadingLayout.setVisibility(View.VISIBLE);
+
         webView.evaluateJavascript("(function() {" +
                 "document.location.href = '/vtop';" +
                 "})();", new ValueCallback<String>() {
@@ -130,7 +145,7 @@ public class VTOP {
                 Bitmap decodedImage = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
                 captcha.setImageBitmap(decodedImage);
 
-                loadingLayout.setVisibility(View.INVISIBLE);
+                hideLayouts();
                 captchaLayout.setVisibility(View.VISIBLE);
             }
         });
@@ -169,6 +184,9 @@ public class VTOP {
             public void onReceiveValue(String value) {
                 if (value.equals("true")) {
                     isLoggedIn = true;
+                    hideLayouts();
+                    loading.setText("Downloading Profile");
+                    loadingLayout.setVisibility(View.VISIBLE);
                     downloadProfile();
                 } else {
                     if (!value.equals("false")) {
@@ -182,14 +200,16 @@ public class VTOP {
                         Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
                     }
                     isOpened = false;
-                    loadingLayout.setVisibility(View.VISIBLE);
-                    captchaLayout.setVisibility(View.INVISIBLE);
                     reloadPage();
                 }
             }
         });
     }
 
+    /*
+        Function to save the name of the user and his/her ID (register number or faculty id, maybe in future) in SharedPreferences
+        TBD: Saving the users profile picture
+     */
     public void downloadProfile() {
         webView.evaluateJavascript("(function() {" +
                 "var data = 'verifyMenu=true&winImage=' + $('#winImage').val() + '&authorizedID=' + $('#authorizedIDX').val() + '&nocache=@(new Date().getTime())';" +
@@ -230,14 +250,16 @@ public class VTOP {
                 if (obj.equals("false")) {
                     Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
                     isOpened = false;
-                    loadingLayout.setVisibility(View.VISIBLE);
-                    captchaLayout.setVisibility(View.INVISIBLE);
                     reloadPage();
                 } else {
                     try {
                         JSONObject myObj = new JSONObject(obj);
                         sharedPreferences.edit().putString("name", myObj.getString("name")).apply();
                         sharedPreferences.edit().putString("id", myObj.getString("id")).apply();
+                        hideLayouts();
+                        loading.setText("Downloading Timetable");
+                        loadingLayout.setVisibility(View.VISIBLE);
+                        openTimetable();
                     } catch (Exception e) {
                         e.printStackTrace();
                         Toast.makeText(context, "Sorry, something went wrong. Please try again later.", Toast.LENGTH_LONG).show();
@@ -245,5 +267,79 @@ public class VTOP {
                 }
             }
         });
+    }
+
+    /*
+        Function to select the semester in order to save the timetable
+     */
+    public void openTimetable() {
+        webView.evaluateJavascript("(function() {" +
+                "var data = 'verifyMenu=true&winImage=' + $('#winImage').val() + '&authorizedID=' + $('#authorizedIDX').val() + '&nocache=@(new Date().getTime())';" +
+                "var obj = false;" +
+                "$.ajax({" +
+                "type: 'POST'," +
+                "url : 'academics/common/StudentTimeTable'," +
+                "data : data," +
+                "async: false," +
+                "success: function(response) {" +
+                "if(response.includes('Time Table')) {" +
+                "$('#page-wrapper').html(response);" +
+                "var options = document.getElementsByTagName('option');" +
+                "obj = {};" +
+                "for(var i = 0, j = 0; i < options.length; ++i, ++j) {" +
+                "if(options[i].innerHTML.includes('Choose') || options[i].innerHTML.includes('Select')) {" +
+                "--j;" +
+                "continue;" +
+                "}" +
+                "obj[j] = options[i].innerHTML;" +
+                "}" +
+                "}" +
+                "}" +
+                "});" +
+                "return obj;" +
+                "})();", new ValueCallback<String>() {
+            @Override
+            public void onReceiveValue(String obj) {
+                /*
+                    obj will look like {"name":"JOHN DOE","register":"20XYZ1987"}
+                 */
+                if (obj.equals("false") || obj.equals("null")) {
+                    Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
+                    isOpened = false;
+                    reloadPage();
+                } else {
+                    try {
+                        JSONObject myObj = new JSONObject(obj);
+                        List<String> options = new ArrayList<>();
+                        for (int i = 0; i < myObj.length(); ++i) {
+                            options.add(myObj.getString(Integer.toString(i)));
+                        }
+                        ArrayAdapter<String> adapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_dropdown_item, options);
+                        selectSemester.setAdapter(adapter);
+                        hideLayouts();
+                        semesterLayout.setVisibility(View.VISIBLE);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(context, "Sorry, something went wrong. Please try again later.", Toast.LENGTH_LONG).show();
+                    }
+                }
+            }
+        });
+    }
+
+    /*
+        Function to save the timetable in an SQLite database, and the credit score in SharedPreferences
+     */
+    public void downloadTimetable() {
+
+    }
+
+    /*
+        Function to hide all layouts
+     */
+    public void hideLayouts() {
+        loadingLayout.setVisibility(View.INVISIBLE);
+        captchaLayout.setVisibility(View.INVISIBLE);
+        semesterLayout.setVisibility(View.INVISIBLE);
     }
 }

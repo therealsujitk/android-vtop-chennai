@@ -378,7 +378,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="10dp"
             android:text="@string/app"
             android:textColor="@color/colorPrimary"
             android:textSize="18sp"
@@ -432,6 +432,146 @@
                         android:layout_marginTop="2dp"
                         android:clickable="false"
                         android:text="@string/share"
+                        android:textAlignment="center"
+                        android:textColor="@color/colorPrimary"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/refresh"
+                    android:layout_width="125dp"
+                    android:layout_height="125dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:background="@drawable/button_card"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center_vertical"
+                    android:onClick="share"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:id="@+id/imageRefresh"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clickable="false"
+                        android:contentDescription="@string/refresh_description"
+                        app:srcCompat="@drawable/ic_refresh" />
+
+                    <TextView
+                        android:id="@+id/textRefresh"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:clickable="false"
+                        android:text="@string/refresh"
+                        android:textAlignment="center"
+                        android:textColor="@color/colorPrimary"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/about"
+                    android:layout_width="125dp"
+                    android:layout_height="125dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:background="@drawable/button_card"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center_vertical"
+                    android:onClick="share"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:id="@+id/imageAbout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clickable="false"
+                        android:contentDescription="@string/about_description"
+                        app:srcCompat="@drawable/ic_about" />
+
+                    <TextView
+                        android:id="@+id/textAbout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:clickable="false"
+                        android:text="@string/about"
+                        android:textAlignment="center"
+                        android:textColor="@color/colorPrimary"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/privacy"
+                    android:layout_width="125dp"
+                    android:layout_height="125dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:background="@drawable/button_card"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center_vertical"
+                    android:onClick="share"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:id="@+id/imagePrivacy"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clickable="false"
+                        android:contentDescription="@string/privacy_description"
+                        app:srcCompat="@drawable/ic_privacy" />
+
+                    <TextView
+                        android:id="@+id/textPrivacy"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:clickable="false"
+                        android:text="@string/privacy"
+                        android:textAlignment="center"
+                        android:textColor="@color/colorPrimary"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/signOut"
+                    android:layout_width="125dp"
+                    android:layout_height="125dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="20dp"
+                    android:layout_marginBottom="10dp"
+                    android:background="@drawable/button_card"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center_vertical"
+                    android:onClick="share"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:id="@+id/imageSignOut"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clickable="false"
+                        android:contentDescription="@string/sign_out_description"
+                        app:srcCompat="@drawable/ic_sign_out" />
+
+                    <TextView
+                        android:id="@+id/textSignOut"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:clickable="false"
+                        android:text="@string/sign_out"
                         android:textAlignment="center"
                         android:textColor="@color/colorPrimary"
                         android:textStyle="bold" />

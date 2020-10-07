@@ -71,7 +71,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="45dp"
-            android:layout_marginTop="25dp"
+            android:layout_marginTop="20dp"
             android:layout_marginEnd="45dp"
             android:autofillHints="Enter your VTOP username"
             android:background="@drawable/text_field_primary"
@@ -79,6 +79,8 @@
             android:hint="@string/captcha"
             android:inputType="textCapCharacters"
             android:padding="10dp"
+            android:paddingTop="17dp"
+            android:paddingBottom="17dp"
             android:textAlignment="center" />
 
         <Button
@@ -94,6 +96,46 @@
             android:paddingEnd="50dp"
             android:paddingBottom="15dp"
             android:text="@string/submit"
+            android:textAllCaps="true"
+            android:textColor="@color/colorLight"
+            android:textSize="16sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/semesterLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <Spinner
+            android:id="@+id/selectSemester"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="45dp"
+            android:layout_marginEnd="45dp"
+            android:background="@drawable/text_field_primary"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp" />
+
+        <Button
+            android:id="@+id/select"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/button_primary"
+            android:onClick="signIn"
+            android:paddingStart="50dp"
+            android:paddingTop="15dp"
+            android:paddingEnd="50dp"
+            android:paddingBottom="15dp"
+            android:text="@string/select"
             android:textAllCaps="true"
             android:textColor="@color/colorLight"
             android:textSize="16sp" />

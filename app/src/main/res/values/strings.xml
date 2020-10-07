@@ -19,17 +19,20 @@
     <string name="privacy_contact_content">If you have any questions or suggestions, my contact information is available at <a href="https://therealsuji.tk">https://therealsuji.tk</a>.</string>
 
 
-    <string name="loading">Loading…</string>
-    <string name="downloading_profile">Downloading Profile…</string>
-    <string name="downloading_timetable">Downloading Timetable…</string>
-    <string name="downloading_attendance">Downloading Attendance…</string>
-    <string name="downloading_messages">Downloading Messages…</string>
-    <string name="downloading_spotlight">Downloading Spotlight…</string>
-    <string name="downloading_staff">Downloading Staff Info…</string>
-    <string name="downloading_faculty">Downloading Faculty Info…</string>
+    <string name="loading">Loading</string>
+    <string name="downloading_profile">Downloading Profile</string>
+    <string name="downloading_timetable">Downloading Timetable</string>
+    <string name="downloading_attendance">Downloading Attendance</string>
+    <string name="downloading_messages">Downloading Messages</string>
+    <string name="downloading_spotlight">Downloading Spotlight</string>
+    <string name="downloading_staff">Downloading Staff Info</string>
+    <string name="downloading_faculty">Downloading Faculty Info</string>
+
     <string name="captcha">Enter Captcha</string>
     <string name="captcha_description">Image that shows the captcha code.</string>
     <string name="submit">Submit</string>
+
+    <string name="select">Select</string>
 
 
     <string name="avatar_description">Image that shows a users profile picture.</string>
@@ -59,4 +62,11 @@
     <string name="app">Application</string>
     <string name="share">Share</string>
     <string name="share_description">Icon for the share button.</string>
+    <string name="refresh">Refresh Data</string>
+    <string name="refresh_description">Icon for the refresh button.</string>
+    <string name="about">About Me</string>
+    <string name="about_description">Icon for the about button</string>
+    <string name="privacy_description">Icon for the privacy button.</string>
+    <string name="sign_out">Sign Out</string>
+    <string name="sign_out_description">Icon for the sign out button.</string>
 </resources>
