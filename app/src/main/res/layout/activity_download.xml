@@ -44,7 +44,7 @@
             android:paddingStart="10dp"
             android:text="@string/loading"
             android:textColor="@color/colorPrimary"
-            android:textSize="22sp"
+            android:textSize="20sp"
             tools:ignore="RtlSymmetry" />
     </LinearLayout>
 
@@ -120,6 +120,8 @@
             android:layout_marginStart="45dp"
             android:layout_marginEnd="45dp"
             android:background="@drawable/text_field_primary"
+            android:drawableEnd="@drawable/ic_password"
+            android:drawablePadding="7dp"
             android:paddingStart="10dp"
             android:paddingEnd="10dp" />
 
@@ -130,7 +132,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:background="@drawable/button_primary"
-            android:onClick="signIn"
+            android:onClick="downloadTimetable"
             android:paddingStart="50dp"
             android:paddingTop="15dp"
             android:paddingEnd="50dp"

@@ -189,7 +189,7 @@ public class VTOP {
                     loadingLayout.setVisibility(View.VISIBLE);
                     downloadProfile();
                 } else {
-                    if (!value.equals("false")) {
+                    if (!value.equals("false") && !value.equals("null")) {
                         value = value.substring(1, value.length() - 1);
                         if (value.equals("Invalid User Id / Password") || value.equals("User Id Not available")) {
                             sharedPreferences.edit().putString("isLoggedIn", "false").apply();
@@ -256,9 +256,6 @@ public class VTOP {
                         JSONObject myObj = new JSONObject(obj);
                         sharedPreferences.edit().putString("name", myObj.getString("name")).apply();
                         sharedPreferences.edit().putString("id", myObj.getString("id")).apply();
-                        hideLayouts();
-                        loading.setText("Downloading Timetable");
-                        loadingLayout.setVisibility(View.VISIBLE);
                         openTimetable();
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -284,7 +281,7 @@ public class VTOP {
                 "success: function(response) {" +
                 "if(response.includes('Time Table')) {" +
                 "$('#page-wrapper').html(response);" +
-                "var options = document.getElementsByTagName('option');" +
+                "var options = document.getElementById('semesterSubId').getElementsByTagName('option');" +
                 "obj = {};" +
                 "for(var i = 0, j = 0; i < options.length; ++i, ++j) {" +
                 "if(options[i].innerHTML.includes('Choose') || options[i].innerHTML.includes('Select')) {" +
@@ -312,7 +309,10 @@ public class VTOP {
                         JSONObject myObj = new JSONObject(obj);
                         List<String> options = new ArrayList<>();
                         for (int i = 0; i < myObj.length(); ++i) {
-                            options.add(myObj.getString(Integer.toString(i)));
+                            // All the string replacing has to be undone before submitting to get the timetable
+                            String option = myObj.getString(Integer.toString(i)).replaceAll("&amp;", "&");
+
+                            options.add(option);
                         }
                         ArrayAdapter<String> adapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_dropdown_item, options);
                         selectSemester.setAdapter(adapter);
@@ -320,8 +320,45 @@ public class VTOP {
                         semesterLayout.setVisibility(View.VISIBLE);
                     } catch (Exception e) {
                         e.printStackTrace();
-                        Toast.makeText(context, "Sorry, something went wrong. Please try again later.", Toast.LENGTH_LONG).show();
+                        Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
+                        isOpened = false;
+                        reloadPage();
                     }
+                }
+            }
+        });
+    }
+
+    /*
+        Function to select the timetable to download
+     */
+    public void selectTimetable() {
+        hideLayouts();
+        loading.setText("Downloading Timetable");
+        loadingLayout.setVisibility(View.VISIBLE);
+
+        String semester = sharedPreferences.getString("semester", "null");
+
+        webView.evaluateJavascript("(function() {" +
+                "var select = document.getElementById('semesterSubId');" +
+                "var options = select.getElementsByTagName('option');" +
+                "for(var i = 0; i < options.length; ++i) {" +
+                "if(options[i].innerHTML == '" + semester + "') {" +
+                "document.getElementById('semesterSubId').selectedIndex = i;" +
+                "document.getElementById('studentTimeTable').getElementsByTagName('button')[0].click();" +
+                "return true;" +
+                "}" +
+                "}" +
+                "return false;" +
+                "})();", new ValueCallback<String>() {
+            @Override
+            public void onReceiveValue(String value) {
+                if (value.equals("true")) {
+                    downloadTimetable();
+                } else {
+                    Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
+                    isOpened = false;
+                    reloadPage();
                 }
             }
         });
@@ -331,6 +368,67 @@ public class VTOP {
         Function to save the timetable in an SQLite database, and the credit score in SharedPreferences
      */
     public void downloadTimetable() {
+        webView.evaluateJavascript("(function() {" +
+                "var loading = document.getElementsByTagName('html')[0];" +
+                "if(loading.innerHTML.includes('Please wait...')) {" +
+                "return 'loading';" +
+                "} else {" +
+                //This is where you download the timetable
+                "}" +
+                "return 'false';" +
+                "})();", new ValueCallback<String>() {
+            @Override
+            public void onReceiveValue(String value) {
+                value = value.substring(1, value.length() - 1);
+                if (value.equals("false") || value.equals("null")) {
+                    Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
+                    isOpened = false;
+                    reloadPage();
+                } else if (value.equals("loading")) {
+                    downloadTimetable();
+                } else {
+                    // save time table
+                }
+            }
+        });
+    }
+
+    /*
+        Function to select the attendance to download
+     */
+    public void selectAttendance() {
+        loading.setText("Downloading Attendance");
+        String semester = sharedPreferences.getString("semester", "null");
+
+        webView.evaluateJavascript("(function() {" +
+                "var select = document.getElementById('semesterSubId');" +
+                "var options = select.getElementsByTagName('option');" +
+                "for(var i = 0; i < options.length; ++i) {" +
+                "if(options[i].innerHTML == '" + semester + "') {" +
+                "document.getElementById('semesterSubId').selectedIndex = i;" +
+                "document.getElementById('studentAttendance').getElementsByTagName('button')[0].click();" +
+                "return true;" +
+                "}" +
+                "}" +
+                "return false;" +
+                "})();", new ValueCallback<String>() {
+            @Override
+            public void onReceiveValue(String value) {
+                if (value.equals("true")) {
+                    downloadAttendance();
+                } else {
+                    Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
+                    isOpened = false;
+                    reloadPage();
+                }
+            }
+        });
+    }
+
+    /*
+        Function to store the attendance in an SQLite database
+     */
+    public void downloadAttendance() {
 
     }
 

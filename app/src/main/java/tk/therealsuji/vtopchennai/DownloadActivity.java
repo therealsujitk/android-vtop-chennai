@@ -30,7 +30,12 @@ public class DownloadActivity extends AppCompatActivity {
     }
 
     public void downloadTimetable(View view) {
-        vtop.downloadTimetable();
+        Spinner selectSemester = findViewById(R.id.selectSemester);
+        String semester = selectSemester.getSelectedItem().toString();
+        semester = semester.replaceAll("&", "&amp;");
+        sharedPreferences.edit().putString("semester", semester).apply();
+
+        vtop.selectTimetable();
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -51,7 +56,7 @@ public class DownloadActivity extends AppCompatActivity {
         TextView loading = findViewById(R.id.loading);
         loading.setText(getString(R.string.loading));
 
-        Spinner selectSemester = (Spinner) findViewById(R.id.selectSemester);
+        Spinner selectSemester = findViewById(R.id.selectSemester);
 
         vtop.setVtop(this, vtopPortal, captcha, captchaLayout, loadingLayout, loading, semesterLayout, selectSemester, sharedPreferences);
 
