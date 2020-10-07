@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Base64;
-import android.util.Log;
 import android.view.View;
 import android.webkit.ValueCallback;
 import android.webkit.WebView;
@@ -14,6 +13,8 @@ import android.webkit.WebViewClient;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
+
+import org.json.JSONObject;
 
 public class VTOP {
     Context context;
@@ -173,7 +174,8 @@ public class VTOP {
                     if (!value.equals("false")) {
                         value = value.substring(1, value.length() - 1);
                         if (value.equals("Invalid User Id / Password") || value.equals("User Id Not available")) {
-                            //sign out and launch signin activity
+                            sharedPreferences.edit().putString("isLoggedIn", "false").apply();
+                            //launch signin activity
                         }
                         Toast.makeText(context, value, Toast.LENGTH_LONG).show();
                     } else {
@@ -191,9 +193,9 @@ public class VTOP {
     public void downloadProfile() {
         webView.evaluateJavascript("(function() {" +
                 "var data = 'verifyMenu=true&winImage=' + $('#winImage').val() + '&authorizedID=' + $('#authorizedIDX').val() + '&nocache=@(new Date().getTime())';" +
-                "var responseFinal = false;" +
+                "var obj = false;" +
                 "var name = '';" +
-                "var register = '';" +
+                "var id = '';" +
                 "var j = 0;" +
                 "$.ajax({" +
                 "type: 'POST'," +
@@ -210,22 +212,37 @@ public class VTOP {
                 "++j;" +
                 "}" +
                 "if(cells[i].innerHTML.includes('Register')) {" +
-                "register = cells[++i].innerHTML;" +
+                "id = cells[++i].innerHTML;" +
                 "++j;" +
                 "}" +
                 "}" +
-                "responseFinal = name + '&' + register;" +
+                "obj = {'name': name, 'id': id};" +
                 "}" +
                 "}" +
                 "});" +
-                "return responseFinal;" +
+                "return obj;" +
                 "})();", new ValueCallback<String>() {
             @Override
-            public void onReceiveValue(String response) {
+            public void onReceiveValue(String obj) {
                 /*
-                    response will look like "JOHN DOE&20XY3546" (including the quotes)
+                    obj will look like {"name":"JOHN DOE","register":"20XYZ1987"}
                  */
-                Log.i("profile", response);
+                if (obj.equals("false")) {
+                    Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
+                    isOpened = false;
+                    loadingLayout.setVisibility(View.VISIBLE);
+                    captchaLayout.setVisibility(View.INVISIBLE);
+                    reloadPage();
+                } else {
+                    try {
+                        JSONObject myObj = new JSONObject(obj);
+                        sharedPreferences.edit().putString("name", myObj.getString("name")).apply();
+                        sharedPreferences.edit().putString("id", myObj.getString("id")).apply();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(context, "Sorry, something went wrong. Please try again later.", Toast.LENGTH_LONG).show();
+                    }
+                }
             }
         });
     }

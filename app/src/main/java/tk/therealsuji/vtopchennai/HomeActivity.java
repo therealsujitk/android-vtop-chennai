@@ -1,11 +1,14 @@
 package tk.therealsuji.vtopchennai;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -58,6 +61,24 @@ public class HomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
+        SharedPreferences sharedPreferences = this.getSharedPreferences("tk.therealsuji.vtopchennai", Context.MODE_PRIVATE);
+
+        String name = sharedPreferences.getString("name", getString(R.string.name));
+        String id = sharedPreferences.getString("id", getString(R.string.id));
+        String credits = sharedPreferences.getString("credits", getString(R.string.credits));
+
+        TextView nameView = (TextView) findViewById(R.id.name);
+        TextView idView = (TextView) findViewById(R.id.id);
+        TextView creditsView = (TextView) findViewById(R.id.credits);
+
+        nameView.setText(name);
+        idView.setText(id);
+        creditsView.setText(credits);
+
+        /*
+            Add code to set upcoming/ongoing class here
+         */
 
         final LinearLayout timetable = findViewById(R.id.timetable);
         timetable.setElevation(12f);

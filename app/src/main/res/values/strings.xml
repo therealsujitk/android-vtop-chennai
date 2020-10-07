@@ -35,8 +35,8 @@
     <string name="avatar_description">Image that shows a users profile picture.</string>
     <string name="profile_background">Background image for the profile section.</string>
     <string name="name">JOHN DOE</string>
-    <string name="register_number">Registration Number</string>
-    <string name="credits">Credits</string>
+    <string name="id">20XYZ3727</string>
+    <string name="credits">Credits: 0</string>
 
     <string name="upcoming">Upcoming Class</string>
 

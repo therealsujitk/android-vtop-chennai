@@ -29,7 +29,8 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void openPrivacy(View view) {
-        startActivity(new Intent(LoginActivity.this, PrivacyActivity.class));
+        //startActivity(new Intent(LoginActivity.this, PrivacyActivity.class));
+        startActivity(new Intent(LoginActivity.this, HomeActivity.class));
     }
 
     @SuppressLint("ClickableViewAccessibility")
