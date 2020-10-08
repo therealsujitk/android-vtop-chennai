@@ -449,7 +449,7 @@
                     android:clickable="true"
                     android:focusable="true"
                     android:gravity="center_vertical"
-                    android:onClick="share"
+                    android:onClick="openDownload"
                     android:orientation="vertical">
 
                     <ImageView
@@ -484,7 +484,7 @@
                     android:clickable="true"
                     android:focusable="true"
                     android:gravity="center_vertical"
-                    android:onClick="share"
+                    android:onClick="openAbout"
                     android:orientation="vertical">
 
                     <ImageView
@@ -519,7 +519,7 @@
                     android:clickable="true"
                     android:focusable="true"
                     android:gravity="center_vertical"
-                    android:onClick="share"
+                    android:onClick="openPrivacy"
                     android:orientation="vertical">
 
                     <ImageView
@@ -554,7 +554,7 @@
                     android:clickable="true"
                     android:focusable="true"
                     android:gravity="center_vertical"
-                    android:onClick="share"
+                    android:onClick="signOut"
                     android:orientation="vertical">
 
                     <ImageView

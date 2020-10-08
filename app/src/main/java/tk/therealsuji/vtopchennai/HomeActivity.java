@@ -14,6 +14,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class HomeActivity extends AppCompatActivity {
+    SharedPreferences sharedPreferences;
 
     /*
         The following functions are to open the activities in the "Classes" category
@@ -55,6 +56,24 @@ public class HomeActivity extends AppCompatActivity {
         Toast.makeText(this, "This will be replaced with a sharing feature", Toast.LENGTH_SHORT).show();
     }
 
+    public void openDownload(View view) {
+        startActivity(new Intent(HomeActivity.this, DownloadActivity.class));
+    }
+
+    public void openAbout(View view) {
+        Toast.makeText(this, "This activity is still under development", Toast.LENGTH_SHORT).show();
+    }
+
+    public void openPrivacy(View view) {
+        startActivity(new Intent(HomeActivity.this, PrivacyActivity.class));
+    }
+
+    public void signOut(View view) {
+        sharedPreferences.edit().putString("isLoggedIn", "false").apply();
+        startActivity(new Intent(HomeActivity.this, LoginActivity.class));
+        finish();
+    }
+
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -62,7 +81,7 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        SharedPreferences sharedPreferences = this.getSharedPreferences("tk.therealsuji.vtopchennai", Context.MODE_PRIVATE);
+        sharedPreferences = this.getSharedPreferences("tk.therealsuji.vtopchennai", Context.MODE_PRIVATE);
 
         String name = sharedPreferences.getString("name", getString(R.string.name));
         String id = sharedPreferences.getString("id", getString(R.string.id));

@@ -16,6 +16,8 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.util.Objects;
+
 public class DownloadActivity extends AppCompatActivity {
     VTOP vtop = new VTOP();
     SharedPreferences sharedPreferences;
@@ -27,6 +29,12 @@ public class DownloadActivity extends AppCompatActivity {
         EditText captchaView = findViewById(R.id.captcha);
         String captcha = captchaView.getText().toString();
         vtop.signIn(username, password, captcha);
+
+        LinearLayout captchaLayout = findViewById(R.id.captchaLayout);
+        LinearLayout loadingLayout = findViewById(R.id.loadingLayout);
+        captchaLayout.setVisibility(View.INVISIBLE);
+        loadingLayout.setVisibility(View.VISIBLE);
+        captchaView.setText("");
     }
 
     public void downloadTimetable(View view) {
@@ -43,6 +51,7 @@ public class DownloadActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_download);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
         sharedPreferences = this.getSharedPreferences("tk.therealsuji.vtopchennai", Context.MODE_PRIVATE);
 
@@ -53,12 +62,14 @@ public class DownloadActivity extends AppCompatActivity {
         LinearLayout loadingLayout = findViewById(R.id.loadingLayout);
         LinearLayout semesterLayout = findViewById(R.id.semesterLayout);
 
+        EditText captchaView = findViewById(R.id.captcha);
+
         TextView loading = findViewById(R.id.loading);
         loading.setText(getString(R.string.loading));
 
         Spinner selectSemester = findViewById(R.id.selectSemester);
 
-        vtop.setVtop(this, vtopPortal, captcha, captchaLayout, loadingLayout, loading, semesterLayout, selectSemester, sharedPreferences);
+        vtop.setVtop(this, vtopPortal, captcha, captchaLayout, captchaView, loadingLayout, loading, semesterLayout, selectSemester, sharedPreferences);
 
         final Button submit = findViewById(R.id.submit);
         submit.setOnTouchListener(new View.OnTouchListener() {
