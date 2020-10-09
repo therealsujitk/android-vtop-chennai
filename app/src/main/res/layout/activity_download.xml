@@ -120,8 +120,6 @@
             android:layout_marginStart="45dp"
             android:layout_marginEnd="45dp"
             android:background="@drawable/text_field_primary"
-            android:drawableEnd="@drawable/ic_password"
-            android:drawablePadding="7dp"
             android:paddingStart="10dp"
             android:paddingEnd="10dp" />
 

@@ -6,20 +6,17 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
-import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
-import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.Objects;
 
 public class DownloadActivity extends AppCompatActivity {
-    VTOP vtop = new VTOP();
+    VTOP vtop;
     SharedPreferences sharedPreferences;
 
     public void signIn(View view) {
@@ -40,8 +37,7 @@ public class DownloadActivity extends AppCompatActivity {
     public void downloadTimetable(View view) {
         Spinner selectSemester = findViewById(R.id.selectSemester);
         String semester = selectSemester.getSelectedItem().toString();
-        semester = semester.replaceAll("&", "&amp;");
-        sharedPreferences.edit().putString("semester", semester).apply();
+        sharedPreferences.edit().putString("semester", semester.toLowerCase()).apply();
 
         vtop.selectTimetable();
     }
@@ -54,22 +50,7 @@ public class DownloadActivity extends AppCompatActivity {
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
         sharedPreferences = this.getSharedPreferences("tk.therealsuji.vtopchennai", Context.MODE_PRIVATE);
-
-        WebView vtopPortal = findViewById(R.id.vtopPortal);
-        ImageView captcha = findViewById(R.id.captchaCode);
-
-        LinearLayout captchaLayout = findViewById(R.id.captchaLayout);
-        LinearLayout loadingLayout = findViewById(R.id.loadingLayout);
-        LinearLayout semesterLayout = findViewById(R.id.semesterLayout);
-
-        EditText captchaView = findViewById(R.id.captcha);
-
-        TextView loading = findViewById(R.id.loading);
-        loading.setText(getString(R.string.loading));
-
-        Spinner selectSemester = findViewById(R.id.selectSemester);
-
-        vtop.setVtop(this, vtopPortal, captcha, captchaLayout, captchaView, loadingLayout, loading, semesterLayout, selectSemester, sharedPreferences);
+        vtop = new VTOP(this);
 
         final Button submit = findViewById(R.id.submit);
         submit.setOnTouchListener(new View.OnTouchListener() {
