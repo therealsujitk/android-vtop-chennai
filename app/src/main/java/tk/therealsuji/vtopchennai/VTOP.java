@@ -63,7 +63,7 @@ public class VTOP {
         webView.setWebViewClient(new WebViewClient() {
             public void onPageFinished(WebView view, String url) {
                 if (!isOpened) {
-                    if (counter == 60) {
+                    if (counter >= 60) {
                         Toast.makeText(context, "Sorry, we had some trouble connecting to the server. Please try again later.", Toast.LENGTH_LONG).show();
                         ((Activity) context).finish();
                         return;
@@ -79,10 +79,7 @@ public class VTOP {
         isLoggedIn = false;
         counter = 0;
 
-        webView.clearCache(true);
-        webView.clearHistory();
-        CookieManager.getInstance().removeAllCookies(null);
-        webView.loadUrl("http://vtopcc.vit.ac.in:8080/vtop");
+        reloadPage();
     }
 
     /*
@@ -140,7 +137,7 @@ public class VTOP {
         webView.evaluateJavascript("(function() {" +
                 "var images = document.getElementsByTagName('img');" +
                 "for(var i = 0; i < images.length; ++i) {" +
-                "if(images[i].alt == 'vtopCaptcha') {" +
+                "if(images[i].alt.toLowerCase().includes('captcha')) {" +
                 "return images[i].src;" +
                 "}" +
                 "}" +
@@ -157,14 +154,21 @@ public class VTOP {
                     return;
                 }
 
-                src = src.substring(24, src.length() - 1);  //It'll be better (and safer) to split the string using ' ' and take the second value
-                byte[] decodedString = Base64.decode(src, Base64.DEFAULT);
-                Bitmap decodedImage = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-                captcha.setImageBitmap(decodedImage);
+                try {
+                    src = src.substring(24, src.length() - 1);  //It'll be better (and safer) to split the string using ' ' and take the second value
+                    byte[] decodedString = Base64.decode(src, Base64.DEFAULT);
+                    Bitmap decodedImage = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                    captcha.setImageBitmap(decodedImage);
 
-                hideLayouts();
-                captchaView.setText("");
-                captchaLayout.setVisibility(View.VISIBLE);
+                    hideLayouts();
+                    captchaView.setText("");
+                    captchaLayout.setVisibility(View.VISIBLE);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
+                    isOpened = false;
+                    reloadPage();
+                }
             }
         });
     }
@@ -224,7 +228,7 @@ public class VTOP {
     }
 
     /*
-        Function to save the name of the user and his/her ID (register number or faculty id, maybe in future) in SharedPreferences
+        Function to save the name of the user and his/her ID (register number) in SharedPreferences
         TBD: Saving the users profile picture
      */
     public void downloadProfile() {
@@ -264,10 +268,14 @@ public class VTOP {
                 /*
                     obj is in the form of a JSON string like {"name":"JOHN DOE","register":"20XYZ1987"}
                  */
-                if (obj.equals("false")) {
+                String temp = obj.substring(1, obj.length() - 1);
+                if (obj.equals("false") || obj.equals("null")) {
                     Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
                     isOpened = false;
                     reloadPage();
+                } else if (temp.equals("")) {
+                    Toast.makeText(context, "Sorry, we had some trouble downloading your profile.", Toast.LENGTH_LONG).show();
+                    ((Activity) context).finish();
                 } else {
                     try {
                         JSONObject myObj = new JSONObject(obj);
@@ -277,6 +285,8 @@ public class VTOP {
                     } catch (Exception e) {
                         e.printStackTrace();
                         Toast.makeText(context, "Sorry, something went wrong. Please try again later.", Toast.LENGTH_LONG).show();
+                        isOpened = false;
+                        reloadPage();
                     }
                 }
             }
@@ -374,7 +384,7 @@ public class VTOP {
                         public void run() {
                             downloadTimetable();
                         }
-                    }, 500);
+                    }, 1000);
                 } else {
                     Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
                     isOpened = false;
@@ -487,13 +497,22 @@ public class VTOP {
                     isOpened = false;
                     reloadPage();
                 } else if (temp.equals("loading")) {
+                    if (counter >= 60) {
+                        Toast.makeText(context, "Sorry, we had some trouble connecting to the server. Please try again later.", Toast.LENGTH_LONG).show();
+                        ((Activity) context).finish();
+                        return;
+                    }
+                    ++counter;
                     downloadTimetable();
-                } else if (temp.equals("unreleased")) {
+                } else if (temp.equals("unreleased") || temp.equals("")) {
                     myDatabase.execSQL("DROP TABLE IF EXISTS timetable_lab");
                     myDatabase.execSQL("CREATE TABLE IF NOT EXISTS timetable_lab (id INT(3) PRIMARY KEY, start_time VARCHAR, end_time VARCHAR, mon VARCHAR, tue VARCHAR, wed VARCHAR, thu VARCHAR, fri VARCHAR, sat VARCHAR, sun VARCHAR)");
 
                     myDatabase.execSQL("DROP TABLE IF EXISTS timetable_theory");
                     myDatabase.execSQL("CREATE TABLE IF NOT EXISTS timetable_theory (id INT(3) PRIMARY KEY, start_time VARCHAR, end_time VARCHAR, mon VARCHAR, tue VARCHAR, wed VARCHAR, thu VARCHAR, fri VARCHAR, sat VARCHAR, sun VARCHAR)");
+
+                    myDatabase.execSQL("DROP TABLE IF EXISTS faculty");
+                    myDatabase.execSQL("CREATE TABLE IF NOT EXISTS faculty (id INT(3) PRIMARY KEY, course VARCHAR, faculty VARCHAR)");
 
                     downloadProctor();
                 } else {
@@ -505,7 +524,11 @@ public class VTOP {
                         myDatabase.execSQL("DROP TABLE IF EXISTS timetable_lab");
                         myDatabase.execSQL("CREATE TABLE IF NOT EXISTS timetable_lab (id INT(3) PRIMARY KEY, start_time VARCHAR, end_time VARCHAR, mon VARCHAR, tue VARCHAR, wed VARCHAR, thu VARCHAR, fri VARCHAR, sat VARCHAR, sun VARCHAR)");
 
+                        myDatabase.execSQL("DROP TABLE IF EXISTS timetable_theory");
+                        myDatabase.execSQL("CREATE TABLE IF NOT EXISTS timetable_theory (id INT(3) PRIMARY KEY, start_time VARCHAR, end_time VARCHAR, mon VARCHAR, tue VARCHAR, wed VARCHAR, thu VARCHAR, fri VARCHAR, sat VARCHAR, sun VARCHAR)");
+
                         JSONObject lab = new JSONObject(myObj.getString("lab"));
+                        JSONObject theory = new JSONObject(myObj.getString("theory"));
                         JSONObject mon = new JSONObject(myObj.getString("mon"));
                         JSONObject tue = new JSONObject(myObj.getString("tue"));
                         JSONObject wed = new JSONObject(myObj.getString("wed"));
@@ -513,6 +536,7 @@ public class VTOP {
                         JSONObject fri = new JSONObject(myObj.getString("fri"));
                         JSONObject sat = new JSONObject(myObj.getString("sat"));
                         JSONObject sun = new JSONObject(myObj.getString("sun"));
+
                         for (int i = 0; i < lab.length() / 2; ++i) {
                             String start_time = lab.getString(i + "start");
                             myDatabase.execSQL("INSERT INTO timetable_lab (id, start_time) VALUES ('" + i + "', '" + start_time + "')");
@@ -569,17 +593,11 @@ public class VTOP {
                                 myDatabase.execSQL("UPDATE timetable_lab SET sun = null WHERE id = " + i);
 
                             }
-                        }
 
-                        myDatabase.execSQL("DROP TABLE IF EXISTS timetable_theory");
-                        myDatabase.execSQL("CREATE TABLE IF NOT EXISTS timetable_theory (id INT(3) PRIMARY KEY, start_time VARCHAR, end_time VARCHAR, mon VARCHAR, tue VARCHAR, wed VARCHAR, thu VARCHAR, fri VARCHAR, sat VARCHAR, sun VARCHAR)");
-
-                        JSONObject theory = new JSONObject(myObj.getString("theory"));
-                        for (int i = 0; i < theory.length() / 2; ++i) {
-                            String start_time = theory.getString(i + "start");
+                            start_time = theory.getString(i + "start");
                             myDatabase.execSQL("INSERT INTO timetable_theory (id, start_time) VALUES ('" + i + "', '" + start_time + "')");
 
-                            String end_time = theory.getString(i + "end");
+                            end_time = theory.getString(i + "end");
                             myDatabase.execSQL("UPDATE timetable_theory SET end_time = '" + end_time + "' WHERE id = " + i);
 
                             if (mon.has(i + "theory")) {
@@ -652,7 +670,7 @@ public class VTOP {
         loading.setText(context.getString(R.string.downloading_faculty));
 
         webView.evaluateJavascript("(function() {" +
-                "var division = document.getElementById('studentDetailsList'); " +
+                "var division = document.getElementById('studentDetailsList'); " +  //Possible error: If timetable is available but faculty info isn't
                 "var heads = division.getElementsByTagName('th');" +
                 "var courseIndex, facultyIndex, flag = 0;" +
                 "var columns = heads.length;" +
@@ -683,10 +701,23 @@ public class VTOP {
                 "})();", new ValueCallback<String>() {
             @Override
             public void onReceiveValue(String obj) {
+                String temp = obj.substring(1, obj.length() - 1);
                 if (obj.equals("null")) {
                     Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
                     isOpened = false;
                     reloadPage();
+                } else if (temp.equals("")) {
+                    try {
+                        myDatabase.execSQL("DROP TABLE IF EXISTS faculty");
+                        myDatabase.execSQL("CREATE TABLE IF NOT EXISTS faculty (id INT(3) PRIMARY KEY, course VARCHAR, faculty VARCHAR)");
+
+                        downloadProctor();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
+                        isOpened = false;
+                        reloadPage();
+                    }
                 } else {
                     try {
                         JSONObject myObj = new JSONObject(obj);
@@ -730,6 +761,10 @@ public class VTOP {
                 "async: false," +
                 "success: function(response) {" +
                 "var doc = new DOMParser().parseFromString(response, 'text/html');" +
+                "if(!doc.getElementById('showDetails').getElementsByTagName('td')) {" +
+                "obj = 'unavailable';" +
+                "return;" +
+                "}" +
                 "var cells = doc.getElementById('showDetails').getElementsByTagName('td');" +
                 "for(var i = 0; i < cells.length; ++i) {" +
                 "if(cells[i].innerHTML.includes('img')) {" +
@@ -745,10 +780,23 @@ public class VTOP {
                 "})();", new ValueCallback<String>() {
             @Override
             public void onReceiveValue(String obj) {
+                String temp = obj.substring(1, obj.length() - 1);
                 if (obj.equals("null")) {
                     Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
                     isOpened = false;
                     reloadPage();
+                } else if (temp.equals("unavailable") || temp.equals("")) {
+                    try {
+                        myDatabase.execSQL("DROP TABLE IF EXISTS proctor");
+                        myDatabase.execSQL("CREATE TABLE IF NOT EXISTS proctor (id INT(3) PRIMARY KEY, column1 VARCHAR, column2 VARCHAR)");
+
+                        downloadDeanHOD();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
+                        isOpened = false;
+                        reloadPage();
+                    }
                 } else {
                     try {
                         JSONObject myObj = new JSONObject(obj);
@@ -791,6 +839,10 @@ public class VTOP {
                 "async: false," +
                 "success: function(response) {" +
                 "var doc = new DOMParser().parseFromString(response, 'text/html');" +
+                "if(!doc.getElementsByTagName('table')[0]) {" +
+                "obj = 'unavailable';" +
+                "return;" +
+                "}" +
                 "var tables = doc.getElementsByTagName('table');" +
                 "var first = 'dean';" +
                 "if(doc.getElementsByTagName('h3')[0].innerText.toLowerCase() != 'dean') {" +
@@ -815,7 +867,7 @@ public class VTOP {
                 "hod[key] = value;" +
                 "}" +
                 "}" +
-                "var cells = tables[1].getElementsByTagName('td');" +
+                "var cells = tables[1].getElementsByTagName('td');" +   //Possible error: If only one table is present
                 "for(var i = 0; i < cells.length; ++i) {" +
                 "if(first == 'dean') {" +
                 "if(cells[i].innerHTML.includes('img')) {" +
@@ -841,10 +893,26 @@ public class VTOP {
                 "})();", new ValueCallback<String>() {
             @Override
             public void onReceiveValue(String obj) {
+                String temp = obj.substring(1, obj.length() - 1);
                 if (obj.equals("null")) {
                     Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
                     isOpened = false;
                     reloadPage();
+                } else if (temp.equals("unavailable") || temp.equals("")) {
+                    try {
+                        myDatabase.execSQL("DROP TABLE IF EXISTS dean");
+                        myDatabase.execSQL("CREATE TABLE IF NOT EXISTS dean (id INT(3) PRIMARY KEY, column1 VARCHAR, column2 VARCHAR)");
+
+                        myDatabase.execSQL("DROP TABLE IF EXISTS hod");
+                        myDatabase.execSQL("CREATE TABLE IF NOT EXISTS hod (id INT(3) PRIMARY KEY, column1 VARCHAR, column2 VARCHAR)");
+
+                        openAttendance();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
+                        isOpened = false;
+                        reloadPage();
+                    }
                 } else {
                     try {
                         JSONObject myObj = new JSONObject(obj);
@@ -950,7 +1018,7 @@ public class VTOP {
                         public void run() {
                             downloadAttendance();
                         }
-                    }, 500);
+                    }, 1000);
                 } else {
                     Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
                     isOpened = false;
@@ -1010,12 +1078,31 @@ public class VTOP {
                 "})();", new ValueCallback<String>() {
             @Override
             public void onReceiveValue(String obj) {
+                String temp = obj.substring(1, obj.length() - 1);
                 if (obj.equals("null")) {
                     Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
                     isOpened = false;
                     reloadPage();
                 } else if (obj.equals("loading")) {
+                    if (counter >= 60) {
+                        Toast.makeText(context, "Sorry, we had some trouble connecting to the server. Please try again later.", Toast.LENGTH_LONG).show();
+                        ((Activity) context).finish();
+                        return;
+                    }
+                    ++counter;
                     downloadAttendance();
+                } else if (temp.equals("unavailable") || temp.equals("")) {
+                    try {
+                        myDatabase.execSQL("DROP TABLE IF EXISTS attendance");
+                        myDatabase.execSQL("CREATE TABLE IF NOT EXISTS attendance (id INT(3) PRIMARY KEY, course VARCHAR, attended INT(3), total INT(3))");
+
+                        downloadMessages();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
+                        isOpened = false;
+                        reloadPage();
+                    }
                 } else {
                     try {
                         JSONObject myObj = new JSONObject(obj);
@@ -1152,6 +1239,10 @@ public class VTOP {
                         sharedPreferences.edit().putString("isLoggedIn", "true").apply();
                         context.startActivity(new Intent(context, HomeActivity.class));
                         ((Activity) context).finish();
+
+                        webView.clearCache(true);
+                        webView.clearHistory();
+                        CookieManager.getInstance().removeAllCookies(null);
                     } catch (Exception e) {
                         e.printStackTrace();
                         Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
@@ -1174,6 +1265,10 @@ public class VTOP {
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         context.startActivity(intent);
                         ((Activity) context).finish();
+
+                        webView.clearCache(true);
+                        webView.clearHistory();
+                        CookieManager.getInstance().removeAllCookies(null);
                     } catch (Exception e) {
                         e.printStackTrace();
                         Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
