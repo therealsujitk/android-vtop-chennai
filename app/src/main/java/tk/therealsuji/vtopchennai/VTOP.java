@@ -1042,36 +1042,36 @@ public class VTOP {
                 "return 'unavailable';" +
                 "}" +
                 "var heads = division.getElementsByTagName('th');" +
-                "var courseIndex, attendedIndex, totalIndex, flag = 0;" +
+                "var courseIndex, typeIndex, percentIndex, flag = 0;" +
                 "var columns = heads.length;" +
                 "for(var i = 0; i < columns; ++i) {" +
-                "if(heads[i].innerText.toLowerCase() == 'course code') {" +
+                "if(heads[i].innerText.toLowerCase().trim() == 'course code') {" +
                 "courseIndex = i;" +
                 "++flag;" +
                 "}" +
-                "if(heads[i].innerText.toLowerCase() == 'attended classes') {" +
-                "attendIndex = i;" +
+                "if(heads[i].innerText.toLowerCase().trim() == 'course type') {" +
+                "typeIndex = i;" +
                 "++flag;" +
                 "}" +
-                "if(heads[i].innerText.toLowerCase() == 'total classes') {" +
-                "totalIndex = i;" +
+                "if(heads[i].innerText.toLowerCase().trim() == 'attendance percentage') {" +
+                "percentIndex = i;" +
                 "++flag;" +
                 "}" +
-                "if(flag == 3) {" +
+                "if(flag >= 3) {" +
                 "break;" +
                 "}" +
                 "}" +
                 "var obj = {};" +
                 "var cells = division.getElementsByTagName('td');" +
-                "for(var i = 0; courseIndex < cells.length && attendIndex < cells.length && totalIndex < cells.length; ++i) {" +
+                "for(var i = 0; courseIndex < cells.length && typeIndex < cells.length && percentIndex < cells.length; ++i) {" +
                 "var temp = {};" +
                 "temp['course'] = cells[courseIndex].innerText.trim();" +
-                "temp['attended'] = cells[attendIndex].innerText.trim();" +
-                "temp['total'] = cells[totalIndex].innerText.trim();" +
+                "temp['type'] = cells[typeIndex].innerText.trim();" +
+                "temp['percent'] = cells[percentIndex].innerText.trim();" +
                 "obj[i.toString()] = temp;" +
                 "courseIndex += columns;" +
-                "attendIndex += columns;" +
-                "totalIndex += columns;" +
+                "typeIndex += columns;" +
+                "percentIndex += columns;" +
                 "}" +
                 "}" +
                 "return obj;" +
@@ -1094,7 +1094,7 @@ public class VTOP {
                 } else if (temp.equals("unavailable") || temp.equals("")) {
                     try {
                         myDatabase.execSQL("DROP TABLE IF EXISTS attendance");
-                        myDatabase.execSQL("CREATE TABLE IF NOT EXISTS attendance (id INT(3) PRIMARY KEY, course VARCHAR, attended INT(3), total INT(3))");
+                        myDatabase.execSQL("CREATE TABLE IF NOT EXISTS attendance (id INT(3) PRIMARY KEY, course VARCHAR, type VARCHAR, percent VARCHAR)");
 
                         downloadMessages();
                     } catch (Exception e) {
@@ -1108,15 +1108,15 @@ public class VTOP {
                         JSONObject myObj = new JSONObject(obj);
 
                         myDatabase.execSQL("DROP TABLE IF EXISTS attendance");
-                        myDatabase.execSQL("CREATE TABLE IF NOT EXISTS attendance (id INT(3) PRIMARY KEY, course VARCHAR, attended INT(3), total INT(3))");
+                        myDatabase.execSQL("CREATE TABLE IF NOT EXISTS attendance (id INT(3) PRIMARY KEY, course VARCHAR, type VARCHAR, percent VARCHAR)");
 
                         for (int i = 0; i < myObj.length(); ++i) {
                             JSONObject tempObj = new JSONObject(myObj.getString(Integer.toString(i)));
                             String course = tempObj.getString("course");
-                            String attended = tempObj.getString("attended");
-                            String total = tempObj.getString("total");
+                            String type = tempObj.getString("type");
+                            String percent = tempObj.getString("percent");
 
-                            myDatabase.execSQL("INSERT INTO attendance (course, attended, total) VALUES('" + course + "', '" + attended + "', '" + total + "')");
+                            myDatabase.execSQL("INSERT INTO attendance (course, type, percent) VALUES('" + course + "', '" + type + "', '" + percent + "%')");
                         }
 
                         downloadMessages();

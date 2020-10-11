@@ -69,4 +69,9 @@
     <string name="privacy_description">Icon for the privacy button.</string>
     <string name="sign_out">Sign Out</string>
     <string name="sign_out_description">Icon for the sign out button.</string>
+
+
+    <string name="no_data">No Data Available</string>
+    <string name="no_messages">No Messages</string>
+    <string name="no_announcements">No Announcements</string>
 </resources>
