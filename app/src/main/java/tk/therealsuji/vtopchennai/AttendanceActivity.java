@@ -3,6 +3,7 @@ package tk.therealsuji.vtopchennai;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.res.ResourcesCompat;
 
 import java.util.Objects;
 
@@ -84,6 +86,7 @@ public class AttendanceActivity extends AppCompatActivity {
             course.setText(c.getString(courseIndex));
             course.setTextColor(getColor(R.color.colorPrimary));
             course.setTextSize(20);
+            course.setTypeface(ResourcesCompat.getFont(this, R.font.rubik));
 
             innerBlock.addView(course); //Adding course code to innerBlock
 
@@ -102,6 +105,7 @@ public class AttendanceActivity extends AppCompatActivity {
             type.setText(c.getString(typeIndex));
             type.setTextColor(getColor(R.color.colorPrimary));
             type.setTextSize(16);
+            type.setTypeface(ResourcesCompat.getFont(this, R.font.rubik));
 
             innerBlock.addView(type);   //Adding course type to innerBlock
 
@@ -122,7 +126,8 @@ public class AttendanceActivity extends AppCompatActivity {
             percent.setText(c.getString(percentIndex));
             percent.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
             percent.setTextColor(getColor(R.color.colorPrimary));
-            percent.setTextSize(22);
+            percent.setTextSize(20);
+            percent.setTypeface(ResourcesCompat.getFont(this, R.font.rubik), Typeface.BOLD);
 
             block.addView(percent); //Adding percentage to block
 
