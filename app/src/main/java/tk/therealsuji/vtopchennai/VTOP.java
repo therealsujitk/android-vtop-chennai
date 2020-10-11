@@ -442,36 +442,36 @@ public class VTOP {
                 "}" +
                 "subcat = i.toString() + postfix;" +
                 "if(category == 'theory') {" +
-                "theory[subcat] = cells[j].innerText;" +
+                "theory[subcat] = cells[j].innerText.trim();" +
                 "} else if(category == 'lab') {" +
-                "lab[subcat] = cells[j].innerText;" +
+                "lab[subcat] = cells[j].innerText.trim();" +
                 "} else if(category == 'mon') {" +
                 "if(cells[j].bgColor == '#CCFF33') {" +
-                "mon[subcat] = cells[j].innerText;" +
+                "mon[subcat] = cells[j].innerText.trim();" +
                 "}" +
                 "} else if(category == 'tue') {" +
                 "if(cells[j].bgColor == '#CCFF33') {" +
-                "tue[subcat] = cells[j].innerText;" +
+                "tue[subcat] = cells[j].innerText.trim();" +
                 "}" +
                 "} else if(category == 'wed') {" +
                 "if(cells[j].bgColor == '#CCFF33') {" +
-                "wed[subcat] = cells[j].innerText;" +
+                "wed[subcat] = cells[j].innerText.trim();" +
                 "}" +
                 "} else if(category == 'thu') {" +
                 "if(cells[j].bgColor == '#CCFF33') {" +
-                "thu[subcat] = cells[j].innerText;" +
+                "thu[subcat] = cells[j].innerText.trim();" +
                 "}" +
                 "} else if(category == 'fri') {" +
                 "if(cells[j].bgColor == '#CCFF33') {" +
-                "fri[subcat] = cells[j].innerText;" +
+                "fri[subcat] = cells[j].innerText.trim();" +
                 "}" +
                 "} else if(category == 'sat') {" +
                 "if(cells[j].bgColor == '#CCFF33') {" +
-                "sat[subcat] = cells[j].innerText;" +
+                "sat[subcat] = cells[j].innerText.trim();" +
                 "}" +
                 "} else if(category == 'sun') {" +
                 "if(cells[j].bgColor == '#CCFF33') {" +
-                "sun[subcat] = cells[j].innerText;" +
+                "sun[subcat] = cells[j].innerText.trim();" +
                 "}" +
                 "}" +
                 "++i;" +
@@ -691,8 +691,8 @@ public class VTOP {
                 "var cells = division.getElementsByTagName('td');" +
                 "for(var i = 0; courseIndex < cells.length && facultyIndex < cells.length; ++i) {" +
                 "var temp = {};" +
-                "temp['course'] = cells[courseIndex].innerText;" +
-                "temp['faculty'] = cells[facultyIndex].innerText;" +
+                "temp['course'] = cells[courseIndex].innerText.trim();" +
+                "temp['faculty'] = cells[facultyIndex].innerText.trim();" +
                 "obj[i.toString()] = temp;" +
                 "courseIndex += columns;" +
                 "facultyIndex += columns;" +
@@ -770,8 +770,8 @@ public class VTOP {
                 "if(cells[i].innerHTML.includes('img')) {" +
                 "continue;" +
                 "}" +
-                "var key = cells[i].innerText;" +
-                "var value = cells[++i].innerText;" +
+                "var key = cells[i].innerText.trim();" +
+                "var value = cells[++i].innerText.trim();" +
                 "obj[key] = value;" +
                 "}" +
                 "}" +
@@ -1065,9 +1065,9 @@ public class VTOP {
                 "var cells = division.getElementsByTagName('td');" +
                 "for(var i = 0; courseIndex < cells.length && attendIndex < cells.length && totalIndex < cells.length; ++i) {" +
                 "var temp = {};" +
-                "temp['course'] = cells[courseIndex].innerText;" +
-                "temp['attended'] = cells[attendIndex].innerText;" +
-                "temp['total'] = cells[totalIndex].innerText;" +
+                "temp['course'] = cells[courseIndex].innerText.trim();" +
+                "temp['attended'] = cells[attendIndex].innerText.trim();" +
+                "temp['total'] = cells[totalIndex].innerText.trim();" +
                 "obj[i.toString()] = temp;" +
                 "courseIndex += columns;" +
                 "attendIndex += columns;" +
