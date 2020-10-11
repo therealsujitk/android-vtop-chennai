@@ -9,7 +9,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -53,7 +52,14 @@ public class HomeActivity extends AppCompatActivity {
      */
 
     public void share(View view) {
-        Toast.makeText(this, "This will be replaced with a sharing feature", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_SEND);
+        intent.putExtra(Intent.EXTRA_SUBJECT, "Get the VTOP Chennai android app");
+        intent.putExtra(Intent.EXTRA_TEXT, "https://vtopchennai.therealsuji.tk");
+        intent.setType("text/plain");
+
+        Intent shareIntent = Intent.createChooser(intent, "Share \"VTOP Chennai\" via");
+        startActivity(shareIntent);
     }
 
     public void openDownload(View view) {
@@ -61,7 +67,7 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     public void openAbout(View view) {
-        Toast.makeText(this, "This activity is still under development", Toast.LENGTH_SHORT).show();
+        startActivity(new Intent(HomeActivity.this, AboutActivity.class));
     }
 
     public void openPrivacy(View view) {
@@ -87,9 +93,9 @@ public class HomeActivity extends AppCompatActivity {
         String id = sharedPreferences.getString("id", getString(R.string.id));
         String credits = sharedPreferences.getString("credits", getString(R.string.credits));
 
-        TextView nameView = (TextView) findViewById(R.id.name);
-        TextView idView = (TextView) findViewById(R.id.id);
-        TextView creditsView = (TextView) findViewById(R.id.credits);
+        TextView nameView = findViewById(R.id.name);
+        TextView idView = findViewById(R.id.id);
+        TextView creditsView = findViewById(R.id.credits);
 
         nameView.setText(name);
         idView.setText(id);
