@@ -90,8 +90,7 @@
             android:layout_marginStart="20dp"
             android:layout_marginTop="20dp"
             android:layout_marginEnd="20dp"
-            android:layout_marginBottom="10dp"
-            android:background="@drawable/button_card"
+            android:background="@drawable/plain_card"
             android:text="@string/upcoming"
             android:textColor="@color/colorPrimary"
             android:textSize="14sp"
@@ -139,10 +138,12 @@
                     android:layout_marginBottom="10dp"
                     android:background="@drawable/button_card"
                     android:clickable="true"
+                    android:elevation="3dp"
                     android:focusable="true"
                     android:gravity="center_vertical"
                     android:onClick="openTimetable"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:stateListAnimator="@animator/item_elevation">
 
                     <ImageView
                         android:id="@+id/imageTimetable"
@@ -174,10 +175,12 @@
                     android:layout_marginBottom="10dp"
                     android:background="@drawable/button_card"
                     android:clickable="true"
+                    android:elevation="3dp"
                     android:focusable="true"
                     android:gravity="center_vertical"
                     android:onClick="openAttendance"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:stateListAnimator="@animator/item_elevation">
 
                     <ImageView
                         android:id="@+id/imageAttendance"
@@ -209,10 +212,12 @@
                     android:layout_marginBottom="10dp"
                     android:background="@drawable/button_card"
                     android:clickable="true"
+                    android:elevation="3dp"
                     android:focusable="true"
                     android:gravity="center_vertical"
                     android:onClick="openMessages"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:stateListAnimator="@animator/item_elevation">
 
                     <ImageView
                         android:id="@+id/imageMessages"
@@ -276,10 +281,12 @@
                     android:layout_marginBottom="10dp"
                     android:background="@drawable/button_card"
                     android:clickable="true"
+                    android:elevation="3dp"
                     android:focusable="true"
                     android:gravity="center_vertical"
                     android:onClick="openSpotlight"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:stateListAnimator="@animator/item_elevation">
 
                     <ImageView
                         android:id="@+id/imageSpotlight"
@@ -311,10 +318,12 @@
                     android:layout_marginBottom="10dp"
                     android:background="@drawable/button_card"
                     android:clickable="true"
+                    android:elevation="3dp"
                     android:focusable="true"
                     android:gravity="center_vertical"
                     android:onClick="openStaff"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:stateListAnimator="@animator/item_elevation">
 
                     <ImageView
                         android:id="@+id/imageStaff"
@@ -346,10 +355,12 @@
                     android:layout_marginBottom="10dp"
                     android:background="@drawable/button_card"
                     android:clickable="true"
+                    android:elevation="3dp"
                     android:focusable="true"
                     android:gravity="center_vertical"
                     android:onClick="openFaculty"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:stateListAnimator="@animator/item_elevation">
 
                     <ImageView
                         android:id="@+id/imageFaculty"
@@ -412,10 +423,12 @@
                     android:layout_marginBottom="10dp"
                     android:background="@drawable/button_card"
                     android:clickable="true"
+                    android:elevation="3dp"
                     android:focusable="true"
                     android:gravity="center_vertical"
                     android:onClick="share"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:stateListAnimator="@animator/item_elevation">
 
                     <ImageView
                         android:id="@+id/imageShare"
@@ -447,10 +460,12 @@
                     android:layout_marginBottom="10dp"
                     android:background="@drawable/button_card"
                     android:clickable="true"
+                    android:elevation="3dp"
                     android:focusable="true"
                     android:gravity="center_vertical"
                     android:onClick="openDownload"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:stateListAnimator="@animator/item_elevation">
 
                     <ImageView
                         android:id="@+id/imageRefresh"
@@ -482,10 +497,12 @@
                     android:layout_marginBottom="10dp"
                     android:background="@drawable/button_card"
                     android:clickable="true"
+                    android:elevation="3dp"
                     android:focusable="true"
                     android:gravity="center_vertical"
                     android:onClick="openAbout"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:stateListAnimator="@animator/item_elevation">
 
                     <ImageView
                         android:id="@+id/imageAbout"
@@ -517,10 +534,12 @@
                     android:layout_marginBottom="10dp"
                     android:background="@drawable/button_card"
                     android:clickable="true"
+                    android:elevation="3dp"
                     android:focusable="true"
                     android:gravity="center_vertical"
                     android:onClick="openPrivacy"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:stateListAnimator="@animator/item_elevation">
 
                     <ImageView
                         android:id="@+id/imagePrivacy"
@@ -552,10 +571,12 @@
                     android:layout_marginBottom="10dp"
                     android:background="@drawable/button_card"
                     android:clickable="true"
+                    android:elevation="3dp"
                     android:focusable="true"
                     android:gravity="center_vertical"
                     android:onClick="signOut"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:stateListAnimator="@animator/item_elevation">
 
                     <ImageView
                         android:id="@+id/imageSignOut"

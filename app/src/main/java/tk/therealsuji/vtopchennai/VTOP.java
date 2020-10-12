@@ -810,6 +810,10 @@ public class VTOP {
                             String key = (String) keys.next();
                             String value = myObj.getString(key);
 
+                            if (value.equals("")) {
+                                value = "null";
+                            }
+
                             myDatabase.execSQL("INSERT INTO proctor (column1, column2) VALUES('" + key + "', '" + value + "')");
                         }
 
@@ -1269,6 +1273,7 @@ public class VTOP {
                         webView.clearCache(true);
                         webView.clearHistory();
                         CookieManager.getInstance().removeAllCookies(null);
+                        myDatabase.close();
                     } catch (Exception e) {
                         e.printStackTrace();
                         Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();

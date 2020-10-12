@@ -50,14 +50,14 @@ public class AttendanceActivity extends AppCompatActivity {
             blockParams.setMarginEnd((int) (20 * pixelDensity));
             if (i == 0) {
                 findViewById(R.id.noData).setVisibility(View.INVISIBLE);
-                blockParams.setMargins(0, (int) (20 * pixelDensity), 0, (int) (10 * pixelDensity));
+                blockParams.setMargins(0, (int) (20 * pixelDensity), 0, (int) (5 * pixelDensity));
             } else if (i == c.getCount() - 1) {
-                blockParams.setMargins(0, (int) (10 * pixelDensity), 0, (int) (20 * pixelDensity));
+                blockParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (20 * pixelDensity));
             } else {
-                blockParams.setMargins(0, (int) (10 * pixelDensity), 0, (int) (10 * pixelDensity));
+                blockParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (5 * pixelDensity));
             }
             block.setLayoutParams(blockParams);
-            block.setBackground(ContextCompat.getDrawable(this, R.drawable.button_card));
+            block.setBackground(ContextCompat.getDrawable(this, R.drawable.plain_card));
             block.setGravity(Gravity.CENTER_VERTICAL);
             block.setOrientation(LinearLayout.HORIZONTAL);
 
@@ -81,7 +81,7 @@ public class AttendanceActivity extends AppCompatActivity {
             );
             courseParams.setMarginStart((int) (20 * pixelDensity));
             courseParams.setMarginEnd((int) (20 * pixelDensity));
-            courseParams.setMargins(0, (int) (20 * pixelDensity), (int) (20 * pixelDensity), (int) (5 * pixelDensity));
+            courseParams.setMargins(0, (int) (20 * pixelDensity), 0, (int) (5 * pixelDensity));
             course.setLayoutParams(courseParams);
             course.setText(c.getString(courseIndex));
             course.setTextColor(getColor(R.color.colorPrimary));
@@ -91,7 +91,7 @@ public class AttendanceActivity extends AppCompatActivity {
             innerBlock.addView(course); //Adding course code to innerBlock
 
             /*
-                The course code TextView
+                The course type code TextView
              */
             TextView type = new TextView(this);
             TableRow.LayoutParams typeParams = new TableRow.LayoutParams(
@@ -100,7 +100,7 @@ public class AttendanceActivity extends AppCompatActivity {
             );
             typeParams.setMarginStart((int) (20 * pixelDensity));
             typeParams.setMarginEnd((int) (20 * pixelDensity));
-            typeParams.setMargins(0, (int) (5 * pixelDensity), (int) (20 * pixelDensity), (int) (20 * pixelDensity));
+            typeParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (20 * pixelDensity));
             type.setLayoutParams(typeParams);
             type.setText(c.getString(typeIndex));
             type.setTextColor(getColor(R.color.colorPrimary));
@@ -121,7 +121,6 @@ public class AttendanceActivity extends AppCompatActivity {
             );
             percentParams.setMarginStart((int) (20 * pixelDensity));
             percentParams.setMarginEnd((int) (20 * pixelDensity));
-            percentParams.setMargins(0, (int) (20 * pixelDensity), (int) (20 * pixelDensity), (int) (20 * pixelDensity));
             percent.setLayoutParams(percentParams);
             percent.setText(c.getString(percentIndex));
             percent.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
@@ -140,5 +139,6 @@ public class AttendanceActivity extends AppCompatActivity {
         }
 
         c.close();
+        myDatabase.close();
     }
 }

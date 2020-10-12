@@ -5,9 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.MotionEvent;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -101,23 +99,25 @@ public class HomeActivity extends AppCompatActivity {
         idView.setText(id);
         creditsView.setText(credits);
 
+        final float pixelDensity = this.getResources().getDisplayMetrics().density;
+
         /*
             Add code to set upcoming/ongoing class here
          */
 
-        final LinearLayout timetable = findViewById(R.id.timetable);
-        timetable.setElevation(12f);
+        /*final LinearLayout timetable = findViewById(R.id.timetable);
+        timetable.setElevation(4 * pixelDensity);
         timetable.setOnTouchListener(new View.OnTouchListener() {
 
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 switch (motionEvent.getAction()) {
                     case MotionEvent.ACTION_DOWN:
-                        timetable.setElevation(18f);
+                        timetable.setElevation(0);
                         break;
                     case MotionEvent.ACTION_UP:
                     case MotionEvent.ACTION_CANCEL:
-                        timetable.setElevation(12f);
+                        timetable.setElevation(4 * pixelDensity);
                         break;
                 }
                 return false;
@@ -312,6 +312,6 @@ public class HomeActivity extends AppCompatActivity {
                 }
                 return false;
             }
-        });
+        });*/
     }
 }

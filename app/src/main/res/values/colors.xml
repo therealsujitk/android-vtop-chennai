@@ -7,6 +7,9 @@
     <color name="colorLightGrey">#F5F5F5</color>
 
     <color name="colorBlue01">#4A91F2</color>
+    <color name="colorBlue02">#64A1F4</color>
+    <color name="colorBlue03">#8DBDFF</color>
     <color name="colorBlue04">#BFD6F6</color>
-
+    <color name="colorBlue05">#D6E7FF</color>
+    <color name="colorBlue06">#F3F8FF</color>
 </resources>
