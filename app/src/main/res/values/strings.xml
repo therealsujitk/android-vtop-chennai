@@ -74,4 +74,9 @@
     <string name="no_data">No Data Available</string>
     <string name="no_messages">No Messages</string>
     <string name="no_announcements">No Announcements</string>
+
+
+    <string name="proctor">PROCTOR</string>
+    <string name="dean">DEAN</string>
+    <string name="hod">HOD</string>
 </resources>

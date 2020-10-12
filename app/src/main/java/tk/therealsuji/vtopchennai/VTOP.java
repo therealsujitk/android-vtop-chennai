@@ -810,10 +810,6 @@ public class VTOP {
                             String key = (String) keys.next();
                             String value = myObj.getString(key);
 
-                            if (value.equals("")) {
-                                value = "null";
-                            }
-
                             myDatabase.execSQL("INSERT INTO proctor (column1, column2) VALUES('" + key + "', '" + value + "')");
                         }
 
