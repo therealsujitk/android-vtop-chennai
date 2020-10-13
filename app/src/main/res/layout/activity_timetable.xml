@@ -6,7 +6,20 @@
     android:layout_height="match_parent"
     tools:context=".TimetableActivity">
 
+    <TextView
+        android:id="@+id/noData"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/no_data"
+        android:textColor="@color/colorBlue01"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <HorizontalScrollView
+        android:id="@+id/horizontalScrollView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:scrollbars="none"
@@ -20,60 +33,116 @@
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/button"
+                android:id="@+id/sunday"
                 style="?android:attr/borderlessButtonStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="60dp"
+                android:layout_height="25dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="5dp"
+                android:layout_marginBottom="20dp"
                 android:layout_weight="1"
-                android:text="@string/sun" />
+                android:background="@drawable/button_secondary"
+                android:text="@string/sun"
+                android:textColor="@color/colorPrimary"
+                android:textSize="12sp"
+                tools:ignore="InefficientWeight" />
 
             <Button
-                android:id="@+id/button2"
+                android:id="@+id/monday"
                 style="?android:attr/borderlessButtonStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="60dp"
+                android:layout_height="25dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="5dp"
+                android:layout_marginBottom="20dp"
                 android:layout_weight="1"
-                android:text="@string/mon" />
+                android:background="@drawable/button_secondary"
+                android:text="@string/mon"
+                android:textColor="@color/colorPrimary"
+                android:textSize="12sp"
+                tools:ignore="InefficientWeight" />
 
             <Button
-                android:id="@+id/button3"
+                android:id="@+id/tuesday"
                 style="?android:attr/borderlessButtonStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="60dp"
+                android:layout_height="25dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="5dp"
+                android:layout_marginBottom="20dp"
                 android:layout_weight="1"
-                android:text="@string/tue" />
+                android:background="@drawable/button_secondary"
+                android:text="@string/tue"
+                android:textColor="@color/colorPrimary"
+                android:textSize="12sp"
+                tools:ignore="InefficientWeight" />
 
             <Button
-                android:id="@+id/button4"
+                android:id="@+id/wednesday"
                 style="?android:attr/borderlessButtonStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="60dp"
+                android:layout_height="25dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="5dp"
+                android:layout_marginBottom="20dp"
                 android:layout_weight="1"
-                android:text="@string/wed" />
+                android:background="@drawable/button_secondary"
+                android:text="@string/wed"
+                android:textColor="@color/colorPrimary"
+                android:textSize="12sp"
+                tools:ignore="InefficientWeight" />
 
             <Button
-                android:id="@+id/button5"
+                android:id="@+id/thursday"
                 style="?android:attr/borderlessButtonStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="60dp"
+                android:layout_height="25dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="5dp"
+                android:layout_marginBottom="20dp"
                 android:layout_weight="1"
-                android:text="@string/thu" />
+                android:background="@drawable/button_secondary"
+                android:text="@string/thu"
+                android:textColor="@color/colorPrimary"
+                android:textSize="12sp"
+                tools:ignore="InefficientWeight" />
 
             <Button
-                android:id="@+id/button6"
+                android:id="@+id/friday"
                 style="?android:attr/borderlessButtonStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="60dp"
+                android:layout_height="25dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="5dp"
+                android:layout_marginBottom="20dp"
                 android:layout_weight="1"
-                android:text="@string/fri" />
+                android:background="@drawable/button_secondary"
+                android:text="@string/fri"
+                android:textColor="@color/colorPrimary"
+                android:textSize="12sp"
+                tools:ignore="InefficientWeight" />
 
             <Button
-                android:id="@+id/button7"
+                android:id="@+id/saturday"
                 style="?android:attr/borderlessButtonStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="60dp"
+                android:layout_height="25dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginBottom="20dp"
                 android:layout_weight="1"
-                android:text="@string/sat" />
+                android:background="@drawable/button_secondary"
+                android:text="@string/sat"
+                android:textColor="@color/colorPrimary"
+                android:textSize="12sp"
+                tools:ignore="InefficientWeight" />
         </LinearLayout>
     </HorizontalScrollView>
 
