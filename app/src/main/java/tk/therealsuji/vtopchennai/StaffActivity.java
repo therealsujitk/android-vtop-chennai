@@ -102,7 +102,7 @@ public class StaffActivity extends AppCompatActivity {
                 keyView.setText(key);
                 keyView.setTextColor(getColor(R.color.colorPrimary));
                 keyView.setTextSize(16);
-                keyView.setTypeface(ResourcesCompat.getFont(this, R.font.rubik), Typeface.BOLD);
+                keyView.setTypeface(ResourcesCompat.getFont(this, R.font.rubik));
 
                 block.addView(keyView);   //Adding key to block
 
@@ -121,7 +121,7 @@ public class StaffActivity extends AppCompatActivity {
                 valueView.setText(value);
                 valueView.setTextColor(getColor(R.color.colorPrimary));
                 valueView.setTextSize(16);
-                valueView.setTypeface(ResourcesCompat.getFont(this, R.font.rubik));
+                valueView.setTypeface(ResourcesCompat.getFont(this, R.font.rubik), Typeface.BOLD);
 
                 block.addView(valueView);   //Adding key to block
             }
@@ -205,7 +205,7 @@ public class StaffActivity extends AppCompatActivity {
                 keyView.setText(key);
                 keyView.setTextColor(getColor(R.color.colorPrimary));
                 keyView.setTextSize(16);
-                keyView.setTypeface(ResourcesCompat.getFont(this, R.font.rubik), Typeface.BOLD);
+                keyView.setTypeface(ResourcesCompat.getFont(this, R.font.rubik));
 
                 block.addView(keyView);   //Adding key to block
 
@@ -224,7 +224,7 @@ public class StaffActivity extends AppCompatActivity {
                 valueView.setText(value);
                 valueView.setTextColor(getColor(R.color.colorPrimary));
                 valueView.setTextSize(16);
-                valueView.setTypeface(ResourcesCompat.getFont(this, R.font.rubik));
+                valueView.setTypeface(ResourcesCompat.getFont(this, R.font.rubik), Typeface.BOLD);
 
                 block.addView(valueView);   //Adding key to block
             }
@@ -308,7 +308,7 @@ public class StaffActivity extends AppCompatActivity {
                 keyView.setText(key);
                 keyView.setTextColor(getColor(R.color.colorPrimary));
                 keyView.setTextSize(16);
-                keyView.setTypeface(ResourcesCompat.getFont(this, R.font.rubik), Typeface.BOLD);
+                keyView.setTypeface(ResourcesCompat.getFont(this, R.font.rubik));
 
                 block.addView(keyView);   //Adding key to block
 
@@ -327,7 +327,7 @@ public class StaffActivity extends AppCompatActivity {
                 valueView.setText(value);
                 valueView.setTextColor(getColor(R.color.colorPrimary));
                 valueView.setTextSize(16);
-                valueView.setTypeface(ResourcesCompat.getFont(this, R.font.rubik));
+                valueView.setTypeface(ResourcesCompat.getFont(this, R.font.rubik), Typeface.BOLD);
 
                 block.addView(valueView);   //Adding key to block
             }
