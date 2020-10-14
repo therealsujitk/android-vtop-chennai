@@ -79,6 +79,9 @@
     <string name="fri">Fri</string>
     <string name="sat">Sat</string>
 
+    <string name="theory">Theory</string>
+    <string name="lab">Lab</string>
+
 
     <string name="no_data">No Data Available</string>
     <string name="no_messages">No Messages</string>

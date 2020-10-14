@@ -537,7 +537,7 @@ public class VTOP {
                         JSONObject sat = new JSONObject(myObj.getString("sat"));
                         JSONObject sun = new JSONObject(myObj.getString("sun"));
 
-                        for (int i = 0; i < lab.length() / 2; ++i) {
+                        for (int i = 0; i < lab.length() / 2 && i < theory.length() / 2; ++i) {
                             String start_time = lab.getString(i + "start");
                             myDatabase.execSQL("INSERT INTO timetable_lab (id, start_time) VALUES ('" + i + "', '" + start_time + "')");
 
@@ -548,49 +548,49 @@ public class VTOP {
                                 String period = mon.getString(i + "lab");
                                 myDatabase.execSQL("UPDATE timetable_lab SET mon = '" + period + "' WHERE id = " + i);
                             } else {
-                                myDatabase.execSQL("UPDATE timetable_lab SET mon = null WHERE id = " + i);
+                                myDatabase.execSQL("UPDATE timetable_lab SET mon = 'null' WHERE id = " + i);
                             }
 
                             if (tue.has(i + "lab")) {
                                 String period = tue.getString(i + "lab");
                                 myDatabase.execSQL("UPDATE timetable_lab SET tue = '" + period + "' WHERE id = " + i);
                             } else {
-                                myDatabase.execSQL("UPDATE timetable_lab SET tue = null WHERE id = " + i);
+                                myDatabase.execSQL("UPDATE timetable_lab SET tue = 'null' WHERE id = " + i);
                             }
 
                             if (wed.has(i + "lab")) {
                                 String period = wed.getString(i + "lab");
                                 myDatabase.execSQL("UPDATE timetable_lab SET wed = '" + period + "' WHERE id = " + i);
                             } else {
-                                myDatabase.execSQL("UPDATE timetable_lab SET wed = null WHERE id = " + i);
+                                myDatabase.execSQL("UPDATE timetable_lab SET wed = 'null' WHERE id = " + i);
                             }
 
                             if (thu.has(i + "lab")) {
                                 String period = thu.getString(i + "lab");
                                 myDatabase.execSQL("UPDATE timetable_lab SET thu = '" + period + "' WHERE id = " + i);
                             } else {
-                                myDatabase.execSQL("UPDATE timetable_lab SET thu = null WHERE id = " + i);
+                                myDatabase.execSQL("UPDATE timetable_lab SET thu = 'null' WHERE id = " + i);
                             }
 
                             if (fri.has(i + "lab")) {
                                 String period = fri.getString(i + "lab");
                                 myDatabase.execSQL("UPDATE timetable_lab SET fri = '" + period + "' WHERE id = " + i);
                             } else {
-                                myDatabase.execSQL("UPDATE timetable_lab SET fri = null WHERE id = " + i);
+                                myDatabase.execSQL("UPDATE timetable_lab SET fri = 'null' WHERE id = " + i);
                             }
 
                             if (sat.has(i + "lab")) {
                                 String period = sat.getString(i + "lab");
                                 myDatabase.execSQL("UPDATE timetable_lab SET sat = '" + period + "' WHERE id = " + i);
                             } else {
-                                myDatabase.execSQL("UPDATE timetable_lab SET sat = null WHERE id = " + i);
+                                myDatabase.execSQL("UPDATE timetable_lab SET sat = 'null' WHERE id = " + i);
                             }
 
                             if (sun.has(i + "lab")) {
                                 String period = sun.getString(i + "lab");
                                 myDatabase.execSQL("UPDATE timetable_lab SET sun = '" + period + "' WHERE id = " + i);
                             } else {
-                                myDatabase.execSQL("UPDATE timetable_lab SET sun = null WHERE id = " + i);
+                                myDatabase.execSQL("UPDATE timetable_lab SET sun = 'null' WHERE id = " + i);
 
                             }
 
@@ -604,49 +604,49 @@ public class VTOP {
                                 String period = mon.getString(i + "theory");
                                 myDatabase.execSQL("UPDATE timetable_theory SET mon = '" + period + "' WHERE id = " + i);
                             } else {
-                                myDatabase.execSQL("UPDATE timetable_theory SET mon = null WHERE id = " + i);
+                                myDatabase.execSQL("UPDATE timetable_theory SET mon = 'null' WHERE id = " + i);
                             }
 
                             if (tue.has(i + "theory")) {
                                 String period = tue.getString(i + "theory");
                                 myDatabase.execSQL("UPDATE timetable_theory SET tue = '" + period + "' WHERE id = " + i);
                             } else {
-                                myDatabase.execSQL("UPDATE timetable_theory SET tue = null WHERE id = " + i);
+                                myDatabase.execSQL("UPDATE timetable_theory SET tue = 'null' WHERE id = " + i);
                             }
 
                             if (wed.has(i + "theory")) {
                                 String period = wed.getString(i + "theory");
                                 myDatabase.execSQL("UPDATE timetable_theory SET wed = '" + period + "' WHERE id = " + i);
                             } else {
-                                myDatabase.execSQL("UPDATE timetable_theory SET wed = null WHERE id = " + i);
+                                myDatabase.execSQL("UPDATE timetable_theory SET wed = 'null' WHERE id = " + i);
                             }
 
                             if (thu.has(i + "theory")) {
                                 String period = thu.getString(i + "theory");
                                 myDatabase.execSQL("UPDATE timetable_theory SET thu = '" + period + "' WHERE id = " + i);
                             } else {
-                                myDatabase.execSQL("UPDATE timetable_theory SET thu = null WHERE id = " + i);
+                                myDatabase.execSQL("UPDATE timetable_theory SET thu = 'null' WHERE id = " + i);
                             }
 
                             if (fri.has(i + "theory")) {
                                 String period = fri.getString(i + "theory");
                                 myDatabase.execSQL("UPDATE timetable_theory SET fri = '" + period + "' WHERE id = " + i);
                             } else {
-                                myDatabase.execSQL("UPDATE timetable_theory SET fri = null WHERE id = " + i);
+                                myDatabase.execSQL("UPDATE timetable_theory SET fri = 'null' WHERE id = " + i);
                             }
 
                             if (sat.has(i + "theory")) {
                                 String period = sat.getString(i + "theory");
                                 myDatabase.execSQL("UPDATE timetable_theory SET sat = '" + period + "' WHERE id = " + i);
                             } else {
-                                myDatabase.execSQL("UPDATE timetable_theory SET sat = null WHERE id = " + i);
+                                myDatabase.execSQL("UPDATE timetable_theory SET sat = 'null' WHERE id = " + i);
                             }
 
                             if (sun.has(i + "theory")) {
                                 String period = sun.getString(i + "theory");
                                 myDatabase.execSQL("UPDATE timetable_theory SET sun = '" + period + "' WHERE id = " + i);
                             } else {
-                                myDatabase.execSQL("UPDATE timetable_theory SET sun = null WHERE id = " + i);
+                                myDatabase.execSQL("UPDATE timetable_theory SET sun = 'null' WHERE id = " + i);
 
                             }
                         }

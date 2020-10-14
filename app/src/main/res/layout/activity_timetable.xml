@@ -18,10 +18,23 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <ScrollView
+        android:id="@+id/timetable"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+    </ScrollView>
+
     <HorizontalScrollView
         android:id="@+id/horizontalScrollView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/colorLight"
+        android:overScrollMode="never"
         android:scrollbars="none"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -43,9 +56,11 @@
                 android:layout_marginBottom="20dp"
                 android:layout_weight="1"
                 android:background="@drawable/button_secondary"
+                android:onClick="setSunday"
                 android:text="@string/sun"
                 android:textColor="@color/colorPrimary"
                 android:textSize="12sp"
+                android:textStyle="bold"
                 tools:ignore="InefficientWeight" />
 
             <Button
@@ -59,9 +74,11 @@
                 android:layout_marginBottom="20dp"
                 android:layout_weight="1"
                 android:background="@drawable/button_secondary"
+                android:onClick="setMonday"
                 android:text="@string/mon"
                 android:textColor="@color/colorPrimary"
                 android:textSize="12sp"
+                android:textStyle="bold"
                 tools:ignore="InefficientWeight" />
 
             <Button
@@ -75,9 +92,11 @@
                 android:layout_marginBottom="20dp"
                 android:layout_weight="1"
                 android:background="@drawable/button_secondary"
+                android:onClick="setTuesday"
                 android:text="@string/tue"
                 android:textColor="@color/colorPrimary"
                 android:textSize="12sp"
+                android:textStyle="bold"
                 tools:ignore="InefficientWeight" />
 
             <Button
@@ -91,9 +110,11 @@
                 android:layout_marginBottom="20dp"
                 android:layout_weight="1"
                 android:background="@drawable/button_secondary"
+                android:onClick="setWednesday"
                 android:text="@string/wed"
                 android:textColor="@color/colorPrimary"
                 android:textSize="12sp"
+                android:textStyle="bold"
                 tools:ignore="InefficientWeight" />
 
             <Button
@@ -107,9 +128,11 @@
                 android:layout_marginBottom="20dp"
                 android:layout_weight="1"
                 android:background="@drawable/button_secondary"
+                android:onClick="setThursday"
                 android:text="@string/thu"
                 android:textColor="@color/colorPrimary"
                 android:textSize="12sp"
+                android:textStyle="bold"
                 tools:ignore="InefficientWeight" />
 
             <Button
@@ -123,9 +146,11 @@
                 android:layout_marginBottom="20dp"
                 android:layout_weight="1"
                 android:background="@drawable/button_secondary"
+                android:onClick="setFriday"
                 android:text="@string/fri"
                 android:textColor="@color/colorPrimary"
                 android:textSize="12sp"
+                android:textStyle="bold"
                 tools:ignore="InefficientWeight" />
 
             <Button
@@ -139,9 +164,11 @@
                 android:layout_marginBottom="20dp"
                 android:layout_weight="1"
                 android:background="@drawable/button_secondary"
+                android:onClick="setSaturday"
                 android:text="@string/sat"
                 android:textColor="@color/colorPrimary"
                 android:textSize="12sp"
+                android:textStyle="bold"
                 tools:ignore="InefficientWeight" />
         </LinearLayout>
     </HorizontalScrollView>
