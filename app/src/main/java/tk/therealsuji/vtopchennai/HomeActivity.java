@@ -64,10 +64,6 @@ public class HomeActivity extends AppCompatActivity {
         startActivity(new Intent(HomeActivity.this, DownloadActivity.class));
     }
 
-    public void openAbout(View view) {
-        startActivity(new Intent(HomeActivity.this, AboutActivity.class));
-    }
-
     public void openPrivacy(View view) {
         startActivity(new Intent(HomeActivity.this, PrivacyActivity.class));
     }

@@ -488,43 +488,6 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/about"
-                    android:layout_width="125dp"
-                    android:layout_height="125dp"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginBottom="10dp"
-                    android:background="@drawable/button_card"
-                    android:clickable="true"
-                    android:elevation="3dp"
-                    android:focusable="true"
-                    android:gravity="center_vertical"
-                    android:onClick="openAbout"
-                    android:orientation="vertical"
-                    android:stateListAnimator="@animator/item_elevation">
-
-                    <ImageView
-                        android:id="@+id/imageAbout"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:clickable="false"
-                        android:contentDescription="@string/about_description"
-                        app:srcCompat="@drawable/ic_about" />
-
-                    <TextView
-                        android:id="@+id/textAbout"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp"
-                        android:clickable="false"
-                        android:text="@string/about"
-                        android:textAlignment="center"
-                        android:textColor="@color/colorPrimary"
-                        android:textStyle="bold" />
-                </LinearLayout>
-
-                <LinearLayout
                     android:id="@+id/privacy"
                     android:layout_width="125dp"
                     android:layout_height="125dp"
@@ -599,5 +562,17 @@
                 </LinearLayout>
             </LinearLayout>
         </HorizontalScrollView>
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:text="@string/about"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/app" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>
