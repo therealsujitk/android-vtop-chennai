@@ -4,11 +4,20 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.res.ResourcesCompat;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 public class HomeActivity extends AppCompatActivity {
     SharedPreferences sharedPreferences;
@@ -97,217 +106,124 @@ public class HomeActivity extends AppCompatActivity {
 
         final float pixelDensity = this.getResources().getDisplayMetrics().density;
 
-        /*
-            Add code to set upcoming/ongoing class here
-         */
+        Calendar cal = Calendar.getInstance();
+        int dayCode = cal.get(Calendar.DAY_OF_WEEK);
+        SimpleDateFormat df = new SimpleDateFormat("HH:mm");
 
-        /*final LinearLayout timetable = findViewById(R.id.timetable);
-        timetable.setElevation(4 * pixelDensity);
-        timetable.setOnTouchListener(new View.OnTouchListener() {
+        String day;
 
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                switch (motionEvent.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        timetable.setElevation(0);
-                        break;
-                    case MotionEvent.ACTION_UP:
-                    case MotionEvent.ACTION_CANCEL:
-                        timetable.setElevation(4 * pixelDensity);
-                        break;
+        if (dayCode == 1) {
+            day = "sun";
+        } else if (dayCode == 2) {
+            day = "mon";
+        } else if (dayCode == 3) {
+            day = "tue";
+        } else if (dayCode == 4) {
+            day = "wed";
+        } else if (dayCode == 5) {
+            day = "thu";
+        } else if (dayCode == 6) {
+            day = "fri";
+        } else if (dayCode == 7) {
+            day = "sat";
+        }
+
+        SQLiteDatabase myDatabase = getApplicationContext().openOrCreateDatabase("vtop", Context.MODE_PRIVATE, null);
+        myDatabase.execSQL("CREATE TABLE IF NOT EXISTS timetable_theory (id INT(3) PRIMARY KEY, start_time VARCHAR, end_time VARCHAR, mon VARCHAR, tue VARCHAR, wed VARCHAR, thu VARCHAR, fri VARCHAR, sat VARCHAR, sun VARCHAR)");
+        myDatabase.execSQL("CREATE TABLE IF NOT EXISTS timetable_lab (id INT(3) PRIMARY KEY, start_time VARCHAR, end_time VARCHAR, mon VARCHAR, tue VARCHAR, wed VARCHAR, thu VARCHAR, fri VARCHAR, sat VARCHAR, sun VARCHAR)");
+
+        Cursor theory = myDatabase.rawQuery("SELECT start_time, end_time FROM timetable_theory", null);
+        Cursor lab = myDatabase.rawQuery("SELECT start_time, end_time FROM timetable_lab", null);
+
+        int startTheory = theory.getColumnIndex("start_time");
+        int endTheory = theory.getColumnIndex("end_time");
+
+        int startLab = lab.getColumnIndex("start_time");
+        int endLab = lab.getColumnIndex("end_time");
+
+        theory.moveToFirst();
+        lab.moveToFirst();
+
+        LinearLayout upcoming = findViewById(R.id.upcoming);
+
+        for (int i = 0; i < theory.getCount() && i < lab.getCount(); ++i, theory.moveToNext(), lab.moveToNext()) {
+            boolean flag = false;
+
+            String startTimeTheory = theory.getString(startTheory);
+            String endTimeTheory = theory.getString(endTheory);
+            String startTimeLab = lab.getString(startLab);
+            String endTimeLab = lab.getString(endLab);
+
+            Date currentTime = null;
+            try {
+                currentTime = df.parse(df.format(cal.getTime()));
+                if (currentTime.after(df.parse(startTimeTheory)) && currentTime.before(df.parse(endTimeTheory))) {
+                    upcoming.removeAllViews();
+
+                    LinearLayout innerBlock = new LinearLayout(this);
+                    LinearLayout.LayoutParams innerBlockParams = new LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.MATCH_PARENT,
+                            LinearLayout.LayoutParams.WRAP_CONTENT
+                    );
+                    innerBlock.setLayoutParams(innerBlockParams);
+                    innerBlock.setOrientation(LinearLayout.HORIZONTAL);
+
+                    TextView heading = new TextView(this);
+                    TableRow.LayoutParams headingParams = new TableRow.LayoutParams(
+                            TableRow.LayoutParams.MATCH_PARENT,
+                            TableRow.LayoutParams.WRAP_CONTENT
+                    );
+                    headingParams.setMarginStart((int) (20 * pixelDensity));
+                    headingParams.setMarginEnd((int) (20 * pixelDensity));
+                    headingParams.setMargins(0, (int) (20 * pixelDensity), 0, (int) (20 * pixelDensity));
+                    heading.setLayoutParams(headingParams);
+                    heading.setText(getString(R.string.ongoing));
+                    heading.setTextColor(getColor(R.color.colorPrimary));
+                    heading.setTextSize(16);
+                    heading.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
+                    heading.setTypeface(ResourcesCompat.getFont(this, R.font.rubik));
+
+                    upcoming.addView(innerBlock);
+                    flag = true;
                 }
-                return false;
-            }
-        });
 
-        final LinearLayout attendance = findViewById(R.id.attendance);
-        attendance.setElevation(12f);
-        attendance.setOnTouchListener(new View.OnTouchListener() {
+                if (currentTime.after(df.parse(startTimeLab)) && currentTime.before(df.parse(endTimeLab))) {
+                    if (!flag) {
+                        upcoming.removeAllViews();
+                    }
 
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                switch (motionEvent.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        attendance.setElevation(18f);
-                        break;
-                    case MotionEvent.ACTION_UP:
-                    case MotionEvent.ACTION_CANCEL:
-                        attendance.setElevation(12f);
-                        break;
+                    LinearLayout innerBlock = new LinearLayout(this);
+                    LinearLayout.LayoutParams innerBlockParams = new LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.MATCH_PARENT,
+                            LinearLayout.LayoutParams.WRAP_CONTENT
+                    );
+                    innerBlock.setLayoutParams(innerBlockParams);
+                    innerBlock.setOrientation(LinearLayout.HORIZONTAL);
+
+                    TextView heading = new TextView(this);
+                    TableRow.LayoutParams headingParams = new TableRow.LayoutParams(
+                            TableRow.LayoutParams.MATCH_PARENT,
+                            TableRow.LayoutParams.WRAP_CONTENT
+                    );
+                    headingParams.setMarginStart((int) (20 * pixelDensity));
+                    headingParams.setMarginEnd((int) (20 * pixelDensity));
+                    headingParams.setMargins(0, (int) (20 * pixelDensity), 0, (int) (20 * pixelDensity));
+                    heading.setLayoutParams(headingParams);
+                    heading.setText(getString(R.string.ongoing));
+                    heading.setTextColor(getColor(R.color.colorPrimary));
+                    heading.setTextSize(16);
+                    heading.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
+                    heading.setTypeface(ResourcesCompat.getFont(this, R.font.rubik));
+
+                    upcoming.addView(innerBlock);
                 }
-                return false;
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        });
+        }
 
-        final LinearLayout messages = findViewById(R.id.messages);
-        messages.setElevation(12f);
-        messages.setOnTouchListener(new View.OnTouchListener() {
-
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                switch (motionEvent.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        messages.setElevation(18f);
-                        break;
-                    case MotionEvent.ACTION_UP:
-                    case MotionEvent.ACTION_CANCEL:
-                        messages.setElevation(12f);
-                        break;
-                }
-                return false;
-            }
-        });
-
-        final LinearLayout spotlight = findViewById(R.id.spotlight);
-        spotlight.setElevation(12f);
-        spotlight.setOnTouchListener(new View.OnTouchListener() {
-
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                switch (motionEvent.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        spotlight.setElevation(18f);
-                        break;
-                    case MotionEvent.ACTION_UP:
-                    case MotionEvent.ACTION_CANCEL:
-                        spotlight.setElevation(12f);
-                        break;
-                }
-                return false;
-            }
-        });
-
-        final LinearLayout staff = findViewById(R.id.staff);
-        staff.setElevation(12f);
-        staff.setOnTouchListener(new View.OnTouchListener() {
-
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                switch (motionEvent.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        staff.setElevation(18f);
-                        break;
-                    case MotionEvent.ACTION_UP:
-                    case MotionEvent.ACTION_CANCEL:
-                        staff.setElevation(12f);
-                        break;
-                }
-                return false;
-            }
-        });
-
-        final LinearLayout faculty = findViewById(R.id.faculty);
-        faculty.setElevation(12f);
-        faculty.setOnTouchListener(new View.OnTouchListener() {
-
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                switch (motionEvent.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        faculty.setElevation(18f);
-                        break;
-                    case MotionEvent.ACTION_UP:
-                    case MotionEvent.ACTION_CANCEL:
-                        faculty.setElevation(12f);
-                        break;
-                }
-                return false;
-            }
-        });
-
-        final LinearLayout share = findViewById(R.id.share);
-        share.setElevation(12f);
-        share.setOnTouchListener(new View.OnTouchListener() {
-
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                switch (motionEvent.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        share.setElevation(18f);
-                        break;
-                    case MotionEvent.ACTION_UP:
-                    case MotionEvent.ACTION_CANCEL:
-                        share.setElevation(12f);
-                        break;
-                }
-                return false;
-            }
-        });
-
-        final LinearLayout refresh = findViewById(R.id.refresh);
-        refresh.setElevation(12f);
-        refresh.setOnTouchListener(new View.OnTouchListener() {
-
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                switch (motionEvent.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        refresh.setElevation(18f);
-                        break;
-                    case MotionEvent.ACTION_UP:
-                    case MotionEvent.ACTION_CANCEL:
-                        refresh.setElevation(12f);
-                        break;
-                }
-                return false;
-            }
-        });
-
-        final LinearLayout about = findViewById(R.id.about);
-        about.setElevation(12f);
-        about.setOnTouchListener(new View.OnTouchListener() {
-
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                switch (motionEvent.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        about.setElevation(18f);
-                        break;
-                    case MotionEvent.ACTION_UP:
-                    case MotionEvent.ACTION_CANCEL:
-                        about.setElevation(12f);
-                        break;
-                }
-                return false;
-            }
-        });
-
-        final LinearLayout privacy = findViewById(R.id.privacy);
-        privacy.setElevation(12f);
-        privacy.setOnTouchListener(new View.OnTouchListener() {
-
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                switch (motionEvent.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        privacy.setElevation(18f);
-                        break;
-                    case MotionEvent.ACTION_UP:
-                    case MotionEvent.ACTION_CANCEL:
-                        privacy.setElevation(12f);
-                        break;
-                }
-                return false;
-            }
-        });
-
-        final LinearLayout signOut = findViewById(R.id.signOut);
-        signOut.setElevation(12f);
-        signOut.setOnTouchListener(new View.OnTouchListener() {
-
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                switch (motionEvent.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        signOut.setElevation(18f);
-                        break;
-                    case MotionEvent.ACTION_UP:
-                    case MotionEvent.ACTION_CANCEL:
-                        signOut.setElevation(12f);
-                        break;
-                }
-                return false;
-            }
-        });*/
+        theory.close();
+        lab.close();
+        myDatabase.close();
     }
 }

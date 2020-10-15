@@ -41,7 +41,8 @@
     <string name="id">20XYZ3727</string>
     <string name="credits">Credits: 0</string>
 
-    <string name="upcoming">Upcoming Class</string>
+    <string name="no_upcoming">No Upcoming Classes</string>
+    <string name="ongoing">ONGOING</string>
 
     <string name="classes">Classes</string>
     <string name="timetable">Timetable</string>
