@@ -15,45 +15,158 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 
+import java.util.Calendar;
 import java.util.Objects;
 
 public class TimetableActivity extends AppCompatActivity {
     ScrollView timetable;
     LinearLayout sunday, monday, tuesday, wednesday, thursday, friday, saturday;
+    boolean[] hasClasses = new boolean[7];
 
     public void setSunday(View view) {
+        findViewById(R.id.sunday).setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary_selected));
+        if (view != null) {
+            findViewById(R.id.monday).setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary));
+            findViewById(R.id.tuesday).setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary));
+            findViewById(R.id.wednesday).setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary));
+            findViewById(R.id.thursday).setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary));
+            findViewById(R.id.friday).setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary));
+            findViewById(R.id.saturday).setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary));
+        }
         timetable.removeAllViews();
         timetable.addView(sunday);
+        if (hasClasses[0]) {
+            findViewById(R.id.noData).setVisibility(View.INVISIBLE);
+        } else {
+
+            findViewById(R.id.noData).setVisibility(View.VISIBLE);
+        }
     }
 
     public void setMonday(View view) {
+        findViewById(R.id.monday).setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary_selected));
+        if (view != null) {
+            findViewById(R.id.sunday).setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary));
+            findViewById(R.id.tuesday).setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary));
+            findViewById(R.id.wednesday).setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary));
+            findViewById(R.id.thursday).setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary));
+            findViewById(R.id.friday).setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary));
+            findViewById(R.id.saturday).setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary));
+        }
+
         timetable.removeAllViews();
         timetable.addView(monday);
+        if (hasClasses[1]) {
+            findViewById(R.id.noData).setVisibility(View.INVISIBLE);
+        } else {
+
+            findViewById(R.id.noData).setVisibility(View.VISIBLE);
+        }
     }
 
     public void setTuesday(View view) {
+        findViewById(R.id.tuesday).setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary_selected));
+        if (view != null) {
+            findViewById(R.id.sunday).setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary));
+            findViewById(R.id.monday).setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary));
+            findViewById(R.id.wednesday).setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary));
+            findViewById(R.id.thursday).setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary));
+            findViewById(R.id.friday).setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary));
+            findViewById(R.id.saturday).setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary));
+        }
+
         timetable.removeAllViews();
         timetable.addView(tuesday);
+        if (hasClasses[2]) {
+            findViewById(R.id.noData).setVisibility(View.INVISIBLE);
+        } else {
+
+            findViewById(R.id.noData).setVisibility(View.VISIBLE);
+        }
     }
 
     public void setWednesday(View view) {
+        findViewById(R.id.wednesday).setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary_selected));
+        if (view != null) {
+            findViewById(R.id.sunday).setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary));
+            findViewById(R.id.monday).setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary));
+            findViewById(R.id.tuesday).setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary));
+            findViewById(R.id.thursday).setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary));
+            findViewById(R.id.friday).setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary));
+            findViewById(R.id.saturday).setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary));
+        }
+
         timetable.removeAllViews();
         timetable.addView(wednesday);
+        if (hasClasses[3]) {
+            findViewById(R.id.noData).setVisibility(View.INVISIBLE);
+        } else {
+
+            findViewById(R.id.noData).setVisibility(View.VISIBLE);
+        }
     }
 
     public void setThursday(View view) {
+        findViewById(R.id.thursday).setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary_selected));
+        if (view != null) {
+            findViewById(R.id.sunday).setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary));
+            findViewById(R.id.monday).setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary));
+            findViewById(R.id.tuesday).setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary));
+            findViewById(R.id.wednesday).setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary));
+            findViewById(R.id.friday).setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary));
+            findViewById(R.id.saturday).setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary));
+        }
+
         timetable.removeAllViews();
         timetable.addView(thursday);
+        if (hasClasses[4]) {
+            findViewById(R.id.noData).setVisibility(View.INVISIBLE);
+        } else {
+
+            findViewById(R.id.noData).setVisibility(View.VISIBLE);
+        }
     }
 
     public void setFriday(View view) {
+        findViewById(R.id.friday).setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary_selected));
+        if (view != null) {
+            findViewById(R.id.sunday).setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary));
+            findViewById(R.id.monday).setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary));
+            findViewById(R.id.tuesday).setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary));
+            findViewById(R.id.wednesday).setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary));
+            findViewById(R.id.thursday).setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary));
+            findViewById(R.id.saturday).setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary));
+        }
+
         timetable.removeAllViews();
         timetable.addView(friday);
+        if (hasClasses[5]) {
+            findViewById(R.id.noData).setVisibility(View.INVISIBLE);
+        } else {
+
+            findViewById(R.id.noData).setVisibility(View.VISIBLE);
+        }
     }
 
     public void setSaturday(View view) {
+        findViewById(R.id.saturday).setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary_selected));
+        if (view != null) {
+            findViewById(R.id.sunday).setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary));
+            findViewById(R.id.monday).setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary));
+            findViewById(R.id.tuesday).setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary));
+            findViewById(R.id.wednesday).setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary));
+            findViewById(R.id.thursday).setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary));
+            findViewById(R.id.friday).setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary));
+        }
+
         timetable.removeAllViews();
         timetable.addView(saturday);
+        if (hasClasses[6]) {
+            findViewById(R.id.noData).setVisibility(View.INVISIBLE);
+        } else {
+
+            findViewById(R.id.noData).setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -152,11 +265,11 @@ public class TimetableActivity extends AppCompatActivity {
         theory.moveToFirst();
         lab.moveToFirst();
 
-        for (int i = 0; i < theory.getCount() && i < lab.getCount(); ++i, theory.moveToNext(), lab.moveToNext()) {
-            LinearLayout[] days = {sunday, monday, tuesday, wednesday, thursday, friday, saturday};
-            int[] theoryIndexes = {sundayTheory, mondayTheory, tuesdayTheory, wednesdayTheory, thursdayTheory, fridayTheory, saturdayTheory};
-            int[] labIndexes = {sundayLab, mondayLab, tuesdayLab, wednesdayLab, thursdayLab, fridayLab, saturdayLab};
+        LinearLayout[] days = {sunday, monday, tuesday, wednesday, thursday, friday, saturday};
+        int[] theoryIndexes = {sundayTheory, mondayTheory, tuesdayTheory, wednesdayTheory, thursdayTheory, fridayTheory, saturdayTheory};
+        int[] labIndexes = {sundayLab, mondayLab, tuesdayLab, wednesdayLab, thursdayLab, fridayLab, saturdayLab};
 
+        for (int i = 0; i < theory.getCount() && i < lab.getCount(); ++i, theory.moveToNext(), lab.moveToNext()) {
             /*
                 The starting and ending times
              */
@@ -253,6 +366,7 @@ public class TimetableActivity extends AppCompatActivity {
                     block.addView(period);
                     block.addView(innerBlock);
                     days[j].addView(block);
+                    hasClasses[j] = true;
                 }
 
                 /*
@@ -340,14 +454,36 @@ public class TimetableActivity extends AppCompatActivity {
                     block.addView(period);
                     block.addView(innerBlock);
                     days[j].addView(block);
+                    hasClasses[j] = true;
                 }
             }
         }
 
-        timetable.addView(thursday);
-
         theory.close();
         lab.close();
         myDatabase.close();
+
+        Calendar c = Calendar.getInstance();
+        int day = c.get(Calendar.DAY_OF_WEEK);
+
+        //HorizontalScrollView daysView = findViewById(R.id.days);
+        //int halfWidth = daysView.getMeasuredWidth() / 14;
+        //daysView.scrollBy(halfWidth * ((2 * day) - 1), 0);
+
+        if (day == 1) {
+            setSunday(null);
+        } else if (day == 2) {
+            setMonday(null);
+        } else if (day == 3) {
+            setTuesday(null);
+        } else if (day == 4) {
+            setWednesday(null);
+        } else if (day == 5) {
+            setThursday(null);
+        } else if (day == 6) {
+            setFriday(null);
+        } else if (day == 7) {
+            setSaturday(null);
+        }
     }
 }
