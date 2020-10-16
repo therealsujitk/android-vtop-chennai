@@ -28,7 +28,7 @@ public class AttendanceActivity extends AppCompatActivity {
         LinearLayout attendance = findViewById(R.id.attendance);
         float pixelDensity = this.getResources().getDisplayMetrics().density;
 
-        SQLiteDatabase myDatabase = getApplicationContext().openOrCreateDatabase("vtop", Context.MODE_PRIVATE, null);
+        SQLiteDatabase myDatabase = this.openOrCreateDatabase("vtop", Context.MODE_PRIVATE, null);
         myDatabase.execSQL("CREATE TABLE IF NOT EXISTS attendance (id INT(3) PRIMARY KEY, course VARCHAR, type VARCHAR, percent VARCHAR)");
         Cursor c = myDatabase.rawQuery("SELECT * FROM attendance", null);
 

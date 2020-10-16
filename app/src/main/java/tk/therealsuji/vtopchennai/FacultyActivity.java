@@ -28,7 +28,7 @@ public class FacultyActivity extends AppCompatActivity {
         LinearLayout facultyInfo = findViewById(R.id.facultyInfo);
         float pixelDensity = this.getResources().getDisplayMetrics().density;
 
-        SQLiteDatabase myDatabase = getApplicationContext().openOrCreateDatabase("vtop", Context.MODE_PRIVATE, null);
+        SQLiteDatabase myDatabase = this.openOrCreateDatabase("vtop", Context.MODE_PRIVATE, null);
         myDatabase.execSQL("CREATE TABLE IF NOT EXISTS faculty (id INT(3) PRIMARY KEY, course VARCHAR, faculty VARCHAR)");
         Cursor c = myDatabase.rawQuery("SELECT * FROM faculty", null);
 

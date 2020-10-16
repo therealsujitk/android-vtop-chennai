@@ -27,7 +27,7 @@ public class StaffActivity extends AppCompatActivity {
         LinearLayout staffInfo = findViewById(R.id.staffInfo);
         float pixelDensity = this.getResources().getDisplayMetrics().density;
 
-        SQLiteDatabase myDatabase = getApplicationContext().openOrCreateDatabase("vtop", Context.MODE_PRIVATE, null);
+        SQLiteDatabase myDatabase = this.openOrCreateDatabase("vtop", Context.MODE_PRIVATE, null);
 
         boolean flag = false;
 
