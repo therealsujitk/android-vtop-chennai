@@ -109,10 +109,12 @@ public class HomeActivity extends AppCompatActivity {
         final float pixelDensity = this.getResources().getDisplayMetrics().density;
 
         Calendar cal = Calendar.getInstance();
+        Calendar calFuture = Calendar.getInstance();
+        calFuture.add(Calendar.MINUTE, 30);
         int dayCode = cal.get(Calendar.DAY_OF_WEEK);
         SimpleDateFormat df = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
 
-        String day = "sun";
+        String day;
 
         if (dayCode == 1) {
             day = "sun";
@@ -126,7 +128,7 @@ public class HomeActivity extends AppCompatActivity {
             day = "thu";
         } else if (dayCode == 6) {
             day = "fri";
-        } else if (dayCode == 7) {
+        } else {
             day = "sat";
         }
 
@@ -158,11 +160,150 @@ public class HomeActivity extends AppCompatActivity {
             String startTimeLab = lab.getString(startLab);
             String endTimeLab = lab.getString(endLab);
 
-            Date currentTime;
             try {
-                currentTime = df.parse(df.format(cal.getTime()));
+                Date currentTime = df.parse(df.format(cal.getTime()));
+                Date futureTime = df.parse(df.format(calFuture.getTime()));
+
                 assert currentTime != null;
-                if (currentTime.after(df.parse(startTimeTheory)) && currentTime.before(df.parse(endTimeTheory)) && !theory.getString(dayTheory).equals("null")) {
+                assert futureTime != null;
+
+                if (futureTime.after(df.parse(startTimeTheory)) && currentTime.before(df.parse(startTimeTheory)) && !theory.getString(dayTheory).equals("null")) {
+                    upcoming.removeAllViews();
+                    TextView heading = new TextView(this);
+                    TableRow.LayoutParams headingParams = new TableRow.LayoutParams(
+                            TableRow.LayoutParams.WRAP_CONTENT,
+                            TableRow.LayoutParams.WRAP_CONTENT
+                    );
+                    headingParams.setMarginStart((int) (20 * pixelDensity));
+                    headingParams.setMarginEnd((int) (20 * pixelDensity));
+                    headingParams.setMargins(0, (int) (20 * pixelDensity), 0, (int) (5 * pixelDensity));
+                    heading.setLayoutParams(headingParams);
+                    heading.setText(getString(R.string.upcoming));
+                    heading.setTextColor(getColor(R.color.colorPrimary));
+                    heading.setTextSize(20);
+                    heading.setTypeface(ResourcesCompat.getFont(this, R.font.rubik));
+
+                    upcoming.addView(heading);
+
+                    LinearLayout innerBlock = new LinearLayout(this);
+                    LinearLayout.LayoutParams innerBlockParams = new LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.MATCH_PARENT,
+                            LinearLayout.LayoutParams.WRAP_CONTENT
+                    );
+                    innerBlock.setLayoutParams(innerBlockParams);
+                    innerBlock.setOrientation(LinearLayout.HORIZONTAL);
+
+                    TextView period = new TextView(this);
+                    TableRow.LayoutParams periodParams = new TableRow.LayoutParams(
+                            TableRow.LayoutParams.WRAP_CONTENT,
+                            TableRow.LayoutParams.WRAP_CONTENT
+                    );
+                    periodParams.setMarginStart((int) (20 * pixelDensity));
+                    periodParams.setMarginEnd((int) (20 * pixelDensity));
+                    periodParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (20 * pixelDensity));
+                    period.setLayoutParams(periodParams);
+                    period.setText(theory.getString(dayTheory).split("-")[1].trim());
+                    period.setTextColor(getColor(R.color.colorPrimary));
+                    period.setTextSize(16);
+                    period.setTypeface(ResourcesCompat.getFont(this, R.font.rubik), Typeface.BOLD);
+
+                    innerBlock.addView(period);
+
+                    String timings = startTimeTheory + " - " + endTimeTheory;
+
+                    TextView timing = new TextView(this);
+                    TableRow.LayoutParams timingParams = new TableRow.LayoutParams(
+                            TableRow.LayoutParams.MATCH_PARENT,
+                            TableRow.LayoutParams.WRAP_CONTENT
+                    );
+                    timingParams.setMarginStart((int) (20 * pixelDensity));
+                    timingParams.setMarginEnd((int) (20 * pixelDensity));
+                    timingParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (20 * pixelDensity));
+                    timing.setLayoutParams(timingParams);
+                    timing.setText(timings);
+                    timing.setTextColor(getColor(R.color.colorPrimary));
+                    timing.setTextSize(16);
+                    timing.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
+                    timing.setTypeface(ResourcesCompat.getFont(this, R.font.rubik), Typeface.BOLD);
+
+                    innerBlock.addView(timing);
+
+                    upcoming.addView(innerBlock);
+                    flag = true;
+                }
+
+                if (futureTime.after(df.parse(startTimeLab)) && currentTime.before(df.parse(startTimeLab)) && !lab.getString(dayLab).equals("null")) {
+                    if (!flag) {
+                        upcoming.removeAllViews();
+                    }
+
+                    TextView heading = new TextView(this);
+                    TableRow.LayoutParams headingParams = new TableRow.LayoutParams(
+                            TableRow.LayoutParams.WRAP_CONTENT,
+                            TableRow.LayoutParams.WRAP_CONTENT
+                    );
+                    headingParams.setMarginStart((int) (20 * pixelDensity));
+                    headingParams.setMarginEnd((int) (20 * pixelDensity));
+                    headingParams.setMargins(0, (int) (20 * pixelDensity), 0, (int) (5 * pixelDensity));
+                    heading.setLayoutParams(headingParams);
+                    heading.setText(getString(R.string.upcoming));
+                    heading.setTextColor(getColor(R.color.colorPrimary));
+                    heading.setTextSize(20);
+                    heading.setTypeface(ResourcesCompat.getFont(this, R.font.rubik));
+
+                    upcoming.addView(heading);
+
+                    LinearLayout innerBlock = new LinearLayout(this);
+                    LinearLayout.LayoutParams innerBlockParams = new LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.MATCH_PARENT,
+                            LinearLayout.LayoutParams.WRAP_CONTENT
+                    );
+                    innerBlock.setLayoutParams(innerBlockParams);
+                    innerBlock.setOrientation(LinearLayout.HORIZONTAL);
+
+                    TextView period = new TextView(this);
+                    TableRow.LayoutParams periodParams = new TableRow.LayoutParams(
+                            TableRow.LayoutParams.WRAP_CONTENT,
+                            TableRow.LayoutParams.WRAP_CONTENT
+                    );
+                    periodParams.setMarginStart((int) (20 * pixelDensity));
+                    periodParams.setMarginEnd((int) (20 * pixelDensity));
+                    periodParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (20 * pixelDensity));
+                    period.setLayoutParams(periodParams);
+                    period.setText(lab.getString(dayLab).split("-")[1].trim());
+                    period.setTextColor(getColor(R.color.colorPrimary));
+                    period.setTextSize(16);
+                    period.setTypeface(ResourcesCompat.getFont(this, R.font.rubik), Typeface.BOLD);
+
+                    innerBlock.addView(period);
+
+                    String timings = startTimeLab + " - " + endTimeLab;
+
+                    TextView timing = new TextView(this);
+                    TableRow.LayoutParams timingParams = new TableRow.LayoutParams(
+                            TableRow.LayoutParams.MATCH_PARENT,
+                            TableRow.LayoutParams.WRAP_CONTENT
+                    );
+                    timingParams.setMarginStart((int) (20 * pixelDensity));
+                    timingParams.setMarginEnd((int) (20 * pixelDensity));
+                    timingParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (20 * pixelDensity));
+                    timing.setLayoutParams(timingParams);
+                    timing.setText(timings);
+                    timing.setTextColor(getColor(R.color.colorPrimary));
+                    timing.setTextSize(16);
+                    timing.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
+                    timing.setTypeface(ResourcesCompat.getFont(this, R.font.rubik), Typeface.BOLD);
+
+                    innerBlock.addView(timing);
+
+                    upcoming.addView(innerBlock);
+                }
+
+                if (flag) {
+                    break;
+                }
+
+                if ((currentTime.after(df.parse(startTimeTheory)) || currentTime.equals(df.parse(startTimeTheory))) && (currentTime.before(df.parse(endTimeTheory)) || currentTime.equals(df.parse(endTimeTheory))) && !theory.getString(dayTheory).equals("null")) {
                     upcoming.removeAllViews();
 
                     TextView heading = new TextView(this);
@@ -228,7 +369,7 @@ public class HomeActivity extends AppCompatActivity {
                     flag = true;
                 }
 
-                if (currentTime.after(df.parse(startTimeLab)) && currentTime.before(df.parse(endTimeLab)) & !lab.getString(dayLab).equals("null")) {
+                if ((currentTime.after(df.parse(startTimeLab)) || currentTime.equals(df.parse(startTimeLab))) && (currentTime.before(df.parse(endTimeLab)) || currentTime.equals(df.parse(endTimeLab))) && !lab.getString(dayLab).equals("null")) {
                     if (!flag) {
                         upcoming.removeAllViews();
                     }
@@ -293,6 +434,10 @@ public class HomeActivity extends AppCompatActivity {
                     innerBlock.addView(timing);
 
                     upcoming.addView(innerBlock);
+
+                    if (flag) {
+                        break;
+                    }
                 }
             } catch (Exception e) {
                 e.printStackTrace();

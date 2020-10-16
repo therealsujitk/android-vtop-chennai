@@ -42,6 +42,7 @@
     <string name="credits">Credits: 0</string>
 
     <string name="no_upcoming">No Upcoming Classes</string>
+    <string name="upcoming">UP NEXT</string>
     <string name="ongoing">ONGOING</string>
 
     <string name="classes">Classes</string>
