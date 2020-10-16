@@ -1089,7 +1089,7 @@ public class VTOP {
                     Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
                     isOpened = false;
                     reloadPage();
-                } else if (obj.equals("loading")) {
+                } else if (temp.equals("loading")) {
                     Handler handler = new Handler();
                     handler.postDelayed(new Runnable() {
                         @Override
