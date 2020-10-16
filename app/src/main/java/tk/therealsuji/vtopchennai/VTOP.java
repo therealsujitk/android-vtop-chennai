@@ -384,7 +384,7 @@ public class VTOP {
                         public void run() {
                             downloadTimetable();
                         }
-                    }, 1000);
+                    }, 500);
                 } else {
                     Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
                     isOpened = false;
@@ -400,7 +400,7 @@ public class VTOP {
     public void downloadTimetable() {
         webView.evaluateJavascript("(function() {" +
                 "var loading = document.getElementsByTagName('html')[0];" +
-                "if(loading.innerText.toLowerCase().includes('please wait...')) {" +
+                "if(loading.innerText.toLowerCase().includes('please wait') || loading.innerText.toLowerCase().includes('loading')) {" +
                 "return 'loading';" +
                 "} else {" +
                 "var obj = {};" +
@@ -497,13 +497,19 @@ public class VTOP {
                     isOpened = false;
                     reloadPage();
                 } else if (temp.equals("loading")) {
-                    if (counter >= 60) {
-                        Toast.makeText(context, "Sorry, we had some trouble connecting to the server. Please try again later.", Toast.LENGTH_LONG).show();
-                        ((Activity) context).finish();
-                        return;
-                    }
-                    ++counter;
-                    downloadTimetable();
+                    Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (counter >= 60) {
+                                Toast.makeText(context, "Sorry, we had some trouble connecting to the server. Please try again later.", Toast.LENGTH_LONG).show();
+                                ((Activity) context).finish();
+                                return;
+                            }
+                            ++counter;
+                            downloadTimetable();
+                        }
+                    }, 500);
                 } else if (temp.equals("unreleased") || temp.equals("")) {
                     myDatabase.execSQL("DROP TABLE IF EXISTS timetable_lab");
                     myDatabase.execSQL("CREATE TABLE IF NOT EXISTS timetable_lab (id INT(3) PRIMARY KEY, start_time VARCHAR, end_time VARCHAR, mon VARCHAR, tue VARCHAR, wed VARCHAR, thu VARCHAR, fri VARCHAR, sat VARCHAR, sun VARCHAR)");
@@ -1018,7 +1024,7 @@ public class VTOP {
                         public void run() {
                             downloadAttendance();
                         }
-                    }, 1000);
+                    }, 500);
                 } else {
                     Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
                     isOpened = false;
@@ -1034,7 +1040,7 @@ public class VTOP {
     public void downloadAttendance() {
         webView.evaluateJavascript("(function() {" +
                 "var loading = document.getElementsByTagName('html')[0];" +
-                "if(loading.innerHTML.includes('Please wait...')) {" +
+                "if(loading.innerText.toLowerCase().includes('please wait') || loading.innerText.toLowerCase().includes('loading')) {" +
                 "return 'loading';" +
                 "} else {" +
                 "var division = document.getElementById('getStudentDetails');" +
@@ -1084,13 +1090,19 @@ public class VTOP {
                     isOpened = false;
                     reloadPage();
                 } else if (obj.equals("loading")) {
-                    if (counter >= 60) {
-                        Toast.makeText(context, "Sorry, we had some trouble connecting to the server. Please try again later.", Toast.LENGTH_LONG).show();
-                        ((Activity) context).finish();
-                        return;
-                    }
-                    ++counter;
-                    downloadAttendance();
+                    Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (counter >= 60) {
+                                Toast.makeText(context, "Sorry, we had some trouble connecting to the server. Please try again later.", Toast.LENGTH_LONG).show();
+                                ((Activity) context).finish();
+                                return;
+                            }
+                            ++counter;
+                            downloadAttendance();
+                        }
+                    }, 500);
                 } else if (temp.equals("unavailable") || temp.equals("")) {
                     try {
                         myDatabase.execSQL("DROP TABLE IF EXISTS attendance");
