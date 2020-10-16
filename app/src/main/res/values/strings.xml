@@ -42,7 +42,7 @@
     <string name="credits">Credits: 0</string>
 
     <string name="no_upcoming">No Upcoming Classes</string>
-    <string name="upcoming">UP NEXT</string>
+    <string name="upcoming">UPCOMING</string>
     <string name="ongoing">ONGOING</string>
 
     <string name="classes">Classes</string>
@@ -87,6 +87,9 @@
     <string name="no_data">No Data Available</string>
     <string name="no_messages">No Messages</string>
     <string name="no_announcements">No Announcements</string>
+
+    <string name="new_message">Looks like you do have some new messages, however <a href="https://therealsuji.tk">@therealsujitk</a> was a bit too lazy to add this feature, why don\'t you contact him and give him a piece of your mind.</string>
+    <string name="new_announcement">Looks like you do have some new announcements, however <a href="https://therealsuji.tk">@therealsujitk</a> was a bit too lazy to add this feature, why don\'t you contact him and give him a piece of your mind.</string>
 
 
     <string name="proctor">PROCTOR</string>

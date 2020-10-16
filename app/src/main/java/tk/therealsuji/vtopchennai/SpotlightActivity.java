@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -25,9 +26,11 @@ public class SpotlightActivity extends AppCompatActivity {
         int categoryIndex = c.getColumnIndex("category");
         c.moveToFirst();
 
-        for (int i = 0; i < c.getCount(); ++i) {
-            //Check stuff
-            c.moveToNext();
+        for (int i = 0; i < c.getCount(); ++i, c.moveToNext()) {
+            if (c.getString(categoryIndex).equals("null")) {
+                findViewById(R.id.noData).setVisibility(View.INVISIBLE);
+                findViewById(R.id.newData).setVisibility(View.VISIBLE);
+            }
         }
 
         c.close();

@@ -193,6 +193,8 @@ public class HomeActivity extends AppCompatActivity {
                     innerBlock.setLayoutParams(innerBlockParams);
                     innerBlock.setOrientation(LinearLayout.HORIZONTAL);
 
+                    String course = theory.getString(dayTheory).split("-")[1].trim() + " - Theory";
+
                     TextView period = new TextView(this);
                     TableRow.LayoutParams periodParams = new TableRow.LayoutParams(
                             TableRow.LayoutParams.WRAP_CONTENT,
@@ -202,7 +204,7 @@ public class HomeActivity extends AppCompatActivity {
                     periodParams.setMarginEnd((int) (20 * pixelDensity));
                     periodParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (20 * pixelDensity));
                     period.setLayoutParams(periodParams);
-                    period.setText(theory.getString(dayTheory).split("-")[1].trim());
+                    period.setText(course);
                     period.setTextColor(getColor(R.color.colorPrimary));
                     period.setTextSize(16);
                     period.setTypeface(ResourcesCompat.getFont(this, R.font.rubik), Typeface.BOLD);
@@ -261,6 +263,8 @@ public class HomeActivity extends AppCompatActivity {
                     innerBlock.setLayoutParams(innerBlockParams);
                     innerBlock.setOrientation(LinearLayout.HORIZONTAL);
 
+                    String course = lab.getString(dayLab).split("-")[1].trim() + " - Lab";
+
                     TextView period = new TextView(this);
                     TableRow.LayoutParams periodParams = new TableRow.LayoutParams(
                             TableRow.LayoutParams.WRAP_CONTENT,
@@ -270,7 +274,7 @@ public class HomeActivity extends AppCompatActivity {
                     periodParams.setMarginEnd((int) (20 * pixelDensity));
                     periodParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (20 * pixelDensity));
                     period.setLayoutParams(periodParams);
-                    period.setText(lab.getString(dayLab).split("-")[1].trim());
+                    period.setText(course);
                     period.setTextColor(getColor(R.color.colorPrimary));
                     period.setTextSize(16);
                     period.setTypeface(ResourcesCompat.getFont(this, R.font.rubik), Typeface.BOLD);
@@ -330,6 +334,7 @@ public class HomeActivity extends AppCompatActivity {
                     innerBlock.setLayoutParams(innerBlockParams);
                     innerBlock.setOrientation(LinearLayout.HORIZONTAL);
 
+                    String course = theory.getString(dayTheory).split("-")[1].trim() + " - Theory";
                     TextView period = new TextView(this);
                     TableRow.LayoutParams periodParams = new TableRow.LayoutParams(
                             TableRow.LayoutParams.WRAP_CONTENT,
@@ -339,7 +344,7 @@ public class HomeActivity extends AppCompatActivity {
                     periodParams.setMarginEnd((int) (20 * pixelDensity));
                     periodParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (20 * pixelDensity));
                     period.setLayoutParams(periodParams);
-                    period.setText(theory.getString(dayTheory).split("-")[1].trim());
+                    period.setText(course);
                     period.setTextColor(getColor(R.color.colorPrimary));
                     period.setTextSize(16);
                     period.setTypeface(ResourcesCompat.getFont(this, R.font.rubik), Typeface.BOLD);
@@ -398,6 +403,7 @@ public class HomeActivity extends AppCompatActivity {
                     innerBlock.setLayoutParams(innerBlockParams);
                     innerBlock.setOrientation(LinearLayout.HORIZONTAL);
 
+                    String course = lab.getString(dayLab).split("-")[1].trim() + " - Lab";
                     TextView period = new TextView(this);
                     TableRow.LayoutParams periodParams = new TableRow.LayoutParams(
                             TableRow.LayoutParams.WRAP_CONTENT,
@@ -407,7 +413,7 @@ public class HomeActivity extends AppCompatActivity {
                     periodParams.setMarginEnd((int) (20 * pixelDensity));
                     periodParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (20 * pixelDensity));
                     period.setLayoutParams(periodParams);
-                    period.setText(lab.getString(dayLab).split("-")[1].trim());
+                    period.setText(course);
                     period.setTextColor(getColor(R.color.colorPrimary));
                     period.setTextSize(16);
                     period.setTypeface(ResourcesCompat.getFont(this, R.font.rubik), Typeface.BOLD);

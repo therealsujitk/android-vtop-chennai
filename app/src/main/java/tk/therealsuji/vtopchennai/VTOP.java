@@ -1193,7 +1193,7 @@ public class VTOP {
                         myDatabase.execSQL("DROP TABLE IF EXISTS messages");
                         myDatabase.execSQL("CREATE TABLE IF NOT EXISTS messages (id INT(3) PRIMARY KEY, faculty VARCHAR, time VARCHAR, message VARCHAR)");
 
-                        myDatabase.execSQL("INSERT INTO messages (faculty, time, message) VALUES(null, null, null)"); //To be changed with the actual announcements
+                        myDatabase.execSQL("INSERT INTO messages (faculty, time, message) VALUES('null', 'null', 'null')"); //To be changed with the actual announcements
 
                         downloadSpotlight();
                     } catch (Exception e) {
@@ -1269,7 +1269,7 @@ public class VTOP {
                         myDatabase.execSQL("DROP TABLE IF EXISTS spotlight");
                         myDatabase.execSQL("CREATE TABLE IF NOT EXISTS spotlight (id INT(3) PRIMARY KEY, category VARCHAR, announcement VARCHAR)");
 
-                        myDatabase.execSQL("INSERT INTO spotlight (category, announcement) VALUES(null, null)"); //To be changed with the actual announcements
+                        myDatabase.execSQL("INSERT INTO spotlight (category, announcement) VALUES('null', 'null')"); //To be changed with the actual announcements
 
                         loading.setText(context.getString(R.string.loading));
                         sharedPreferences.edit().putString("isLoggedIn", "true").apply();
