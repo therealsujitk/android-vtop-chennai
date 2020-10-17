@@ -167,7 +167,7 @@ public class HomeActivity extends AppCompatActivity {
                 assert currentTime != null;
                 assert futureTime != null;
 
-                if (futureTime.after(df.parse(startTimeTheory)) && currentTime.before(df.parse(startTimeTheory)) && !theory.getString(dayTheory).equals("null")) {
+                if ((futureTime.after(df.parse(startTimeTheory)) || futureTime.equals(df.parse(startTimeTheory))) && currentTime.before(df.parse(startTimeTheory)) && !theory.getString(dayTheory).equals("null")) {
                     upcoming.removeAllViews();
                     TextView heading = new TextView(this);
                     TableRow.LayoutParams headingParams = new TableRow.LayoutParams(
@@ -234,7 +234,7 @@ public class HomeActivity extends AppCompatActivity {
                     flag = true;
                 }
 
-                if (futureTime.after(df.parse(startTimeLab)) && currentTime.before(df.parse(startTimeLab)) && !lab.getString(dayLab).equals("null")) {
+                if ((futureTime.after(df.parse(startTimeLab)) || futureTime.equals(df.parse(startTimeLab))) && currentTime.before(df.parse(startTimeLab)) && !lab.getString(dayLab).equals("null")) {
                     if (!flag) {
                         upcoming.removeAllViews();
                     }
