@@ -10,8 +10,11 @@ import android.os.Build;
 import androidx.core.app.NotificationCompat;
 
 public class NotificationHelper extends ContextWrapper {
-    public static final String CHANNEL_ID_TIMETABLE = "timetable";
-    public static final String CHANNEL_NAME_TIMETABLE = "Timetable";
+    public static final String CHANNEL_ID_UPCOMING = "upcoming";
+    public static final String CHANNEL_NAME_UPCOMING = "Upcoming Classes";
+
+    public static final String CHANNEL_ID_ONGOING = "ongoing";
+    public static final String CHANNEL_NAME_ONGOING = "Ongoing Classes";
 
     public static final String CHANNEL_ID_APPLICATION = "application";
     public static final String CHANNEL_NAME_APPLICATION = "Application";
@@ -22,13 +25,21 @@ public class NotificationHelper extends ContextWrapper {
         super(base);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel timetable = new NotificationChannel(CHANNEL_ID_TIMETABLE, CHANNEL_NAME_TIMETABLE, NotificationManager.IMPORTANCE_HIGH);
-            timetable.enableLights(true);
-            timetable.enableVibration(true);
-            timetable.setLightColor(R.color.colorPrimary);
-            timetable.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
+            NotificationChannel upcoming = new NotificationChannel(CHANNEL_ID_UPCOMING, CHANNEL_NAME_UPCOMING, NotificationManager.IMPORTANCE_HIGH);
+            upcoming.enableLights(true);
+            upcoming.enableVibration(true);
+            upcoming.setLightColor(R.color.colorPrimary);
+            upcoming.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
 
-            getManager().createNotificationChannel(timetable);
+            getManager().createNotificationChannel(upcoming);
+
+            NotificationChannel ongoing = new NotificationChannel(CHANNEL_ID_ONGOING, CHANNEL_NAME_ONGOING, NotificationManager.IMPORTANCE_HIGH);
+            ongoing.enableLights(true);
+            ongoing.enableVibration(true);
+            ongoing.setLightColor(R.color.colorPrimary);
+            ongoing.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
+
+            getManager().createNotificationChannel(ongoing);
 
             NotificationChannel application = new NotificationChannel(CHANNEL_ID_APPLICATION, CHANNEL_NAME_APPLICATION, NotificationManager.IMPORTANCE_DEFAULT);
             application.enableLights(true);
@@ -48,15 +59,22 @@ public class NotificationHelper extends ContextWrapper {
         return manager;
     }
 
-    public NotificationCompat.Builder getTimetableNotification(String title, String message) {
-        return new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID_TIMETABLE)
+    public NotificationCompat.Builder notifyUpcoming(String title, String message) {
+        return new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID_UPCOMING)
                 .setContentTitle(title)
                 .setContentText(message)
                 .setSmallIcon(R.drawable.ic_timetable);
     }
 
-    public NotificationCompat.Builder getApplicationNotification(String title, String message) {
-        return new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID_TIMETABLE)
+    public NotificationCompat.Builder notifyOngoing(String title, String message) {
+        return new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID_ONGOING)
+                .setContentTitle(title)
+                .setContentText(message)
+                .setSmallIcon(R.drawable.ic_timetable);
+    }
+
+    public NotificationCompat.Builder notifyApplication(String title, String message) {
+        return new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID_APPLICATION)
                 .setContentTitle(title)
                 .setContentText(message)
                 .setSmallIcon(R.drawable.ic_logo_square);

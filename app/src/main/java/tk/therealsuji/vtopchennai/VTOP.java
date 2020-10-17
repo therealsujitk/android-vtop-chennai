@@ -2,6 +2,8 @@ package tk.therealsuji.vtopchennai;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -25,9 +27,15 @@ import android.widget.Toast;
 
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
+
+import static android.content.Context.ALARM_SERVICE;
 
 public class VTOP {
     Context context;
@@ -520,6 +528,13 @@ public class VTOP {
                     myDatabase.execSQL("DROP TABLE IF EXISTS faculty");
                     myDatabase.execSQL("CREATE TABLE IF NOT EXISTS faculty (id INT(3) PRIMARY KEY, course VARCHAR, faculty VARCHAR)");
 
+                    AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
+                    Intent notificationIntent = new Intent(context, NotificationReceiver.class);
+                    for (int j = 0; j < Integer.parseInt(sharedPreferences.getString("alarms", "0")); ++j) {
+                        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
+                        alarmManager.cancel(pendingIntent);
+                    }
+
                     downloadProctor();
                 } else {
                     try {
@@ -543,6 +558,18 @@ public class VTOP {
                         JSONObject sat = new JSONObject(myObj.getString("sat"));
                         JSONObject sun = new JSONObject(myObj.getString("sun"));
 
+                        Calendar c = Calendar.getInstance();
+                        AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
+                        Intent notificationIntent = new Intent(context, NotificationReceiver.class);
+                        SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy HH:mm", Locale.ENGLISH);
+
+                        for (int j = 0; j < Integer.parseInt(sharedPreferences.getString("alarms", "0")); ++j) {
+                            PendingIntent pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
+                            alarmManager.cancel(pendingIntent);
+                        }
+
+                        int j = 0;
+
                         for (int i = 0; i < lab.length() / 2 && i < theory.length() / 2; ++i) {
                             String start_time = lab.getString(i + "start");
                             myDatabase.execSQL("INSERT INTO timetable_lab (id, start_time) VALUES ('" + i + "', '" + start_time + "')");
@@ -553,6 +580,18 @@ public class VTOP {
                             if (mon.has(i + "lab")) {
                                 String period = mon.getString(i + "lab");
                                 myDatabase.execSQL("UPDATE timetable_lab SET mon = '" + period + "' WHERE id = " + i);
+
+                                Date date = df.parse("05-01-2020 " + start_time);
+
+                                c.setTime(date);
+                                PendingIntent pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
+                                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
+                                ++j;
+
+                                c.add(Calendar.MINUTE, -30);
+                                pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
+                                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
+                                ++j;
                             } else {
                                 myDatabase.execSQL("UPDATE timetable_lab SET mon = 'null' WHERE id = " + i);
                             }
@@ -560,6 +599,18 @@ public class VTOP {
                             if (tue.has(i + "lab")) {
                                 String period = tue.getString(i + "lab");
                                 myDatabase.execSQL("UPDATE timetable_lab SET tue = '" + period + "' WHERE id = " + i);
+
+                                Date date = df.parse("06-01-2020 " + start_time);
+
+                                c.setTime(date);
+                                PendingIntent pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
+                                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
+                                ++j;
+
+                                c.add(Calendar.MINUTE, -30);
+                                pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
+                                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
+                                ++j;
                             } else {
                                 myDatabase.execSQL("UPDATE timetable_lab SET tue = 'null' WHERE id = " + i);
                             }
@@ -567,6 +618,18 @@ public class VTOP {
                             if (wed.has(i + "lab")) {
                                 String period = wed.getString(i + "lab");
                                 myDatabase.execSQL("UPDATE timetable_lab SET wed = '" + period + "' WHERE id = " + i);
+
+                                Date date = df.parse("07-01-2020 " + start_time);
+
+                                c.setTime(date);
+                                PendingIntent pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
+                                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
+                                ++j;
+
+                                c.add(Calendar.MINUTE, -30);
+                                pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
+                                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
+                                ++j;
                             } else {
                                 myDatabase.execSQL("UPDATE timetable_lab SET wed = 'null' WHERE id = " + i);
                             }
@@ -574,6 +637,18 @@ public class VTOP {
                             if (thu.has(i + "lab")) {
                                 String period = thu.getString(i + "lab");
                                 myDatabase.execSQL("UPDATE timetable_lab SET thu = '" + period + "' WHERE id = " + i);
+
+                                Date date = df.parse("08-01-2020 " + start_time);
+
+                                c.setTime(date);
+                                PendingIntent pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
+                                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
+                                ++j;
+
+                                c.add(Calendar.MINUTE, -30);
+                                pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
+                                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
+                                ++j;
                             } else {
                                 myDatabase.execSQL("UPDATE timetable_lab SET thu = 'null' WHERE id = " + i);
                             }
@@ -581,6 +656,18 @@ public class VTOP {
                             if (fri.has(i + "lab")) {
                                 String period = fri.getString(i + "lab");
                                 myDatabase.execSQL("UPDATE timetable_lab SET fri = '" + period + "' WHERE id = " + i);
+
+                                Date date = df.parse("09-01-2020 " + start_time);
+
+                                c.setTime(date);
+                                PendingIntent pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
+                                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
+                                ++j;
+
+                                c.add(Calendar.MINUTE, -30);
+                                pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
+                                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
+                                ++j;
                             } else {
                                 myDatabase.execSQL("UPDATE timetable_lab SET fri = 'null' WHERE id = " + i);
                             }
@@ -588,6 +675,18 @@ public class VTOP {
                             if (sat.has(i + "lab")) {
                                 String period = sat.getString(i + "lab");
                                 myDatabase.execSQL("UPDATE timetable_lab SET sat = '" + period + "' WHERE id = " + i);
+
+                                Date date = df.parse("10-01-2020 " + start_time);
+
+                                c.setTime(date);
+                                PendingIntent pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
+                                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
+                                ++j;
+
+                                c.add(Calendar.MINUTE, -30);
+                                pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
+                                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
+                                ++j;
                             } else {
                                 myDatabase.execSQL("UPDATE timetable_lab SET sat = 'null' WHERE id = " + i);
                             }
@@ -595,6 +694,18 @@ public class VTOP {
                             if (sun.has(i + "lab")) {
                                 String period = sun.getString(i + "lab");
                                 myDatabase.execSQL("UPDATE timetable_lab SET sun = '" + period + "' WHERE id = " + i);
+
+                                Date date = df.parse("04-01-2020 " + start_time);
+
+                                c.setTime(date);
+                                PendingIntent pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
+                                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
+                                ++j;
+
+                                c.add(Calendar.MINUTE, -30);
+                                pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
+                                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
+                                ++j;
                             } else {
                                 myDatabase.execSQL("UPDATE timetable_lab SET sun = 'null' WHERE id = " + i);
 
@@ -609,6 +720,18 @@ public class VTOP {
                             if (mon.has(i + "theory")) {
                                 String period = mon.getString(i + "theory");
                                 myDatabase.execSQL("UPDATE timetable_theory SET mon = '" + period + "' WHERE id = " + i);
+
+                                Date date = df.parse("05-01-2020 " + start_time);
+
+                                c.setTime(date);
+                                PendingIntent pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
+                                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
+                                ++j;
+
+                                c.add(Calendar.MINUTE, -30);
+                                pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
+                                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
+                                ++j;
                             } else {
                                 myDatabase.execSQL("UPDATE timetable_theory SET mon = 'null' WHERE id = " + i);
                             }
@@ -616,6 +739,18 @@ public class VTOP {
                             if (tue.has(i + "theory")) {
                                 String period = tue.getString(i + "theory");
                                 myDatabase.execSQL("UPDATE timetable_theory SET tue = '" + period + "' WHERE id = " + i);
+
+                                Date date = df.parse("06-01-2020 " + start_time);
+
+                                c.setTime(date);
+                                PendingIntent pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
+                                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
+                                ++j;
+
+                                c.add(Calendar.MINUTE, -30);
+                                pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
+                                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
+                                ++j;
                             } else {
                                 myDatabase.execSQL("UPDATE timetable_theory SET tue = 'null' WHERE id = " + i);
                             }
@@ -623,6 +758,18 @@ public class VTOP {
                             if (wed.has(i + "theory")) {
                                 String period = wed.getString(i + "theory");
                                 myDatabase.execSQL("UPDATE timetable_theory SET wed = '" + period + "' WHERE id = " + i);
+
+                                Date date = df.parse("07-01-2020 " + start_time);
+
+                                c.setTime(date);
+                                PendingIntent pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
+                                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
+                                ++j;
+
+                                c.add(Calendar.MINUTE, -30);
+                                pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
+                                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
+                                ++j;
                             } else {
                                 myDatabase.execSQL("UPDATE timetable_theory SET wed = 'null' WHERE id = " + i);
                             }
@@ -630,6 +777,18 @@ public class VTOP {
                             if (thu.has(i + "theory")) {
                                 String period = thu.getString(i + "theory");
                                 myDatabase.execSQL("UPDATE timetable_theory SET thu = '" + period + "' WHERE id = " + i);
+
+                                Date date = df.parse("08-01-2020 " + start_time);
+
+                                c.setTime(date);
+                                PendingIntent pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
+                                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
+                                ++j;
+
+                                c.add(Calendar.MINUTE, -30);
+                                pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
+                                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
+                                ++j;
                             } else {
                                 myDatabase.execSQL("UPDATE timetable_theory SET thu = 'null' WHERE id = " + i);
                             }
@@ -637,6 +796,18 @@ public class VTOP {
                             if (fri.has(i + "theory")) {
                                 String period = fri.getString(i + "theory");
                                 myDatabase.execSQL("UPDATE timetable_theory SET fri = '" + period + "' WHERE id = " + i);
+
+                                Date date = df.parse("09-01-2020 " + start_time);
+
+                                c.setTime(date);
+                                PendingIntent pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
+                                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
+                                ++j;
+
+                                c.add(Calendar.MINUTE, -30);
+                                pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
+                                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
+                                ++j;
                             } else {
                                 myDatabase.execSQL("UPDATE timetable_theory SET fri = 'null' WHERE id = " + i);
                             }
@@ -644,6 +815,18 @@ public class VTOP {
                             if (sat.has(i + "theory")) {
                                 String period = sat.getString(i + "theory");
                                 myDatabase.execSQL("UPDATE timetable_theory SET sat = '" + period + "' WHERE id = " + i);
+
+                                Date date = df.parse("10-01-2020 " + start_time);
+
+                                c.setTime(date);
+                                PendingIntent pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
+                                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
+                                ++j;
+
+                                c.add(Calendar.MINUTE, -30);
+                                pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
+                                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
+                                ++j;
                             } else {
                                 myDatabase.execSQL("UPDATE timetable_theory SET sat = 'null' WHERE id = " + i);
                             }
@@ -651,12 +834,24 @@ public class VTOP {
                             if (sun.has(i + "theory")) {
                                 String period = sun.getString(i + "theory");
                                 myDatabase.execSQL("UPDATE timetable_theory SET sun = '" + period + "' WHERE id = " + i);
+
+                                Date date = df.parse("04-01-2020 " + start_time);
+
+                                c.setTime(date);
+                                PendingIntent pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
+                                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
+                                ++j;
+
+                                c.add(Calendar.MINUTE, -30);
+                                pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
+                                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
+                                ++j;
                             } else {
                                 myDatabase.execSQL("UPDATE timetable_theory SET sun = 'null' WHERE id = " + i);
-
                             }
                         }
 
+                        //sharedPreferences.edit().putString("alarms", Integer.toString(j)).apply();
                         downloadFaculty();
                     } catch (Exception e) {
                         e.printStackTrace();

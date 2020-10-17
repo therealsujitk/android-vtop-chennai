@@ -14,7 +14,6 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.NotificationCompat;
 import androidx.core.content.res.ResourcesCompat;
 
 import java.text.SimpleDateFormat;
@@ -302,6 +301,7 @@ public class HomeActivity extends AppCompatActivity {
                     innerBlock.addView(timing);
 
                     upcoming.addView(innerBlock);
+                    flag = true;
                 }
 
                 if (flag) {
@@ -441,10 +441,12 @@ public class HomeActivity extends AppCompatActivity {
                     innerBlock.addView(timing);
 
                     upcoming.addView(innerBlock);
+                    flag = true;
+                }
 
-                    if (flag) {
-                        break;
-                    }
+
+                if (flag) {
+                    break;
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -454,15 +456,5 @@ public class HomeActivity extends AppCompatActivity {
         theory.close();
         lab.close();
         myDatabase.close();
-
-        /*
-            Check for a new version
-         */
-
-        if (false) {
-            NotificationHelper notificationHelper = new NotificationHelper(this);
-            NotificationCompat.Builder n = notificationHelper.getApplicationNotification("New Release", "A new version of VTOP has been released");
-            notificationHelper.getManager().notify(1, n.build());
-        }
     }
 }
