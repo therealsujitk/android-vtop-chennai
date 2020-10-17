@@ -97,20 +97,12 @@ public class NotificationReceiver extends BroadcastReceiver {
                     NotificationHelper notificationHelper = new NotificationHelper(context);
                     NotificationCompat.Builder n = notificationHelper.notifyOngoing("Ongoing: " + startTimeTheory + " - " + endTimeTheory, theory.getString(dayTheory).split("-")[1].trim() + " - Theory");
                     notificationHelper.getManager().notify(1, n.build());
-
-                    flag = true;
                 }
 
                 if ((currentTime.after(df.parse(startTimeLab)) || currentTime.equals(df.parse(startTimeLab))) && (currentTime.before(df.parse(endTimeLab)) || currentTime.equals(df.parse(endTimeLab))) && !lab.getString(dayLab).equals("null")) {
                     NotificationHelper notificationHelper = new NotificationHelper(context);
                     NotificationCompat.Builder n = notificationHelper.notifyOngoing("Ongoing: " + startTimeLab + " - " + endTimeLab, lab.getString(dayLab).split("-")[1].trim() + " - Lab");
                     notificationHelper.getManager().notify(1, n.build());
-
-                    flag = true;
-                }
-
-                if (flag) {
-                    break;
                 }
             } catch (Exception e) {
                 e.printStackTrace();

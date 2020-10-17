@@ -441,12 +441,6 @@ public class HomeActivity extends AppCompatActivity {
                     innerBlock.addView(timing);
 
                     upcoming.addView(innerBlock);
-                    flag = true;
-                }
-
-
-                if (flag) {
-                    break;
                 }
             } catch (Exception e) {
                 e.printStackTrace();
