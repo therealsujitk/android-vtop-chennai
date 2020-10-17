@@ -1422,7 +1422,7 @@ public class VTOP {
                 "async: false," +
                 "success: function(response) {" +
                 "var doc = new DOMParser().parseFromString(response, 'text/html');" +
-                "if(doc.getElementById('spotlightViewNewForm').getElementsByTagName('a')) {" +
+                "if(!doc.getElementById('spotlightViewNewForm').getElementsByTagName('a')) {" +
                 "successFlag = true;" +
                 "} else {" +
                 "successFlag = 'new';" +
