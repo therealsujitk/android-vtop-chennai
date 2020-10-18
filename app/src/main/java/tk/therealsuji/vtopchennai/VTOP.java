@@ -12,6 +12,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.util.Base64;
+import android.util.Log;
 import android.view.View;
 import android.webkit.CookieManager;
 import android.webkit.ValueCallback;
@@ -47,7 +48,7 @@ public class VTOP {
     Spinner selectSemester;
     TextView loading;
 
-    Boolean isOpened, isLoggedIn;
+    Boolean isOpened, isLoggedIn, checkUpdate;
     SharedPreferences sharedPreferences;
     int counter;
 
@@ -80,11 +81,16 @@ public class VTOP {
                     openSignIn();
                     ++counter;
                 }
+
+                if (checkUpdate) {
+                    checkUpdates();
+                }
             }
         });
 
         isOpened = false;
         isLoggedIn = false;
+        checkUpdate = false;
         counter = 0;
 
         reloadPage();
@@ -583,6 +589,7 @@ public class VTOP {
 
                                 Date date = df.parse("05-01-2020 " + start_time);
 
+                                assert date != null;
                                 c.setTime(date);
                                 PendingIntent pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
                                 alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
@@ -602,6 +609,7 @@ public class VTOP {
 
                                 Date date = df.parse("06-01-2020 " + start_time);
 
+                                assert date != null;
                                 c.setTime(date);
                                 PendingIntent pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
                                 alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
@@ -621,6 +629,7 @@ public class VTOP {
 
                                 Date date = df.parse("07-01-2020 " + start_time);
 
+                                assert date != null;
                                 c.setTime(date);
                                 PendingIntent pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
                                 alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
@@ -640,6 +649,7 @@ public class VTOP {
 
                                 Date date = df.parse("08-01-2020 " + start_time);
 
+                                assert date != null;
                                 c.setTime(date);
                                 PendingIntent pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
                                 alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
@@ -659,6 +669,7 @@ public class VTOP {
 
                                 Date date = df.parse("09-01-2020 " + start_time);
 
+                                assert date != null;
                                 c.setTime(date);
                                 PendingIntent pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
                                 alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
@@ -678,6 +689,7 @@ public class VTOP {
 
                                 Date date = df.parse("10-01-2020 " + start_time);
 
+                                assert date != null;
                                 c.setTime(date);
                                 PendingIntent pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
                                 alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
@@ -697,6 +709,7 @@ public class VTOP {
 
                                 Date date = df.parse("04-01-2020 " + start_time);
 
+                                assert date != null;
                                 c.setTime(date);
                                 PendingIntent pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
                                 alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
@@ -723,6 +736,7 @@ public class VTOP {
 
                                 Date date = df.parse("05-01-2020 " + start_time);
 
+                                assert date != null;
                                 c.setTime(date);
                                 PendingIntent pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
                                 alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
@@ -742,6 +756,7 @@ public class VTOP {
 
                                 Date date = df.parse("06-01-2020 " + start_time);
 
+                                assert date != null;
                                 c.setTime(date);
                                 PendingIntent pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
                                 alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
@@ -761,6 +776,7 @@ public class VTOP {
 
                                 Date date = df.parse("07-01-2020 " + start_time);
 
+                                assert date != null;
                                 c.setTime(date);
                                 PendingIntent pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
                                 alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
@@ -780,6 +796,7 @@ public class VTOP {
 
                                 Date date = df.parse("08-01-2020 " + start_time);
 
+                                assert date != null;
                                 c.setTime(date);
                                 PendingIntent pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
                                 alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
@@ -799,6 +816,7 @@ public class VTOP {
 
                                 Date date = df.parse("09-01-2020 " + start_time);
 
+                                assert date != null;
                                 c.setTime(date);
                                 PendingIntent pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
                                 alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
@@ -818,6 +836,7 @@ public class VTOP {
 
                                 Date date = df.parse("10-01-2020 " + start_time);
 
+                                assert date != null;
                                 c.setTime(date);
                                 PendingIntent pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
                                 alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
@@ -837,6 +856,7 @@ public class VTOP {
 
                                 Date date = df.parse("04-01-2020 " + start_time);
 
+                                assert date != null;
                                 c.setTime(date);
                                 PendingIntent pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
                                 alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
@@ -1444,12 +1464,9 @@ public class VTOP {
 
                         loading.setText(context.getString(R.string.loading));
                         sharedPreferences.edit().putString("isLoggedIn", "true").apply();
-                        context.startActivity(new Intent(context, HomeActivity.class));
-                        ((Activity) context).finish();
+                        myDatabase.close();
 
-                        webView.clearCache(true);
-                        webView.clearHistory();
-                        CookieManager.getInstance().removeAllCookies(null);
+                        loadUpdatePage();
                     } catch (Exception e) {
                         e.printStackTrace();
                         Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
@@ -1468,15 +1485,9 @@ public class VTOP {
 
                         loading.setText(context.getString(R.string.loading));
                         sharedPreferences.edit().putString("isLoggedIn", "true").apply();
-                        Intent intent = new Intent(context, HomeActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        context.startActivity(intent);
-                        ((Activity) context).finish();
-
-                        webView.clearCache(true);
-                        webView.clearHistory();
-                        CookieManager.getInstance().removeAllCookies(null);
                         myDatabase.close();
+
+                        loadUpdatePage();
                     } catch (Exception e) {
                         e.printStackTrace();
                         Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
@@ -1487,6 +1498,45 @@ public class VTOP {
                     Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
                     isOpened = false;
                     reloadPage();
+                }
+            }
+        });
+    }
+
+    public void loadUpdatePage() {
+        checkUpdate = true;
+        webView.loadUrl("http://therealsujitk.epizy.com/version.php");
+    }
+
+    public void checkUpdates() {
+        webView.evaluateJavascript("(function() {" +
+                "return document.getElementById('vtop-chennai-vc').innerText;" +
+                "})();", new ValueCallback<String>() {
+            @Override
+            public void onReceiveValue(String value) {
+                if (!value.equals("null")) {
+                    Log.i("l", value);
+                    String versionCode = value.substring(1, value.length() - 1);
+                    sharedPreferences.edit().putString("versionCode", versionCode).apply();
+                }
+
+                Intent intent = new Intent(context, HomeActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                context.startActivity(intent);
+                ((Activity) context).finish();
+
+                webView.clearCache(true);
+                webView.clearHistory();
+                CookieManager.getInstance().removeAllCookies(null);
+
+                try {
+                    Calendar c = Calendar.getInstance();
+                    SimpleDateFormat df = new SimpleDateFormat("dd MMM HH:mm", Locale.ENGLISH);
+                    Date date = df.parse(df.format(c.getTime()));
+                    String[] dateFormat = date.toString().split(" ");
+                    sharedPreferences.edit().putString("refreshed", "Last refreshed: " + dateFormat[1] + " " + dateFormat[2] + ", " + dateFormat[3].substring(0, dateFormat[3].length() - 3)).apply();
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
         });

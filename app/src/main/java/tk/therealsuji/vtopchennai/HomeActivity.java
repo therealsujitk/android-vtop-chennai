@@ -75,6 +75,18 @@ public class HomeActivity extends AppCompatActivity {
         startActivity(new Intent(HomeActivity.this, DownloadActivity.class));
     }
 
+    public void openNotifications(View view) {
+        Intent intent = new Intent();
+        intent.setAction("android.settings.APP_NOTIFICATION_SETTINGS");
+
+        intent.putExtra("app_package", getPackageName());
+        intent.putExtra("app_uid", getApplicationInfo().uid);
+
+        intent.putExtra("android.provider.extra.APP_PACKAGE", getPackageName());
+
+        startActivity(intent);
+    }
+
     public void openPrivacy(View view) {
         startActivity(new Intent(HomeActivity.this, PrivacyActivity.class));
     }
@@ -450,5 +462,9 @@ public class HomeActivity extends AppCompatActivity {
         theory.close();
         lab.close();
         myDatabase.close();
+
+        String refreshed = sharedPreferences.getString("refreshed", getString(R.string.refreshed));
+        TextView refreshedView = findViewById(R.id.refreshed);
+        refreshedView.setText(refreshed);
     }
 }

@@ -66,10 +66,13 @@
     <string name="share_description">Icon for the share button.</string>
     <string name="refresh">Refresh Data</string>
     <string name="refresh_description">Icon for the refresh button.</string>
+    <string name="notifications">Notifications</string>
+    <string name="notifications_description">Icon for the notification settings button.</string>
     <string name="privacy_description">Icon for the privacy button.</string>
     <string name="sign_out">Sign Out</string>
     <string name="sign_out_description">Icon for the sign out button.</string>
 
+    <string name="refreshed">Data unavailable</string>
     <string name="about">Built by <a href="https://therealsuji.tk">@therealsujitk</a></string>
 
     <string name="sun">Sun</string>

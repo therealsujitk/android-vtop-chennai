@@ -29,8 +29,10 @@ public class SplashScreenActivity extends AppCompatActivity {
         /*
             Check for a new version
          */
+        int versionCode = BuildConfig.VERSION_CODE;
+        String latestVersion = sharedPreferences.getString("versionCode", Integer.toString(versionCode));
 
-        if (false) {
+        if (versionCode < Integer.parseInt(latestVersion)) {
             NotificationHelper notificationHelper = new NotificationHelper(this);
             NotificationCompat.Builder n = notificationHelper.notifyApplication("New Release", "A new version of VTOP Chennai has been released");
             notificationHelper.getManager().notify(1, n.build());
