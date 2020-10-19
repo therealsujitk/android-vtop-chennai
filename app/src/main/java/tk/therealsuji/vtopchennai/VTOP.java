@@ -69,6 +69,7 @@ public class VTOP {
         myDatabase = context.openOrCreateDatabase("vtop", Context.MODE_PRIVATE, null);
 
         webView.getSettings().setJavaScriptEnabled(true);
+        webView.getSettings().setUserAgentString("Mozilla/5.0 (Linux; Android 10) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.99 Mobile Safari/537.36");
         webView.setWebViewClient(new WebViewClient() {
             public void onPageFinished(WebView view, String url) {
                 if (!isOpened) {
@@ -169,7 +170,7 @@ public class VTOP {
                 }
 
                 try {
-                    src = src.substring(24, src.length() - 1);  //It'll be better (and safer) to split the string using ' ' and take the second value
+                    src = src.substring(1, src.length() - 1).split(" ")[1];
                     byte[] decodedString = Base64.decode(src, Base64.DEFAULT);
                     Bitmap decodedImage = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
                     captcha.setImageBitmap(decodedImage);
@@ -414,7 +415,7 @@ public class VTOP {
     public void downloadTimetable() {
         webView.evaluateJavascript("(function() {" +
                 "var loading = document.getElementsByTagName('html')[0];" +
-                "if(loading.innerText.toLowerCase().includes('please wait') || loading.innerText.toLowerCase().includes('loading')) {" +
+                "if(loading.innerHTML.toLowerCase().includes('please wait') || loading.innerHTML.toLowerCase().includes('loading')) {" +
                 "return 'loading';" +
                 "} else {" +
                 "var obj = {};" +
@@ -1255,7 +1256,7 @@ public class VTOP {
     public void downloadAttendance() {
         webView.evaluateJavascript("(function() {" +
                 "var loading = document.getElementsByTagName('html')[0];" +
-                "if(loading.innerText.toLowerCase().includes('please wait') || loading.innerText.toLowerCase().includes('loading')) {" +
+                "if(loading.innerHTML.toLowerCase().includes('please wait') || loading.innerHTML.toLowerCase().includes('loading')) {" +
                 "return 'loading';" +
                 "} else {" +
                 "var division = document.getElementById('getStudentDetails');" +
@@ -1533,6 +1534,7 @@ public class VTOP {
                     Calendar c = Calendar.getInstance();
                     SimpleDateFormat df = new SimpleDateFormat("dd MMM HH:mm", Locale.ENGLISH);
                     Date date = df.parse(df.format(c.getTime()));
+                    assert date != null;
                     String[] dateFormat = date.toString().split(" ");
                     sharedPreferences.edit().putString("refreshed", "Last refreshed: " + dateFormat[1] + " " + dateFormat[2] + ", " + dateFormat[3].substring(0, dateFormat[3].length() - 3)).apply();
                 } catch (Exception e) {
