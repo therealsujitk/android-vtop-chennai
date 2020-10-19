@@ -12,7 +12,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.util.Base64;
-import android.util.Log;
 import android.view.View;
 import android.webkit.CookieManager;
 import android.webkit.ValueCallback;
@@ -1536,7 +1535,6 @@ public class VTOP {
             @Override
             public void onReceiveValue(String value) {
                 if (!value.equals("null")) {
-                    Log.i("l", value);
                     String versionCode = value.substring(1, value.length() - 1);
                     sharedPreferences.edit().putString("versionCode", versionCode).apply();
                 }
