@@ -1435,7 +1435,7 @@ public class VTOP {
 
         webView.evaluateJavascript("(function() {" +
                 "var data = 'verifyMenu=true&winImage=' + $('#winImage').val() + '&authorizedID=' + $('#authorizedIDX').val() + '&nocache=@(new Date().getTime())';" +
-                "var successFlag = false;" +
+                "var obj = {};" +
                 "$.ajax({" +
                 "type: 'POST'," +
                 "url : 'spotlight/spotlightViewOld'," +
@@ -1443,19 +1443,32 @@ public class VTOP {
                 "async: false," +
                 "success: function(response) {" +
                 "var doc = new DOMParser().parseFromString(response, 'text/html');" +
-                "if(!doc.getElementById('spotlightViewNewForm').getElementsByTagName('a')) {" +
-                "successFlag = true;" +
+                "if(!doc.getElementsByClassName('box-info')) {" +
+                "obj = 'nothing';" +
                 "} else {" +
-                "successFlag = 'new';" +
+                "boxes = doc.getElementsByClassName('box-info');" +
+                "for(var i = 0; i < boxes.length; ++i) {" +
+                "var category = boxes[i].getElementsByTagName('h4')[0].innerText.trim();" +
+                "var links = boxes[i].getElementsByTagName('a');" +
+                "var temp = {};" +
+                "for(var j = 0; j < links.length; ++j) {" +
+                "temp[j] = links[j].innerText.trim();" +
+                "}" +
+                "obj[category] = temp;" +
+                "}" +
                 "}" +
                 "}" +
                 "});" +
-                "return successFlag;" +
+                "return obj;" +
                 "})();", new ValueCallback<String>() {
             @Override
-            public void onReceiveValue(String value) {
-                String temp = value.substring(1, value.length() - 1);
-                if (value.equals("true")) {
+            public void onReceiveValue(String obj) {
+                String temp = obj.substring(1, obj.length() - 1);
+                if (obj.equals("null")) {
+                    Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
+                    isOpened = false;
+                    reloadPage();
+                } else if (temp.equals("nothing") || obj.equals("")) {
                     /*
                         Dropping and recreating an empty table
                      */
@@ -1474,15 +1487,26 @@ public class VTOP {
                         isOpened = false;
                         reloadPage();
                     }
-                } else if (temp.equals("new")) {
+                } else {
                     /*
                         Dropping, recreating and adding announcements
                      */
                     try {
+                        JSONObject myObj = new JSONObject(obj);
+
                         myDatabase.execSQL("DROP TABLE IF EXISTS spotlight");
                         myDatabase.execSQL("CREATE TABLE IF NOT EXISTS spotlight (id INT(3) PRIMARY KEY, category VARCHAR, announcement VARCHAR)");
 
-                        myDatabase.execSQL("INSERT INTO spotlight (category, announcement) VALUES('null', 'null')"); //To be changed with the actual announcements
+                        Iterator<?> keys = myObj.keys();
+
+                        while (keys.hasNext()) {
+                            String key = (String) keys.next();
+                            JSONObject tempObj = new JSONObject(myObj.getString(key));
+
+                            for (int i = 0; i < tempObj.length(); ++i) {
+                                myDatabase.execSQL("INSERT INTO spotlight (category, announcement) VALUES(" + key + ", " + tempObj.getString(Integer.toString(i)) + ")");
+                            }
+                        }
 
                         loading.setText(context.getString(R.string.loading));
                         sharedPreferences.edit().putString("isLoggedIn", "true").apply();
@@ -1495,10 +1519,6 @@ public class VTOP {
                         isOpened = false;
                         reloadPage();
                     }
-                } else {
-                    Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
-                    isOpened = false;
-                    reloadPage();
                 }
             }
         });
