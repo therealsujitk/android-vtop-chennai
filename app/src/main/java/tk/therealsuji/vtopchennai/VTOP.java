@@ -415,7 +415,7 @@ public class VTOP {
     public void downloadTimetable() {
         webView.evaluateJavascript("(function() {" +
                 "var loading = document.getElementsByTagName('html')[0];" +
-                "if(loading.innerHTML.toLowerCase().includes('please wait')) {" +
+                "if(loading.innerHTML.toLowerCase().includes('just a moment')) {" +
                 "return 'loading';" +
                 "} else {" +
                 "var obj = {};" +
@@ -1256,7 +1256,7 @@ public class VTOP {
     public void downloadAttendance() {
         webView.evaluateJavascript("(function() {" +
                 "var loading = document.getElementsByTagName('html')[0];" +
-                "if(loading.innerHTML.toLowerCase().includes('please wait')) {" +
+                "if(loading.innerHTML.toLowerCase().includes('just a moment')) {" +
                 "return 'loading';" +
                 "} else {" +
                 "var division = document.getElementById('getStudentDetails');" +
