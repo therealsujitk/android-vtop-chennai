@@ -1504,7 +1504,7 @@ public class VTOP {
                             JSONObject tempObj = new JSONObject(myObj.getString(key));
 
                             for (int i = 0; i < tempObj.length(); ++i) {
-                                myDatabase.execSQL("INSERT INTO spotlight (category, announcement) VALUES(" + key + ", " + tempObj.getString(Integer.toString(i)) + ")");
+                                myDatabase.execSQL("INSERT INTO spotlight (category, announcement) VALUES('" + key + "', '" + tempObj.getString(Integer.toString(i)) + "')");
                             }
                         }
 
