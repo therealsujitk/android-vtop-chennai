@@ -50,6 +50,7 @@
         android:orientation="vertical"
         app:layout_constraintBottom_toTopOf="@+id/textView7"
         app:layout_constraintTop_toBottomOf="@+id/nameSignIn"
+        app:layout_constraintWidth_max="400dp"
         tools:layout_editor_absoluteX="-178dp">
 
         <EditText
