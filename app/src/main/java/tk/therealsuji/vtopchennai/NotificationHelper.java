@@ -63,20 +63,23 @@ public class NotificationHelper extends ContextWrapper {
         return new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID_UPCOMING)
                 .setContentTitle(title)
                 .setContentText(message)
-                .setSmallIcon(R.drawable.ic_timetable);
+                .setSmallIcon(R.drawable.ic_timetable)
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
     }
 
     public NotificationCompat.Builder notifyOngoing(String title, String message) {
         return new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID_ONGOING)
                 .setContentTitle(title)
                 .setContentText(message)
-                .setSmallIcon(R.drawable.ic_timetable);
+                .setSmallIcon(R.drawable.ic_timetable)
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
     }
 
     public NotificationCompat.Builder notifyApplication(String title, String message) {
         return new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID_APPLICATION)
                 .setContentTitle(title)
                 .setContentText(message)
-                .setSmallIcon(R.drawable.ic_logo_square);
+                .setSmallIcon(R.drawable.ic_logo_square)
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
     }
 }

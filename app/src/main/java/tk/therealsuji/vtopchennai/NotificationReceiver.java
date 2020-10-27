@@ -58,9 +58,12 @@ public class NotificationReceiver extends BroadcastReceiver {
         theory.moveToFirst();
         lab.moveToFirst();
 
-        for (int i = 0; i < theory.getCount() && i < lab.getCount(); ++i, theory.moveToNext(), lab.moveToNext()) {
-            boolean flag = false;
+        boolean flag = false;
+        boolean upcoming = true;
+        String title = null;
+        String message = null;
 
+        for (int i = 0; i < theory.getCount() && i < lab.getCount(); ++i, theory.moveToNext(), lab.moveToNext()) {
             String startTimeTheory = theory.getString(startTheory);
             String endTimeTheory = theory.getString(endTheory);
             String startTimeLab = lab.getString(startLab);
@@ -74,18 +77,14 @@ public class NotificationReceiver extends BroadcastReceiver {
                 assert futureTime != null;
 
                 if ((futureTime.after(df.parse(startTimeTheory)) || futureTime.equals(df.parse(startTimeTheory))) && currentTime.before(df.parse(startTimeTheory)) && !theory.getString(dayTheory).equals("null")) {
-                    NotificationHelper notificationHelper = new NotificationHelper(context);
-                    NotificationCompat.Builder n = notificationHelper.notifyUpcoming("Upcoming: " + startTimeTheory + " - " + endTimeTheory, theory.getString(dayTheory).split("-")[1].trim() + " - Theory");
-                    notificationHelper.getManager().notify(1, n.build());
-
+                    title = "Upcoming: " + startTimeTheory + " - " + endTimeTheory;
+                    message = theory.getString(dayTheory).split("-")[1].trim() + " - Theory";
                     flag = true;
                 }
 
                 if ((futureTime.after(df.parse(startTimeLab)) || futureTime.equals(df.parse(startTimeLab))) && currentTime.before(df.parse(startTimeLab)) && !lab.getString(dayLab).equals("null")) {
-                    NotificationHelper notificationHelper = new NotificationHelper(context);
-                    NotificationCompat.Builder n = notificationHelper.notifyUpcoming("Upcoming: " + startTimeLab + " - " + endTimeLab, lab.getString(dayLab).split("-")[1].trim() + " - Lab");
-                    notificationHelper.getManager().notify(1, n.build());
-
+                    title = "Upcoming: " + startTimeLab + " - " + endTimeLab;
+                    message = lab.getString(dayLab).split("-")[1].trim() + " - Lab";
                     flag = true;
                 }
 
@@ -94,19 +93,32 @@ public class NotificationReceiver extends BroadcastReceiver {
                 }
 
                 if ((currentTime.after(df.parse(startTimeTheory)) || currentTime.equals(df.parse(startTimeTheory))) && (currentTime.before(df.parse(endTimeTheory)) || currentTime.equals(df.parse(endTimeTheory))) && !theory.getString(dayTheory).equals("null")) {
-                    NotificationHelper notificationHelper = new NotificationHelper(context);
-                    NotificationCompat.Builder n = notificationHelper.notifyOngoing("Ongoing: " + startTimeTheory + " - " + endTimeTheory, theory.getString(dayTheory).split("-")[1].trim() + " - Theory");
-                    notificationHelper.getManager().notify(1, n.build());
+                    title = "Ongoing: " + startTimeTheory + " - " + endTimeTheory;
+                    message = theory.getString(dayTheory).split("-")[1].trim() + " - Theory";
+                    upcoming = false;
+                    flag = true;
                 }
 
                 if ((currentTime.after(df.parse(startTimeLab)) || currentTime.equals(df.parse(startTimeLab))) && (currentTime.before(df.parse(endTimeLab)) || currentTime.equals(df.parse(endTimeLab))) && !lab.getString(dayLab).equals("null")) {
-                    NotificationHelper notificationHelper = new NotificationHelper(context);
-                    NotificationCompat.Builder n = notificationHelper.notifyOngoing("Ongoing: " + startTimeLab + " - " + endTimeLab, lab.getString(dayLab).split("-")[1].trim() + " - Lab");
-                    notificationHelper.getManager().notify(1, n.build());
+                    title = "Ongoing: " + startTimeLab + " - " + endTimeLab;
+                    message = lab.getString(dayLab).split("-")[1].trim() + " - Lab";
+                    upcoming = false;
+                    flag = true;
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        }
+
+        if (title != null && message != null) {
+            NotificationHelper notificationHelper = new NotificationHelper(context);
+            NotificationCompat.Builder n;
+            if (upcoming) {
+                n = notificationHelper.notifyOngoing(title, message);
+            } else {
+                n = notificationHelper.notifyUpcoming(title, message);
+            }
+            notificationHelper.getManager().notify(2, n.build());
         }
 
         theory.close();

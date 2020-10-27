@@ -164,9 +164,9 @@ public class HomeActivity extends AppCompatActivity {
 
         LinearLayout upcoming = findViewById(R.id.upcoming);
 
-        for (int i = 0; i < theory.getCount() && i < lab.getCount(); ++i, theory.moveToNext(), lab.moveToNext()) {
-            boolean flag = false;
+        boolean flag = false;
 
+        for (int i = 0; i < theory.getCount() && i < lab.getCount(); ++i, theory.moveToNext(), lab.moveToNext()) {
             String startTimeTheory = theory.getString(startTheory);
             String endTimeTheory = theory.getString(endTheory);
             String startTimeLab = lab.getString(startLab);
@@ -188,7 +188,7 @@ public class HomeActivity extends AppCompatActivity {
                     );
                     headingParams.setMarginStart((int) (20 * pixelDensity));
                     headingParams.setMarginEnd((int) (20 * pixelDensity));
-                    headingParams.setMargins(0, (int) (20 * pixelDensity), 0, (int) (5 * pixelDensity));
+                    headingParams.setMargins(0, 0, 0, (int) (5 * pixelDensity));
                     heading.setLayoutParams(headingParams);
                     heading.setText(getString(R.string.upcoming));
                     heading.setTextColor(getColor(R.color.colorPrimary));
@@ -258,7 +258,7 @@ public class HomeActivity extends AppCompatActivity {
                     );
                     headingParams.setMarginStart((int) (20 * pixelDensity));
                     headingParams.setMarginEnd((int) (20 * pixelDensity));
-                    headingParams.setMargins(0, (int) (20 * pixelDensity), 0, (int) (5 * pixelDensity));
+                    headingParams.setMargins(0, 0, 0, (int) (5 * pixelDensity));
                     heading.setLayoutParams(headingParams);
                     heading.setText(getString(R.string.upcoming));
                     heading.setTextColor(getColor(R.color.colorPrimary));
@@ -330,7 +330,7 @@ public class HomeActivity extends AppCompatActivity {
                     );
                     headingParams.setMarginStart((int) (20 * pixelDensity));
                     headingParams.setMarginEnd((int) (20 * pixelDensity));
-                    headingParams.setMargins(0, (int) (20 * pixelDensity), 0, (int) (5 * pixelDensity));
+                    headingParams.setMargins(0, 0, 0, (int) (5 * pixelDensity));
                     heading.setLayoutParams(headingParams);
                     heading.setText(getString(R.string.ongoing));
                     heading.setTextColor(getColor(R.color.colorPrimary));
@@ -399,7 +399,7 @@ public class HomeActivity extends AppCompatActivity {
                     );
                     headingParams.setMarginStart((int) (20 * pixelDensity));
                     headingParams.setMarginEnd((int) (20 * pixelDensity));
-                    headingParams.setMargins(0, (int) (20 * pixelDensity), 0, (int) (5 * pixelDensity));
+                    headingParams.setMargins(0, 0, 0, (int) (5 * pixelDensity));
                     heading.setLayoutParams(headingParams);
                     heading.setText(getString(R.string.ongoing));
                     heading.setTextColor(getColor(R.color.colorPrimary));
@@ -453,6 +453,7 @@ public class HomeActivity extends AppCompatActivity {
                     innerBlock.addView(timing);
 
                     upcoming.addView(innerBlock);
+                    flag = true;
                 }
             } catch (Exception e) {
                 e.printStackTrace();
