@@ -587,7 +587,7 @@ public class VTOP {
                                 String period = mon.getString(i + "lab");
                                 myDatabase.execSQL("UPDATE timetable_lab SET mon = '" + period + "' WHERE id = " + i);
 
-                                Date date = df.parse("05-01-2020 " + start_time);
+                                Date date = df.parse("06-01-2020 " + start_time);
 
                                 assert date != null;
                                 c.setTime(date);
@@ -607,7 +607,7 @@ public class VTOP {
                                 String period = tue.getString(i + "lab");
                                 myDatabase.execSQL("UPDATE timetable_lab SET tue = '" + period + "' WHERE id = " + i);
 
-                                Date date = df.parse("06-01-2020 " + start_time);
+                                Date date = df.parse("07-01-2020 " + start_time);
 
                                 assert date != null;
                                 c.setTime(date);
@@ -627,7 +627,7 @@ public class VTOP {
                                 String period = wed.getString(i + "lab");
                                 myDatabase.execSQL("UPDATE timetable_lab SET wed = '" + period + "' WHERE id = " + i);
 
-                                Date date = df.parse("07-01-2020 " + start_time);
+                                Date date = df.parse("01-01-2020 " + start_time);
 
                                 assert date != null;
                                 c.setTime(date);
@@ -647,7 +647,7 @@ public class VTOP {
                                 String period = thu.getString(i + "lab");
                                 myDatabase.execSQL("UPDATE timetable_lab SET thu = '" + period + "' WHERE id = " + i);
 
-                                Date date = df.parse("08-01-2020 " + start_time);
+                                Date date = df.parse("02-01-2020 " + start_time);
 
                                 assert date != null;
                                 c.setTime(date);
@@ -667,7 +667,7 @@ public class VTOP {
                                 String period = fri.getString(i + "lab");
                                 myDatabase.execSQL("UPDATE timetable_lab SET fri = '" + period + "' WHERE id = " + i);
 
-                                Date date = df.parse("09-01-2020 " + start_time);
+                                Date date = df.parse("03-01-2020 " + start_time);
 
                                 assert date != null;
                                 c.setTime(date);
@@ -687,7 +687,7 @@ public class VTOP {
                                 String period = sat.getString(i + "lab");
                                 myDatabase.execSQL("UPDATE timetable_lab SET sat = '" + period + "' WHERE id = " + i);
 
-                                Date date = df.parse("10-01-2020 " + start_time);
+                                Date date = df.parse("04-01-2020 " + start_time);
 
                                 assert date != null;
                                 c.setTime(date);
@@ -707,7 +707,7 @@ public class VTOP {
                                 String period = sun.getString(i + "lab");
                                 myDatabase.execSQL("UPDATE timetable_lab SET sun = '" + period + "' WHERE id = " + i);
 
-                                Date date = df.parse("04-01-2020 " + start_time);
+                                Date date = df.parse("05-01-2020 " + start_time);
 
                                 assert date != null;
                                 c.setTime(date);
@@ -734,7 +734,7 @@ public class VTOP {
                                 String period = mon.getString(i + "theory");
                                 myDatabase.execSQL("UPDATE timetable_theory SET mon = '" + period + "' WHERE id = " + i);
 
-                                Date date = df.parse("05-01-2020 " + start_time);
+                                Date date = df.parse("06-01-2020 " + start_time);
 
                                 assert date != null;
                                 c.setTime(date);
@@ -754,7 +754,7 @@ public class VTOP {
                                 String period = tue.getString(i + "theory");
                                 myDatabase.execSQL("UPDATE timetable_theory SET tue = '" + period + "' WHERE id = " + i);
 
-                                Date date = df.parse("06-01-2020 " + start_time);
+                                Date date = df.parse("07-01-2020 " + start_time);
 
                                 assert date != null;
                                 c.setTime(date);
@@ -774,7 +774,7 @@ public class VTOP {
                                 String period = wed.getString(i + "theory");
                                 myDatabase.execSQL("UPDATE timetable_theory SET wed = '" + period + "' WHERE id = " + i);
 
-                                Date date = df.parse("07-01-2020 " + start_time);
+                                Date date = df.parse("01-01-2020 " + start_time);
 
                                 assert date != null;
                                 c.setTime(date);
@@ -794,7 +794,7 @@ public class VTOP {
                                 String period = thu.getString(i + "theory");
                                 myDatabase.execSQL("UPDATE timetable_theory SET thu = '" + period + "' WHERE id = " + i);
 
-                                Date date = df.parse("08-01-2020 " + start_time);
+                                Date date = df.parse("02-01-2020 " + start_time);
 
                                 assert date != null;
                                 c.setTime(date);
@@ -814,7 +814,7 @@ public class VTOP {
                                 String period = fri.getString(i + "theory");
                                 myDatabase.execSQL("UPDATE timetable_theory SET fri = '" + period + "' WHERE id = " + i);
 
-                                Date date = df.parse("09-01-2020 " + start_time);
+                                Date date = df.parse("03-01-2020 " + start_time);
 
                                 assert date != null;
                                 c.setTime(date);
@@ -834,7 +834,7 @@ public class VTOP {
                                 String period = sat.getString(i + "theory");
                                 myDatabase.execSQL("UPDATE timetable_theory SET sat = '" + period + "' WHERE id = " + i);
 
-                                Date date = df.parse("10-01-2020 " + start_time);
+                                Date date = df.parse("04-01-2020 " + start_time);
 
                                 assert date != null;
                                 c.setTime(date);
@@ -854,7 +854,7 @@ public class VTOP {
                                 String period = sun.getString(i + "theory");
                                 myDatabase.execSQL("UPDATE timetable_theory SET sun = '" + period + "' WHERE id = " + i);
 
-                                Date date = df.parse("04-01-2020 " + start_time);
+                                Date date = df.parse("05-01-2020 " + start_time);
 
                                 assert date != null;
                                 c.setTime(date);
