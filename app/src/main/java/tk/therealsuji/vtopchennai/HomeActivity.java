@@ -180,7 +180,10 @@ public class HomeActivity extends AppCompatActivity {
                 assert futureTime != null;
 
                 if ((futureTime.after(df.parse(startTimeTheory)) || futureTime.equals(df.parse(startTimeTheory))) && currentTime.before(df.parse(startTimeTheory)) && !theory.getString(dayTheory).equals("null")) {
-                    upcoming.removeAllViews();
+                    if (!flag) {
+                        upcoming.removeAllViews();
+                    }
+
                     TextView heading = new TextView(this);
                     TableRow.LayoutParams headingParams = new TableRow.LayoutParams(
                             TableRow.LayoutParams.WRAP_CONTENT,
