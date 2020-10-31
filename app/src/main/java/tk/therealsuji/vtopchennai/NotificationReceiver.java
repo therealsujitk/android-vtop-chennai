@@ -79,12 +79,14 @@ public class NotificationReceiver extends BroadcastReceiver {
                 if ((futureTime.after(df.parse(startTimeTheory)) || futureTime.equals(df.parse(startTimeTheory))) && currentTime.before(df.parse(startTimeTheory)) && !theory.getString(dayTheory).equals("null")) {
                     title = "Upcoming: " + startTimeTheory + " - " + endTimeTheory;
                     message = theory.getString(dayTheory).split("-")[1].trim() + " - Theory";
+                    upcoming = true;
                     flag = true;
                 }
 
                 if ((futureTime.after(df.parse(startTimeLab)) || futureTime.equals(df.parse(startTimeLab))) && currentTime.before(df.parse(startTimeLab)) && !lab.getString(dayLab).equals("null")) {
                     title = "Upcoming: " + startTimeLab + " - " + endTimeLab;
                     message = lab.getString(dayLab).split("-")[1].trim() + " - Lab";
+                    upcoming = true;
                     flag = true;
                 }
 
@@ -114,9 +116,9 @@ public class NotificationReceiver extends BroadcastReceiver {
             NotificationHelper notificationHelper = new NotificationHelper(context);
             NotificationCompat.Builder n;
             if (upcoming) {
-                n = notificationHelper.notifyOngoing(title, message);
-            } else {
                 n = notificationHelper.notifyUpcoming(title, message);
+            } else {
+                n = notificationHelper.notifyOngoing(title, message);
             }
             notificationHelper.getManager().notify(2, n.build());
         }
