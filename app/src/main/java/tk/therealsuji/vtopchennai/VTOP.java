@@ -103,16 +103,16 @@ public class VTOP {
         webView.evaluateJavascript("(function() {" +
                 "var successFlag = false;" +
                 "$.ajax({" +
-                "type: 'POST'," +
-                "url: 'vtopLogin'," +
-                "data: null," +
-                "async: false," +
-                "success: function(response) {" +
-                "if(response.search('___INTERNAL___RESPONSE___') == -1 && response.includes('VTOP Login')) {" +
-                "$('#page_outline').html(response);" +
-                "successFlag = true;" +
-                "}" +
-                "}" +
+                "   type: 'POST'," +
+                "   url: 'vtopLogin'," +
+                "   data: null," +
+                "   async: false," +
+                "   success: function(response) {" +
+                "       if(response.search('___INTERNAL___RESPONSE___') == -1 && response.includes('VTOP Login')) {" +
+                "           $('#page_outline').html(response);" +
+                "           successFlag = true;" +
+                "       }" +
+                "   }" +
                 "});" +
                 "return successFlag;" +
                 "})();", new ValueCallback<String>() {
@@ -151,9 +151,9 @@ public class VTOP {
         webView.evaluateJavascript("(function() {" +
                 "var images = document.getElementsByTagName('img');" +
                 "for(var i = 0; i < images.length; ++i) {" +
-                "if(images[i].alt.toLowerCase().includes('captcha')) {" +
-                "return images[i].src;" +
-                "}" +
+                "   if(images[i].alt.toLowerCase().includes('captcha')) {" +
+                "       return images[i].src;" +
+                "   }" +
                 "}" +
                 "})();", new ValueCallback<String>() {
             @Override
@@ -195,24 +195,24 @@ public class VTOP {
                 "var credentials = 'uname=" + username + "&passwd=' + encodeURIComponent('" + password + "') + '&captchaCheck=" + captcha + "';" +
                 "var successFlag = false;" +
                 "$.ajax({" +
-                "type : 'POST'," +
-                "url : 'doLogin'," +
-                "data : credentials," +
-                "async: false," +
-                "success : function(response) {" +
-                "if(response.search('___INTERNAL___RESPONSE___') == -1) {" +
-                "if(response.includes('authorizedIDX')) {" +
-                "$('#page_outline').html(response);" +
-                "successFlag = true;" +
-                "} else if(response.toLowerCase().includes('invalid captcha')) {" +
-                "successFlag = 'Invalid Captcha';" +
-                "} else if(response.toLowerCase().includes('invalid user id / password')) {" +
-                "successFlag = 'Invalid User Id / Password';" +
-                "} else if(response.toLowerCase().includes('user id not available')) {" +
-                "successFlag = 'User Id Not available';" +
-                "}" +
-                "}" +
-                "}" +
+                "   type : 'POST'," +
+                "   url : 'doLogin'," +
+                "   data : credentials," +
+                "   async: false," +
+                "   success : function(response) {" +
+                "       if(response.search('___INTERNAL___RESPONSE___') == -1) {" +
+                "           if(response.includes('authorizedIDX')) {" +
+                "               $('#page_outline').html(response);" +
+                "               successFlag = true;" +
+                "           } else if(response.toLowerCase().includes('invalid captcha')) {" +
+                "               successFlag = 'Invalid Captcha';" +
+                "           } else if(response.toLowerCase().includes('invalid user id / password')) {" +
+                "               successFlag = 'Invalid User Id / Password';" +
+            "               } else if(response.toLowerCase().includes('user id not available')) {" +
+                "               successFlag = 'User Id Not available';" +
+                "           }" +
+                "       }" +
+                "   }" +
                 "});" +
                 "return successFlag;" +
                 "})();", new ValueCallback<String>() {
@@ -253,27 +253,27 @@ public class VTOP {
                 "var id = '';" +
                 "var j = 0;" +
                 "$.ajax({" +
-                "type: 'POST'," +
-                "url : 'studentsRecord/StudentProfileAllView'," +
-                "data : data," +
-                "async: false," +
-                "success: function(response) {" +
-                "if(response.toLowerCase().includes('personal information')) {" +
-                "var doc = new DOMParser().parseFromString(response, 'text/html');" +
-                "var cells = doc.getElementsByTagName('td');" +
-                "for(var i = 0; i < cells.length && j < 2; ++i) {" +
-                "if(cells[i].innerText.toLowerCase().includes('name')) {" +
-                "name = cells[++i].innerHTML;" +
-                "++j;" +
-                "}" +
-                "if(cells[i].innerText.toLowerCase().includes('register')) {" +
-                "id = cells[++i].innerHTML;" +
-                "++j;" +
-                "}" +
-                "}" +
-                "obj = {'name': name, 'id': id};" +
-                "}" +
-                "}" +
+                "   type: 'POST'," +
+                "   url : 'studentsRecord/StudentProfileAllView'," +
+                "   data : data," +
+                "   async: false," +
+                "   success: function(response) {" +
+                "       if(response.toLowerCase().includes('personal information')) {" +
+                "           var doc = new DOMParser().parseFromString(response, 'text/html');" +
+                "           var cells = doc.getElementsByTagName('td');" +
+                "           for(var i = 0; i < cells.length && j < 2; ++i) {" +
+                "               if(cells[i].innerText.toLowerCase().includes('name')) {" +
+                "                   name = cells[++i].innerHTML;" +
+                "                   ++j;" +
+                "               }" +
+                "               if(cells[i].innerText.toLowerCase().includes('register')) {" +
+                "                   id = cells[++i].innerHTML;" +
+                "                   ++j;" +
+                "               }" +
+                "           }" +
+                "           obj = {'name': name, 'id': id};" +
+                "       }" +
+                "   }" +
                 "});" +
                 "return obj;" +
                 "})();", new ValueCallback<String>() {
@@ -315,24 +315,24 @@ public class VTOP {
                 "var data = 'verifyMenu=true&winImage=' + $('#winImage').val() + '&authorizedID=' + $('#authorizedIDX').val() + '&nocache=@(new Date().getTime())';" +
                 "var obj = false;" +
                 "$.ajax({" +
-                "type: 'POST'," +
-                "url : 'academics/common/StudentTimeTable'," +
-                "data : data," +
-                "async: false," +
-                "success: function(response) {" +
-                "if(response.toLowerCase().includes('time table')) {" +
-                "$('#page-wrapper').html(response);" +
-                "var options = document.getElementById('semesterSubId').getElementsByTagName('option');" +
-                "obj = {};" +
-                "for(var i = 0, j = 0; i < options.length; ++i, ++j) {" +
-                "if(options[i].innerText.toLowerCase().includes('choose') || options[i].innerText.toLowerCase().includes('select')) {" +
-                "--j;" +
-                "continue;" +
-                "}" +
-                "obj[j] = options[i].innerText;" +
-                "}" +
-                "}" +
-                "}" +
+                "   type: 'POST'," +
+                "   url : 'academics/common/StudentTimeTable'," +
+                "   data : data," +
+                "   async: false," +
+                "   success: function(response) {" +
+                "       if(response.toLowerCase().includes('time table')) {" +
+                "           $('#page-wrapper').html(response);" +
+                "           var options = document.getElementById('semesterSubId').getElementsByTagName('option');" +
+                "           obj = {};" +
+                "           for(var i = 0, j = 0; i < options.length; ++i, ++j) {" +
+                "               if(options[i].innerText.toLowerCase().includes('choose') || options[i].innerText.toLowerCase().includes('select')) {" +
+                "                   --j;" +
+                "                   continue;" +
+                "               }" +
+                "               obj[j] = options[i].innerText;" +
+                "           }" +
+                "       }" +
+                "   }" +
                 "});" +
                 "return obj;" +
                 "})();", new ValueCallback<String>() {
@@ -381,11 +381,11 @@ public class VTOP {
                 "var select = document.getElementById('semesterSubId');" +
                 "var options = select.getElementsByTagName('option');" +
                 "for(var i = 0; i < options.length; ++i) {" +
-                "if(options[i].innerText.toLowerCase().includes('" + semester + "')) {" +
-                "select.selectedIndex = i;" +
-                "document.getElementById('studentTimeTable').getElementsByTagName('button')[0].click();" +
-                "return true;" +
-                "}" +
+                "   if(options[i].innerText.toLowerCase().includes('" + semester + "')) {" +
+                "       select.selectedIndex = i;" +
+                "       document.getElementById('studentTimeTable').getElementsByTagName('button')[0].click();" +
+                "       return true;" +
+                "   }" +
                 "}" +
                 "return false;" +
                 "})();", new ValueCallback<String>() {
@@ -413,21 +413,21 @@ public class VTOP {
      */
     public void downloadTimetable() {
         webView.evaluateJavascript("(function() {" +
-                "var loading = document.getElementsByTagName('html')[0];" +
+                "var loading = document.getElementsByTagName('body')[0];" +
                 "if(loading.innerText.toLowerCase().includes('loading') || loading.innerText.toLowerCase().includes('please wait')) {" +
-                "return 'loading';" +
-                "} else {" +
+                "   return 'loading';" +
+                "}" +
                 "var obj = {};" +
                 "var spans = document.getElementById('getStudentDetails').getElementsByTagName('span');" +
                 "var credits = '0';" +
                 "if(spans[0].innerText.toLowerCase().includes('no record(s) found')) {" +
-                "return 'unreleased';" +
+                "   return 'unreleased';" +
                 "}" +
                 "for(var i = spans.length-1; i > 0; --i) {" +
-                "if(spans[i].innerText.toLowerCase().includes('credits')) {" +
-                "credits = spans[i+1].innerText;" +
-                "break;" +
-                "}" +
+                "   if(spans[i].innerText.toLowerCase().includes('credits')) {" +
+                "       credits = spans[i+1].innerText;" +
+                "       break;" +
+                "   }" +
                 "}" +
                 "obj['credits'] = credits;" +
                 "var cells = document.getElementById('timeTableStyle').getElementsByTagName('td');" +
@@ -436,59 +436,59 @@ public class VTOP {
                 "var theory = {}, lab = {}, mon = {}, tue = {}, wed = {}, thu = {}, fri = {}, sat = {}, sun = {};" +
                 "var i = 0;" +
                 "for(var j = 0; j < cells.length; ++j) {" +
-                "if(cells[j].innerText.toLowerCase() == 'mon' || cells[j].innerText.toLowerCase() == 'tue' || cells[j].innerText.toLowerCase() == 'wed' || cells[j].innerText.toLowerCase() == 'thu' || cells[j].innerText.toLowerCase() == 'fri' || cells[j].innerText.toLowerCase() == 'sat' || cells[j].innerText.toLowerCase() == 'sun') {" +
-                "category = cells[j].innerText.toLowerCase();" +
-                "continue;" +
-                "}" +
-                "if(cells[j].innerText.toLowerCase() == 'theory' || cells[j].innerText.toLowerCase() == 'lab') {" +
-                "if(category == '' || category == 'theory' || category == 'lab') {" +
-                "category = cells[j].innerText.toLowerCase();" +
-                "} else {" +
-                "postfix = cells[j].innerText.toLowerCase();" +
-                "}" +
-                "i = 0;" +
-                "continue;" +
-                "}" +
-                "if(cells[j].innerText.toLowerCase() == 'start' || cells[j].innerText.toLowerCase() == 'end') {" +
-                "postfix = cells[j].innerText.toLowerCase();" +
-                "i = 0;" +
-                "continue;" +
-                "}" +
-                "subcat = i.toString() + postfix;" +
-                "if(category == 'theory') {" +
-                "theory[subcat] = cells[j].innerText.trim();" +
-                "} else if(category == 'lab') {" +
-                "lab[subcat] = cells[j].innerText.trim();" +
-                "} else if(category == 'mon') {" +
-                "if(cells[j].bgColor == '#CCFF33') {" +
-                "mon[subcat] = cells[j].innerText.trim();" +
-                "}" +
-                "} else if(category == 'tue') {" +
-                "if(cells[j].bgColor == '#CCFF33') {" +
-                "tue[subcat] = cells[j].innerText.trim();" +
-                "}" +
-                "} else if(category == 'wed') {" +
-                "if(cells[j].bgColor == '#CCFF33') {" +
-                "wed[subcat] = cells[j].innerText.trim();" +
-                "}" +
-                "} else if(category == 'thu') {" +
-                "if(cells[j].bgColor == '#CCFF33') {" +
-                "thu[subcat] = cells[j].innerText.trim();" +
-                "}" +
-                "} else if(category == 'fri') {" +
-                "if(cells[j].bgColor == '#CCFF33') {" +
-                "fri[subcat] = cells[j].innerText.trim();" +
-                "}" +
-                "} else if(category == 'sat') {" +
-                "if(cells[j].bgColor == '#CCFF33') {" +
-                "sat[subcat] = cells[j].innerText.trim();" +
-                "}" +
-                "} else if(category == 'sun') {" +
-                "if(cells[j].bgColor == '#CCFF33') {" +
-                "sun[subcat] = cells[j].innerText.trim();" +
-                "}" +
-                "}" +
-                "++i;" +
+                "   if(cells[j].innerText.toLowerCase() == 'mon' || cells[j].innerText.toLowerCase() == 'tue' || cells[j].innerText.toLowerCase() == 'wed' || cells[j].innerText.toLowerCase() == 'thu' || cells[j].innerText.toLowerCase() == 'fri' || cells[j].innerText.toLowerCase() == 'sat' || cells[j].innerText.toLowerCase() == 'sun') {" +
+                "       category = cells[j].innerText.toLowerCase();" +
+                "       continue;" +
+                "   }" +
+                "   if(cells[j].innerText.toLowerCase() == 'theory' || cells[j].innerText.toLowerCase() == 'lab') {" +
+                "       if(category == '' || category == 'theory' || category == 'lab') {" +
+                "           category = cells[j].innerText.toLowerCase();" +
+                "       } else {" +
+                "           postfix = cells[j].innerText.toLowerCase();" +
+                "       }" +
+                "       i = 0;" +
+                "       continue;" +
+                "   }" +
+                "   if(cells[j].innerText.toLowerCase() == 'start' || cells[j].innerText.toLowerCase() == 'end') {" +
+                "       postfix = cells[j].innerText.toLowerCase();" +
+                "       i = 0;" +
+                "       continue;" +
+                "   }" +
+                "   subcat = i.toString() + postfix;" +
+                "   if(category == 'theory') {" +
+                "      theory[subcat] = cells[j].innerText.trim();" +
+                "   } else if(category == 'lab') {" +
+                "      lab[subcat] = cells[j].innerText.trim();" +
+                "   } else if(category == 'mon') {" +
+                "      if(cells[j].bgColor == '#CCFF33') {" +
+                "          mon[subcat] = cells[j].innerText.trim();" +
+                "      }" +
+                "   } else if(category == 'tue') {" +
+                "      if(cells[j].bgColor == '#CCFF33') {" +
+                "          tue[subcat] = cells[j].innerText.trim();" +
+                "      }" +
+                "   } else if(category == 'wed') {" +
+                "      if(cells[j].bgColor == '#CCFF33') {" +
+                "          wed[subcat] = cells[j].innerText.trim();" +
+                "      }" +
+                "   } else if(category == 'thu') {" +
+                "      if(cells[j].bgColor == '#CCFF33') {" +
+                "          thu[subcat] = cells[j].innerText.trim();" +
+                "      }" +
+                "   } else if(category == 'fri') {" +
+                "      if(cells[j].bgColor == '#CCFF33') {" +
+                "          fri[subcat] = cells[j].innerText.trim();" +
+                "      }" +
+                "   } else if(category == 'sat') {" +
+                "      if(cells[j].bgColor == '#CCFF33') {" +
+                "          sat[subcat] = cells[j].innerText.trim();" +
+                "      }" +
+                "   } else if(category == 'sun') {" +
+                "      if(cells[j].bgColor == '#CCFF33') {" +
+                "          sun[subcat] = cells[j].innerText.trim();" +
+                "      }" +
+                "   }" +
+                "   ++i;" +
                 "}" +
                 "obj.theory = theory;" +
                 "obj.lab = lab;" +
@@ -500,13 +500,11 @@ public class VTOP {
                 "obj.sat = sat;" +
                 "obj.sun = sun;" +
                 "return obj;" +
-                "}" +
-                "return 'false';" +
                 "})();", new ValueCallback<String>() {
             @Override
             public void onReceiveValue(String obj) {
                 String temp = obj.substring(1, obj.length() - 1);
-                if (temp.equals("false") || obj.equals("null")) {
+                if (obj.equals("null")) {
                     Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
                     isOpened = false;
                     reloadPage();
@@ -896,27 +894,27 @@ public class VTOP {
                 "var courseIndex, facultyIndex, flag = 0;" +
                 "var columns = heads.length;" +
                 "for(var i = 0; i < columns; ++i) {" +
-                "if(heads[i].innerText.toLowerCase() == 'course') {" +
-                "courseIndex = i + 1;" + // +1 is a correction due to an extra 'td' element at the top
-                "++flag;" +
-                "}" +
-                "if(heads[i].innerText.toLowerCase() == 'faculty details') {" +
-                "facultyIndex = i + 1;" + // +1 is a correction due to an extra 'td' element at the top
-                "++flag;" +
-                "}" +
-                "if(flag == 2) {" +
-                "break;" +
-                "}" +
+                "   if(heads[i].innerText.toLowerCase() == 'course') {" +
+                "       courseIndex = i + 1;" + // +1 is a correction due to an extra 'td' element at the top
+                "       ++flag;" +
+                "   }" +
+                "   if(heads[i].innerText.toLowerCase() == 'faculty details') {" +
+                "       facultyIndex = i + 1;" + // +1 is a correction due to an extra 'td' element at the top
+                "       ++flag;" +
+                "   }" +
+                "   if(flag == 2) {" +
+                "       break;" +
+                "   }" +
                 "}" +
                 "var obj = {};" +
                 "var cells = division.getElementsByTagName('td');" +
                 "for(var i = 0; courseIndex < cells.length && facultyIndex < cells.length; ++i) {" +
-                "var temp = {};" +
-                "temp['course'] = cells[courseIndex].innerText.trim();" +
-                "temp['faculty'] = cells[facultyIndex].innerText.trim();" +
-                "obj[i.toString()] = temp;" +
-                "courseIndex += columns;" +
-                "facultyIndex += columns;" +
+                "   var temp = {};" +
+                "   temp['course'] = cells[courseIndex].innerText.trim();" +
+                "   temp['faculty'] = cells[facultyIndex].innerText.trim();" +
+                "   obj[i.toString()] = temp;" +
+                "   courseIndex += columns;" +
+                "   facultyIndex += columns;" +
                 "}" +
                 "return obj;" +
                 "})();", new ValueCallback<String>() {
@@ -976,25 +974,25 @@ public class VTOP {
                 "var data = 'verifyMenu=true&winImage=' + $('#winImage').val() + '&authorizedID=' + $('#authorizedIDX').val() + '&nocache=@(new Date().getTime())';" +
                 "var obj = {};" +
                 "$.ajax({" +
-                "type: 'POST'," +
-                "url : 'proctor/viewProctorDetails'," +
-                "data : data," +
-                "async: false," +
-                "success: function(response) {" +
-                "var doc = new DOMParser().parseFromString(response, 'text/html');" +
-                "if(!doc.getElementById('showDetails').getElementsByTagName('td')) {" +
-                "obj = 'unavailable';" +
-                "return;" +
-                "}" +
-                "var cells = doc.getElementById('showDetails').getElementsByTagName('td');" +
-                "for(var i = 0; i < cells.length; ++i) {" +
-                "if(cells[i].innerHTML.includes('img')) {" +
-                "continue;" +
-                "}" +
-                "var key = cells[i].innerText.trim();" +
-                "var value = cells[++i].innerText.trim();" +
-                "obj[key] = value;" +
-                "}" +
+                "   type: 'POST'," +
+                "   url : 'proctor/viewProctorDetails'," +
+                "   data : data," +
+                "   async: false," +
+                "   success: function(response) {" +
+                "       var doc = new DOMParser().parseFromString(response, 'text/html');" +
+                "       if(!doc.getElementById('showDetails').getElementsByTagName('td')) {" +
+                "       obj = 'unavailable';" +
+                "       return;" +
+                "   }" +
+                "   var cells = doc.getElementById('showDetails').getElementsByTagName('td');" +
+                "   for(var i = 0; i < cells.length; ++i) {" +
+                "       if(cells[i].innerHTML.includes('img')) {" +
+                "           continue;" +
+                "       }" +
+                "       var key = cells[i].innerText.trim();" +
+                "       var value = cells[++i].innerText.trim();" +
+                "       obj[key] = value;" +
+                "   }" +
                 "}" +
                 "});" +
                 "return obj;" +
@@ -1054,60 +1052,60 @@ public class VTOP {
                 "var data = 'verifyMenu=true&winImage=' + $('#winImage').val() + '&authorizedID=' + $('#authorizedIDX').val() + '&nocache=@(new Date().getTime())';" +
                 "var obj = {};" +
                 "$.ajax({" +
-                "type: 'POST'," +
-                "url : 'hrms/viewHodDeanDetails'," +
-                "data : data," +
-                "async: false," +
-                "success: function(response) {" +
-                "var doc = new DOMParser().parseFromString(response, 'text/html');" +
-                "if(!doc.getElementsByTagName('table')[0]) {" +
-                "obj = 'unavailable';" +
-                "return;" +
-                "}" +
-                "var tables = doc.getElementsByTagName('table');" +
-                "var first = 'dean';" +
-                "if(doc.getElementsByTagName('h3')[0].innerText.toLowerCase() != 'dean') {" +
-                "first = 'hod';" +
-                "}" +
-                "var dean = {}, hod = {};" +
-                "var cells = tables[0].getElementsByTagName('td');" +
-                "for(var i = 0; i < cells.length; ++i) {" +
-                "if(first == 'dean') {" +
-                "if(cells[i].innerHTML.includes('img')) {" +
-                "continue;" +
-                "}" +
-                "var key = cells[i].innerText.trim();" +
-                "var value = cells[++i].innerText.trim();" +
-                "dean[key] = value;" +
-                "} else {" +
-                "if(cells[i].innerHTML.includes('img')) {" +
-                "continue;" +
-                "}" +
-                "var key = cells[i].innerText.trim();" +
-                "var value = cells[++i].innerText.trim();" +
-                "hod[key] = value;" +
-                "}" +
-                "}" +
-                "var cells = tables[1].getElementsByTagName('td');" +   //Possible error: If only one table is present
-                "for(var i = 0; i < cells.length; ++i) {" +
-                "if(first == 'dean') {" +
-                "if(cells[i].innerHTML.includes('img')) {" +
-                "continue;" +
-                "}" +
-                "var key = cells[i].innerText.trim();" +
-                "var value = cells[++i].innerText.trim();" +
-                "hod[key] = value;" +
-                "} else {" +
-                "if(cells[i].innerHTML.includes('img')) {" +
-                "continue;" +
-                "}" +
-                "var key = cells[i].innerText.trim();" +
-                "var value = cells[++i].innerText.trim();" +
-                "dean[key] = value;" +
-                "}" +
-                "}" +
-                "obj['dean'] = dean;" +
-                "obj['hod'] = hod;" +
+                "   type: 'POST'," +
+                "   url : 'hrms/viewHodDeanDetails'," +
+                "   data : data," +
+                "   async: false," +
+                "   success: function(response) {" +
+                "       var doc = new DOMParser().parseFromString(response, 'text/html');" +
+                "       if(!doc.getElementsByTagName('table')[0]) {" +
+                "           obj = 'unavailable';" +
+                "           return;" +
+                "       }" +
+                "       var tables = doc.getElementsByTagName('table');" +
+                "       var first = 'dean';" +
+                "       if(doc.getElementsByTagName('h3')[0].innerText.toLowerCase() != 'dean') {" +
+                "           first = 'hod';" +
+                "       }" +
+                "       var dean = {}, hod = {};" +
+                "       var cells = tables[0].getElementsByTagName('td');" +
+                "       for(var i = 0; i < cells.length; ++i) {" +
+                "           if(first == 'dean') {" +
+                "               if(cells[i].innerHTML.includes('img')) {" +
+                "                   continue;" +
+                "               }" +
+                "               var key = cells[i].innerText.trim();" +
+                "               var value = cells[++i].innerText.trim();" +
+                "               dean[key] = value;" +
+                "               } else {" +
+                "                   if(cells[i].innerHTML.includes('img')) {" +
+                "                   continue;" +
+                "               }" +
+                "               var key = cells[i].innerText.trim();" +
+                "               var value = cells[++i].innerText.trim();" +
+                "               hod[key] = value;" +
+                "           }" +
+                "       }" +
+                "       var cells = tables[1].getElementsByTagName('td');" +   //Possible error: If only one table is present
+                "       for(var i = 0; i < cells.length; ++i) {" +
+                "           if(first == 'dean') {" +
+                "               if(cells[i].innerHTML.includes('img')) {" +
+                "                   continue;" +
+                "               }" +
+                "               var key = cells[i].innerText.trim();" +
+                "               var value = cells[++i].innerText.trim();" +
+                "               hod[key] = value;" +
+                "           } else {" +
+                "               if(cells[i].innerHTML.includes('img')) {" +
+                "                   continue;" +
+                "           }" +
+                "           var key = cells[i].innerText.trim();" +
+                "           var value = cells[++i].innerText.trim();" +
+                "           dean[key] = value;" +
+                "       }" +
+                "   }" +
+                "   obj['dean'] = dean;" +
+                "   obj['hod'] = hod;" +
                 "}" +
                 "});" +
                 "return obj;" +
@@ -1184,16 +1182,16 @@ public class VTOP {
                 "var data = 'verifyMenu=true&winImage=' + $('#winImage').val() + '&authorizedID=' + $('#authorizedIDX').val() + '&nocache=@(new Date().getTime())';" +
                 "var successFlag = false;" +
                 "$.ajax({" +
-                "type: 'POST'," +
-                "url : 'academics/common/StudentAttendance'," +
-                "data : data," +
-                "async: false," +
-                "success: function(response) {" +
-                "if(response.toLowerCase().includes('attendance')) {" +
-                "$('#page-wrapper').html(response);" +
-                "successFlag = true;" +
-                "}" +
-                "}" +
+                "   type: 'POST'," +
+                "   url : 'academics/common/StudentAttendance'," +
+                "   data : data," +
+                "   async: false," +
+                "   success: function(response) {" +
+                "       if(response.toLowerCase().includes('attendance')) {" +
+                "           $('#page-wrapper').html(response);" +
+                "           successFlag = true;" +
+                "       }" +
+                "   }" +
                 "});" +
                 "return successFlag;" +
                 "})();", new ValueCallback<String>() {
@@ -1222,11 +1220,11 @@ public class VTOP {
                 "var select = document.getElementById('semesterSubId');" +
                 "var options = select.getElementsByTagName('option');" +
                 "for(var i = 0; i < options.length; ++i) {" +
-                "if(options[i].innerText.toLowerCase().includes('" + semester + "')) {" +
-                "select.selectedIndex = i;" +
-                "document.getElementById('viewStudentAttendance').getElementsByTagName('button')[0].click();" +
-                "return true;" +
-                "}" +
+                "   if(options[i].innerText.toLowerCase().includes('" + semester + "')) {" +
+                "       select.selectedIndex = i;" +
+                "       document.getElementById('viewStudentAttendance').getElementsByTagName('button')[0].click();" +
+                "       return true;" +
+                "   }" +
                 "}" +
                 "return false;" +
                 "})();", new ValueCallback<String>() {
@@ -1239,7 +1237,7 @@ public class VTOP {
                         public void run() {
                             downloadAttendance();
                         }
-                    }, 500);
+                    }, 10000);
                 } else {
                     Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
                     isOpened = false;
@@ -1254,46 +1252,45 @@ public class VTOP {
      */
     public void downloadAttendance() {
         webView.evaluateJavascript("(function() {" +
-                "var loading = document.getElementsByTagName('html')[0];" +
+                "var loading = document.getElementsByTagName('body')[0];" +
                 "if(loading.innerText.toLowerCase().includes('loading') || loading.innerText.toLowerCase().includes('please wait')) {" +
-                "return 'loading';" +
-                "} else {" +
+                "   return 'loading';" +
+                "}" +
                 "var division = document.getElementById('getStudentDetails');" +
                 "if(division.getElementsByTagName('td').length == 1) {" +
-                "return 'unavailable';" +
+                "   return 'unavailable';" +
                 "}" +
                 "var heads = division.getElementsByTagName('th');" +
                 "var courseIndex, typeIndex, percentIndex, flag = 0;" +
                 "var columns = heads.length;" +
                 "for(var i = 0; i < columns; ++i) {" +
-                "if(heads[i].innerText.toLowerCase().trim() == 'course code') {" +
-                "courseIndex = i;" +
-                "++flag;" +
-                "}" +
-                "if(heads[i].innerText.toLowerCase().trim() == 'course type') {" +
-                "typeIndex = i;" +
-                "++flag;" +
-                "}" +
-                "if(heads[i].innerText.toLowerCase().trim() == 'attendance percentage') {" +
-                "percentIndex = i;" +
-                "++flag;" +
-                "}" +
-                "if(flag >= 3) {" +
-                "break;" +
-                "}" +
+                "   if(heads[i].innerText.toLowerCase().trim() == 'course code') {" +
+                "       courseIndex = i;" +
+                "       ++flag;" +
+                "   }" +
+                "   if(heads[i].innerText.toLowerCase().trim() == 'course type') {" +
+                "       typeIndex = i;" +
+                "       ++flag;" +
+                "   }" +
+                "   if(heads[i].innerText.toLowerCase().trim() == 'attendance percentage') {" +
+                "       percentIndex = i;" +
+                "       ++flag;" +
+                "   }" +
+                "   if(flag >= 3) {" +
+                "       break;" +
+                "   }" +
                 "}" +
                 "var obj = {};" +
                 "var cells = division.getElementsByTagName('td');" +
                 "for(var i = 0; courseIndex < cells.length && typeIndex < cells.length && percentIndex < cells.length; ++i) {" +
-                "var temp = {};" +
-                "temp['course'] = cells[courseIndex].innerText.trim();" +
-                "temp['type'] = cells[typeIndex].innerText.trim();" +
-                "temp['percent'] = cells[percentIndex].innerText.trim();" +
-                "obj[i.toString()] = temp;" +
-                "courseIndex += columns;" +
-                "typeIndex += columns;" +
-                "percentIndex += columns;" +
-                "}" +
+                "   var temp = {};" +
+                "   temp['course'] = cells[courseIndex].innerText.trim();" +
+                "   temp['type'] = cells[typeIndex].innerText.trim();" +
+                "   temp['percent'] = cells[percentIndex].innerText.trim();" +
+                "   obj[i.toString()] = temp;" +
+                "   courseIndex += columns;" +
+                "   typeIndex += columns;" +
+                "   percentIndex += columns;" +
                 "}" +
                 "return obj;" +
                 "})();", new ValueCallback<String>() {
@@ -1368,17 +1365,17 @@ public class VTOP {
                 "var data = 'verifyMenu=true&winImage=' + $('#winImage').val() + '&authorizedID=' + $('#authorizedIDX').val() + '&nocache=@(new Date().getTime())';" +
                 "var successFlag = false;" +
                 "$.ajax({" +
-                "type: 'POST'," +
-                "url : 'academics/common/StudentClassMessage'," +
-                "data : data," +
-                "async: false," +
-                "success: function(response) {" +
-                "if(response.toLowerCase().includes('no messages')) {" +
-                "successFlag = true;" +
-                "} else {" +
-                "successFlag = 'new';" +
-                "}" +
-                "}" +
+                "   type: 'POST'," +
+                "   url : 'academics/common/StudentClassMessage'," +
+                "   data : data," +
+                "   async: false," +
+                "   success: function(response) {" +
+                "       if(response.toLowerCase().includes('no messages')) {" +
+                "           successFlag = true;" +
+                "       } else {" +
+                "           successFlag = 'new';" +
+                "       }" +
+                "   }" +
                 "});" +
                 "return successFlag;" +
                 "})();", new ValueCallback<String>() {
@@ -1436,27 +1433,27 @@ public class VTOP {
                 "var data = 'verifyMenu=true&winImage=' + $('#winImage').val() + '&authorizedID=' + $('#authorizedIDX').val() + '&nocache=@(new Date().getTime())';" +
                 "var obj = {};" +
                 "$.ajax({" +
-                "type: 'POST'," +
-                "url : 'spotlight/spotlightViewOld'," +
-                "data : data," +
-                "async: false," +
-                "success: function(response) {" +
-                "var doc = new DOMParser().parseFromString(response, 'text/html');" +
-                "if(!doc.getElementsByClassName('box-info')) {" +
-                "obj = 'nothing';" +
-                "} else {" +
-                "boxes = doc.getElementsByClassName('box-info');" +
-                "for(var i = 0; i < boxes.length; ++i) {" +
-                "var category = boxes[i].getElementsByTagName('h4')[0].innerText.trim();" +
-                "var links = boxes[i].getElementsByTagName('a');" +
-                "var temp = {};" +
-                "for(var j = 0; j < links.length; ++j) {" +
-                "temp[j] = links[j].innerText.trim();" +
-                "}" +
-                "obj[category] = temp;" +
-                "}" +
-                "}" +
-                "}" +
+                "   type: 'POST'," +
+                "   url : 'spotlight/spotlightViewOld'," +
+                "   data : data," +
+                "   async: false," +
+                "   success: function(response) {" +
+                "       var doc = new DOMParser().parseFromString(response, 'text/html');" +
+                "       if(!doc.getElementsByClassName('box-info')) {" +
+                "           obj = 'nothing';" +
+                "       } else {" +
+                "           boxes = doc.getElementsByClassName('box-info');" +
+                "           for(var i = 0; i < boxes.length; ++i) {" +
+                "               var category = boxes[i].getElementsByTagName('h4')[0].innerText.trim();" +
+                "               var links = boxes[i].getElementsByTagName('a');" +
+                "               var temp = {};" +
+                "               for(var j = 0; j < links.length; ++j) {" +
+                "                   temp[j] = links[j].innerText.trim();" +
+                "               }" +
+                "               obj[category] = temp;" +
+                "           }" +
+                "       }" +
+                "   }" +
                 "});" +
                 "return obj;" +
                 "})();", new ValueCallback<String>() {
