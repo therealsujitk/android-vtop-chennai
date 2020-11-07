@@ -86,29 +86,41 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/upcoming"
+            android:id="@+id/upcomingContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginEnd="20dp"
-            android:background="@drawable/plain_card"
-            android:orientation="vertical"
-            android:paddingTop="20dp"
+            android:gravity="center_horizontal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/profileFooter">
+            app:layout_constraintTop_toBottomOf="@+id/profileFooter"
+            app:layout_constraintWidth_max="400dp">
 
-            <TextView
+            <LinearLayout
+                android:id="@+id/upcoming"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
+                android:layout_marginTop="20dp"
                 android:layout_marginEnd="20dp"
-                android:layout_marginBottom="20dp"
-                android:text="@string/no_upcoming"
-                android:textAlignment="center"
-                android:textColor="@color/colorPrimary"
-                android:textSize="18sp" />
+                android:background="@drawable/plain_card"
+                android:paddingTop="20dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/profileFooter"
+                tools:ignore="UselessParent">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="20dp"
+                    android:layout_marginBottom="20dp"
+                    android:text="@string/no_upcoming"
+                    android:textAlignment="center"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="18sp" />
+
+            </LinearLayout>
 
         </LinearLayout>
 
@@ -123,7 +135,7 @@
             android:textSize="18sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/upcoming" />
+            app:layout_constraintTop_toBottomOf="@+id/upcomingContainer" />
 
         <HorizontalScrollView
             android:id="@+id/classes"
