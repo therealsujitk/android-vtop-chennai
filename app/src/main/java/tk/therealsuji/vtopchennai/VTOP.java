@@ -10,7 +10,6 @@ import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.Handler;
 import android.util.Base64;
 import android.view.View;
 import android.webkit.CookieManager;
@@ -378,27 +377,31 @@ public class VTOP {
         String semester = sharedPreferences.getString("semester", "null");
 
         webView.evaluateJavascript("(function() {" +
-                "var select = document.getElementById('semesterSubId');" +
-                "var options = select.getElementsByTagName('option');" +
+                "var semID = '';" +
+                "var options = document.getElementById('semesterSubId').getElementsByTagName('option');" +
                 "for(var i = 0; i < options.length; ++i) {" +
                 "   if(options[i].innerText.toLowerCase().includes('" + semester + "')) {" +
-                "       select.selectedIndex = i;" +
-                "       document.getElementById('studentTimeTable').getElementsByTagName('button')[0].click();" +
-                "       return true;" +
+                "       semID = options[i].value;" +
                 "   }" +
                 "}" +
-                "return false;" +
+                "var data = 'semesterSubId=' + semID + '&authorizedID=' + $('#authorizedIDX').val();" +
+                "var successFlag = false;" +
+                "$.ajax({" +
+                "   type : 'POST'," +
+                "   url : 'processViewTimeTable'," +
+                "   data : data," +
+                "   async: false," +
+                "   success : function(response) {" +
+                "       $('#main-section').html(response);" +
+                "       successFlag = true;" +
+                "   }" +
+                "});" +
+                "return successFlag;" +
                 "})();", new ValueCallback<String>() {
             @Override
             public void onReceiveValue(String value) {
                 if (value.equals("true")) {
-                    Handler handler = new Handler();
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            downloadTimetable();
-                        }
-                    }, 500);
+                    downloadTimetable();
                 } else {
                     Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
                     isOpened = false;
@@ -413,10 +416,6 @@ public class VTOP {
      */
     public void downloadTimetable() {
         webView.evaluateJavascript("(function() {" +
-                "var loading = document.getElementsByTagName('body')[0];" +
-                "if(loading.innerText.toLowerCase().includes('loading') || loading.innerText.toLowerCase().includes('please wait')) {" +
-                "   return 'loading';" +
-                "}" +
                 "var obj = {};" +
                 "var spans = document.getElementById('getStudentDetails').getElementsByTagName('span');" +
                 "var credits = '0';" +
@@ -508,20 +507,6 @@ public class VTOP {
                     Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
                     isOpened = false;
                     reloadPage();
-                } else if (temp.equals("loading")) {
-                    Handler handler = new Handler();
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (counter >= 60) {
-                                Toast.makeText(context, "Sorry, we had some trouble connecting to the server. Please try again later.", Toast.LENGTH_LONG).show();
-                                ((Activity) context).finish();
-                                return;
-                            }
-                            ++counter;
-                            downloadTimetable();
-                        }
-                    }, 500);
                 } else if (temp.equals("unreleased") || temp.equals("")) {
                     myDatabase.execSQL("DROP TABLE IF EXISTS timetable_lab");
                     myDatabase.execSQL("CREATE TABLE IF NOT EXISTS timetable_lab (id INT(3) PRIMARY KEY, start_time VARCHAR, end_time VARCHAR, mon VARCHAR, tue VARCHAR, wed VARCHAR, thu VARCHAR, fri VARCHAR, sat VARCHAR, sun VARCHAR)");
@@ -576,9 +561,15 @@ public class VTOP {
 
                         for (int i = 0; i < lab.length() / 2 && i < theory.length() / 2; ++i) {
                             String start_time = lab.getString(i + "start");
+                            if (start_time.toLowerCase().equals("lunch")) {
+                                continue;
+                            }
                             myDatabase.execSQL("INSERT INTO timetable_lab (id, start_time) VALUES ('" + i + "', '" + start_time + "')");
 
                             String end_time = lab.getString(i + "end");
+                            if (end_time.toLowerCase().equals("lunch")) {
+                                continue;
+                            }
                             myDatabase.execSQL("UPDATE timetable_lab SET end_time = '" + end_time + "' WHERE id = " + i);
 
                             if (mon.has(i + "lab")) {
@@ -1198,7 +1189,7 @@ public class VTOP {
             @Override
             public void onReceiveValue(String value) {
                 if (value.equals("true")) {
-                    selectAttendance();
+                    downloadAttendance();
                 } else {
                     Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
                     isOpened = false;
@@ -1211,87 +1202,67 @@ public class VTOP {
     /*
         Function to select the attendance to download
      */
-    public void selectAttendance() {
+    public void downloadAttendance() {
         loading.setText(context.getString(R.string.downloading_attendance));
 
         String semester = sharedPreferences.getString("semester", "null");
 
         webView.evaluateJavascript("(function() {" +
-                "var select = document.getElementById('semesterSubId');" +
-                "var options = select.getElementsByTagName('option');" +
+                "var semID = '';" +
+                "var options = document.getElementById('semesterSubId').getElementsByTagName('option');" +
                 "for(var i = 0; i < options.length; ++i) {" +
                 "   if(options[i].innerText.toLowerCase().includes('" + semester + "')) {" +
-                "       select.selectedIndex = i;" +
-                "       document.getElementById('viewStudentAttendance').getElementsByTagName('button')[0].click();" +
-                "       return true;" +
+                "       semID = options[i].value;" +
                 "   }" +
                 "}" +
-                "return false;" +
-                "})();", new ValueCallback<String>() {
-            @Override
-            public void onReceiveValue(String value) {
-                if (value.equals("true")) {
-                    Handler handler = new Handler();
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            downloadAttendance();
-                        }
-                    }, 10000);
-                } else {
-                    Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
-                    isOpened = false;
-                    reloadPage();
-                }
-            }
-        });
-    }
-
-    /*
-        Function to store the attendance in the SQLite database.
-     */
-    public void downloadAttendance() {
-        webView.evaluateJavascript("(function() {" +
-                "var loading = document.getElementsByTagName('body')[0];" +
-                "if(loading.innerText.toLowerCase().includes('loading') || loading.innerText.toLowerCase().includes('please wait')) {" +
-                "   return 'loading';" +
-                "}" +
-                "var division = document.getElementById('getStudentDetails');" +
-                "if(division.getElementsByTagName('td').length == 1) {" +
-                "   return 'unavailable';" +
-                "}" +
-                "var heads = division.getElementsByTagName('th');" +
-                "var courseIndex, typeIndex, percentIndex, flag = 0;" +
-                "var columns = heads.length;" +
-                "for(var i = 0; i < columns; ++i) {" +
-                "   if(heads[i].innerText.toLowerCase().trim() == 'course code') {" +
-                "       courseIndex = i;" +
-                "       ++flag;" +
-                "   }" +
-                "   if(heads[i].innerText.toLowerCase().trim() == 'course type') {" +
-                "       typeIndex = i;" +
-                "       ++flag;" +
-                "   }" +
-                "   if(heads[i].innerText.toLowerCase().trim() == 'attendance percentage') {" +
-                "       percentIndex = i;" +
-                "       ++flag;" +
-                "   }" +
-                "   if(flag >= 3) {" +
-                "       break;" +
-                "   }" +
-                "}" +
+                "var data = 'semesterSubId=' + semID + '&authorizedID=' + $('#authorizedIDX').val();" +
                 "var obj = {};" +
-                "var cells = division.getElementsByTagName('td');" +
-                "for(var i = 0; courseIndex < cells.length && typeIndex < cells.length && percentIndex < cells.length; ++i) {" +
-                "   var temp = {};" +
-                "   temp['course'] = cells[courseIndex].innerText.trim();" +
-                "   temp['type'] = cells[typeIndex].innerText.trim();" +
-                "   temp['percent'] = cells[percentIndex].innerText.trim();" +
-                "   obj[i.toString()] = temp;" +
-                "   courseIndex += columns;" +
-                "   typeIndex += columns;" +
-                "   percentIndex += columns;" +
-                "}" +
+                "$.ajax({" +
+                "   type : 'POST'," +
+                "   url : 'processViewStudentAttendance'," +
+                "   data : data," +
+                "   async: false," +
+                "   success : function(response) {" +
+                "       var doc = new DOMParser().parseFromString(response, 'text/html');" +
+                "       var division = doc.getElementById('getStudentDetails');" +
+                "       if(division.getElementsByTagName('td').length == 1) {" +
+                "           obj = 'unavailable';" +
+                "       } else {" +
+                "           var heads = division.getElementsByTagName('th');" +
+                "           var courseIndex = 0, typeIndex = 0, percentIndex = 0, flag = 0;" +
+                "           var columns = heads.length;" +
+                "           for(var i = 0; i < columns; ++i) {" +
+                "               var header = heads[i].innerText.trim().toLowerCase();" +
+                "               if(header.includes('course') &&  header.includes('code')) {" +
+                "                   courseIndex = i;" +
+                "                   ++flag;" +
+                "               }" +
+                "               if(header.includes('course') && header.includes('type')) {" +
+                "                   typeIndex = i;" +
+                "                   ++flag;" +
+                "               }" +
+                "               if(header.includes('percentage')) {" +
+                "                   percentIndex = i;" +
+                "                   ++flag;" +
+                "               }" +
+                "               if(flag >= 3) {" +
+                "                   break;" +
+                "               }" +
+                "           }" +
+                "           var cells = division.getElementsByTagName('td');" +
+                "           for(var i = 0; courseIndex < cells.length && typeIndex < cells.length && percentIndex < cells.length; ++i) {" +
+                "               var temp = {};" +
+                "               temp['course'] = cells[courseIndex].innerText.trim();" +
+                "               temp['type'] = cells[typeIndex].innerText.trim();" +
+                "               temp['percent'] = cells[percentIndex].innerText.trim();" +
+                "               obj[i.toString()] = temp;" +
+                "               courseIndex += columns;" +
+                "               typeIndex += columns;" +
+                "               percentIndex += columns;" +
+                "           }" +
+                "       }" +
+                "   }" +
+                "});" +
                 "return obj;" +
                 "})();", new ValueCallback<String>() {
             @Override
@@ -1301,20 +1272,6 @@ public class VTOP {
                     Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
                     isOpened = false;
                     reloadPage();
-                } else if (temp.equals("loading")) {
-                    Handler handler = new Handler();
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (counter >= 60) {
-                                Toast.makeText(context, "Sorry, we had some trouble connecting to the server. Please try again later.", Toast.LENGTH_LONG).show();
-                                ((Activity) context).finish();
-                                return;
-                            }
-                            ++counter;
-                            downloadAttendance();
-                        }
-                    }, 500);
                 } else if (temp.equals("unavailable") || temp.equals("")) {
                     try {
                         myDatabase.execSQL("DROP TABLE IF EXISTS attendance");
