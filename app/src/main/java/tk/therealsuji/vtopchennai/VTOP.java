@@ -1479,12 +1479,20 @@ public class VTOP {
 
     public void loadUpdatePage() {
         checkUpdate = true;
-        webView.loadUrl("http://therealsujitk.epizy.com/version.php");
+        webView.loadUrl("http://vtopchennai.therealsuji.tk/details.json");
     }
 
     public void checkUpdates() {
         webView.evaluateJavascript("(function() {" +
-                "return document.getElementById('vtop-chennai-vc').innerText;" +
+                "var versionCode = 1" +
+                "cells = document.getElementsByTagName('td');" +
+                "for(var i = cells.length - 1; i > 0; ++i) {" +
+                "   if (cells[i].innerText.trim().toLowerCase().includes('version-code')) {" +
+                "       versionCode = cells[++i].innerText.trim();" +
+                "       break;" +
+                "   }" +
+                "}" +
+                "return versionCode;" +
                 "})();", new ValueCallback<String>() {
             @Override
             public void onReceiveValue(String value) {
