@@ -75,6 +75,10 @@ public class HomeActivity extends AppCompatActivity {
         startActivity(new Intent(HomeActivity.this, DownloadActivity.class));
     }
 
+    public void openTheme(View view) {
+
+    }
+
     public void openNotifications(View view) {
         Intent intent = new Intent();
         intent.setAction("android.settings.APP_NOTIFICATION_SETTINGS");

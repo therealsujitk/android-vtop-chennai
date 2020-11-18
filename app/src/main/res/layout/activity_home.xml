@@ -506,6 +506,42 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/theme"
+                    android:layout_width="125dp"
+                    android:layout_height="125dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:background="@drawable/button_card"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center_vertical"
+                    android:onClick="openTheme"
+                    android:orientation="vertical"
+                    android:stateListAnimator="@animator/item_elevation">
+
+                    <ImageView
+                        android:id="@+id/imageTheme"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clickable="false"
+                        android:contentDescription="@string/theme_description"
+                        app:srcCompat="@drawable/ic_theme" />
+
+                    <TextView
+                        android:id="@+id/textTheme"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:clickable="false"
+                        android:text="@string/theme"
+                        android:textAlignment="center"
+                        android:textColor="@color/colorPrimary"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <LinearLayout
                     android:id="@+id/notifications"
                     android:layout_width="125dp"
                     android:layout_height="125dp"
