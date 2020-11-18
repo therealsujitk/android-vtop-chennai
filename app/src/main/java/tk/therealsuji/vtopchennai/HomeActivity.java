@@ -82,10 +82,8 @@ public class HomeActivity extends AppCompatActivity {
     public void openNotifications(View view) {
         Intent intent = new Intent();
         intent.setAction("android.settings.APP_NOTIFICATION_SETTINGS");
-
         intent.putExtra("app_package", getPackageName());
         intent.putExtra("app_uid", getApplicationInfo().uid);
-
         intent.putExtra("android.provider.extra.APP_PACKAGE", getPackageName());
 
         startActivity(intent);
