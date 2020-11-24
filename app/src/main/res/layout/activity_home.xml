@@ -506,7 +506,7 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/theme"
+                    android:id="@+id/appearance"
                     android:layout_width="125dp"
                     android:layout_height="125dp"
                     android:layout_marginStart="10dp"
@@ -522,20 +522,20 @@
                     android:stateListAnimator="@animator/item_elevation">
 
                     <ImageView
-                        android:id="@+id/imageTheme"
+                        android:id="@+id/imageAppearance"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:clickable="false"
-                        android:contentDescription="@string/theme_description"
+                        android:contentDescription="@string/appearance_description"
                         app:srcCompat="@drawable/ic_theme" />
 
                     <TextView
-                        android:id="@+id/textTheme"
+                        android:id="@+id/textAppearance"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
                         android:clickable="false"
-                        android:text="@string/theme"
+                        android:text="@string/appearance"
                         android:textAlignment="center"
                         android:textColor="@color/colorPrimary"
                         android:textStyle="bold" />

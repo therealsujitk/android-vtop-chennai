@@ -66,8 +66,8 @@
     <string name="share_description">Icon for the share button.</string>
     <string name="refresh">Refresh Data</string>
     <string name="refresh_description">Icon for the refresh button.</string>
-    <string name="theme">Select Theme</string>
-    <string name="theme_description">Icon for the theme button.</string>
+    <string name="appearance">Appearance</string>
+    <string name="appearance_description">Icon for the appearance button.</string>
     <string name="notifications">Notifications</string>
     <string name="notifications_description">Icon for the notification settings button.</string>
     <string name="privacy_description">Icon for the privacy button.</string>
