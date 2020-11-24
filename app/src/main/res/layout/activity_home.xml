@@ -517,7 +517,7 @@
                     android:clickable="true"
                     android:focusable="true"
                     android:gravity="center_vertical"
-                    android:onClick="openTheme"
+                    android:onClick="openAppearance"
                     android:orientation="vertical"
                     android:stateListAnimator="@animator/item_elevation">
 
@@ -663,6 +663,7 @@
             app:layout_constraintTop_toBottomOf="@+id/app" />
 
         <TextView
+            android:id="@+id/builtBy"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"

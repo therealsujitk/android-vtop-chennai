@@ -1,6 +1,8 @@
 package tk.therealsuji.vtopchennai;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Typeface;
@@ -17,6 +19,10 @@ import androidx.core.content.res.ResourcesCompat;
 import java.util.Objects;
 
 public class StaffActivity extends AppCompatActivity {
+
+    private void setNight() {
+        getWindow().setBackgroundDrawableResource(R.color.colorDark);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -337,5 +343,23 @@ public class StaffActivity extends AppCompatActivity {
 
         c.close();
         myDatabase.close();
+
+        /*
+            Set appearance
+         */
+        SharedPreferences sharedPreferences = this.getSharedPreferences("tk.therealsuji.vtopchennai", Context.MODE_PRIVATE);
+        String appearance = sharedPreferences.getString("appearance", "system");
+
+        if (appearance.equals("night")) {
+            setNight();
+        } else if (appearance.equals("system")) {
+            switch (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) {
+                case Configuration.UI_MODE_NIGHT_YES:
+                    setNight();
+                    break;
+                case Configuration.UI_MODE_NIGHT_NO:
+                    break;
+            }
+        }
     }
 }

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
@@ -11,6 +12,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 public class LoginActivity extends AppCompatActivity {
     SharedPreferences sharedPreferences;
@@ -30,6 +32,13 @@ public class LoginActivity extends AppCompatActivity {
 
     public void openPrivacy(View view) {
         startActivity(new Intent(LoginActivity.this, PrivacyActivity.class));
+    }
+
+    private void setNight() {
+        getWindow().setBackgroundDrawableResource(R.color.colorDark);
+
+        findViewById(R.id.username).setBackground(ContextCompat.getDrawable(this, R.drawable.text_field_primary_night));
+        findViewById(R.id.password).setBackground(ContextCompat.getDrawable(this, R.drawable.text_field_primary_night));
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -83,5 +92,22 @@ public class LoginActivity extends AppCompatActivity {
                 return false;
             }
         });
+
+        /*
+            Set appearance
+         */
+        String appearance = sharedPreferences.getString("appearance", "system");
+
+        if (appearance.equals("night")) {
+            setNight();
+        } else if (appearance.equals("system")) {
+            switch (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) {
+                case Configuration.UI_MODE_NIGHT_YES:
+                    setNight();
+                    break;
+                case Configuration.UI_MODE_NIGHT_NO:
+                    break;
+            }
+        }
     }
 }

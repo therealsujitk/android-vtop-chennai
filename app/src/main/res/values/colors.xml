@@ -2,6 +2,8 @@
 <resources>
     <color name="colorLight">#FFFFFF</color>
     <color name="colorLightTransparent">#CCFFFFFF</color>
+    <color name="colorDark">#333333</color>
+    <color name="colorDarkTransparent">#CC333333</color>
 
     <color name="colorPrimary">#3B7DD8</color>
     <color name="colorAccent">#4A91F2</color>
@@ -11,5 +13,7 @@
     <color name="colorBlue03">#8DBDFF</color>
     <color name="colorBlue04">#BFD6F6</color>
     <color name="colorBlue05">#D6E7FF</color>
-    <color name="colorBlue06">#F3F8FF</color>
+    <color name="colorBlue06">#CCF3F8FF</color>
+
+    <color name="colorBlue07">#CCAABAD1</color>
 </resources>

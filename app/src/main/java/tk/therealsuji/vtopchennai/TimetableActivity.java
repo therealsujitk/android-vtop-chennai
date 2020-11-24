@@ -1,6 +1,8 @@
 package tk.therealsuji.vtopchennai;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Typeface;
@@ -167,6 +169,11 @@ public class TimetableActivity extends AppCompatActivity {
 
             findViewById(R.id.noData).setVisibility(View.VISIBLE);
         }
+    }
+
+    private void setNight() {
+        getWindow().setBackgroundDrawableResource(R.color.colorDark);
+        findViewById(R.id.days).setBackground(ContextCompat.getDrawable(this, R.color.colorDarkTransparent));
     }
 
     @Override
@@ -484,6 +491,24 @@ public class TimetableActivity extends AppCompatActivity {
             setFriday(null);
         } else if (day == 7) {
             setSaturday(null);
+        }
+
+        /*
+            Set appearance
+         */
+        SharedPreferences sharedPreferences = this.getSharedPreferences("tk.therealsuji.vtopchennai", Context.MODE_PRIVATE);
+        String appearance = sharedPreferences.getString("appearance", "system");
+
+        if (appearance.equals("night")) {
+            setNight();
+        } else if (appearance.equals("system")) {
+            switch (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) {
+                case Configuration.UI_MODE_NIGHT_YES:
+                    setNight();
+                    break;
+                case Configuration.UI_MODE_NIGHT_NO:
+                    break;
+            }
         }
     }
 }

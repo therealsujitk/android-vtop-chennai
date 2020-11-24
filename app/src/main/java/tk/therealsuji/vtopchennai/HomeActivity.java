@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Typeface;
@@ -75,8 +76,8 @@ public class HomeActivity extends AppCompatActivity {
         startActivity(new Intent(HomeActivity.this, DownloadActivity.class));
     }
 
-    public void openTheme(View view) {
-
+    public void openAppearance(View view) {
+        // Code to choose appearance
     }
 
     public void openNotifications(View view) {
@@ -99,6 +100,14 @@ public class HomeActivity extends AppCompatActivity {
         finish();
     }
 
+    private void setNight() {
+        getWindow().setBackgroundDrawableResource(R.color.colorDark);
+
+        TextView refreshed = findViewById(R.id.refreshed);
+        refreshed.setTextColor(getColor(R.color.colorLight));
+        TextView builtBy = findViewById(R.id.builtBy);
+        builtBy.setTextColor(getColor(R.color.colorLight));
+    }
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -472,5 +481,22 @@ public class HomeActivity extends AppCompatActivity {
         String refreshed = sharedPreferences.getString("refreshed", getString(R.string.refreshed));
         TextView refreshedView = findViewById(R.id.refreshed);
         refreshedView.setText(refreshed);
+
+        /*
+            Set appearance
+         */
+        String appearance = sharedPreferences.getString("appearance", "system");
+
+        if (appearance.equals("night")) {
+            setNight();
+        } else if (appearance.equals("system")) {
+            switch (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) {
+                case Configuration.UI_MODE_NIGHT_YES:
+                    setNight();
+                    break;
+                case Configuration.UI_MODE_NIGHT_NO:
+                    break;
+            }
+        }
     }
 }
