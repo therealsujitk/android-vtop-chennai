@@ -12,23 +12,23 @@ import java.util.Objects;
 
 public class PrivacyActivity extends AppCompatActivity {
 
-    private void setNight() {
-        getWindow().setBackgroundDrawableResource(R.color.colorDark);
+    private void setDay() {
+        getWindow().setBackgroundDrawableResource(R.color.colorLight);
 
         TextView privacyIntro = findViewById(R.id.privacyIntro);
-        privacyIntro.setTextColor(getColor(R.color.colorLight));
+        privacyIntro.setTextColor(getColor(R.color.colorDark));
         TextView privacyOwnership = findViewById(R.id.privacyOwnership);
-        privacyOwnership.setTextColor(getColor(R.color.colorLight));
+        privacyOwnership.setTextColor(getColor(R.color.colorDark));
         TextView privacyOwnershipContent = findViewById(R.id.privacyOwnershipContent);
-        privacyOwnershipContent.setTextColor(getColor(R.color.colorLight));
+        privacyOwnershipContent.setTextColor(getColor(R.color.colorDark));
         TextView privacyData = findViewById(R.id.privacyData);
-        privacyData.setTextColor(getColor(R.color.colorLight));
+        privacyData.setTextColor(getColor(R.color.colorDark));
         TextView privacyDataContent = findViewById(R.id.privacyDataContent);
-        privacyDataContent.setTextColor(getColor(R.color.colorLight));
+        privacyDataContent.setTextColor(getColor(R.color.colorDark));
         TextView privacyContact = findViewById(R.id.privacyContact);
-        privacyContact.setTextColor(getColor(R.color.colorLight));
+        privacyContact.setTextColor(getColor(R.color.colorDark));
         TextView privacyContactContent = findViewById(R.id.privacyContactContent);
-        privacyContactContent.setTextColor(getColor(R.color.colorLight));
+        privacyContactContent.setTextColor(getColor(R.color.colorDark));
     }
 
     @Override
@@ -43,14 +43,14 @@ public class PrivacyActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences = this.getSharedPreferences("tk.therealsuji.vtopchennai", Context.MODE_PRIVATE);
         String appearance = sharedPreferences.getString("appearance", "system");
 
-        if (appearance.equals("night")) {
-            setNight();
+        if (appearance.equals("day")) {
+            setDay();
         } else if (appearance.equals("system")) {
             switch (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) {
                 case Configuration.UI_MODE_NIGHT_YES:
-                    setNight();
                     break;
                 case Configuration.UI_MODE_NIGHT_NO:
+                    setDay();
                     break;
             }
         }

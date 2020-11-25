@@ -20,9 +20,10 @@ import androidx.core.content.res.ResourcesCompat;
 import java.util.Objects;
 
 public class AttendanceActivity extends AppCompatActivity {
+    boolean night = true;
 
-    private void setNight() {
-        getWindow().setBackgroundDrawableResource(R.color.colorDark);
+    private void setDay() {
+        getWindow().setBackgroundDrawableResource(R.color.colorLight);
     }
 
     @Override
@@ -30,6 +31,26 @@ public class AttendanceActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_attendance);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+
+        /*
+            Set appearance
+         */
+        SharedPreferences sharedPreferences = this.getSharedPreferences("tk.therealsuji.vtopchennai", Context.MODE_PRIVATE);
+        String appearance = sharedPreferences.getString("appearance", "system");
+
+        if (appearance.equals("day")) {
+            setDay();
+            night = false;
+        } else if (appearance.equals("system")) {
+            switch (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) {
+                case Configuration.UI_MODE_NIGHT_YES:
+                    break;
+                case Configuration.UI_MODE_NIGHT_NO:
+                    setDay();
+                    night = false;
+                    break;
+            }
+        }
 
         LinearLayout attendance = findViewById(R.id.attendance);
         float pixelDensity = this.getResources().getDisplayMetrics().density;
@@ -63,7 +84,11 @@ public class AttendanceActivity extends AppCompatActivity {
                 blockParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (5 * pixelDensity));
             }
             block.setLayoutParams(blockParams);
-            block.setBackground(ContextCompat.getDrawable(this, R.drawable.plain_card));
+            if (night) {
+                block.setBackground(ContextCompat.getDrawable(this, R.drawable.plain_card_night));
+            } else {
+                block.setBackground(ContextCompat.getDrawable(this, R.drawable.plain_card));
+            }
             block.setGravity(Gravity.CENTER_VERTICAL);
             block.setOrientation(LinearLayout.HORIZONTAL);
 
@@ -146,23 +171,5 @@ public class AttendanceActivity extends AppCompatActivity {
 
         c.close();
         myDatabase.close();
-
-        /*
-            Set appearance
-         */
-        SharedPreferences sharedPreferences = this.getSharedPreferences("tk.therealsuji.vtopchennai", Context.MODE_PRIVATE);
-        String appearance = sharedPreferences.getString("appearance", "system");
-
-        if (appearance.equals("night")) {
-            setNight();
-        } else if (appearance.equals("system")) {
-            switch (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) {
-                case Configuration.UI_MODE_NIGHT_YES:
-                    setNight();
-                    break;
-                case Configuration.UI_MODE_NIGHT_NO:
-                    break;
-            }
-        }
     }
 }

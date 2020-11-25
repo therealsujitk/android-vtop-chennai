@@ -10,11 +10,13 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 
 import java.text.SimpleDateFormat;
@@ -100,13 +102,39 @@ public class HomeActivity extends AppCompatActivity {
         finish();
     }
 
-    private void setNight() {
-        getWindow().setBackgroundDrawableResource(R.color.colorDark);
+    private void setDay() {
+        getWindow().setBackgroundDrawableResource(R.color.colorLight);
+
+        ImageView avatar = findViewById(R.id.avatar);
+        avatar.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.avatar));
+
+        TextView id = findViewById(R.id.id);
+        id.setTextColor(getColor(R.color.colorLight));
+        TextView credits = findViewById(R.id.credits);
+        credits.setTextColor(getColor(R.color.colorLight));
 
         TextView refreshed = findViewById(R.id.refreshed);
-        refreshed.setTextColor(getColor(R.color.colorLight));
+        refreshed.setTextColor(getColor(R.color.colorDark));
         TextView builtBy = findViewById(R.id.builtBy);
-        builtBy.setTextColor(getColor(R.color.colorLight));
+        builtBy.setTextColor(getColor(R.color.colorDark));
+
+        findViewById(R.id.upcoming).setBackground(ContextCompat.getDrawable(this, R.drawable.plain_card));
+
+        findViewById(R.id.timetable).setBackground(ContextCompat.getDrawable(this, R.drawable.button_card));
+        findViewById(R.id.attendance).setBackground(ContextCompat.getDrawable(this, R.drawable.button_card));
+        findViewById(R.id.messages).setBackground(ContextCompat.getDrawable(this, R.drawable.button_card));
+
+        findViewById(R.id.spotlight).setBackground(ContextCompat.getDrawable(this, R.drawable.button_card));
+        findViewById(R.id.staff).setBackground(ContextCompat.getDrawable(this, R.drawable.button_card));
+        findViewById(R.id.faculty).setBackground(ContextCompat.getDrawable(this, R.drawable.button_card));
+
+
+        findViewById(R.id.share).setBackground(ContextCompat.getDrawable(this, R.drawable.button_card));
+        findViewById(R.id.refresh).setBackground(ContextCompat.getDrawable(this, R.drawable.button_card));
+        findViewById(R.id.appearance).setBackground(ContextCompat.getDrawable(this, R.drawable.button_card));
+        findViewById(R.id.notifications).setBackground(ContextCompat.getDrawable(this, R.drawable.button_card));
+        findViewById(R.id.privacy).setBackground(ContextCompat.getDrawable(this, R.drawable.button_card));
+        findViewById(R.id.signOut).setBackground(ContextCompat.getDrawable(this, R.drawable.button_card));
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -487,14 +515,14 @@ public class HomeActivity extends AppCompatActivity {
          */
         String appearance = sharedPreferences.getString("appearance", "system");
 
-        if (appearance.equals("night")) {
-            setNight();
+        if (appearance.equals("day")) {
+            setDay();
         } else if (appearance.equals("system")) {
             switch (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) {
                 case Configuration.UI_MODE_NIGHT_YES:
-                    setNight();
                     break;
                 case Configuration.UI_MODE_NIGHT_NO:
+                    setDay();
                     break;
             }
         }

@@ -75,7 +75,7 @@
             android:layout_marginTop="20dp"
             android:layout_marginEnd="45dp"
             android:autofillHints="Enter your VTOP username"
-            android:background="@drawable/text_field_primary"
+            android:background="@drawable/text_field_primary_night"
             android:ems="10"
             android:hint="@string/captcha"
             android:inputType="textCapCharacters"
@@ -121,7 +121,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="45dp"
             android:layout_marginEnd="45dp"
-            android:background="@drawable/text_field_primary"
+            android:background="@drawable/text_field_primary_night"
             android:paddingStart="10dp"
             android:paddingEnd="10dp" />
 
