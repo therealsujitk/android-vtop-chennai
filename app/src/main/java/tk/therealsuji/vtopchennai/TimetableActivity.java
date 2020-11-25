@@ -453,7 +453,7 @@ public class TimetableActivity extends AppCompatActivity {
         myDatabase.close();
 
         Calendar c = Calendar.getInstance();
-        day = c.get(Calendar.DAY_OF_WEEK);
+        day = c.get(Calendar.DAY_OF_WEEK) - 1;
 
         //HorizontalScrollView daysView = findViewById(R.id.days);
         //int halfWidth = daysView.getMeasuredWidth() / 14;
