@@ -1429,7 +1429,7 @@ public class VTOP {
                         myDatabase.execSQL("DROP TABLE IF EXISTS spotlight");
                         myDatabase.execSQL("CREATE TABLE IF NOT EXISTS spotlight (id INT(3) PRIMARY KEY, category VARCHAR, announcement VARCHAR)");
 
-                        loading.setText(context.getString(R.string.loading));
+                        loading.setText(context.getString(R.string.checking_update));
                         sharedPreferences.edit().putString("isLoggedIn", "true").apply();
                         myDatabase.close();
 
@@ -1461,7 +1461,7 @@ public class VTOP {
                             }
                         }
 
-                        loading.setText(context.getString(R.string.loading));
+                        loading.setText(context.getString(R.string.checking_update));
                         sharedPreferences.edit().putString("isLoggedIn", "true").apply();
                         myDatabase.close();
 
@@ -1493,6 +1493,7 @@ public class VTOP {
                     sharedPreferences.edit().putString("versionCode", versionCode).apply();
                 }
 
+                loading.setText(context.getString(R.string.loading));
                 Intent intent = new Intent(context, HomeActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 context.startActivity(intent);

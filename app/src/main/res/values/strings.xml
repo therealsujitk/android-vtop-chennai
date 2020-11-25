@@ -27,6 +27,7 @@
     <string name="downloading_spotlight">Downloading Spotlight</string>
     <string name="downloading_staff">Downloading Staff Info</string>
     <string name="downloading_faculty">Downloading Faculty Info</string>
+    <string name="checking_update">Checking for updates</string>
 
     <string name="captcha">Enter Captcha</string>
     <string name="captcha_description">Image that shows the captcha code.</string>
