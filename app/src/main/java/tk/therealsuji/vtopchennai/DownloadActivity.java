@@ -44,10 +44,13 @@ public class DownloadActivity extends AppCompatActivity {
         vtop.selectTimetable();
     }
 
-    private void setNight() {
-        getWindow().setBackgroundDrawableResource(R.color.colorDark);
-        findViewById(R.id.captcha).setBackground(ContextCompat.getDrawable(this, R.drawable.text_field_primary_night));
-        findViewById(R.id.selectSemester).setBackground(ContextCompat.getDrawable(this, R.drawable.text_field_primary_night));
+    private void setDay() {
+        getWindow().setBackgroundDrawableResource(R.color.colorLight);
+
+        EditText captcha = findViewById(R.id.captcha);
+        captcha.setBackground(ContextCompat.getDrawable(this, R.drawable.text_field_primary));
+        captcha.setTextColor(getColor(R.color.colorDark));
+        findViewById(R.id.selectSemester).setBackground(ContextCompat.getDrawable(this, R.drawable.text_field_primary));
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -107,14 +110,14 @@ public class DownloadActivity extends AppCompatActivity {
          */
         String appearance = sharedPreferences.getString("appearance", "system");
 
-        if (appearance.equals("night")) {
-            setNight();
+        if (appearance.equals("day")) {
+            setDay();
         } else if (appearance.equals("system")) {
             switch (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) {
                 case Configuration.UI_MODE_NIGHT_YES:
-                    setNight();
                     break;
                 case Configuration.UI_MODE_NIGHT_NO:
+                    setDay();
                     break;
             }
         }

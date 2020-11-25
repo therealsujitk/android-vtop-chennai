@@ -10,6 +10,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -37,8 +38,12 @@ public class LoginActivity extends AppCompatActivity {
     private void setDay() {
         getWindow().setBackgroundDrawableResource(R.color.colorLight);
 
-        findViewById(R.id.username).setBackground(ContextCompat.getDrawable(this, R.drawable.text_field_primary));
-        findViewById(R.id.password).setBackground(ContextCompat.getDrawable(this, R.drawable.text_field_primary));
+        TextView username = findViewById(R.id.username);
+        username.setBackground(ContextCompat.getDrawable(this, R.drawable.text_field_primary));
+        username.setTextColor(getColor(R.color.colorDark));
+        TextView password = findViewById(R.id.password);
+        password.setBackground(ContextCompat.getDrawable(this, R.drawable.text_field_primary));
+        password.setTextColor(getColor(R.color.colorDark));
     }
 
     @SuppressLint("ClickableViewAccessibility")

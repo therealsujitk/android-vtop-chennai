@@ -82,7 +82,9 @@
             android:padding="10dp"
             android:paddingTop="17dp"
             android:paddingBottom="17dp"
-            android:textAlignment="center" />
+            android:textAlignment="center"
+            android:textColor="@color/colorLight"
+            android:textColorHint="@color/colorGrey" />
 
         <Button
             android:id="@+id/submit"

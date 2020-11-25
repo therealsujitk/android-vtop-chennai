@@ -1,5 +1,6 @@
 package tk.therealsuji.vtopchennai;
 
+import android.animation.AnimatorInflater;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
@@ -9,7 +10,9 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.View;
+import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TableRow;
@@ -26,6 +29,7 @@ import java.util.Locale;
 
 public class HomeActivity extends AppCompatActivity {
     SharedPreferences sharedPreferences;
+    boolean night = true;
 
     /*
         The following functions are to open the activities in the "Classes" category
@@ -135,6 +139,11 @@ public class HomeActivity extends AppCompatActivity {
         findViewById(R.id.notifications).setBackground(ContextCompat.getDrawable(this, R.drawable.button_card));
         findViewById(R.id.privacy).setBackground(ContextCompat.getDrawable(this, R.drawable.button_card));
         findViewById(R.id.signOut).setBackground(ContextCompat.getDrawable(this, R.drawable.button_card));
+    }
+
+    private void openUpdate() {
+        WebView webView = new WebView(this);
+        webView.loadUrl("http://vtopchennai.therealsuji.tk/download");
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -517,14 +526,83 @@ public class HomeActivity extends AppCompatActivity {
 
         if (appearance.equals("day")) {
             setDay();
+            night = false;
         } else if (appearance.equals("system")) {
             switch (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) {
                 case Configuration.UI_MODE_NIGHT_YES:
                     break;
                 case Configuration.UI_MODE_NIGHT_NO:
                     setDay();
+                    night = false;
                     break;
             }
+        }
+
+        /*
+            Check for a new version
+         */
+        int versionCode = BuildConfig.VERSION_CODE;
+        String latestVersion = sharedPreferences.getString("versionCode", Integer.toString(versionCode));
+
+        if (versionCode < Integer.parseInt(latestVersion)) {
+            LinearLayout container = findViewById(R.id.container);
+
+            LinearLayout block = new LinearLayout(this);
+            LinearLayout.LayoutParams blockParams = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+            );
+            blockParams.setMarginStart((int) (20 * pixelDensity));
+            blockParams.setMarginEnd((int) (20 * pixelDensity));
+            blockParams.setMargins(0, 0, 0, (int) (10 * pixelDensity));
+            block.setLayoutParams(blockParams);
+            if (night) {
+                block.setBackground(ContextCompat.getDrawable(this, R.drawable.button_card_night));
+            } else {
+                block.setBackground(ContextCompat.getDrawable(this, R.drawable.button_card));
+            }
+            block.setOrientation(LinearLayout.HORIZONTAL);
+            block.setGravity(Gravity.CENTER_VERTICAL);
+            block.setFocusable(true);
+            block.setClickable(true);
+            block.setStateListAnimator(AnimatorInflater.loadStateListAnimator(this, R.animator.item_elevation));
+            block.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    openUpdate();
+                }
+            });
+
+            ImageView image = new ImageView(this);
+            image.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_download));
+            TableRow.LayoutParams imageParams = new TableRow.LayoutParams(
+                    TableRow.LayoutParams.WRAP_CONTENT,
+                    TableRow.LayoutParams.MATCH_PARENT
+            );
+            imageParams.setMarginStart((int) (20 * pixelDensity));
+            imageParams.setMargins(0, (int) (20 * pixelDensity), 0, (int) (20 * pixelDensity));
+            imageParams.height = (int) (30 * pixelDensity);
+            image.setLayoutParams(imageParams);
+
+            block.addView(image);
+
+            TextView text = new TextView(this);
+            TableRow.LayoutParams textParams = new TableRow.LayoutParams(
+                    TableRow.LayoutParams.MATCH_PARENT,
+                    TableRow.LayoutParams.WRAP_CONTENT
+            );
+            textParams.setMarginEnd((int) (20 * pixelDensity));
+            textParams.setMargins(0, (int) (20 * pixelDensity), 0, (int) (20 * pixelDensity));
+            text.setLayoutParams(textParams);
+            text.setText(getString(R.string.update));
+            text.setTextColor(getColor(R.color.colorPrimary));
+            text.setTextSize(18);
+            text.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+            text.setTypeface(ResourcesCompat.getFont(this, R.font.rubik));
+
+            block.addView(text);
+
+            container.addView(block);
         }
     }
 }

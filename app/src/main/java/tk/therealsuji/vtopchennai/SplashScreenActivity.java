@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.NotificationCompat;
 
 public class SplashScreenActivity extends AppCompatActivity {
 
@@ -25,17 +24,5 @@ public class SplashScreenActivity extends AppCompatActivity {
         }
 
         finish();
-
-        /*
-            Check for a new version
-         */
-        int versionCode = BuildConfig.VERSION_CODE;
-        String latestVersion = sharedPreferences.getString("versionCode", Integer.toString(versionCode));
-
-        if (versionCode < Integer.parseInt(latestVersion)) {
-            NotificationHelper notificationHelper = new NotificationHelper(this);
-            NotificationCompat.Builder n = notificationHelper.notifyApplication("New Release", "A new version of VTOP Chennai has been released");
-            notificationHelper.getManager().notify(1, n.build());
-        }
     }
 }
