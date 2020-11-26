@@ -1,5 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape
+            android:shape="oval"
+            android:useLevel="false">
+            <solid android:color="@color/colorDefault" />
+
+            <size
+                android:width="130dp"
+                android:height="130dp" />
+        </shape>
+    </item>
+
     <item android:drawable="@drawable/default_avatar" />
 
     <item>
