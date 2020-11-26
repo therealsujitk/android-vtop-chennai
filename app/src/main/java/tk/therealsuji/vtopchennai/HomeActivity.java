@@ -57,12 +57,16 @@ public class HomeActivity extends AppCompatActivity {
         startActivity(new Intent(HomeActivity.this, SpotlightActivity.class));
     }
 
+    public void openFaculty(View view) {
+        startActivity(new Intent(HomeActivity.this, FacultyActivity.class));
+    }
+
     public void openStaff(View view) {
         startActivity(new Intent(HomeActivity.this, StaffActivity.class));
     }
 
-    public void openFaculty(View view) {
-        startActivity(new Intent(HomeActivity.this, FacultyActivity.class));
+    public void openReceipts(View view) {
+        startActivity(new Intent(HomeActivity.this, ReceiptsActivity.class));
     }
 
     /*

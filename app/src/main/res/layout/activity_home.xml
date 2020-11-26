@@ -368,6 +368,42 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/faculty"
+                    android:layout_width="125dp"
+                    android:layout_height="125dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:background="@drawable/button_card"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center_vertical"
+                    android:onClick="openFaculty"
+                    android:orientation="vertical"
+                    android:stateListAnimator="@animator/item_elevation">
+
+                    <ImageView
+                        android:id="@+id/imageFaculty"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clickable="false"
+                        android:contentDescription="@string/faculty_description"
+                        app:srcCompat="@drawable/ic_faculty" />
+
+                    <TextView
+                        android:id="@+id/textFaculty"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:clickable="false"
+                        android:text="@string/faculty"
+                        android:textAlignment="center"
+                        android:textColor="@color/colorPrimary"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <LinearLayout
                     android:id="@+id/staff"
                     android:layout_width="125dp"
                     android:layout_height="125dp"
@@ -404,7 +440,7 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/faculty"
+                    android:id="@+id/receipts"
                     android:layout_width="125dp"
                     android:layout_height="125dp"
                     android:layout_marginStart="10dp"
@@ -415,25 +451,25 @@
                     android:clickable="true"
                     android:focusable="true"
                     android:gravity="center_vertical"
-                    android:onClick="openFaculty"
+                    android:onClick="openReceipts"
                     android:orientation="vertical"
                     android:stateListAnimator="@animator/item_elevation">
 
                     <ImageView
-                        android:id="@+id/imageFaculty"
+                        android:id="@+id/imageReceipts"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:clickable="false"
-                        android:contentDescription="@string/faculty_description"
-                        app:srcCompat="@drawable/ic_faculty" />
+                        android:contentDescription="@string/receipts_description"
+                        app:srcCompat="@drawable/ic_receipts" />
 
                     <TextView
-                        android:id="@+id/textFaculty"
+                        android:id="@+id/textReceipts"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
                         android:clickable="false"
-                        android:text="@string/faculty"
+                        android:text="@string/receipts"
                         android:textAlignment="center"
                         android:textColor="@color/colorPrimary"
                         android:textStyle="bold" />

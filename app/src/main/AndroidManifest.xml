@@ -103,6 +103,15 @@
                 android:value=".SpotlightActivity" />
         </activity>
         <activity
+            android:name=".FacultyActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:label="Faculty"
+            android:screenOrientation="portrait">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".FacultyActivity" />
+        </activity>
+        <activity
             android:name=".StaffActivity"
             android:configChanges="orientation|keyboardHidden"
             android:label="Staff"
@@ -112,13 +121,13 @@
                 android:value=".StaffActivity" />
         </activity>
         <activity
-            android:name=".FacultyActivity"
+            android:name=".ReceiptsActivity"
             android:configChanges="orientation|keyboardHidden"
-            android:label="Faculty"
+            android:label="Payment Receipts"
             android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".FacultyActivity" />
+                android:value=".ReceiptsActivity" />
         </activity>
 
         <meta-data

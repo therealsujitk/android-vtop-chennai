@@ -1389,7 +1389,7 @@ public class VTOP {
                         myDatabase.execSQL("DROP TABLE IF EXISTS exams");
                         myDatabase.execSQL("CREATE TABLE IF NOT EXISTS exams (id INT(3) PRIMARY KEY, course VARCHAR, date VARCHAR, time VARCHAR)");
 
-                        downloadMessages();
+                        downloadReceipts();
                     } catch (Exception e) {
                         e.printStackTrace();
                         Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
@@ -1411,7 +1411,105 @@ public class VTOP {
                             String startTime = time[0].trim();
                             String endTime = time[1].trim();
 
-                            myDatabase.execSQL("INSERT INTO faculty (course, date, start_time, end_time) VALUES('" + course + "', '" + date + "', '" + startTime + "', '" + endTime + "')");
+                            myDatabase.execSQL("INSERT INTO exams (course, date, start_time, end_time) VALUES('" + course + "', '" + date + "', '" + startTime + "', '" + endTime + "')");
+                        }
+
+                        downloadReceipts();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
+                        isOpened = false;
+                        reloadPage();
+                    }
+                }
+            }
+        });
+    }
+
+    /*
+        Function to store payment receipts
+     */
+    public void downloadReceipts() {
+        loading.setText(context.getString(R.string.downloading_receipts));
+
+        webView.evaluateJavascript("(function() {" +
+                "var data = 'verifyMenu=true&winImage=' + $('#winImage').val() + '&authorizedID=' + $('#authorizedIDX').val() + '&nocache=@(new Date().getTime())';" +
+                "var obj = {};" +
+                "$.ajax({" +
+                "   type: 'POST'," +
+                "   url : 'p2p/getReceiptsApplno'," +
+                "   data : data," +
+                "   async: false," +
+                "   success: function(response) {" +
+                "       var doc = new DOMParser().parseFromString(response, 'text/html');" +
+                "       var receiptIndex, dateIndex, amountIndex, flag = 0;" +
+                "       var columns = doc.getElementsByTagName('tr')[0].getElementsByTagName('td').length;" +
+                "       var cells = doc.getElementsByTagName('td');" +
+                "       for(var i = 0; i < columns; ++i) {" +
+                "           var heading = cells[i].innerText.toLowerCase();" +
+                "           if(heading.includes('receipt')) {" +
+                "               receiptIndex = i + columns;" +
+                "               ++flag;" +
+                "           }" +
+                "           if(heading.includes('date')) {" +
+                "               dateIndex = i + columns;" +
+                "               ++flag;" +
+                "           }" +
+                "           if(heading.includes('amount')) {" +
+                "               amountIndex = i + columns;" +
+                "               ++flag;" +
+                "           }" +
+                "           if(flag == 3) {" +
+                "               break;" +
+                "           }" +
+                "       }" +
+                "       for(var i = 0; receiptIndex < cells.length && dateIndex < cells.length && amountIndex < cells.length; ++i) {" +
+                "           var temp = {};" +
+                "           temp['receipt'] = cells[receiptIndex].innerText.trim();" +
+                "           temp['date'] = cells[dateIndex].innerText.trim();" +
+                "           temp['amount'] = cells[amountIndex].innerText.trim();" +
+                "           obj[i.toString()] = temp;" +
+                "           receiptIndex += columns;" +
+                "           dateIndex += columns;" +
+                "           amountIndex += columns;" +
+                "       }" +
+                "   }" +
+                "});" +
+                "return obj;" +
+                "})();", new ValueCallback<String>() {
+            @Override
+            public void onReceiveValue(String obj) {
+                String temp = obj.substring(1, obj.length() - 1);
+                if (obj.equals("null")) {
+                    Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
+                    isOpened = false;
+                    reloadPage();
+                } else if (temp.equals("")) {
+                    try {
+                        myDatabase.execSQL("DROP TABLE IF EXISTS receipts");
+                        myDatabase.execSQL("CREATE TABLE IF NOT EXISTS receipts (id INT(3) PRIMARY KEY, receipt VARCHAR, date VARCHAR, amount VARCHAR)");
+
+                        downloadMessages();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
+                        isOpened = false;
+                        reloadPage();
+                    }
+                } else {
+                    try {
+                        JSONObject myObj = new JSONObject(obj);
+
+                        myDatabase.execSQL("DROP TABLE IF EXISTS receipts");
+                        myDatabase.execSQL("CREATE TABLE IF NOT EXISTS receipts (id INT(3) PRIMARY KEY, receipt VARCHAR, date VARCHAR, amount VARCHAR)");
+
+                        for (int i = 0; i < myObj.length(); ++i) {
+                            JSONObject tempObj = new JSONObject(myObj.getString(Integer.toString(i)));
+                            String receipt = tempObj.getString("receipt");
+                            String date = tempObj.getString("date");
+                            String amount = tempObj.getString("amount");
+
+                            myDatabase.execSQL("INSERT INTO receipts (receipt, date, amount) VALUES('" + receipt + "', '" + date + "', '" + amount + "')");
                         }
 
                         downloadMessages();

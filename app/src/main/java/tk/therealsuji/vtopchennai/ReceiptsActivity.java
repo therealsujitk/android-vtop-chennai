@@ -17,25 +17,24 @@ import androidx.core.content.res.ResourcesCompat;
 
 import java.util.Objects;
 
-public class ExamsActivity extends AppCompatActivity {
+public class ReceiptsActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_exams);
+        setContentView(R.layout.activity_receipts);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
-        LinearLayout schedule = findViewById(R.id.schedule);
+        LinearLayout receipts = findViewById(R.id.receiptsList);
         float pixelDensity = this.getResources().getDisplayMetrics().density;
 
         SQLiteDatabase myDatabase = this.openOrCreateDatabase("vtop", Context.MODE_PRIVATE, null);
-        myDatabase.execSQL("CREATE TABLE IF NOT EXISTS exams (id INT(3) PRIMARY KEY, course VARCHAR, date VARCHAR, start_time VARCHAR, end_time VARCHAR)");
-        Cursor c = myDatabase.rawQuery("SELECT * FROM exams", null);
+        myDatabase.execSQL("CREATE TABLE IF NOT EXISTS receipts (id INT(3) PRIMARY KEY, receipt VARCHAR, date VARCHAR, amount VARCHAR)");
+        Cursor c = myDatabase.rawQuery("SELECT * FROM receipts", null);
 
-        int courseIndex = c.getColumnIndex("course");
+        int receiptIndex = c.getColumnIndex("receipt");
         int dateIndex = c.getColumnIndex("date");
-        int startTimeIndex = c.getColumnIndex("start_time");
-        int endTimeIndex = c.getColumnIndex("end_time");
+        int amountIndex = c.getColumnIndex("amount");
         c.moveToFirst();
 
         for (int i = 0; i < c.getCount(); ++i) {
@@ -63,23 +62,25 @@ public class ExamsActivity extends AppCompatActivity {
             block.setOrientation(LinearLayout.VERTICAL);
 
             /*
-                The course code TextView
+                The amount TextView
              */
-            TextView course = new TextView(this);
-            TableRow.LayoutParams courseParams = new TableRow.LayoutParams(
+            String amountString = "₹" + c.getString(amountIndex) + "/-";
+
+            TextView amount = new TextView(this);
+            TableRow.LayoutParams amountParams = new TableRow.LayoutParams(
                     TableRow.LayoutParams.MATCH_PARENT,
                     TableRow.LayoutParams.WRAP_CONTENT
             );
-            courseParams.setMarginStart((int) (20 * pixelDensity));
-            courseParams.setMarginEnd((int) (20 * pixelDensity));
-            courseParams.setMargins(0, (int) (20 * pixelDensity), 0, (int) (5 * pixelDensity));
-            course.setLayoutParams(courseParams);
-            course.setText(c.getString(courseIndex));
-            course.setTextColor(getColor(R.color.colorPrimary));
-            course.setTextSize(20);
-            course.setTypeface(ResourcesCompat.getFont(this, R.font.rubik), Typeface.BOLD);
+            amountParams.setMarginStart((int) (20 * pixelDensity));
+            amountParams.setMarginEnd((int) (20 * pixelDensity));
+            amountParams.setMargins(0, (int) (20 * pixelDensity), 0, (int) (5 * pixelDensity));
+            amount.setLayoutParams(amountParams);
+            amount.setText(amountString);
+            amount.setTextColor(getColor(R.color.colorPrimary));
+            amount.setTextSize(20);
+            amount.setTypeface(ResourcesCompat.getFont(this, R.font.rubik), Typeface.BOLD);
 
-            block.addView(course); //Adding course code to block
+            block.addView(amount); //Adding amount to block
 
             /*
                 The inner LinearLayout
@@ -91,26 +92,24 @@ public class ExamsActivity extends AppCompatActivity {
             ));
             innerBlock.setOrientation(LinearLayout.HORIZONTAL);
 
-            String timings = c.getString(startTimeIndex) + " - " + c.getString(endTimeIndex);
-
             /*
-                The time TextView
+                The receipt number TextView
              */
-            TextView time = new TextView(this);
-            TableRow.LayoutParams timeParams = new TableRow.LayoutParams(
+            TextView receipt = new TextView(this);
+            TableRow.LayoutParams receiptParams = new TableRow.LayoutParams(
                     TableRow.LayoutParams.WRAP_CONTENT,
                     TableRow.LayoutParams.WRAP_CONTENT
             );
-            timeParams.setMarginStart((int) (20 * pixelDensity));
-            timeParams.setMarginEnd((int) (20 * pixelDensity));
-            timeParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (20 * pixelDensity));
-            time.setLayoutParams(timeParams);
-            time.setText(timings);
-            time.setTextColor(getColor(R.color.colorPrimary));
-            time.setTextSize(16);
-            time.setTypeface(ResourcesCompat.getFont(this, R.font.rubik));
+            receiptParams.setMarginStart((int) (20 * pixelDensity));
+            receiptParams.setMarginEnd((int) (20 * pixelDensity));
+            receiptParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (20 * pixelDensity));
+            receipt.setLayoutParams(receiptParams);
+            receipt.setText(c.getString(receiptIndex));
+            receipt.setTextColor(getColor(R.color.colorPrimary));
+            receipt.setTextSize(16);
+            receipt.setTypeface(ResourcesCompat.getFont(this, R.font.rubik));
 
-            innerBlock.addView(course); //Adding time to innerBlock
+            innerBlock.addView(receipt); //Adding receipt to innerBlock
 
             /*
                 The date TextView
@@ -130,14 +129,14 @@ public class ExamsActivity extends AppCompatActivity {
             date.setTextSize(16);
             date.setTypeface(ResourcesCompat.getFont(this, R.font.rubik));
 
-            innerBlock.addView(date);   //Adding course type to innerBlock
+            innerBlock.addView(date);   //Adding date to innerBlock
 
             block.addView(innerBlock);  //Adding innerBlock to block
 
             /*
                 Finally adding the block to the activity
              */
-            schedule.addView(block);
+            receipts.addView(block);
 
             c.moveToNext();
         }
