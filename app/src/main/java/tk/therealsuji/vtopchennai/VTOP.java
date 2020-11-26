@@ -885,11 +885,12 @@ public class VTOP {
                 "var courseIndex, facultyIndex, flag = 0;" +
                 "var columns = heads.length;" +
                 "for(var i = 0; i < columns; ++i) {" +
-                "   if(heads[i].innerText.toLowerCase() == 'course') {" +
+                "   var hading = heads[i].innerText.toLowerCase();" +
+                "   if(heading.includes('course')) {" +
                 "       courseIndex = i + 1;" + // +1 is a correction due to an extra 'td' element at the top
                 "       ++flag;" +
                 "   }" +
-                "   if(heads[i].innerText.toLowerCase() == 'faculty details') {" +
+                "   if(heading.includes('faculty') && heading.includes('details')) {" +
                 "       facultyIndex = i + 1;" + // +1 is a correction due to an extra 'td' element at the top
                 "       ++flag;" +
                 "   }" +
@@ -1642,7 +1643,7 @@ public class VTOP {
                         myDatabase.execSQL("CREATE TABLE IF NOT EXISTS spotlight (id INT(3) PRIMARY KEY, category VARCHAR, announcement VARCHAR)");
 
                         loading.setText(context.getString(R.string.checking_update));
-                        sharedPreferences.edit().putString("isLoggedIn", "true").apply();
+                        sharedPreferences.edit().putBoolean("isSignedIn", true).apply();
                         myDatabase.close();
 
                         loadUpdatePage();

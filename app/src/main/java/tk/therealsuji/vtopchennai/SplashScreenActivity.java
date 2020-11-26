@@ -14,10 +14,9 @@ public class SplashScreenActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         SharedPreferences sharedPreferences = this.getSharedPreferences("tk.therealsuji.vtopchennai", Context.MODE_PRIVATE);
-        String isLoggedIn = sharedPreferences.getString("isLoggedIn", "false");
+        boolean isSignedIn = sharedPreferences.getBoolean("isSignedIn", false);
 
-        assert isLoggedIn != null;
-        if (isLoggedIn.equals("true")) {
+        if (isSignedIn) {
             startActivity(new Intent(SplashScreenActivity.this, HomeActivity.class));
         } else {
             startActivity(new Intent(SplashScreenActivity.this, LoginActivity.class));

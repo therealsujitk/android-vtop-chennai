@@ -144,7 +144,7 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     public void signOut(View view) {
-        sharedPreferences.edit().putString("isLoggedIn", "false").apply();
+        sharedPreferences.edit().remove("isSignedIn").apply();
         startActivity(new Intent(HomeActivity.this, LoginActivity.class));
         finish();
     }
