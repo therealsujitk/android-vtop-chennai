@@ -108,4 +108,8 @@
     <string name="proctor">PROCTOR</string>
     <string name="dean">DEAN</string>
     <string name="hod">HOD</string>
+
+    <string name="light">Light</string>
+    <string name="dark">Dark</string>
+    <string name="system">Set by System</string>
 </resources>

@@ -2,22 +2,27 @@ package tk.therealsuji.vtopchennai;
 
 import android.animation.AnimatorInflater;
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.graphics.Typeface;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
 import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.TableRow;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 
@@ -28,6 +33,7 @@ import java.util.Locale;
 
 public class HomeActivity extends AppCompatActivity {
     SharedPreferences sharedPreferences;
+    Dialog appearance;
 
     /*
         The following functions are to open the activities in the "Classes" category
@@ -89,7 +95,38 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     public void openAppearance(View view) {
-        // Code to choose appearance
+        appearance = new Dialog(this);
+        appearance.setContentView(R.layout.dialog_appearance);
+        appearance.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        String theme = sharedPreferences.getString("appearance", "system");
+        if (theme.equals("light")) {
+            RadioButton light = appearance.findViewById(R.id.light);
+            light.setChecked(true);
+        } else if (theme.equals("dark")) {
+            RadioButton dark = appearance.findViewById(R.id.dark);
+            dark.setChecked(true);
+        } else {
+            RadioButton system = appearance.findViewById(R.id.system);
+            system.setChecked(true);
+        }
+        appearance.show();
+    }
+
+    public void setAppearance(View view) {
+        int selected = Integer.parseInt(view.getTag().toString());
+
+        if (selected == 0) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+            sharedPreferences.edit().putString("appearance", "light").apply();
+        } else if (selected == 1) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+            sharedPreferences.edit().putString("appearance", "dark").apply();
+        } else {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
+            sharedPreferences.edit().remove("appearance").apply();
+        }
+
+        appearance.dismiss();
     }
 
     public void openNotifications(View view) {
