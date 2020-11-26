@@ -12,6 +12,7 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.text.method.LinkMovementMethod;
 import android.view.Gravity;
 import android.view.View;
 import android.webkit.WebView;
@@ -589,5 +590,8 @@ public class HomeActivity extends AppCompatActivity {
 
             container.addView(block);
         }
+
+        TextView myLink = (TextView) findViewById(R.id.builtBy);
+        myLink.setMovementMethod(LinkMovementMethod.getInstance());
     }
 }

@@ -70,7 +70,9 @@ public class VTOP {
         webView.getSettings().setUserAgentString("Mozilla/5.0 (Linux; Android 10) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.99 Mobile Safari/537.36");
         webView.setWebViewClient(new WebViewClient() {
             public void onPageFinished(WebView view, String url) {
-                if (!isOpened) {
+                if (!checkUpdate) {
+                    checkUpdates();
+                } else if (!isOpened) {
                     if (counter >= 60) {
                         Toast.makeText(context, "Sorry, we had some trouble connecting to the server. Please try again later.", Toast.LENGTH_LONG).show();
                         ((Activity) context).finish();
@@ -80,10 +82,6 @@ public class VTOP {
                     openSignIn();
                     ++counter;
                 }
-
-                if (checkUpdate) {
-                    checkUpdates();
-                }
             }
         });
 
@@ -92,7 +90,30 @@ public class VTOP {
         checkUpdate = false;
         counter = 0;
 
-        reloadPage();
+        loadUpdatePage();
+    }
+
+    public void loadUpdatePage() {
+        loading.setText(context.getString(R.string.checking_update));
+        webView.loadUrl("http://vtopchennai.therealsuji.tk/latest");
+    }
+
+    public void checkUpdates() {
+        checkUpdate = true;
+
+        webView.evaluateJavascript("(function() {" +
+                "return document.getElementById('vtop-chennai-vc').innerText;" +
+                "})();", new ValueCallback<String>() {
+            @Override
+            public void onReceiveValue(String value) {
+                if (!value.equals("null")) {
+                    String versionCode = value.substring(1, value.length() - 1);
+                    sharedPreferences.edit().putString("versionCode", versionCode).apply();
+                }
+
+                reloadPage();
+            }
+        });
     }
 
     /*
@@ -885,8 +906,8 @@ public class VTOP {
                 "var courseIndex, facultyIndex, flag = 0;" +
                 "var columns = heads.length;" +
                 "for(var i = 0; i < columns; ++i) {" +
-                "   var hading = heads[i].innerText.toLowerCase();" +
-                "   if(heading.includes('course')) {" +
+                "   var heading = heads[i].innerText.toLowerCase();" +
+                "   if(heading == 'course') {" +
                 "       courseIndex = i + 1;" + // +1 is a correction due to an extra 'td' element at the top
                 "       ++flag;" +
                 "   }" +
@@ -894,7 +915,7 @@ public class VTOP {
                 "       facultyIndex = i + 1;" + // +1 is a correction due to an extra 'td' element at the top
                 "       ++flag;" +
                 "   }" +
-                "   if(flag == 2) {" +
+                "   if(flag >= 2) {" +
                 "       break;" +
                 "   }" +
                 "}" +
@@ -1230,34 +1251,46 @@ public class VTOP {
                 "           obj = 'unavailable';" +
                 "       } else {" +
                 "           var heads = division.getElementsByTagName('th');" +
-                "           var courseIndex = 0, typeIndex = 0, percentIndex = 0, flag = 0;" +
+                "           var courseIndex, typeIndex, attendedIndex, totalIndex, percentIndex, flag = 0;" +
                 "           var columns = heads.length;" +
                 "           for(var i = 0; i < columns; ++i) {" +
-                "               var header = heads[i].innerText.trim().toLowerCase();" +
-                "               if(header.includes('course') &&  header.includes('code')) {" +
+                "               var heading = heads[i].innerText.trim().toLowerCase();" +
+                "               if(heading.includes('course') &&  heading.includes('code')) {" +
                 "                   courseIndex = i;" +
                 "                   ++flag;" +
                 "               }" +
-                "               if(header.includes('course') && header.includes('type')) {" +
+                "               if(heading.includes('course') && heading.includes('type')) {" +
                 "                   typeIndex = i;" +
                 "                   ++flag;" +
                 "               }" +
-                "               if(header.includes('percentage')) {" +
+                "               if(heading.includes('attended')) {" +
+                "                   attendedIndex = i;" +
+                "                   ++flag;" +
+                "               }" +
+                "               if(heading.includes('total')) {" +
+                "                   totalIndex = i;" +
+                "                   ++flag;" +
+                "               }" +
+                "               if(heading.includes('percentage')) {" +
                 "                   percentIndex = i;" +
                 "                   ++flag;" +
                 "               }" +
-                "               if(flag >= 3) {" +
+                "               if(flag >= 5) {" +
                 "                   break;" +
                 "               }" +
                 "           }" +
                 "           var cells = division.getElementsByTagName('td');" +
-                "           for(var i = 0; courseIndex < cells.length && typeIndex < cells.length && percentIndex < cells.length; ++i) {" +
+                "           for(var i = 0; courseIndex < cells.length && typeIndex < cells.length  && attendedIndex < cells.length && totalIndex < cells.length && percentIndex < cells.length; ++i) {" +
                 "               var temp = {};" +
                 "               temp['course'] = cells[courseIndex].innerText.trim();" +
                 "               temp['type'] = cells[typeIndex].innerText.trim();" +
+                "               temp['attended'] = cells[attendedIndex].innerText.trim();" +
+                "               temp['total'] = cells[totalIndex].innerText.trim();" +
                 "               temp['percent'] = cells[percentIndex].innerText.trim();" +
                 "               obj[i.toString()] = temp;" +
                 "               courseIndex += columns;" +
+                "               attendedIndex += columns;" +
+                "               totalIndex += columns;" +
                 "               typeIndex += columns;" +
                 "               percentIndex += columns;" +
                 "           }" +
@@ -1276,7 +1309,7 @@ public class VTOP {
                 } else if (temp.equals("unavailable") || temp.equals("")) {
                     try {
                         myDatabase.execSQL("DROP TABLE IF EXISTS attendance");
-                        myDatabase.execSQL("CREATE TABLE IF NOT EXISTS attendance (id INT(3) PRIMARY KEY, course VARCHAR, type VARCHAR, percent VARCHAR)");
+                        myDatabase.execSQL("CREATE TABLE IF NOT EXISTS attendance (id INT(3) PRIMARY KEY, course VARCHAR, type VARCHAR, attended VARCHAR, total VARCHAR, percent VARCHAR)");
 
                         downloadExams();
                     } catch (Exception e) {
@@ -1290,15 +1323,17 @@ public class VTOP {
                         JSONObject myObj = new JSONObject(obj);
 
                         myDatabase.execSQL("DROP TABLE IF EXISTS attendance");
-                        myDatabase.execSQL("CREATE TABLE IF NOT EXISTS attendance (id INT(3) PRIMARY KEY, course VARCHAR, type VARCHAR, percent VARCHAR)");
+                        myDatabase.execSQL("CREATE TABLE IF NOT EXISTS attendance (id INT(3) PRIMARY KEY, course VARCHAR, type VARCHAR, attended VARCHAR, total VARCHAR, percent VARCHAR)");
 
                         for (int i = 0; i < myObj.length(); ++i) {
                             JSONObject tempObj = new JSONObject(myObj.getString(Integer.toString(i)));
                             String course = tempObj.getString("course");
                             String type = tempObj.getString("type");
+                            String attended = tempObj.getString("attended");
+                            String total = tempObj.getString("total");
                             String percent = tempObj.getString("percent");
 
-                            myDatabase.execSQL("INSERT INTO attendance (course, type, percent) VALUES('" + course + "', '" + type + "', '" + percent + "%')");
+                            myDatabase.execSQL("INSERT INTO attendance (course, type, attended, total, percent) VALUES('" + course + "', '" + type + "', '" + attended + "', '" + total + "', '" + percent + "')");
                         }
 
                         downloadExams();
@@ -1358,7 +1393,7 @@ public class VTOP {
                 "                   timeIndex = i + 1;" + // +1 is a correction due to an extra 'td' element at the top
                 "                   ++flag;" +
                 "               }" +
-                "               if(flag == 3) {" +
+                "               if(flag >= 3) {" +
                 "                   break;" +
                 "               }" +
                 "           }" +
@@ -1460,7 +1495,7 @@ public class VTOP {
                 "               amountIndex = i + columns;" +
                 "               ++flag;" +
                 "           }" +
-                "           if(flag == 3) {" +
+                "           if(flag >= 3) {" +
                 "               break;" +
                 "           }" +
                 "       }" +
@@ -1642,11 +1677,7 @@ public class VTOP {
                         myDatabase.execSQL("DROP TABLE IF EXISTS spotlight");
                         myDatabase.execSQL("CREATE TABLE IF NOT EXISTS spotlight (id INT(3) PRIMARY KEY, category VARCHAR, announcement VARCHAR)");
 
-                        loading.setText(context.getString(R.string.checking_update));
-                        sharedPreferences.edit().putBoolean("isSignedIn", true).apply();
-                        myDatabase.close();
-
-                        loadUpdatePage();
+                        finishUp();
                     } catch (Exception e) {
                         e.printStackTrace();
                         Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
@@ -1674,11 +1705,7 @@ public class VTOP {
                             }
                         }
 
-                        loading.setText(context.getString(R.string.checking_update));
-                        sharedPreferences.edit().putString("isLoggedIn", "true").apply();
-                        myDatabase.close();
-
-                        loadUpdatePage();
+                        finishUp();
                     } catch (Exception e) {
                         e.printStackTrace();
                         Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
@@ -1690,44 +1717,29 @@ public class VTOP {
         });
     }
 
-    public void loadUpdatePage() {
-        checkUpdate = true;
-        webView.loadUrl("http://vtopchennai.therealsuji.tk/latest");
-    }
+    public void finishUp() {
+        sharedPreferences.edit().putBoolean("isSignedIn", true).apply();
+        myDatabase.close();
+        loading.setText(context.getString(R.string.loading));
+        Intent intent = new Intent(context, HomeActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        context.startActivity(intent);
+        ((Activity) context).finish();
 
-    public void checkUpdates() {
-        webView.evaluateJavascript("(function() {" +
-                "return document.getElementById('vtop-chennai-vc').innerText;" +
-                "})();", new ValueCallback<String>() {
-            @Override
-            public void onReceiveValue(String value) {
-                if (!value.equals("null")) {
-                    String versionCode = value.substring(1, value.length() - 1);
-                    sharedPreferences.edit().putString("versionCode", versionCode).apply();
-                }
+        webView.clearCache(true);
+        webView.clearHistory();
+        CookieManager.getInstance().removeAllCookies(null);
 
-                loading.setText(context.getString(R.string.loading));
-                Intent intent = new Intent(context, HomeActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                context.startActivity(intent);
-                ((Activity) context).finish();
-
-                webView.clearCache(true);
-                webView.clearHistory();
-                CookieManager.getInstance().removeAllCookies(null);
-
-                try {
-                    Calendar c = Calendar.getInstance();
-                    SimpleDateFormat df = new SimpleDateFormat("dd MMM HH:mm", Locale.ENGLISH);
-                    Date date = df.parse(df.format(c.getTime()));
-                    assert date != null;
-                    String[] dateFormat = date.toString().split(" ");
-                    sharedPreferences.edit().putString("refreshed", "Last refreshed: " + dateFormat[1] + " " + dateFormat[2] + ", " + dateFormat[3].substring(0, dateFormat[3].length() - 3)).apply();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
+        try {
+            Calendar c = Calendar.getInstance();
+            SimpleDateFormat df = new SimpleDateFormat("dd MMM HH:mm", Locale.ENGLISH);
+            Date date = df.parse(df.format(c.getTime()));
+            assert date != null;
+            String[] dateFormat = date.toString().split(" ");
+            sharedPreferences.edit().putString("refreshed", "Last refreshed: " + dateFormat[1] + " " + dateFormat[2] + ", " + dateFormat[3].substring(0, dateFormat[3].length() - 3)).apply();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /*

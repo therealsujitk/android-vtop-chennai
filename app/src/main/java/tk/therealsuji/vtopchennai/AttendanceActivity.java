@@ -5,7 +5,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TableRow;
@@ -29,11 +28,13 @@ public class AttendanceActivity extends AppCompatActivity {
         float pixelDensity = this.getResources().getDisplayMetrics().density;
 
         SQLiteDatabase myDatabase = this.openOrCreateDatabase("vtop", Context.MODE_PRIVATE, null);
-        myDatabase.execSQL("CREATE TABLE IF NOT EXISTS attendance (id INT(3) PRIMARY KEY, course VARCHAR, type VARCHAR, percent VARCHAR)");
+        myDatabase.execSQL("CREATE TABLE IF NOT EXISTS attendance (id INT(3) PRIMARY KEY, course VARCHAR, type VARCHAR, attended VARCHAR, total VARCHAR, percent VARCHAR)");
         Cursor c = myDatabase.rawQuery("SELECT * FROM attendance", null);
 
         int courseIndex = c.getColumnIndex("course");
         int typeIndex = c.getColumnIndex("type");
+        int attendedIndex = c.getColumnIndex("attended");
+        int totalIndex = c.getColumnIndex("total");
         int percentIndex = c.getColumnIndex("percent");
         c.moveToFirst();
 
@@ -58,18 +59,17 @@ public class AttendanceActivity extends AppCompatActivity {
             }
             block.setLayoutParams(blockParams);
             block.setBackground(ContextCompat.getDrawable(this, R.drawable.plain_card));
-            block.setGravity(Gravity.CENTER_VERTICAL);
-            block.setOrientation(LinearLayout.HORIZONTAL);
+            block.setOrientation(LinearLayout.VERTICAL);
 
             /*
                 The inner LinearLayout
              */
             LinearLayout innerBlock = new LinearLayout(this);
             innerBlock.setLayoutParams(new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.MATCH_PARENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT
             ));
-            innerBlock.setOrientation(LinearLayout.VERTICAL);
+            innerBlock.setOrientation(LinearLayout.HORIZONTAL);
 
             /*
                 The course code TextView
@@ -91,6 +91,35 @@ public class AttendanceActivity extends AppCompatActivity {
             innerBlock.addView(course); //Adding course code to innerBlock
 
             /*
+                The attendance percentage TextView
+             */
+            String percentString = c.getString(percentIndex) + "%";
+
+            TextView percent = new TextView(this);
+            TableRow.LayoutParams percentParams = new TableRow.LayoutParams(
+                    TableRow.LayoutParams.MATCH_PARENT,
+                    TableRow.LayoutParams.WRAP_CONTENT
+            );
+            percentParams.setMarginStart((int) (20 * pixelDensity));
+            percentParams.setMarginEnd((int) (20 * pixelDensity));
+            percentParams.setMargins(0, (int) (20 * pixelDensity), 0, (int) (5 * pixelDensity));
+            percent.setLayoutParams(percentParams);
+            percent.setText(percentString);
+            percent.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
+            percent.setTextColor(getColor(R.color.colorPrimary));
+            percent.setTextSize(20);
+            percent.setTypeface(ResourcesCompat.getFont(this, R.font.rubik), Typeface.BOLD);
+
+            innerBlock.addView(percent); //Adding percentage to innerBlock
+
+            LinearLayout secondInnerBlock = new LinearLayout(this);
+            secondInnerBlock.setLayoutParams(new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+            ));
+            secondInnerBlock.setOrientation(LinearLayout.HORIZONTAL);
+
+            /*
                 The course type code TextView
              */
             TextView type = new TextView(this);
@@ -107,28 +136,32 @@ public class AttendanceActivity extends AppCompatActivity {
             type.setTextSize(16);
             type.setTypeface(ResourcesCompat.getFont(this, R.font.rubik));
 
-            innerBlock.addView(type);   //Adding course type to innerBlock
-
-            block.addView(innerBlock);  //Adding innerBlock to block
+            secondInnerBlock.addView(type);   //Adding type to innerBlock
 
             /*
-                The attendance percentage TextView
+                The attended classes TextView
              */
-            TextView percent = new TextView(this);
-            TableRow.LayoutParams percentParams = new TableRow.LayoutParams(
+            String attendedString = c.getString(attendedIndex) + " | " + c.getString(totalIndex);
+
+            TextView attended = new TextView(this);
+            TableRow.LayoutParams attendedParams = new TableRow.LayoutParams(
                     TableRow.LayoutParams.MATCH_PARENT,
                     TableRow.LayoutParams.WRAP_CONTENT
             );
-            percentParams.setMarginStart((int) (20 * pixelDensity));
-            percentParams.setMarginEnd((int) (20 * pixelDensity));
-            percent.setLayoutParams(percentParams);
-            percent.setText(c.getString(percentIndex));
-            percent.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
-            percent.setTextColor(getColor(R.color.colorPrimary));
-            percent.setTextSize(20);
-            percent.setTypeface(ResourcesCompat.getFont(this, R.font.rubik), Typeface.BOLD);
+            attendedParams.setMarginStart((int) (20 * pixelDensity));
+            attendedParams.setMarginEnd((int) (20 * pixelDensity));
+            attendedParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (20 * pixelDensity));
+            attended.setLayoutParams(attendedParams);
+            attended.setText(attendedString);
+            attended.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
+            attended.setTextColor(getColor(R.color.colorPrimary));
+            attended.setTextSize(16);
+            attended.setTypeface(ResourcesCompat.getFont(this, R.font.rubik), Typeface.BOLD);
 
-            block.addView(percent); //Adding percentage to block
+            secondInnerBlock.addView(attended);   //Adding attended classes to innerBlock
+
+            block.addView(innerBlock);   //Adding innerBlock to block
+            block.addView(secondInnerBlock);    //Adding secondInnerBlock to block
 
             /*
                 Finally adding the block to the activity

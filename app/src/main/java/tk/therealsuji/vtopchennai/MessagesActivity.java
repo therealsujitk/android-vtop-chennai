@@ -4,7 +4,9 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.text.method.LinkMovementMethod;
 import android.view.View;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -34,5 +36,8 @@ public class MessagesActivity extends AppCompatActivity {
         }
 
         c.close();
+
+        TextView myLink = (TextView) findViewById(R.id.newData);
+        myLink.setMovementMethod(LinkMovementMethod.getInstance());
     }
 }
