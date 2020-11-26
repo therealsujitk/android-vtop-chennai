@@ -41,6 +41,10 @@ public class HomeActivity extends AppCompatActivity {
         startActivity(new Intent(HomeActivity.this, AttendanceActivity.class));
     }
 
+    public void openExams(View view) {
+        startActivity(new Intent(HomeActivity.this, ExamsActivity.class));
+    }
+
     public void openMessages(View view) {
         startActivity(new Intent(HomeActivity.this, MessagesActivity.class));
     }

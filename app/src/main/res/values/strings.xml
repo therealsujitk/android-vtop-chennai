@@ -23,6 +23,7 @@
     <string name="downloading_profile">Downloading Profile</string>
     <string name="downloading_timetable">Downloading Timetable</string>
     <string name="downloading_attendance">Downloading Attendance</string>
+    <string name="downloading_exams">Downloading Exam Schedule</string>
     <string name="downloading_messages">Downloading Messages</string>
     <string name="downloading_spotlight">Downloading Spotlight</string>
     <string name="downloading_staff">Downloading Staff Info</string>
@@ -53,6 +54,8 @@
     <string name="timetable_description">Icon for the timetable button.</string>
     <string name="attendance">Attendance</string>
     <string name="attendance_description">Icon for the attendance button.</string>
+    <string name="exams">Exams</string>
+    <string name="exams_description">Icon for the exams button.</string>
     <string name="messages">Messages</string>
     <string name="messages_description">Icon for the messages button.</string>
 

@@ -1277,7 +1277,7 @@ public class VTOP {
                         myDatabase.execSQL("DROP TABLE IF EXISTS attendance");
                         myDatabase.execSQL("CREATE TABLE IF NOT EXISTS attendance (id INT(3) PRIMARY KEY, course VARCHAR, type VARCHAR, percent VARCHAR)");
 
-                        downloadMessages();
+                        downloadExams();
                     } catch (Exception e) {
                         e.printStackTrace();
                         Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
@@ -1298,6 +1298,120 @@ public class VTOP {
                             String percent = tempObj.getString("percent");
 
                             myDatabase.execSQL("INSERT INTO attendance (course, type, percent) VALUES('" + course + "', '" + type + "', '" + percent + "%')");
+                        }
+
+                        downloadExams();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
+                        isOpened = false;
+                        reloadPage();
+                    }
+                }
+            }
+        });
+    }
+
+    /*
+        Function to store the exam schedule in the SQLite database.
+     */
+    public void downloadExams() {
+        loading.setText(context.getString(R.string.downloading_exams));
+
+        String semester = sharedPreferences.getString("semester", "null");
+
+        webView.evaluateJavascript("(function() {" +
+                "var semID = '';" +
+                "var options = document.getElementById('semesterSubId').getElementsByTagName('option');" +
+                "for(var i = 0; i < options.length; ++i) {" +
+                "   if(options[i].innerText.toLowerCase().includes('" + semester + "')) {" +
+                "       semID = options[i].value;" +
+                "   }" +
+                "}" +
+                "var data = 'semesterSubId=' + semID + '&authorizedID=' + $('#authorizedIDX').val();" +
+                "var obj = {};" +
+                "$.ajax({" +
+                "   type: 'POST'," +
+                "   url : 'examinations/doSearchExamScheduleForStudent'," +
+                "   data : data," +
+                "   async: false," +
+                "   success: function(response) {" +
+                "       if(response.toLowerCase().includes('not') && response.toLowerCase().includes('found')) {" +
+                "           obj = 'nothing';" +
+                "       } else {" +
+                "           var doc = new DOMParser().parseFromString(response, 'text/html');" +
+                "           var heads = doc.getElementsByTagName('th');" +
+                "           var courseIndex, dateIndex, timeIndex, flag = 0;" +
+                "           var columns = heads.length;" +
+                "           for(var i = 0; i < columns; ++i) {" +
+                "               var heading = heads[i].innerText.toLowerCase();" +
+                "               if(heading.includes('course') && heading.includes('code')) {" +
+                "                   courseIndex = i + 1;" + // +1 is a correction due to an extra 'td' element at the top
+                "                   ++flag;" +
+                "               }" +
+                "               if(heading.includes('date')) {" +
+                "                   dateIndex = i + 1;" + // +1 is a correction due to an extra 'td' element at the top
+                "                   ++flag;" +
+                "               }" +
+                "               if(heading.includes('exam') && heading.includes('time')) {" +
+                "                   timeIndex = i + 1;" + // +1 is a correction due to an extra 'td' element at the top
+                "                   ++flag;" +
+                "               }" +
+                "               if(flag == 3) {" +
+                "                   break;" +
+                "               }" +
+                "           }" +
+                "           var cells = doc.getElementsByTagName('td');" +
+                "           for(var i = 0; courseIndex < cells.length && dateIndex < cells.length && timeIndex < cells.length; ++i) {" +
+                "               var temp = {};" +
+                "               temp['course'] = cells[courseIndex].innerText.trim();" +
+                "               temp['date'] = cells[dateIndex].innerText.trim();" +
+                "               temp['time'] = cells[timeIndex].innerText.trim();" +
+                "               obj[i.toString()] = temp;" +
+                "               courseIndex += columns;" +
+                "               dateIndex += columns;" +
+                "               timeIndex += columns;" +
+                "           }" +
+                "       }" +
+                "   }" +
+                "});" +
+                "return obj;" +
+                "})();", new ValueCallback<String>() {
+            @Override
+            public void onReceiveValue(String obj) {
+                String temp = obj.substring(1, obj.length() - 1);
+                if (obj.equals("null")) {
+                    Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
+                    isOpened = false;
+                    reloadPage();
+                } else if (temp.equals("nothing") || temp.equals("")) {
+                    try {
+                        myDatabase.execSQL("DROP TABLE IF EXISTS exams");
+                        myDatabase.execSQL("CREATE TABLE IF NOT EXISTS exams (id INT(3) PRIMARY KEY, course VARCHAR, date VARCHAR, time VARCHAR)");
+
+                        downloadMessages();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
+                        isOpened = false;
+                        reloadPage();
+                    }
+                } else {
+                    try {
+                        JSONObject myObj = new JSONObject(obj);
+
+                        myDatabase.execSQL("DROP TABLE IF EXISTS exams");
+                        myDatabase.execSQL("CREATE TABLE IF NOT EXISTS exams (id INT(3) PRIMARY KEY, course VARCHAR, date VARCHAR, start_time VARCHAR, end_time VARCHAR)");
+
+                        for (int i = 0; i < myObj.length(); ++i) {
+                            JSONObject tempObj = new JSONObject(myObj.getString(Integer.toString(i)));
+                            String course = tempObj.getString("course");
+                            String date = tempObj.getString("date");
+                            String[] time = tempObj.getString("time").split("-");
+                            String startTime = time[0].trim();
+                            String endTime = time[1].trim();
+
+                            myDatabase.execSQL("INSERT INTO faculty (course, date, start_time, end_time) VALUES('" + course + "', '" + date + "', '" + startTime + "', '" + endTime + "')");
                         }
 
                         downloadMessages();
