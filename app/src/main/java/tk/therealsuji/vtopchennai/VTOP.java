@@ -1421,7 +1421,7 @@ public class VTOP {
                     Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
                     isOpened = false;
                     reloadPage();
-                } else if (temp.equals("nothing") || obj.equals("")) {
+                } else if (temp.equals("nothing") || temp.equals("")) {
                     /*
                         Dropping and recreating an empty table
                      */

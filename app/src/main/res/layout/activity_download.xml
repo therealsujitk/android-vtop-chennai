@@ -83,7 +83,7 @@
             android:paddingTop="17dp"
             android:paddingBottom="17dp"
             android:textAlignment="center"
-            android:textColor="@color/colorDefault"
+            android:textColor="@color/colorText"
             android:textColorHint="@color/colorHint" />
 
         <Button
