@@ -1,8 +1,6 @@
 package tk.therealsuji.vtopchennai;
 
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Typeface;
@@ -20,37 +18,12 @@ import androidx.core.content.res.ResourcesCompat;
 import java.util.Objects;
 
 public class FacultyActivity extends AppCompatActivity {
-    boolean night = true;
-
-    private void setDay() {
-        getWindow().setBackgroundDrawableResource(R.color.colorDark);
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_faculty);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
-
-        /*
-            Set appearance
-         */
-        SharedPreferences sharedPreferences = this.getSharedPreferences("tk.therealsuji.vtopchennai", Context.MODE_PRIVATE);
-        String appearance = sharedPreferences.getString("appearance", "system");
-
-        if (appearance.equals("day")) {
-            setDay();
-            night = false;
-        } else if (appearance.equals("system")) {
-            switch (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) {
-                case Configuration.UI_MODE_NIGHT_YES:
-                    break;
-                case Configuration.UI_MODE_NIGHT_NO:
-                    setDay();
-                    night = false;
-                    break;
-            }
-        }
 
         LinearLayout facultyInfo = findViewById(R.id.facultyInfo);
         float pixelDensity = this.getResources().getDisplayMetrics().density;
@@ -83,11 +56,7 @@ public class FacultyActivity extends AppCompatActivity {
                 blockParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (5 * pixelDensity));
             }
             block.setLayoutParams(blockParams);
-            if (night) {
-                block.setBackground(ContextCompat.getDrawable(this, R.drawable.plain_card_night));
-            } else {
-                block.setBackground(ContextCompat.getDrawable(this, R.drawable.plain_card));
-            }
+            block.setBackground(ContextCompat.getDrawable(this, R.drawable.plain_card));
             block.setGravity(Gravity.CENTER_VERTICAL);
             block.setOrientation(LinearLayout.VERTICAL);
 

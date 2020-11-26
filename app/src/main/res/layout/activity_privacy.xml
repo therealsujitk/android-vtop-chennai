@@ -30,7 +30,7 @@
                 android:layout_marginTop="20dp"
                 android:layout_marginEnd="20dp"
                 android:text="@string/privacy_intro"
-                android:textColor="@color/colorLight"
+                android:textColor="@color/colorText"
                 android:textSize="16sp" />
 
             <TextView
@@ -41,7 +41,7 @@
                 android:layout_marginTop="20dp"
                 android:layout_marginEnd="20dp"
                 android:text="@string/privacy_ownership"
-                android:textColor="@color/colorLight"
+                android:textColor="@color/colorText"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
@@ -53,7 +53,7 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="20dp"
                 android:text="@string/privacy_ownership_content"
-                android:textColor="@color/colorLight"
+                android:textColor="@color/colorText"
                 android:textSize="16sp" />
 
             <TextView
@@ -64,7 +64,7 @@
                 android:layout_marginTop="20dp"
                 android:layout_marginEnd="20dp"
                 android:text="@string/privacy_data"
-                android:textColor="@color/colorLight"
+                android:textColor="@color/colorText"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
@@ -76,7 +76,7 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="20dp"
                 android:text="@string/privacy_data_content"
-                android:textColor="@color/colorLight"
+                android:textColor="@color/colorText"
                 android:textSize="16sp" />
 
             <TextView
@@ -87,7 +87,7 @@
                 android:layout_marginTop="20dp"
                 android:layout_marginEnd="20dp"
                 android:text="@string/privacy_contact"
-                android:textColor="@color/colorLight"
+                android:textColor="@color/colorText"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
@@ -100,7 +100,7 @@
                 android:layout_marginEnd="20dp"
                 android:layout_marginBottom="20dp"
                 android:text="@string/privacy_contact_content"
-                android:textColor="@color/colorLight"
+                android:textColor="@color/colorText"
                 android:textSize="16sp" />
         </LinearLayout>
     </ScrollView>

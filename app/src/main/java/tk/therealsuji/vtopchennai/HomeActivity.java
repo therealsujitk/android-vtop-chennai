@@ -5,7 +5,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Typeface;
@@ -29,7 +28,6 @@ import java.util.Locale;
 
 public class HomeActivity extends AppCompatActivity {
     SharedPreferences sharedPreferences;
-    boolean night = true;
 
     /*
         The following functions are to open the activities in the "Classes" category
@@ -104,41 +102,6 @@ public class HomeActivity extends AppCompatActivity {
         sharedPreferences.edit().putString("isLoggedIn", "false").apply();
         startActivity(new Intent(HomeActivity.this, LoginActivity.class));
         finish();
-    }
-
-    private void setDay() {
-        getWindow().setBackgroundDrawableResource(R.color.colorLight);
-
-        ImageView avatar = findViewById(R.id.avatar);
-        avatar.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.avatar));
-
-        TextView id = findViewById(R.id.id);
-        id.setTextColor(getColor(R.color.colorLight));
-        TextView credits = findViewById(R.id.credits);
-        credits.setTextColor(getColor(R.color.colorLight));
-
-        TextView refreshed = findViewById(R.id.refreshed);
-        refreshed.setTextColor(getColor(R.color.colorDark));
-        TextView builtBy = findViewById(R.id.builtBy);
-        builtBy.setTextColor(getColor(R.color.colorDark));
-
-        findViewById(R.id.upcoming).setBackground(ContextCompat.getDrawable(this, R.drawable.plain_card));
-
-        findViewById(R.id.timetable).setBackground(ContextCompat.getDrawable(this, R.drawable.button_card));
-        findViewById(R.id.attendance).setBackground(ContextCompat.getDrawable(this, R.drawable.button_card));
-        findViewById(R.id.messages).setBackground(ContextCompat.getDrawable(this, R.drawable.button_card));
-
-        findViewById(R.id.spotlight).setBackground(ContextCompat.getDrawable(this, R.drawable.button_card));
-        findViewById(R.id.staff).setBackground(ContextCompat.getDrawable(this, R.drawable.button_card));
-        findViewById(R.id.faculty).setBackground(ContextCompat.getDrawable(this, R.drawable.button_card));
-
-
-        findViewById(R.id.share).setBackground(ContextCompat.getDrawable(this, R.drawable.button_card));
-        findViewById(R.id.refresh).setBackground(ContextCompat.getDrawable(this, R.drawable.button_card));
-        findViewById(R.id.appearance).setBackground(ContextCompat.getDrawable(this, R.drawable.button_card));
-        findViewById(R.id.notifications).setBackground(ContextCompat.getDrawable(this, R.drawable.button_card));
-        findViewById(R.id.privacy).setBackground(ContextCompat.getDrawable(this, R.drawable.button_card));
-        findViewById(R.id.signOut).setBackground(ContextCompat.getDrawable(this, R.drawable.button_card));
     }
 
     private void openUpdate() {
@@ -520,25 +483,6 @@ public class HomeActivity extends AppCompatActivity {
         refreshedView.setText(refreshed);
 
         /*
-            Set appearance
-         */
-        String appearance = sharedPreferences.getString("appearance", "system");
-
-        if (appearance.equals("day")) {
-            setDay();
-            night = false;
-        } else if (appearance.equals("system")) {
-            switch (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) {
-                case Configuration.UI_MODE_NIGHT_YES:
-                    break;
-                case Configuration.UI_MODE_NIGHT_NO:
-                    setDay();
-                    night = false;
-                    break;
-            }
-        }
-
-        /*
             Check for a new version
          */
         int versionCode = BuildConfig.VERSION_CODE;
@@ -556,11 +500,7 @@ public class HomeActivity extends AppCompatActivity {
             blockParams.setMarginEnd((int) (20 * pixelDensity));
             blockParams.setMargins(0, 0, 0, (int) (10 * pixelDensity));
             block.setLayoutParams(blockParams);
-            if (night) {
-                block.setBackground(ContextCompat.getDrawable(this, R.drawable.button_card_night));
-            } else {
-                block.setBackground(ContextCompat.getDrawable(this, R.drawable.button_card));
-            }
+            block.setBackground(ContextCompat.getDrawable(this, R.drawable.button_card));
             block.setOrientation(LinearLayout.HORIZONTAL);
             block.setGravity(Gravity.CENTER_VERTICAL);
             block.setFocusable(true);

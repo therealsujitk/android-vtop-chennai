@@ -3,7 +3,6 @@ package tk.therealsuji.vtopchennai;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
@@ -13,7 +12,6 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 
 import java.util.Objects;
 
@@ -42,15 +40,6 @@ public class DownloadActivity extends AppCompatActivity {
         sharedPreferences.edit().putString("semester", semester.toLowerCase()).apply();
 
         vtop.selectTimetable();
-    }
-
-    private void setDay() {
-        getWindow().setBackgroundDrawableResource(R.color.colorLight);
-
-        EditText captcha = findViewById(R.id.captcha);
-        captcha.setBackground(ContextCompat.getDrawable(this, R.drawable.text_field_primary));
-        captcha.setTextColor(getColor(R.color.colorDark));
-        findViewById(R.id.selectSemester).setBackground(ContextCompat.getDrawable(this, R.drawable.text_field_primary));
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -104,22 +93,5 @@ public class DownloadActivity extends AppCompatActivity {
                 return false;
             }
         });
-
-        /*
-            Set appearance
-         */
-        String appearance = sharedPreferences.getString("appearance", "system");
-
-        if (appearance.equals("day")) {
-            setDay();
-        } else if (appearance.equals("system")) {
-            switch (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) {
-                case Configuration.UI_MODE_NIGHT_YES:
-                    break;
-                case Configuration.UI_MODE_NIGHT_NO:
-                    setDay();
-                    break;
-            }
-        }
     }
 }

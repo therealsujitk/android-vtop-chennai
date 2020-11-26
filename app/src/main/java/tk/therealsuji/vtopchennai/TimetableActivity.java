@@ -1,8 +1,6 @@
 package tk.therealsuji.vtopchennai;
 
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Typeface;
@@ -26,7 +24,6 @@ public class TimetableActivity extends AppCompatActivity {
     LinearLayout sunday, monday, tuesday, wednesday, thursday, friday, saturday;
     Button sun, mon, tue, wed, thu, fri, sat;
     boolean[] hasClasses = new boolean[7];
-    boolean night = true;
     int day;
 
     public void setTimetable(View view) {
@@ -52,7 +49,7 @@ public class TimetableActivity extends AppCompatActivity {
             sat = findViewById(R.id.saturday);
         }
 
-        if (!night) {
+        if (view != null) {
             sun.setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary));
             mon.setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary));
             tue.setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary));
@@ -60,71 +57,30 @@ public class TimetableActivity extends AppCompatActivity {
             thu.setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary));
             fri.setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary));
             sat.setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary));
-        } else if (view != null) {
-            sun.setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary_night));
-            mon.setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary_night));
-            tue.setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary_night));
-            wed.setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary_night));
-            thu.setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary_night));
-            fri.setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary_night));
-            sat.setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary_night));
         }
 
         if (day == 0) {
-            if (!night) {
-                sun.setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary_selected));
-            } else {
-                sun.setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary_selected_night));
-            }
+            sun.setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary_selected));
             timetable.addView(sunday);
         } else if (day == 1) {
-            if (!night) {
-                mon.setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary_selected));
-            } else {
-                mon.setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary_selected_night));
-            }
+            mon.setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary_selected));
             timetable.addView(monday);
         } else if (day == 2) {
-            if (!night) {
-                tue.setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary_selected));
-            } else {
-                tue.setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary_selected_night));
-            }
+            tue.setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary_selected));
             timetable.addView(tuesday);
         } else if (day == 3) {
-            if (!night) {
-                wed.setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary_selected));
-            } else {
-                wed.setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary_selected_night));
-            }
+            wed.setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary_selected));
             timetable.addView(wednesday);
         } else if (day == 4) {
-            if (!night) {
-                thu.setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary_selected));
-            } else {
-                thu.setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary_selected_night));
-            }
+            thu.setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary_selected));
             timetable.addView(thursday);
         } else if (day == 5) {
-            if (!night) {
-                fri.setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary_selected));
-            } else {
-                fri.setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary_selected_night));
-            }
+            fri.setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary_selected));
             timetable.addView(friday);
         } else if (day == 6) {
-            if (!night) {
-                sat.setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary_selected));
-            } else {
-                sat.setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary_selected_night));
-            }
+            sat.setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary_selected));
             timetable.addView(saturday);
         }
-    }
-
-    private void setDay() {
-        getWindow().setBackgroundDrawableResource(R.color.colorLight);
-        findViewById(R.id.days).setBackground(ContextCompat.getDrawable(this, R.color.colorLightTransparent));
     }
 
     @Override
@@ -132,26 +88,6 @@ public class TimetableActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timetable);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
-
-        /*
-            Set appearance
-         */
-        SharedPreferences sharedPreferences = this.getSharedPreferences("tk.therealsuji.vtopchennai", Context.MODE_PRIVATE);
-        String appearance = sharedPreferences.getString("appearance", "system");
-
-        if (appearance.equals("day")) {
-            setDay();
-            night = false;
-        } else if (appearance.equals("system")) {
-            switch (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) {
-                case Configuration.UI_MODE_NIGHT_YES:
-                    break;
-                case Configuration.UI_MODE_NIGHT_NO:
-                    setDay();
-                    night = false;
-                    break;
-            }
-        }
 
         /*
             Displaying the timetable
@@ -298,11 +234,7 @@ public class TimetableActivity extends AppCompatActivity {
                     blockParams.setMarginEnd((int) (20 * pixelDensity));
                     blockParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (5 * pixelDensity));
                     block.setLayoutParams(blockParams);
-                    if (night) {
-                        block.setBackground(ContextCompat.getDrawable(this, R.drawable.plain_card_night));
-                    } else {
-                        block.setBackground(ContextCompat.getDrawable(this, R.drawable.plain_card));
-                    }
+                    block.setBackground(ContextCompat.getDrawable(this, R.drawable.plain_card));
                     block.setOrientation(LinearLayout.VERTICAL);
 
                     LinearLayout innerBlock = new LinearLayout(this);
@@ -390,11 +322,7 @@ public class TimetableActivity extends AppCompatActivity {
                     blockParams.setMarginEnd((int) (20 * pixelDensity));
                     blockParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (5 * pixelDensity));
                     block.setLayoutParams(blockParams);
-                    if (night) {
-                        block.setBackground(ContextCompat.getDrawable(this, R.drawable.plain_card_night));
-                    } else {
-                        block.setBackground(ContextCompat.getDrawable(this, R.drawable.plain_card));
-                    }
+                    block.setBackground(ContextCompat.getDrawable(this, R.drawable.plain_card));
                     block.setOrientation(LinearLayout.VERTICAL);
 
                     LinearLayout innerBlock = new LinearLayout(this);

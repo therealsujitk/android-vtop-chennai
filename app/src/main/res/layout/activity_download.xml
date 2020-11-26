@@ -75,7 +75,7 @@
             android:layout_marginTop="20dp"
             android:layout_marginEnd="45dp"
             android:autofillHints="Enter your VTOP username"
-            android:background="@drawable/text_field_primary_night"
+            android:background="@drawable/text_field_primary"
             android:ems="10"
             android:hint="@string/captcha"
             android:inputType="textCapCharacters"
@@ -83,8 +83,8 @@
             android:paddingTop="17dp"
             android:paddingBottom="17dp"
             android:textAlignment="center"
-            android:textColor="@color/colorLight"
-            android:textColorHint="@color/colorGrey" />
+            android:textColor="@color/colorDefault"
+            android:textColorHint="@color/colorHint" />
 
         <Button
             android:id="@+id/submit"
@@ -100,7 +100,7 @@
             android:paddingBottom="15dp"
             android:text="@string/submit"
             android:textAllCaps="true"
-            android:textColor="@color/colorLight"
+            android:textColor="@color/colorDefault"
             android:textSize="16sp" />
     </LinearLayout>
 
@@ -123,7 +123,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="45dp"
             android:layout_marginEnd="45dp"
-            android:background="@drawable/text_field_primary_night"
+            android:background="@drawable/text_field_primary"
             android:paddingStart="10dp"
             android:paddingEnd="10dp" />
 
@@ -141,7 +141,7 @@
             android:paddingBottom="15dp"
             android:text="@string/select"
             android:textAllCaps="true"
-            android:textColor="@color/colorLight"
+            android:textColor="@color/colorDefault"
             android:textSize="16sp" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -37,7 +37,7 @@
         android:layout_marginStart="30dp"
         android:layout_marginTop="10dp"
         android:text="@string/app_name_long"
-        android:textColor="@color/colorLight"
+        android:textColor="@color/colorDefault"
         android:textSize="24sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/logoSignIn" />
@@ -61,16 +61,16 @@
             android:layout_marginTop="25dp"
             android:layout_marginEnd="45dp"
             android:autofillHints="Enter your VTOP username"
-            android:background="@drawable/text_field_primary_night"
+            android:background="@drawable/text_field_primary"
             android:drawableStart="@drawable/ic_username"
             android:drawablePadding="7dp"
-            android:drawableTint="@color/colorGrey"
+            android:drawableTint="@color/colorHint"
             android:ems="10"
             android:hint="@string/username"
             android:inputType="textCapCharacters"
             android:padding="10dp"
-            android:textColor="@color/colorLight"
-            android:textColorHint="@color/colorGrey" />
+            android:textColor="@color/colorText"
+            android:textColorHint="@color/colorHint" />
 
         <EditText
             android:id="@+id/password"
@@ -80,16 +80,16 @@
             android:layout_marginTop="10dp"
             android:layout_marginEnd="45dp"
             android:autofillHints="Enter your VTOP password"
-            android:background="@drawable/text_field_primary_night"
+            android:background="@drawable/text_field_primary"
             android:drawableStart="@drawable/ic_password"
             android:drawablePadding="7dp"
-            android:drawableTint="@color/colorGrey"
+            android:drawableTint="@color/colorHint"
             android:ems="10"
             android:hint="@string/password"
             android:inputType="textPassword"
             android:padding="10dp"
-            android:textColor="@color/colorLight"
-            android:textColorHint="@color/colorGrey" />
+            android:textColor="@color/colorText"
+            android:textColorHint="@color/colorHint" />
 
         <Button
             android:id="@+id/signIn"
@@ -105,7 +105,7 @@
             android:paddingBottom="15dp"
             android:text="@string/sign_in"
             android:textAllCaps="true"
-            android:textColor="@color/colorLight"
+            android:textColor="@color/colorText"
             android:textSize="16sp" />
     </LinearLayout>
 

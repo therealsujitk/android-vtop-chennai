@@ -3,13 +3,13 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimary</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:windowBackground">@color/colorDark</item>
+        <item name="android:windowBackground">@color/colorDefault</item>
         <item name="android:fontFamily">@font/rubik</item>
     </style>
 
     <style name="SplashScreen" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="colorPrimary">@color/colorDark</item>
-        <item name="colorPrimaryDark">@color/colorDark</item>
+        <item name="colorPrimary">@color/colorDefault</item>
+        <item name="colorPrimaryDark">@color/colorDefault</item>
         <item name="android:windowBackground">@drawable/splash_screen</item>
     </style>
 
