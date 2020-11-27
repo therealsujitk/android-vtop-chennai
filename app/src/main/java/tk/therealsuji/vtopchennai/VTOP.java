@@ -372,7 +372,8 @@ public class VTOP {
                         for (int i = 0; i < myObj.length(); ++i) {
                             options.add(myObj.getString(Integer.toString(i)));
                         }
-                        ArrayAdapter<String> adapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_dropdown_item, options);
+                        ArrayAdapter<String> adapter = new ArrayAdapter<>(context, R.layout.style_spinner_selected, options);
+                        adapter.setDropDownViewResource(R.layout.style_spinner);
                         selectSemester.setAdapter(adapter);
                         hideLayouts();
                         semesterLayout.setVisibility(View.VISIBLE);
