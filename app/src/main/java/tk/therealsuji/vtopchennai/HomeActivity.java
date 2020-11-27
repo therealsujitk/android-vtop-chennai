@@ -277,7 +277,6 @@ public class HomeActivity extends AppCompatActivity {
                             TableRow.LayoutParams.WRAP_CONTENT
                     );
                     periodParams.setMarginStart((int) (20 * pixelDensity));
-                    periodParams.setMarginEnd((int) (20 * pixelDensity));
                     periodParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (20 * pixelDensity));
                     period.setLayoutParams(periodParams);
                     period.setText(course);
@@ -357,7 +356,6 @@ public class HomeActivity extends AppCompatActivity {
                             TableRow.LayoutParams.WRAP_CONTENT
                     );
                     periodParams.setMarginStart((int) (20 * pixelDensity));
-                    periodParams.setMarginEnd((int) (20 * pixelDensity));
                     periodParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (20 * pixelDensity));
                     period.setLayoutParams(periodParams);
                     period.setText(course);
@@ -438,7 +436,6 @@ public class HomeActivity extends AppCompatActivity {
                             TableRow.LayoutParams.WRAP_CONTENT
                     );
                     periodParams.setMarginStart((int) (20 * pixelDensity));
-                    periodParams.setMarginEnd((int) (20 * pixelDensity));
                     periodParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (20 * pixelDensity));
                     period.setLayoutParams(periodParams);
                     period.setText(course);
@@ -517,7 +514,6 @@ public class HomeActivity extends AppCompatActivity {
                             TableRow.LayoutParams.WRAP_CONTENT
                     );
                     periodParams.setMarginStart((int) (20 * pixelDensity));
-                    periodParams.setMarginEnd((int) (20 * pixelDensity));
                     periodParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (20 * pixelDensity));
                     period.setLayoutParams(periodParams);
                     period.setText(course);
