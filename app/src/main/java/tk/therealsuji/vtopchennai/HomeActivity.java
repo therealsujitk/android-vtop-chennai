@@ -292,6 +292,8 @@ public class HomeActivity extends AppCompatActivity {
                         try {
                             Date startTime = hour24.parse(startTimeTheory);
                             Date endTime = hour24.parse(endTimeTheory);
+                            assert startTime != null;
+                            assert endTime != null;
                             timings = hour12.format(startTime) + " - " + hour12.format(endTime);
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -303,7 +305,6 @@ public class HomeActivity extends AppCompatActivity {
                             TableRow.LayoutParams.MATCH_PARENT,
                             TableRow.LayoutParams.WRAP_CONTENT
                     );
-                    timingParams.setMarginStart((int) (20 * pixelDensity));
                     timingParams.setMarginEnd((int) (20 * pixelDensity));
                     timingParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (20 * pixelDensity));
                     timing.setLayoutParams(timingParams);
@@ -371,6 +372,8 @@ public class HomeActivity extends AppCompatActivity {
                         try {
                             Date startTime = hour24.parse(startTimeLab);
                             Date endTime = hour24.parse(endTimeLab);
+                            assert startTime != null;
+                            assert endTime != null;
                             timings = hour12.format(startTime) + " - " + hour12.format(endTime);
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -382,7 +385,6 @@ public class HomeActivity extends AppCompatActivity {
                             TableRow.LayoutParams.MATCH_PARENT,
                             TableRow.LayoutParams.WRAP_CONTENT
                     );
-                    timingParams.setMarginStart((int) (20 * pixelDensity));
                     timingParams.setMarginEnd((int) (20 * pixelDensity));
                     timingParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (20 * pixelDensity));
                     timing.setLayoutParams(timingParams);
@@ -451,6 +453,8 @@ public class HomeActivity extends AppCompatActivity {
                         try {
                             Date startTime = hour24.parse(startTimeTheory);
                             Date endTime = hour24.parse(endTimeTheory);
+                            assert startTime != null;
+                            assert endTime != null;
                             timings = hour12.format(startTime) + " - " + hour12.format(endTime);
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -462,7 +466,6 @@ public class HomeActivity extends AppCompatActivity {
                             TableRow.LayoutParams.MATCH_PARENT,
                             TableRow.LayoutParams.WRAP_CONTENT
                     );
-                    timingParams.setMarginStart((int) (20 * pixelDensity));
                     timingParams.setMarginEnd((int) (20 * pixelDensity));
                     timingParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (20 * pixelDensity));
                     timing.setLayoutParams(timingParams);
@@ -529,6 +532,8 @@ public class HomeActivity extends AppCompatActivity {
                         try {
                             Date startTime = hour24.parse(startTimeLab);
                             Date endTime = hour24.parse(endTimeLab);
+                            assert startTime != null;
+                            assert endTime != null;
                             timings = hour12.format(startTime) + " - " + hour12.format(endTime);
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -540,7 +545,6 @@ public class HomeActivity extends AppCompatActivity {
                             TableRow.LayoutParams.MATCH_PARENT,
                             TableRow.LayoutParams.WRAP_CONTENT
                     );
-                    timingParams.setMarginStart((int) (20 * pixelDensity));
                     timingParams.setMarginEnd((int) (20 * pixelDensity));
                     timingParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (20 * pixelDensity));
                     timing.setLayoutParams(timingParams);
