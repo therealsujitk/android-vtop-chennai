@@ -12,6 +12,7 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.text.format.DateFormat;
 import android.text.method.LinkMovementMethod;
 import android.view.Gravity;
 import android.view.View;
@@ -223,6 +224,9 @@ public class HomeActivity extends AppCompatActivity {
 
         boolean flag = false;
 
+        SimpleDateFormat hour24 = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
+        SimpleDateFormat hour12 = new SimpleDateFormat("h:mm a", Locale.ENGLISH);
+
         for (int i = 0; i < theory.getCount() && i < lab.getCount(); ++i, theory.moveToNext(), lab.moveToNext()) {
             String startTimeTheory = theory.getString(startTheory);
             String endTimeTheory = theory.getString(endTheory);
@@ -284,6 +288,15 @@ public class HomeActivity extends AppCompatActivity {
                     innerBlock.addView(period);
 
                     String timings = startTimeTheory + " - " + endTimeTheory;
+                    if (!DateFormat.is24HourFormat(this)) {
+                        try {
+                            Date startTime = hour24.parse(startTimeTheory);
+                            Date endTime = hour24.parse(endTimeTheory);
+                            timings = hour12.format(startTime) + " - " + hour12.format(endTime);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
 
                     TextView timing = new TextView(this);
                     TableRow.LayoutParams timingParams = new TableRow.LayoutParams(
@@ -354,6 +367,15 @@ public class HomeActivity extends AppCompatActivity {
                     innerBlock.addView(period);
 
                     String timings = startTimeLab + " - " + endTimeLab;
+                    if (!DateFormat.is24HourFormat(this)) {
+                        try {
+                            Date startTime = hour24.parse(startTimeLab);
+                            Date endTime = hour24.parse(endTimeLab);
+                            timings = hour12.format(startTime) + " - " + hour12.format(endTime);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
 
                     TextView timing = new TextView(this);
                     TableRow.LayoutParams timingParams = new TableRow.LayoutParams(
@@ -425,6 +447,15 @@ public class HomeActivity extends AppCompatActivity {
                     innerBlock.addView(period);
 
                     String timings = startTimeTheory + " - " + endTimeTheory;
+                    if (!DateFormat.is24HourFormat(this)) {
+                        try {
+                            Date startTime = hour24.parse(startTimeTheory);
+                            Date endTime = hour24.parse(endTimeTheory);
+                            timings = hour12.format(startTime) + " - " + hour12.format(endTime);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
 
                     TextView timing = new TextView(this);
                     TableRow.LayoutParams timingParams = new TableRow.LayoutParams(
@@ -494,6 +525,15 @@ public class HomeActivity extends AppCompatActivity {
                     innerBlock.addView(period);
 
                     String timings = startTimeLab + " - " + endTimeLab;
+                    if (!DateFormat.is24HourFormat(this)) {
+                        try {
+                            Date startTime = hour24.parse(startTimeLab);
+                            Date endTime = hour24.parse(endTimeLab);
+                            timings = hour12.format(startTime) + " - " + hour12.format(endTime);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
 
                     TextView timing = new TextView(this);
                     TableRow.LayoutParams timingParams = new TableRow.LayoutParams(
@@ -524,7 +564,7 @@ public class HomeActivity extends AppCompatActivity {
         lab.close();
         myDatabase.close();
 
-        String refreshed = sharedPreferences.getString("refreshed", getString(R.string.refreshed));
+        String refreshed = sharedPreferences.getString("refreshed", getString(R.string.refreshed_unavailable));
         TextView refreshedView = findViewById(R.id.refreshed);
         refreshedView.setText(refreshed);
 
@@ -591,7 +631,7 @@ public class HomeActivity extends AppCompatActivity {
             container.addView(block);
         }
 
-        TextView myLink = (TextView) findViewById(R.id.builtBy);
+        TextView myLink = findViewById(R.id.builtBy);
         myLink.setMovementMethod(LinkMovementMethod.getInstance());
     }
 }

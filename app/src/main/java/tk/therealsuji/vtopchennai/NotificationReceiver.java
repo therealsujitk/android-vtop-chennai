@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.text.format.DateFormat;
 
 import androidx.core.app.NotificationCompat;
 
@@ -20,7 +21,8 @@ public class NotificationReceiver extends BroadcastReceiver {
         Calendar calFuture = Calendar.getInstance();
         calFuture.add(Calendar.MINUTE, 30);
         int dayCode = cal.get(Calendar.DAY_OF_WEEK);
-        SimpleDateFormat df = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
+        SimpleDateFormat hour24 = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
+        SimpleDateFormat hour12 = new SimpleDateFormat("h:mm a", Locale.ENGLISH);
 
         String day;
 
@@ -70,21 +72,43 @@ public class NotificationReceiver extends BroadcastReceiver {
             String endTimeLab = lab.getString(endLab);
 
             try {
-                Date currentTime = df.parse(df.format(cal.getTime()));
-                Date futureTime = df.parse(df.format(calFuture.getTime()));
+                Date currentTime = hour24.parse(hour24.format(cal.getTime()));
+                Date futureTime = hour24.parse(hour24.format(calFuture.getTime()));
 
                 assert currentTime != null;
                 assert futureTime != null;
 
-                if ((futureTime.after(df.parse(startTimeTheory)) || futureTime.equals(df.parse(startTimeTheory))) && currentTime.before(df.parse(startTimeTheory)) && !theory.getString(dayTheory).equals("null")) {
-                    title = "Upcoming: " + startTimeTheory + " - " + endTimeTheory;
+                if ((futureTime.after(hour24.parse(startTimeTheory)) || futureTime.equals(hour24.parse(startTimeTheory))) && currentTime.before(hour24.parse(startTimeTheory)) && !theory.getString(dayTheory).equals("null")) {
+                    title = "Upcoming: ";
+                    if (DateFormat.is24HourFormat(context)) {
+                        title += startTimeTheory + " - " + endTimeTheory;
+                    } else {
+                        try {
+                            Date startTime = hour24.parse(startTimeTheory);
+                            Date endTime = hour24.parse(endTimeTheory);
+                            title += hour12.format(startTime) + " - " + hour12.format(endTime);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
                     message = theory.getString(dayTheory).split("-")[1].trim() + " - Theory";
                     upcoming = true;
                     flag = true;
                 }
 
-                if ((futureTime.after(df.parse(startTimeLab)) || futureTime.equals(df.parse(startTimeLab))) && currentTime.before(df.parse(startTimeLab)) && !lab.getString(dayLab).equals("null")) {
-                    title = "Upcoming: " + startTimeLab + " - " + endTimeLab;
+                if ((futureTime.after(hour24.parse(startTimeLab)) || futureTime.equals(hour24.parse(startTimeLab))) && currentTime.before(hour24.parse(startTimeLab)) && !lab.getString(dayLab).equals("null")) {
+                    title = "Upcoming: ";
+                    if (DateFormat.is24HourFormat(context)) {
+                        title += startTimeLab + " - " + endTimeLab;
+                    } else {
+                        try {
+                            Date startTime = hour24.parse(startTimeLab);
+                            Date endTime = hour24.parse(endTimeLab);
+                            title += hour12.format(startTime) + " - " + hour12.format(endTime);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
                     message = lab.getString(dayLab).split("-")[1].trim() + " - Lab";
                     upcoming = true;
                     flag = true;
@@ -94,15 +118,37 @@ public class NotificationReceiver extends BroadcastReceiver {
                     break;
                 }
 
-                if ((currentTime.after(df.parse(startTimeTheory)) || currentTime.equals(df.parse(startTimeTheory))) && (currentTime.before(df.parse(endTimeTheory)) || currentTime.equals(df.parse(endTimeTheory))) && !theory.getString(dayTheory).equals("null")) {
-                    title = "Ongoing: " + startTimeTheory + " - " + endTimeTheory;
+                if ((currentTime.after(hour24.parse(startTimeTheory)) || currentTime.equals(hour24.parse(startTimeTheory))) && (currentTime.before(hour24.parse(endTimeTheory)) || currentTime.equals(hour24.parse(endTimeTheory))) && !theory.getString(dayTheory).equals("null")) {
+                    title = "Ongoing: ";
+                    if (DateFormat.is24HourFormat(context)) {
+                        title += startTimeTheory + " - " + endTimeTheory;
+                    } else {
+                        try {
+                            Date startTime = hour24.parse(startTimeTheory);
+                            Date endTime = hour24.parse(endTimeTheory);
+                            title += hour12.format(startTime) + " - " + hour12.format(endTime);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
                     message = theory.getString(dayTheory).split("-")[1].trim() + " - Theory";
                     upcoming = false;
                     flag = true;
                 }
 
-                if ((currentTime.after(df.parse(startTimeLab)) || currentTime.equals(df.parse(startTimeLab))) && (currentTime.before(df.parse(endTimeLab)) || currentTime.equals(df.parse(endTimeLab))) && !lab.getString(dayLab).equals("null")) {
-                    title = "Ongoing: " + startTimeLab + " - " + endTimeLab;
+                if ((currentTime.after(hour24.parse(startTimeLab)) || currentTime.equals(hour24.parse(startTimeLab))) && (currentTime.before(hour24.parse(endTimeLab)) || currentTime.equals(hour24.parse(endTimeLab))) && !lab.getString(dayLab).equals("null")) {
+                    title = "Ongoing: ";
+                    if (DateFormat.is24HourFormat(context)) {
+                        title += startTimeLab + " - " + endTimeLab;
+                    } else {
+                        try {
+                            Date startTime = hour24.parse(startTimeLab);
+                            Date endTime = hour24.parse(endTimeLab);
+                            title += hour12.format(startTime) + " - " + hour12.format(endTime);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
                     message = lab.getString(dayLab).split("-")[1].trim() + " - Lab";
                     upcoming = false;
                     flag = true;

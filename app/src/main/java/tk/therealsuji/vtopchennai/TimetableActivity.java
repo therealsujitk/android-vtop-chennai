@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.text.format.DateFormat;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -16,7 +17,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 import java.util.Objects;
 
 public class TimetableActivity extends AppCompatActivity {
@@ -186,6 +190,9 @@ public class TimetableActivity extends AppCompatActivity {
         int[] theoryIndexes = {sundayTheory, mondayTheory, tuesdayTheory, wednesdayTheory, thursdayTheory, fridayTheory, saturdayTheory};
         int[] labIndexes = {sundayLab, mondayLab, tuesdayLab, wednesdayLab, thursdayLab, fridayLab, saturdayLab};
 
+        SimpleDateFormat hour24 = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
+        SimpleDateFormat hour12 = new SimpleDateFormat("h:mm a", Locale.ENGLISH);
+
         for (int i = 0; i < theory.getCount() && i < lab.getCount(); ++i, theory.moveToNext(), lab.moveToNext()) {
             /*
                 The starting and ending times
@@ -246,6 +253,15 @@ public class TimetableActivity extends AppCompatActivity {
                     innerBlock.setOrientation(LinearLayout.HORIZONTAL);
 
                     String timings = startTimeTheory + " - " + endTimeTheory;
+                    if (!DateFormat.is24HourFormat(this)) {
+                        try {
+                            Date startTime = hour24.parse(startTimeTheory);
+                            Date endTime = hour24.parse(endTimeTheory);
+                            timings = hour12.format(startTime) + " - " + hour12.format(endTime);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
 
                     TextView time = new TextView(this);
                     TableRow.LayoutParams timeParams = new TableRow.LayoutParams(
@@ -334,6 +350,15 @@ public class TimetableActivity extends AppCompatActivity {
                     innerBlock.setOrientation(LinearLayout.HORIZONTAL);
 
                     String timings = startTimeLab + " - " + endTimeLab;
+                    if (!DateFormat.is24HourFormat(this)) {
+                        try {
+                            Date startTime = hour24.parse(startTimeLab);
+                            Date endTime = hour24.parse(endTimeLab);
+                            timings = hour12.format(startTime) + " - " + hour12.format(endTime);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
 
                     TextView time = new TextView(this);
                     TableRow.LayoutParams timeParams = new TableRow.LayoutParams(
