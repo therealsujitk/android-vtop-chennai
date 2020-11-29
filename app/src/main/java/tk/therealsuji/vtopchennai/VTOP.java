@@ -90,10 +90,6 @@ public class VTOP {
         checkUpdate = false;
         counter = 0;
 
-        loadUpdatePage();
-    }
-
-    public void loadUpdatePage() {
         loading.setText(context.getString(R.string.checking_update));
         webView.loadUrl("http://vtopchennai.therealsuji.tk/latest");
     }
@@ -107,8 +103,8 @@ public class VTOP {
             @Override
             public void onReceiveValue(String value) {
                 if (!value.equals("null")) {
-                    String versionCode = value.substring(1, value.length() - 1);
-                    sharedPreferences.edit().putString("versionCode", versionCode).apply();
+                    int latest = Integer.parseInt(value.substring(1, value.length() - 1));
+                    sharedPreferences.edit().putInt("latest", latest).apply();
                 }
 
                 reloadPage();

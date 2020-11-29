@@ -53,10 +53,10 @@
                     android:layout_height="wrap_content"
                     android:onClick="setAppearance"
                     android:tag="0"
-                    android:buttonTint="@color/colorText"
                     android:text="@string/light"
                     android:textColor="@color/colorText"
-                    android:textSize="16sp" />
+                    android:textSize="16sp"
+                    android:theme="@style/MyRadioButton" />
 
                 <RadioButton
                     android:id="@+id/dark"
@@ -64,10 +64,10 @@
                     android:layout_height="wrap_content"
                     android:onClick="setAppearance"
                     android:tag="1"
-                    android:buttonTint="@color/colorText"
                     android:text="@string/dark"
                     android:textColor="@color/colorText"
-                    android:textSize="16sp" />
+                    android:textSize="16sp"
+                    android:theme="@style/MyRadioButton" />
 
                 <RadioButton
                     android:id="@+id/system"
@@ -75,10 +75,10 @@
                     android:layout_height="wrap_content"
                     android:onClick="setAppearance"
                     android:tag="2"
-                    android:buttonTint="@color/colorText"
                     android:text="@string/system"
                     android:textColor="@color/colorText"
-                    android:textSize="16sp" />
+                    android:textSize="16sp"
+                    android:theme="@style/MyRadioButton" />
             </RadioGroup>
 
         </LinearLayout>

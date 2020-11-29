@@ -100,6 +100,7 @@ public class HomeActivity extends AppCompatActivity {
         appearance = new Dialog(this);
         appearance.setContentView(R.layout.dialog_appearance);
         appearance.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
         String theme = sharedPreferences.getString("appearance", "system");
         if (theme.equals("light")) {
             RadioButton light = appearance.findViewById(R.id.light);
@@ -111,6 +112,7 @@ public class HomeActivity extends AppCompatActivity {
             RadioButton system = appearance.findViewById(R.id.system);
             system.setChecked(true);
         }
+
         appearance.show();
     }
 
@@ -160,9 +162,11 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home);
 
         sharedPreferences = this.getSharedPreferences("tk.therealsuji.vtopchennai", Context.MODE_PRIVATE);
+        setContentView(R.layout.activity_home);
+
+        String theme = sharedPreferences.getString("appearance", "system");
 
         String name = sharedPreferences.getString("name", getString(R.string.name));
         String id = sharedPreferences.getString("id", getString(R.string.id));

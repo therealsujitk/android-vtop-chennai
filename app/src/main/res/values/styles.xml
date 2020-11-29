@@ -17,4 +17,9 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
+
+    <style name="MyRadioButton" parent="Theme.AppCompat.Light">
+        <item name="colorControlNormal">@color/colorText</item>
+        <item name="colorControlActivated">@color/colorPrimary</item>
+    </style>
 </resources>
