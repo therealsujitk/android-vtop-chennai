@@ -236,7 +236,6 @@ public class VTOP {
             public void onReceiveValue(String value) {
                 if (value.equals("true")) {
                     isLoggedIn = true;
-                    loading.setText(context.getString(R.string.downloading_profile));
                     downloadProfile();
                 } else {
                     if (!value.equals("false") && !value.equals("null")) {
@@ -262,6 +261,8 @@ public class VTOP {
         TBD: Saving the users profile picture
      */
     public void downloadProfile() {
+        loading.setText(context.getString(R.string.downloading_profile));
+
         webView.evaluateJavascript("(function() {" +
                 "var data = 'verifyMenu=true&winImage=' + $('#winImage').val() + '&authorizedID=' + $('#authorizedIDX').val() + '&nocache=@(new Date().getTime())';" +
                 "var obj = false;" +
@@ -327,6 +328,8 @@ public class VTOP {
         Function to get the list of semesters in order to download the timetable. The same value will be used to download the attendance
      */
     public void openTimetable() {
+        loading.setText(context.getString(R.string.loading));
+
         webView.evaluateJavascript("(function() {" +
                 "var data = 'verifyMenu=true&winImage=' + $('#winImage').val() + '&authorizedID=' + $('#authorizedIDX').val() + '&nocache=@(new Date().getTime())';" +
                 "var obj = false;" +
@@ -389,7 +392,6 @@ public class VTOP {
      */
     public void selectTimetable() {
         hideLayouts();
-        loading.setText(context.getString(R.string.downloading_timetable));
         loadingLayout.setVisibility(View.VISIBLE);
 
         String semester = sharedPreferences.getString("semester", "null");
@@ -433,6 +435,8 @@ public class VTOP {
         Function to save the timetable in an SQLite database, and the credit score in SharedPreferences
      */
     public void downloadTimetable() {
+        loading.setText(context.getString(R.string.downloading_timetable));
+
         webView.evaluateJavascript("(function() {" +
                 "var obj = {};" +
                 "var spans = document.getElementById('getStudentDetails').getElementsByTagName('span');" +
@@ -1188,6 +1192,8 @@ public class VTOP {
         Function to open the attendance page
      */
     public void openAttendance() {
+        loading.setText(context.getString(R.string.loading));
+
         webView.evaluateJavascript("(function() {" +
                 "var data = 'verifyMenu=true&winImage=' + $('#winImage').val() + '&authorizedID=' + $('#authorizedIDX').val() + '&nocache=@(new Date().getTime())';" +
                 "var successFlag = false;" +
@@ -1715,9 +1721,9 @@ public class VTOP {
     }
 
     public void finishUp() {
+        loading.setText(context.getString(R.string.loading));
         sharedPreferences.edit().putBoolean("isSignedIn", true).apply();
         myDatabase.close();
-        loading.setText(context.getString(R.string.loading));
         Intent intent = new Intent(context, HomeActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         context.startActivity(intent);

@@ -51,34 +51,34 @@
                     android:id="@+id/light"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:buttonTint="@color/colorText"
                     android:onClick="setAppearance"
                     android:tag="0"
                     android:text="@string/light"
                     android:textColor="@color/colorText"
-                    android:textSize="16sp"
-                    android:theme="@style/MyRadioButton" />
+                    android:textSize="16sp" />
 
                 <RadioButton
                     android:id="@+id/dark"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:buttonTint="@color/colorText"
                     android:onClick="setAppearance"
                     android:tag="1"
                     android:text="@string/dark"
                     android:textColor="@color/colorText"
-                    android:textSize="16sp"
-                    android:theme="@style/MyRadioButton" />
+                    android:textSize="16sp" />
 
                 <RadioButton
                     android:id="@+id/system"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:buttonTint="@color/colorText"
                     android:onClick="setAppearance"
                     android:tag="2"
                     android:text="@string/system"
                     android:textColor="@color/colorText"
-                    android:textSize="16sp"
-                    android:theme="@style/MyRadioButton" />
+                    android:textSize="16sp" />
             </RadioGroup>
 
         </LinearLayout>
