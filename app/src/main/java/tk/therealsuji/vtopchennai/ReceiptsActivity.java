@@ -101,7 +101,6 @@ public class ReceiptsActivity extends AppCompatActivity {
                     TableRow.LayoutParams.WRAP_CONTENT
             );
             receiptParams.setMarginStart((int) (20 * pixelDensity));
-            receiptParams.setMarginEnd((int) (20 * pixelDensity));
             receiptParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (20 * pixelDensity));
             receipt.setLayoutParams(receiptParams);
             receipt.setText(c.getString(receiptIndex));
@@ -119,7 +118,6 @@ public class ReceiptsActivity extends AppCompatActivity {
                     TableRow.LayoutParams.MATCH_PARENT,
                     TableRow.LayoutParams.WRAP_CONTENT
             );
-            dateParams.setMarginStart((int) (20 * pixelDensity));
             dateParams.setMarginEnd((int) (20 * pixelDensity));
             dateParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (20 * pixelDensity));
             date.setLayoutParams(dateParams);

@@ -80,7 +80,6 @@ public class AttendanceActivity extends AppCompatActivity {
                     TableRow.LayoutParams.WRAP_CONTENT
             );
             courseParams.setMarginStart((int) (20 * pixelDensity));
-            courseParams.setMarginEnd((int) (20 * pixelDensity));
             courseParams.setMargins(0, (int) (20 * pixelDensity), 0, (int) (5 * pixelDensity));
             course.setLayoutParams(courseParams);
             course.setText(c.getString(courseIndex));
@@ -100,7 +99,6 @@ public class AttendanceActivity extends AppCompatActivity {
                     TableRow.LayoutParams.MATCH_PARENT,
                     TableRow.LayoutParams.WRAP_CONTENT
             );
-            percentParams.setMarginStart((int) (20 * pixelDensity));
             percentParams.setMarginEnd((int) (20 * pixelDensity));
             percentParams.setMargins(0, (int) (20 * pixelDensity), 0, (int) (5 * pixelDensity));
             percent.setLayoutParams(percentParams);
@@ -128,7 +126,6 @@ public class AttendanceActivity extends AppCompatActivity {
                     TableRow.LayoutParams.WRAP_CONTENT
             );
             typeParams.setMarginStart((int) (20 * pixelDensity));
-            typeParams.setMarginEnd((int) (20 * pixelDensity));
             typeParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (20 * pixelDensity));
             type.setLayoutParams(typeParams);
             type.setText(c.getString(typeIndex));
@@ -136,7 +133,7 @@ public class AttendanceActivity extends AppCompatActivity {
             type.setTextSize(16);
             type.setTypeface(ResourcesCompat.getFont(this, R.font.rubik));
 
-            secondInnerBlock.addView(type);   //Adding type to innerBlock
+            secondInnerBlock.addView(type);   //Adding the course type to innerBlock
 
             /*
                 The attended classes TextView
@@ -148,7 +145,6 @@ public class AttendanceActivity extends AppCompatActivity {
                     TableRow.LayoutParams.MATCH_PARENT,
                     TableRow.LayoutParams.WRAP_CONTENT
             );
-            attendedParams.setMarginStart((int) (20 * pixelDensity));
             attendedParams.setMarginEnd((int) (20 * pixelDensity));
             attendedParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (20 * pixelDensity));
             attended.setLayoutParams(attendedParams);

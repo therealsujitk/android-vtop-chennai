@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.text.format.DateFormat;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -15,6 +16,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 import java.util.Objects;
 
 public class ExamsActivity extends AppCompatActivity {
@@ -37,6 +41,9 @@ public class ExamsActivity extends AppCompatActivity {
         int startTimeIndex = c.getColumnIndex("start_time");
         int endTimeIndex = c.getColumnIndex("end_time");
         c.moveToFirst();
+
+        SimpleDateFormat hour24 = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
+        SimpleDateFormat hour12 = new SimpleDateFormat("h:mm a", Locale.ENGLISH);
 
         for (int i = 0; i < c.getCount(); ++i) {
             /*
@@ -63,7 +70,7 @@ public class ExamsActivity extends AppCompatActivity {
             block.setOrientation(LinearLayout.VERTICAL);
 
             /*
-                The course code TextView
+                The exam course code TextView
              */
             TextView course = new TextView(this);
             TableRow.LayoutParams courseParams = new TableRow.LayoutParams(
@@ -79,7 +86,7 @@ public class ExamsActivity extends AppCompatActivity {
             course.setTextSize(20);
             course.setTypeface(ResourcesCompat.getFont(this, R.font.rubik), Typeface.BOLD);
 
-            block.addView(course); //Adding course code to block
+            block.addView(course); //Adding exam course code to block
 
             /*
                 The inner LinearLayout
@@ -91,7 +98,32 @@ public class ExamsActivity extends AppCompatActivity {
             ));
             innerBlock.setOrientation(LinearLayout.HORIZONTAL);
 
-            String timings = c.getString(startTimeIndex) + " - " + c.getString(endTimeIndex);
+            /*
+                Making a proper string of the timings
+             */
+            String startTimeString = c.getString(startTimeIndex);
+            String endTimeString = c.getString(endTimeIndex);
+
+            if (startTimeString.charAt(0) == '0') {
+                startTimeString = startTimeString.substring(1);
+            }
+            if (endTimeString.charAt(0) == '0') {
+                endTimeString = endTimeString.substring(1);
+            }
+
+            String timings = startTimeString + " - " + endTimeString;
+
+            if (DateFormat.is24HourFormat(this)) {
+                try {
+                    Date startTime = hour12.parse(startTimeString);
+                    Date endTime = hour12.parse(endTimeString);
+                    assert startTime != null;
+                    assert endTime != null;
+                    timings = hour24.format(startTime) + " - " + hour24.format(endTime);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
 
             /*
                 The time TextView
@@ -102,7 +134,6 @@ public class ExamsActivity extends AppCompatActivity {
                     TableRow.LayoutParams.WRAP_CONTENT
             );
             timeParams.setMarginStart((int) (20 * pixelDensity));
-            timeParams.setMarginEnd((int) (20 * pixelDensity));
             timeParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (20 * pixelDensity));
             time.setLayoutParams(timeParams);
             time.setText(timings);
@@ -120,7 +151,6 @@ public class ExamsActivity extends AppCompatActivity {
                     TableRow.LayoutParams.MATCH_PARENT,
                     TableRow.LayoutParams.WRAP_CONTENT
             );
-            dateParams.setMarginStart((int) (20 * pixelDensity));
             dateParams.setMarginEnd((int) (20 * pixelDensity));
             dateParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (20 * pixelDensity));
             date.setLayoutParams(dateParams);
@@ -130,7 +160,7 @@ public class ExamsActivity extends AppCompatActivity {
             date.setTextSize(16);
             date.setTypeface(ResourcesCompat.getFont(this, R.font.rubik));
 
-            innerBlock.addView(date);   //Adding course type to innerBlock
+            innerBlock.addView(date);   //Adding date to innerBlock
 
             block.addView(innerBlock);  //Adding innerBlock to block
 

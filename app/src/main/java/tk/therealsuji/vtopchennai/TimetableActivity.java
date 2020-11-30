@@ -252,6 +252,9 @@ public class TimetableActivity extends AppCompatActivity {
                     innerBlock.setLayoutParams(innerBlockParams);
                     innerBlock.setOrientation(LinearLayout.HORIZONTAL);
 
+                    /*
+                        Making a proper string of the timings
+                     */
                     String timings = startTimeTheory + " - " + endTimeTheory;
                     if (!DateFormat.is24HourFormat(this)) {
                         try {
@@ -269,7 +272,6 @@ public class TimetableActivity extends AppCompatActivity {
                             TableRow.LayoutParams.WRAP_CONTENT
                     );
                     timeParams.setMarginStart((int) (20 * pixelDensity));
-                    timeParams.setMarginEnd((int) (20 * pixelDensity));
                     timeParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (20 * pixelDensity));
                     time.setLayoutParams(timeParams);
                     time.setText(timings);
@@ -277,14 +279,13 @@ public class TimetableActivity extends AppCompatActivity {
                     time.setTextSize(16);
                     time.setTypeface(ResourcesCompat.getFont(this, R.font.rubik));
 
-                    innerBlock.addView(time);
+                    innerBlock.addView(time);   //Adding the timings to innerBlock
 
                     TextView theoryText = new TextView(this);
                     TableRow.LayoutParams theoryParams = new TableRow.LayoutParams(
                             TableRow.LayoutParams.MATCH_PARENT,
                             TableRow.LayoutParams.WRAP_CONTENT
                     );
-                    theoryParams.setMarginStart((int) (20 * pixelDensity));
                     theoryParams.setMarginEnd((int) (20 * pixelDensity));
                     theoryParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (20 * pixelDensity));
                     theoryText.setLayoutParams(theoryParams);
@@ -294,12 +295,19 @@ public class TimetableActivity extends AppCompatActivity {
                     theoryText.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
                     theoryText.setTypeface(ResourcesCompat.getFont(this, R.font.rubik));
 
-                    innerBlock.addView(theoryText);
+                    innerBlock.addView(theoryText); //Adding the theory text to innerBlock
 
+                    /*
+                        Adding period and other details to block
+                     */
                     block.addView(period);
                     block.addView(innerBlock);
+
+                    /*
+                        Finally adding block to the main sections
+                     */
                     days[j].addView(block);
-                    hasClasses[j] = true;
+                    hasClasses[j] = true;   //Telling everyone that there is something on this day
                 }
 
                 /*
@@ -349,6 +357,9 @@ public class TimetableActivity extends AppCompatActivity {
                     innerBlock.setLayoutParams(innerBlockParams);
                     innerBlock.setOrientation(LinearLayout.HORIZONTAL);
 
+                    /*
+                        Making a proper string of the timings
+                     */
                     String timings = startTimeLab + " - " + endTimeLab;
                     if (!DateFormat.is24HourFormat(this)) {
                         try {
@@ -360,13 +371,15 @@ public class TimetableActivity extends AppCompatActivity {
                         }
                     }
 
+                    /*
+                        The timings TextView
+                     */
                     TextView time = new TextView(this);
                     TableRow.LayoutParams timeParams = new TableRow.LayoutParams(
                             TableRow.LayoutParams.WRAP_CONTENT,
                             TableRow.LayoutParams.WRAP_CONTENT
                     );
                     timeParams.setMarginStart((int) (20 * pixelDensity));
-                    timeParams.setMarginEnd((int) (20 * pixelDensity));
                     timeParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (20 * pixelDensity));
                     time.setLayoutParams(timeParams);
                     time.setText(timings);
@@ -374,14 +387,16 @@ public class TimetableActivity extends AppCompatActivity {
                     time.setTextSize(16);
                     time.setTypeface(ResourcesCompat.getFont(this, R.font.rubik));
 
-                    innerBlock.addView(time);
+                    innerBlock.addView(time);   //Adding the timings to innerBlock
 
+                    /*
+                        The lab text TextView
+                     */
                     TextView labText = new TextView(this);
                     TableRow.LayoutParams labParams = new TableRow.LayoutParams(
                             TableRow.LayoutParams.MATCH_PARENT,
                             TableRow.LayoutParams.WRAP_CONTENT
                     );
-                    labParams.setMarginStart((int) (20 * pixelDensity));
                     labParams.setMarginEnd((int) (20 * pixelDensity));
                     labParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (20 * pixelDensity));
                     labText.setLayoutParams(labParams);
@@ -391,8 +406,11 @@ public class TimetableActivity extends AppCompatActivity {
                     labText.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
                     labText.setTypeface(ResourcesCompat.getFont(this, R.font.rubik));
 
-                    innerBlock.addView(labText);
+                    innerBlock.addView(labText);    //Adding the lab text to innerBlock
 
+                    /*
+                        Adding period and other details to block
+                     */
                     block.addView(period);
                     block.addView(innerBlock);
                     days[j].addView(block);
@@ -407,10 +425,6 @@ public class TimetableActivity extends AppCompatActivity {
 
         Calendar c = Calendar.getInstance();
         day = c.get(Calendar.DAY_OF_WEEK) - 1;
-
-        //HorizontalScrollView daysView = findViewById(R.id.days);
-        //int halfWidth = daysView.getMeasuredWidth() / 14;
-        //daysView.scrollBy(halfWidth * ((2 * day) - 1), 0);
 
         setTimetable(null);
     }

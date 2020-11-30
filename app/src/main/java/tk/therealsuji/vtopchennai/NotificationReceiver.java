@@ -162,9 +162,9 @@ public class NotificationReceiver extends BroadcastReceiver {
             NotificationHelper notificationHelper = new NotificationHelper(context);
             NotificationCompat.Builder n;
             if (upcoming) {
-                n = notificationHelper.notifyUpcoming(title, message);
+                n = notificationHelper.notifyUpcoming(context, title, message);
             } else {
-                n = notificationHelper.notifyOngoing(title, message);
+                n = notificationHelper.notifyOngoing(context, title, message);
             }
             notificationHelper.getManager().notify(2, n.build());
         }

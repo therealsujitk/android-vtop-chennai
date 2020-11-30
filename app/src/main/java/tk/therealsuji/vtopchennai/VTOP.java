@@ -1445,7 +1445,7 @@ public class VTOP {
                         for (int i = 0; i < myObj.length(); ++i) {
                             JSONObject tempObj = new JSONObject(myObj.getString(Integer.toString(i)));
                             String course = tempObj.getString("course");
-                            String date = tempObj.getString("date");
+                            String date = tempObj.getString("date").toUpperCase();
                             String[] time = tempObj.getString("time").split("-");
                             String startTime = time[0].trim();
                             String endTime = time[1].trim();
@@ -1545,7 +1545,7 @@ public class VTOP {
                         for (int i = 0; i < myObj.length(); ++i) {
                             JSONObject tempObj = new JSONObject(myObj.getString(Integer.toString(i)));
                             String receipt = tempObj.getString("receipt");
-                            String date = tempObj.getString("date");
+                            String date = tempObj.getString("date").toUpperCase();
                             String amount = tempObj.getString("amount");
 
                             myDatabase.execSQL("INSERT INTO receipts (receipt, date, amount) VALUES('" + receipt + "', '" + date + "', '" + amount + "')");

@@ -93,8 +93,7 @@
             android:orientation="vertical"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/profileFooter"
-            app:layout_constraintWidth_max="400dp">
+            app:layout_constraintTop_toBottomOf="@+id/profileFooter">
 
             <LinearLayout
                 android:id="@+id/upcoming"
@@ -177,7 +176,8 @@
                         android:layout_height="wrap_content"
                         android:clickable="false"
                         android:contentDescription="@string/timetable_description"
-                        app:srcCompat="@drawable/ic_timetable" />
+                        app:srcCompat="@drawable/ic_timetable"
+                        app:tint="@color/colorPrimary" />
 
                     <TextView
                         android:id="@+id/textTimetable"
@@ -213,7 +213,8 @@
                         android:layout_height="wrap_content"
                         android:clickable="false"
                         android:contentDescription="@string/attendance_description"
-                        app:srcCompat="@drawable/ic_attendance" />
+                        app:srcCompat="@drawable/ic_attendance"
+                        app:tint="@color/colorPrimary" />
 
                     <TextView
                         android:id="@+id/textAttendance"
@@ -249,7 +250,8 @@
                         android:layout_height="wrap_content"
                         android:clickable="false"
                         android:contentDescription="@string/exams_description"
-                        app:srcCompat="@drawable/ic_exams" />
+                        app:srcCompat="@drawable/ic_exams"
+                        app:tint="@color/colorPrimary" />
 
                     <TextView
                         android:id="@+id/textExams"
@@ -285,7 +287,8 @@
                         android:layout_height="wrap_content"
                         android:clickable="false"
                         android:contentDescription="@string/messages_description"
-                        app:srcCompat="@drawable/ic_messages" />
+                        app:srcCompat="@drawable/ic_messages"
+                        app:tint="@color/colorPrimary" />
 
                     <TextView
                         android:id="@+id/textMessages"
@@ -353,7 +356,8 @@
                         android:layout_height="wrap_content"
                         android:clickable="false"
                         android:contentDescription="@string/spotlight_description"
-                        app:srcCompat="@drawable/ic_spotlight" />
+                        app:srcCompat="@drawable/ic_spotlight"
+                        app:tint="@color/colorPrimary" />
 
                     <TextView
                         android:id="@+id/textSpotlight"
@@ -389,7 +393,8 @@
                         android:layout_height="wrap_content"
                         android:clickable="false"
                         android:contentDescription="@string/faculty_description"
-                        app:srcCompat="@drawable/ic_faculty" />
+                        app:srcCompat="@drawable/ic_faculty"
+                        app:tint="@color/colorPrimary" />
 
                     <TextView
                         android:id="@+id/textFaculty"
@@ -425,7 +430,8 @@
                         android:layout_height="wrap_content"
                         android:clickable="false"
                         android:contentDescription="@string/staff_description"
-                        app:srcCompat="@drawable/ic_staff" />
+                        app:srcCompat="@drawable/ic_staff"
+                        app:tint="@color/colorPrimary" />
 
                     <TextView
                         android:id="@+id/textStaff"
@@ -461,7 +467,8 @@
                         android:layout_height="wrap_content"
                         android:clickable="false"
                         android:contentDescription="@string/receipts_description"
-                        app:srcCompat="@drawable/ic_receipts" />
+                        app:srcCompat="@drawable/ic_receipts"
+                        app:tint="@color/colorPrimary" />
 
                     <TextView
                         android:id="@+id/textReceipts"
@@ -528,7 +535,8 @@
                         android:layout_height="wrap_content"
                         android:clickable="false"
                         android:contentDescription="@string/share_description"
-                        app:srcCompat="@drawable/ic_share" />
+                        app:srcCompat="@drawable/ic_share"
+                        app:tint="@color/colorPrimary" />
 
                     <TextView
                         android:id="@+id/textShare"
@@ -564,7 +572,8 @@
                         android:layout_height="wrap_content"
                         android:clickable="false"
                         android:contentDescription="@string/refresh_description"
-                        app:srcCompat="@drawable/ic_refresh" />
+                        app:srcCompat="@drawable/ic_refresh"
+                        app:tint="@color/colorPrimary" />
 
                     <TextView
                         android:id="@+id/textRefresh"
@@ -600,7 +609,8 @@
                         android:layout_height="wrap_content"
                         android:clickable="false"
                         android:contentDescription="@string/appearance_description"
-                        app:srcCompat="@drawable/ic_theme" />
+                        app:srcCompat="@drawable/ic_appearance"
+                        app:tint="@color/colorPrimary" />
 
                     <TextView
                         android:id="@+id/textAppearance"
@@ -636,7 +646,8 @@
                         android:layout_height="wrap_content"
                         android:clickable="false"
                         android:contentDescription="@string/notifications_description"
-                        app:srcCompat="@drawable/ic_notifications" />
+                        app:srcCompat="@drawable/ic_notifications"
+                        app:tint="@color/colorPrimary" />
 
                     <TextView
                         android:id="@+id/textNotifications"
@@ -672,7 +683,8 @@
                         android:layout_height="wrap_content"
                         android:clickable="false"
                         android:contentDescription="@string/privacy_description"
-                        app:srcCompat="@drawable/ic_privacy" />
+                        app:srcCompat="@drawable/ic_privacy"
+                        app:tint="@color/colorPrimary" />
 
                     <TextView
                         android:id="@+id/textPrivacy"
@@ -708,7 +720,8 @@
                         android:layout_height="wrap_content"
                         android:clickable="false"
                         android:contentDescription="@string/sign_out_description"
-                        app:srcCompat="@drawable/ic_sign_out" />
+                        app:srcCompat="@drawable/ic_sign_out"
+                        app:tint="@color/colorPrimary" />
 
                     <TextView
                         android:id="@+id/textSignOut"

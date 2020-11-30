@@ -166,8 +166,6 @@ public class HomeActivity extends AppCompatActivity {
         sharedPreferences = this.getSharedPreferences("tk.therealsuji.vtopchennai", Context.MODE_PRIVATE);
         setContentView(R.layout.activity_home);
 
-        String theme = sharedPreferences.getString("appearance", "system");
-
         String name = sharedPreferences.getString("name", getString(R.string.name));
         String id = sharedPreferences.getString("id", getString(R.string.id));
         String credits = sharedPreferences.getString("credits", getString(R.string.credits));
@@ -249,6 +247,9 @@ public class HomeActivity extends AppCompatActivity {
                         upcoming.removeAllViews();
                     }
 
+                    /*
+                        The upcoming text
+                     */
                     TextView heading = new TextView(this);
                     TableRow.LayoutParams headingParams = new TableRow.LayoutParams(
                             TableRow.LayoutParams.WRAP_CONTENT,
@@ -263,8 +264,11 @@ public class HomeActivity extends AppCompatActivity {
                     heading.setTextSize(20);
                     heading.setTypeface(ResourcesCompat.getFont(this, R.font.rubik));
 
-                    upcoming.addView(heading);
+                    upcoming.addView(heading);  //Adding the upcoming text to the block
 
+                    /*
+                        The inner LinearLayout
+                     */
                     LinearLayout innerBlock = new LinearLayout(this);
                     LinearLayout.LayoutParams innerBlockParams = new LinearLayout.LayoutParams(
                             LinearLayout.LayoutParams.MATCH_PARENT,
@@ -273,6 +277,9 @@ public class HomeActivity extends AppCompatActivity {
                     innerBlock.setLayoutParams(innerBlockParams);
                     innerBlock.setOrientation(LinearLayout.HORIZONTAL);
 
+                    /*
+                        The upcoming class course code
+                     */
                     String course = theory.getString(dayTheory).split("-")[1].trim() + " - Theory";
 
                     TextView period = new TextView(this);
@@ -288,8 +295,11 @@ public class HomeActivity extends AppCompatActivity {
                     period.setTextSize(16);
                     period.setTypeface(ResourcesCompat.getFont(this, R.font.rubik), Typeface.BOLD);
 
-                    innerBlock.addView(period);
+                    innerBlock.addView(period); //Adding the upcoming class to innerBlock
 
+                    /*
+                        Making a proper string of the timings
+                     */
                     String timings = startTimeTheory + " - " + endTimeTheory;
                     if (!DateFormat.is24HourFormat(this)) {
                         try {
@@ -303,6 +313,9 @@ public class HomeActivity extends AppCompatActivity {
                         }
                     }
 
+                    /*
+                        The timing TextView
+                     */
                     TextView timing = new TextView(this);
                     TableRow.LayoutParams timingParams = new TableRow.LayoutParams(
                             TableRow.LayoutParams.MATCH_PARENT,
@@ -317,10 +330,13 @@ public class HomeActivity extends AppCompatActivity {
                     timing.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
                     timing.setTypeface(ResourcesCompat.getFont(this, R.font.rubik), Typeface.BOLD);
 
-                    innerBlock.addView(timing);
+                    innerBlock.addView(timing); //Adding timing to innerBlock
 
+                    /*
+                        Finally adding the innerBlock to the main block
+                     */
                     upcoming.addView(innerBlock);
-                    flag = true;
+                    flag = true;    //Flag is set so that the next code doesn't erase everything
                 }
 
                 if ((futureTime.after(df.parse(startTimeLab)) || futureTime.equals(df.parse(startTimeLab))) && currentTime.before(df.parse(startTimeLab)) && !lab.getString(dayLab).equals("null")) {
@@ -328,6 +344,9 @@ public class HomeActivity extends AppCompatActivity {
                         upcoming.removeAllViews();
                     }
 
+                    /*
+                        The upcoming text
+                     */
                     TextView heading = new TextView(this);
                     TableRow.LayoutParams headingParams = new TableRow.LayoutParams(
                             TableRow.LayoutParams.WRAP_CONTENT,
@@ -342,8 +361,11 @@ public class HomeActivity extends AppCompatActivity {
                     heading.setTextSize(20);
                     heading.setTypeface(ResourcesCompat.getFont(this, R.font.rubik));
 
-                    upcoming.addView(heading);
+                    upcoming.addView(heading);  //Adding the upcoming text to the block
 
+                    /*
+                        The inner LinearLayout
+                     */
                     LinearLayout innerBlock = new LinearLayout(this);
                     LinearLayout.LayoutParams innerBlockParams = new LinearLayout.LayoutParams(
                             LinearLayout.LayoutParams.MATCH_PARENT,
@@ -352,6 +374,9 @@ public class HomeActivity extends AppCompatActivity {
                     innerBlock.setLayoutParams(innerBlockParams);
                     innerBlock.setOrientation(LinearLayout.HORIZONTAL);
 
+                    /*
+                        The upcoming class course code
+                     */
                     String course = lab.getString(dayLab).split("-")[1].trim() + " - Lab";
 
                     TextView period = new TextView(this);
@@ -367,8 +392,11 @@ public class HomeActivity extends AppCompatActivity {
                     period.setTextSize(16);
                     period.setTypeface(ResourcesCompat.getFont(this, R.font.rubik), Typeface.BOLD);
 
-                    innerBlock.addView(period);
+                    innerBlock.addView(period); //Adding the upcoming class to innerBlock
 
+                    /*
+                        Making a proper string of the timings
+                     */
                     String timings = startTimeLab + " - " + endTimeLab;
                     if (!DateFormat.is24HourFormat(this)) {
                         try {
@@ -382,6 +410,9 @@ public class HomeActivity extends AppCompatActivity {
                         }
                     }
 
+                    /*
+                        The timing TextView
+                     */
                     TextView timing = new TextView(this);
                     TableRow.LayoutParams timingParams = new TableRow.LayoutParams(
                             TableRow.LayoutParams.MATCH_PARENT,
@@ -396,19 +427,25 @@ public class HomeActivity extends AppCompatActivity {
                     timing.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
                     timing.setTypeface(ResourcesCompat.getFont(this, R.font.rubik), Typeface.BOLD);
 
-                    innerBlock.addView(timing);
+                    innerBlock.addView(timing); //Adding timing to innerBlock
 
+                    /*
+                        Finally adding the innerBlock to the main block
+                     */
                     upcoming.addView(innerBlock);
-                    flag = true;
+                    flag = true;    //Flag is set so that the next code doesn't erase everything
                 }
 
                 if (flag) {
-                    break;
+                    break;  // If either Upcoming or Ongoing and Upcoming has been added, the loop can stop
                 }
 
                 if ((currentTime.after(df.parse(startTimeTheory)) || currentTime.equals(df.parse(startTimeTheory))) && (currentTime.before(df.parse(endTimeTheory)) || currentTime.equals(df.parse(endTimeTheory))) && !theory.getString(dayTheory).equals("null")) {
                     upcoming.removeAllViews();
 
+                    /*
+                        The ongoing text
+                     */
                     TextView heading = new TextView(this);
                     TableRow.LayoutParams headingParams = new TableRow.LayoutParams(
                             TableRow.LayoutParams.WRAP_CONTENT,
@@ -423,8 +460,11 @@ public class HomeActivity extends AppCompatActivity {
                     heading.setTextSize(20);
                     heading.setTypeface(ResourcesCompat.getFont(this, R.font.rubik));
 
-                    upcoming.addView(heading);
+                    upcoming.addView(heading);  //Adding the ongoing text to the block
 
+                    /*
+                        The inner LinearLayout
+                     */
                     LinearLayout innerBlock = new LinearLayout(this);
                     LinearLayout.LayoutParams innerBlockParams = new LinearLayout.LayoutParams(
                             LinearLayout.LayoutParams.MATCH_PARENT,
@@ -433,6 +473,9 @@ public class HomeActivity extends AppCompatActivity {
                     innerBlock.setLayoutParams(innerBlockParams);
                     innerBlock.setOrientation(LinearLayout.HORIZONTAL);
 
+                    /*
+                        The ongoing class course code
+                     */
                     String course = theory.getString(dayTheory).split("-")[1].trim() + " - Theory";
                     TextView period = new TextView(this);
                     TableRow.LayoutParams periodParams = new TableRow.LayoutParams(
@@ -447,8 +490,11 @@ public class HomeActivity extends AppCompatActivity {
                     period.setTextSize(16);
                     period.setTypeface(ResourcesCompat.getFont(this, R.font.rubik), Typeface.BOLD);
 
-                    innerBlock.addView(period);
+                    innerBlock.addView(period); //Adding the ongoing class to innerBlock
 
+                    /*
+                        Making a proper string of the timings
+                     */
                     String timings = startTimeTheory + " - " + endTimeTheory;
                     if (!DateFormat.is24HourFormat(this)) {
                         try {
@@ -462,6 +508,9 @@ public class HomeActivity extends AppCompatActivity {
                         }
                     }
 
+                    /*
+                        The timing TextView
+                     */
                     TextView timing = new TextView(this);
                     TableRow.LayoutParams timingParams = new TableRow.LayoutParams(
                             TableRow.LayoutParams.MATCH_PARENT,
@@ -476,10 +525,13 @@ public class HomeActivity extends AppCompatActivity {
                     timing.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
                     timing.setTypeface(ResourcesCompat.getFont(this, R.font.rubik), Typeface.BOLD);
 
+                    /*
+                        Finally adding the innerBlock to the main block
+                     */
                     innerBlock.addView(timing);
 
                     upcoming.addView(innerBlock);
-                    flag = true;
+                    flag = true;    //Flag is set so that the next code doesn't erase everything
                 }
 
                 if ((currentTime.after(df.parse(startTimeLab)) || currentTime.equals(df.parse(startTimeLab))) && (currentTime.before(df.parse(endTimeLab)) || currentTime.equals(df.parse(endTimeLab))) && !lab.getString(dayLab).equals("null")) {
@@ -487,6 +539,9 @@ public class HomeActivity extends AppCompatActivity {
                         upcoming.removeAllViews();
                     }
 
+                    /*
+                        The ongoing text
+                     */
                     TextView heading = new TextView(this);
                     TableRow.LayoutParams headingParams = new TableRow.LayoutParams(
                             TableRow.LayoutParams.WRAP_CONTENT,
@@ -501,8 +556,11 @@ public class HomeActivity extends AppCompatActivity {
                     heading.setTextSize(20);
                     heading.setTypeface(ResourcesCompat.getFont(this, R.font.rubik));
 
-                    upcoming.addView(heading);
+                    upcoming.addView(heading);  //Adding the ongoing text to the block
 
+                    /*
+                        The inner LinearLayout
+                     */
                     LinearLayout innerBlock = new LinearLayout(this);
                     LinearLayout.LayoutParams innerBlockParams = new LinearLayout.LayoutParams(
                             LinearLayout.LayoutParams.MATCH_PARENT,
@@ -511,6 +569,9 @@ public class HomeActivity extends AppCompatActivity {
                     innerBlock.setLayoutParams(innerBlockParams);
                     innerBlock.setOrientation(LinearLayout.HORIZONTAL);
 
+                    /*
+                        The ongoing class course code
+                     */
                     String course = lab.getString(dayLab).split("-")[1].trim() + " - Lab";
                     TextView period = new TextView(this);
                     TableRow.LayoutParams periodParams = new TableRow.LayoutParams(
@@ -525,8 +586,11 @@ public class HomeActivity extends AppCompatActivity {
                     period.setTextSize(16);
                     period.setTypeface(ResourcesCompat.getFont(this, R.font.rubik), Typeface.BOLD);
 
-                    innerBlock.addView(period);
+                    innerBlock.addView(period); //Adding the ongoing class to innerBlock
 
+                    /*
+                        Making a proper string of the timings
+                     */
                     String timings = startTimeLab + " - " + endTimeLab;
                     if (!DateFormat.is24HourFormat(this)) {
                         try {
@@ -540,6 +604,9 @@ public class HomeActivity extends AppCompatActivity {
                         }
                     }
 
+                    /*
+                        The timing TextView
+                     */
                     TextView timing = new TextView(this);
                     TableRow.LayoutParams timingParams = new TableRow.LayoutParams(
                             TableRow.LayoutParams.MATCH_PARENT,
@@ -554,10 +621,13 @@ public class HomeActivity extends AppCompatActivity {
                     timing.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
                     timing.setTypeface(ResourcesCompat.getFont(this, R.font.rubik), Typeface.BOLD);
 
+                    /*
+                        Finally adding the innerBlock to the main block
+                     */
                     innerBlock.addView(timing);
 
                     upcoming.addView(innerBlock);
-                    flag = true;
+                    flag = true;    //Flag is set so that the next code doesn't erase everything
                 }
             } catch (Exception e) {
                 e.printStackTrace();
