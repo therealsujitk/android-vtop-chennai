@@ -638,9 +638,25 @@ public class HomeActivity extends AppCompatActivity {
         lab.close();
         myDatabase.close();
 
-        String refreshed = sharedPreferences.getString("refreshed", getString(R.string.refreshed_unavailable));
+        String refreshedDate = sharedPreferences.getString("refreshedDate", getString(R.string.refreshed_unavailable));
+        String refreshedTime = sharedPreferences.getString("refreshedTime", getString(R.string.refreshed_unavailable));
         TextView refreshedView = findViewById(R.id.refreshed);
-        refreshedView.setText(refreshed);
+        if (refreshedDate.equals(getString(R.string.refreshed_unavailable))) {
+            refreshedView.setText(getString(R.string.refreshed_unavailable));
+        } else {
+            String refreshed = getString(R.string.refreshed) + ": " + refreshedDate + ", ";
+            if (!DateFormat.is24HourFormat(this)) {
+                try {
+                    Date time = hour24.parse(refreshedTime);
+                    assert time != null;
+                    refreshedTime = hour12.format(time);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            refreshed += refreshedTime;
+            refreshedView.setText(refreshed);
+        }
 
         /*
             Check for a new version

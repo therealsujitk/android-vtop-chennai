@@ -1735,11 +1735,10 @@ public class VTOP {
 
         try {
             Calendar c = Calendar.getInstance();
-            SimpleDateFormat df = new SimpleDateFormat("dd MMM HH:mm", Locale.ENGLISH);
-            Date date = df.parse(df.format(c.getTime()));
-            assert date != null;
-            String[] dateFormat = date.toString().split(" ");
-            sharedPreferences.edit().putString("refreshed", context.getString(R.string.refreshed) + ": " + dateFormat[1] + " " + dateFormat[2] + ", " + dateFormat[3].substring(0, dateFormat[3].length() - 3)).apply();
+            SimpleDateFormat date = new SimpleDateFormat("MMM dd", Locale.ENGLISH);
+            SimpleDateFormat time = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
+            sharedPreferences.edit().putString("refreshedDate", date.format(c.getTime())).apply();
+            sharedPreferences.edit().putString("refreshedTime", time.format(c.getTime())).apply();
         } catch (Exception e) {
             e.printStackTrace();
         }

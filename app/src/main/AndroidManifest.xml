@@ -38,7 +38,7 @@
             android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".HomeActivity" />
+                android:value=".PrivacyActivity" />
         </activity>
         <activity
             android:name=".DownloadActivity"
@@ -48,7 +48,7 @@
             android:windowSoftInputMode="adjustPan">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".HomeActivity" />
+                android:value=".DownloadActivity" />
         </activity>
         <activity
             android:name=".HomeActivity"
@@ -63,7 +63,7 @@
             android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".HomeActivity" />
+                android:value=".TimetableActivity" />
             <intent-filter>
                 <action android:name="tk.therealsuji.vtopchennai.LAUNCH_TIMETABLE" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -76,7 +76,7 @@
             android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".HomeActivity" />
+                android:value=".AttendanceActivity" />
         </activity>
         <activity
             android:name=".ExamsActivity"
@@ -85,7 +85,7 @@
             android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".HomeActivity" />
+                android:value=".ExamsActivity" />
             <intent-filter>
                 <action android:name="tk.therealsuji.vtopchennai.LAUNCH_EXAMS" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -98,7 +98,7 @@
             android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".HomeActivity" />
+                android:value=".MessagesActivity" />
             <intent-filter>
                 <action android:name="tk.therealsuji.vtopchennai.LAUNCH_MESSAGES" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -111,7 +111,7 @@
             android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".HomeActivity" />
+                android:value=".SpotlightActivity" />
             <intent-filter>
                 <action android:name="tk.therealsuji.vtopchennai.LAUNCH_SPOTLIGHT" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -124,7 +124,7 @@
             android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".HomeActivity" />
+                android:value=".FacultyActivity" />
         </activity>
         <activity
             android:name=".StaffActivity"
@@ -133,7 +133,7 @@
             android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".HomeActivity" />
+                android:value=".StaffActivity" />
         </activity>
         <activity
             android:name=".ReceiptsActivity"
@@ -142,7 +142,7 @@
             android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".HomeActivity" />
+                android:value=".ReceiptsActivity" />
         </activity>
 
         <meta-data
