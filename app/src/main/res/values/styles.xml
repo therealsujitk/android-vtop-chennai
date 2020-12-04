@@ -11,6 +11,7 @@
         <item name="colorPrimary">@color/colorDefault</item>
         <item name="colorPrimaryDark">@color/colorDefault</item>
         <item name="android:windowBackground">@drawable/splash_screen</item>
+        <item name="android:navigationBarColor">@color/colorDefault</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
