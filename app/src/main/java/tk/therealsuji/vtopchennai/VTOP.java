@@ -1735,7 +1735,7 @@ public class VTOP {
 
         try {
             Calendar c = Calendar.getInstance();
-            SimpleDateFormat date = new SimpleDateFormat("MMM dd", Locale.ENGLISH);
+            SimpleDateFormat date = new SimpleDateFormat("MMM d", Locale.ENGLISH);
             SimpleDateFormat time = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
             sharedPreferences.edit().putString("refreshedDate", date.format(c.getTime())).apply();
             sharedPreferences.edit().putString("refreshedTime", time.format(c.getTime())).apply();
