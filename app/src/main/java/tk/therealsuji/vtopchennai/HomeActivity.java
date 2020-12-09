@@ -22,6 +22,7 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
@@ -122,12 +123,15 @@ public class HomeActivity extends AppCompatActivity {
         if (selected == 0) {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
             sharedPreferences.edit().putString("appearance", "light").apply();
+            Toast.makeText(this, "\ud83e\udd28", Toast.LENGTH_LONG).show();
         } else if (selected == 1) {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
             sharedPreferences.edit().putString("appearance", "dark").apply();
+            Toast.makeText(this, "\ud83d\ude0e", Toast.LENGTH_LONG).show();
         } else {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
             sharedPreferences.edit().remove("appearance").apply();
+            Toast.makeText(this, "\ud83d\ude32", Toast.LENGTH_LONG).show();
         }
 
         appearance.dismiss();
