@@ -195,9 +195,7 @@ public class VTOP {
                     captchaLayout.setVisibility(View.VISIBLE);
                 } catch (Exception e) {
                     e.printStackTrace();
-                    Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
-                    isOpened = false;
-                    reloadPage();
+                    error();
                 }
             }
         });
@@ -224,7 +222,7 @@ public class VTOP {
                 "               successFlag = 'Invalid Captcha';" +
                 "           } else if(response.toLowerCase().includes('invalid user id / password')) {" +
                 "               successFlag = 'Invalid User Id / Password';" +
-            "               } else if(response.toLowerCase().includes('user id not available')) {" +
+                "               } else if(response.toLowerCase().includes('user id not available')) {" +
                 "               successFlag = 'User Id Not available';" +
                 "           }" +
                 "       }" +
@@ -301,9 +299,7 @@ public class VTOP {
                  */
                 String temp = obj.substring(1, obj.length() - 1);
                 if (obj.equals("false") || obj.equals("null")) {
-                    Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
-                    isOpened = false;
-                    reloadPage();
+                    error();
                 } else if (temp.equals("")) {
                     Toast.makeText(context, "Sorry, we had some trouble downloading your profile.", Toast.LENGTH_LONG).show();
                     ((Activity) context).finish();
@@ -315,9 +311,7 @@ public class VTOP {
                         openTimetable();
                     } catch (Exception e) {
                         e.printStackTrace();
-                        Toast.makeText(context, "Sorry, something went wrong. Please try again later.", Toast.LENGTH_LONG).show();
-                        isOpened = false;
-                        reloadPage();
+                        error();
                     }
                 }
             }
@@ -361,9 +355,7 @@ public class VTOP {
                     obj is in the form of a JSON string like {"0": "Option 1", "1": "Option 2", "2": "Option 3",...}
                  */
                 if (obj.equals("false") || obj.equals("null")) {
-                    Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
-                    isOpened = false;
-                    reloadPage();
+                    error();
                 } else {
                     try {
                         JSONObject myObj = new JSONObject(obj);
@@ -378,9 +370,7 @@ public class VTOP {
                         semesterLayout.setVisibility(View.VISIBLE);
                     } catch (Exception e) {
                         e.printStackTrace();
-                        Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
-                        isOpened = false;
-                        reloadPage();
+                        error();
                     }
                 }
             }
@@ -423,9 +413,7 @@ public class VTOP {
                 if (value.equals("true")) {
                     downloadTimetable();
                 } else {
-                    Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
-                    isOpened = false;
-                    reloadPage();
+                    error();
                 }
             }
         });
@@ -523,373 +511,389 @@ public class VTOP {
                 "return obj;" +
                 "})();", new ValueCallback<String>() {
             @Override
-            public void onReceiveValue(String obj) {
+            public void onReceiveValue(final String obj) {
                 String temp = obj.substring(1, obj.length() - 1);
                 if (obj.equals("null")) {
-                    Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
-                    isOpened = false;
-                    reloadPage();
+                    error();
                 } else if (temp.equals("unreleased") || temp.equals("")) {
-                    myDatabase.execSQL("DROP TABLE IF EXISTS timetable_lab");
-                    myDatabase.execSQL("CREATE TABLE IF NOT EXISTS timetable_lab (id INT(3) PRIMARY KEY, start_time VARCHAR, end_time VARCHAR, mon VARCHAR, tue VARCHAR, wed VARCHAR, thu VARCHAR, fri VARCHAR, sat VARCHAR, sun VARCHAR)");
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            myDatabase.execSQL("DROP TABLE IF EXISTS timetable_lab");
+                            myDatabase.execSQL("CREATE TABLE IF NOT EXISTS timetable_lab (id INT(3) PRIMARY KEY, start_time VARCHAR, end_time VARCHAR, mon VARCHAR, tue VARCHAR, wed VARCHAR, thu VARCHAR, fri VARCHAR, sat VARCHAR, sun VARCHAR)");
 
-                    myDatabase.execSQL("DROP TABLE IF EXISTS timetable_theory");
-                    myDatabase.execSQL("CREATE TABLE IF NOT EXISTS timetable_theory (id INT(3) PRIMARY KEY, start_time VARCHAR, end_time VARCHAR, mon VARCHAR, tue VARCHAR, wed VARCHAR, thu VARCHAR, fri VARCHAR, sat VARCHAR, sun VARCHAR)");
+                            myDatabase.execSQL("DROP TABLE IF EXISTS timetable_theory");
+                            myDatabase.execSQL("CREATE TABLE IF NOT EXISTS timetable_theory (id INT(3) PRIMARY KEY, start_time VARCHAR, end_time VARCHAR, mon VARCHAR, tue VARCHAR, wed VARCHAR, thu VARCHAR, fri VARCHAR, sat VARCHAR, sun VARCHAR)");
 
-                    myDatabase.execSQL("DROP TABLE IF EXISTS faculty");
-                    myDatabase.execSQL("CREATE TABLE IF NOT EXISTS faculty (id INT(3) PRIMARY KEY, course VARCHAR, faculty VARCHAR)");
+                            myDatabase.execSQL("DROP TABLE IF EXISTS faculty");
+                            myDatabase.execSQL("CREATE TABLE IF NOT EXISTS faculty (id INT(3) PRIMARY KEY, course VARCHAR, faculty VARCHAR)");
 
-                    AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
-                    Intent notificationIntent = new Intent(context, NotificationReceiver.class);
-                    for (int j = 0; j < Integer.parseInt(sharedPreferences.getString("alarms", "0")); ++j) {
-                        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
-                        alarmManager.cancel(pendingIntent);
-                    }
+                            AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
+                            Intent notificationIntent = new Intent(context, NotificationReceiver.class);
+                            for (int j = 0; j < sharedPreferences.getInt("alarmCount", 0); ++j) {
+                                PendingIntent pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
+                                alarmManager.cancel(pendingIntent);
+                            }
 
-                    downloadProctor();
+                            ((Activity) context).runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    downloadProctor();
+                                }
+                            });
+                        }
+                    }).start();
                 } else {
-                    try {
-                        JSONObject myObj = new JSONObject(obj);
-                        String credits = "Credits: " + myObj.getString("credits");
-                        sharedPreferences.edit().putString("credits", credits).apply();
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                JSONObject myObj = new JSONObject(obj);
+                                String credits = "Credits: " + myObj.getString("credits");
+                                sharedPreferences.edit().putString("credits", credits).apply();
 
-                        myDatabase.execSQL("DROP TABLE IF EXISTS timetable_lab");
-                        myDatabase.execSQL("CREATE TABLE IF NOT EXISTS timetable_lab (id INT(3) PRIMARY KEY, start_time VARCHAR, end_time VARCHAR, mon VARCHAR, tue VARCHAR, wed VARCHAR, thu VARCHAR, fri VARCHAR, sat VARCHAR, sun VARCHAR)");
+                                myDatabase.execSQL("DROP TABLE IF EXISTS timetable_lab");
+                                myDatabase.execSQL("CREATE TABLE IF NOT EXISTS timetable_lab (id INT(3) PRIMARY KEY, start_time VARCHAR, end_time VARCHAR, mon VARCHAR, tue VARCHAR, wed VARCHAR, thu VARCHAR, fri VARCHAR, sat VARCHAR, sun VARCHAR)");
 
-                        myDatabase.execSQL("DROP TABLE IF EXISTS timetable_theory");
-                        myDatabase.execSQL("CREATE TABLE IF NOT EXISTS timetable_theory (id INT(3) PRIMARY KEY, start_time VARCHAR, end_time VARCHAR, mon VARCHAR, tue VARCHAR, wed VARCHAR, thu VARCHAR, fri VARCHAR, sat VARCHAR, sun VARCHAR)");
+                                myDatabase.execSQL("DROP TABLE IF EXISTS timetable_theory");
+                                myDatabase.execSQL("CREATE TABLE IF NOT EXISTS timetable_theory (id INT(3) PRIMARY KEY, start_time VARCHAR, end_time VARCHAR, mon VARCHAR, tue VARCHAR, wed VARCHAR, thu VARCHAR, fri VARCHAR, sat VARCHAR, sun VARCHAR)");
 
-                        JSONObject lab = new JSONObject(myObj.getString("lab"));
-                        JSONObject theory = new JSONObject(myObj.getString("theory"));
-                        JSONObject mon = new JSONObject(myObj.getString("mon"));
-                        JSONObject tue = new JSONObject(myObj.getString("tue"));
-                        JSONObject wed = new JSONObject(myObj.getString("wed"));
-                        JSONObject thu = new JSONObject(myObj.getString("thu"));
-                        JSONObject fri = new JSONObject(myObj.getString("fri"));
-                        JSONObject sat = new JSONObject(myObj.getString("sat"));
-                        JSONObject sun = new JSONObject(myObj.getString("sun"));
+                                JSONObject lab = new JSONObject(myObj.getString("lab"));
+                                JSONObject theory = new JSONObject(myObj.getString("theory"));
+                                JSONObject mon = new JSONObject(myObj.getString("mon"));
+                                JSONObject tue = new JSONObject(myObj.getString("tue"));
+                                JSONObject wed = new JSONObject(myObj.getString("wed"));
+                                JSONObject thu = new JSONObject(myObj.getString("thu"));
+                                JSONObject fri = new JSONObject(myObj.getString("fri"));
+                                JSONObject sat = new JSONObject(myObj.getString("sat"));
+                                JSONObject sun = new JSONObject(myObj.getString("sun"));
 
-                        Calendar c = Calendar.getInstance();
-                        AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
-                        Intent notificationIntent = new Intent(context, NotificationReceiver.class);
-                        SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy HH:mm", Locale.ENGLISH);
+                                Calendar c = Calendar.getInstance();
+                                AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
+                                Intent notificationIntent = new Intent(context, NotificationReceiver.class);
+                                SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy HH:mm", Locale.ENGLISH);
 
-                        for (int j = 0; j < Integer.parseInt(sharedPreferences.getString("alarms", "0")); ++j) {
-                            PendingIntent pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
-                            alarmManager.cancel(pendingIntent);
+                                for (int j = 0; j < sharedPreferences.getInt("alarmCount", 0); ++j) {
+                                    PendingIntent pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
+                                    alarmManager.cancel(pendingIntent);
+                                }
+
+                                int j = 0;
+
+                                for (int i = 0; i < lab.length() / 2 && i < theory.length() / 2; ++i) {
+                                    String start_time = lab.getString(i + "start");
+                                    if (start_time.toLowerCase().equals("lunch")) {
+                                        continue;
+                                    }
+                                    myDatabase.execSQL("INSERT INTO timetable_lab (id, start_time) VALUES ('" + i + "', '" + start_time + "')");
+
+                                    String end_time = lab.getString(i + "end");
+                                    if (end_time.toLowerCase().equals("lunch")) {
+                                        continue;
+                                    }
+                                    myDatabase.execSQL("UPDATE timetable_lab SET end_time = '" + end_time + "' WHERE id = " + i);
+
+                                    if (mon.has(i + "lab")) {
+                                        String period = mon.getString(i + "lab");
+                                        myDatabase.execSQL("UPDATE timetable_lab SET mon = '" + period + "' WHERE id = " + i);
+
+                                        Date date = df.parse("06-01-2020 " + start_time);
+
+                                        assert date != null;
+                                        c.setTime(date);
+                                        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
+                                        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
+                                        ++j;
+
+                                        c.add(Calendar.MINUTE, -30);
+                                        pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
+                                        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
+                                        ++j;
+                                    } else {
+                                        myDatabase.execSQL("UPDATE timetable_lab SET mon = 'null' WHERE id = " + i);
+                                    }
+
+                                    if (tue.has(i + "lab")) {
+                                        String period = tue.getString(i + "lab");
+                                        myDatabase.execSQL("UPDATE timetable_lab SET tue = '" + period + "' WHERE id = " + i);
+
+                                        Date date = df.parse("07-01-2020 " + start_time);
+
+                                        assert date != null;
+                                        c.setTime(date);
+                                        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
+                                        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
+                                        ++j;
+
+                                        c.add(Calendar.MINUTE, -30);
+                                        pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
+                                        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
+                                        ++j;
+                                    } else {
+                                        myDatabase.execSQL("UPDATE timetable_lab SET tue = 'null' WHERE id = " + i);
+                                    }
+
+                                    if (wed.has(i + "lab")) {
+                                        String period = wed.getString(i + "lab");
+                                        myDatabase.execSQL("UPDATE timetable_lab SET wed = '" + period + "' WHERE id = " + i);
+
+                                        Date date = df.parse("01-01-2020 " + start_time);
+
+                                        assert date != null;
+                                        c.setTime(date);
+                                        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
+                                        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
+                                        ++j;
+
+                                        c.add(Calendar.MINUTE, -30);
+                                        pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
+                                        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
+                                        ++j;
+                                    } else {
+                                        myDatabase.execSQL("UPDATE timetable_lab SET wed = 'null' WHERE id = " + i);
+                                    }
+
+                                    if (thu.has(i + "lab")) {
+                                        String period = thu.getString(i + "lab");
+                                        myDatabase.execSQL("UPDATE timetable_lab SET thu = '" + period + "' WHERE id = " + i);
+
+                                        Date date = df.parse("02-01-2020 " + start_time);
+
+                                        assert date != null;
+                                        c.setTime(date);
+                                        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
+                                        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
+                                        ++j;
+
+                                        c.add(Calendar.MINUTE, -30);
+                                        pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
+                                        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
+                                        ++j;
+                                    } else {
+                                        myDatabase.execSQL("UPDATE timetable_lab SET thu = 'null' WHERE id = " + i);
+                                    }
+
+                                    if (fri.has(i + "lab")) {
+                                        String period = fri.getString(i + "lab");
+                                        myDatabase.execSQL("UPDATE timetable_lab SET fri = '" + period + "' WHERE id = " + i);
+
+                                        Date date = df.parse("03-01-2020 " + start_time);
+
+                                        assert date != null;
+                                        c.setTime(date);
+                                        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
+                                        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
+                                        ++j;
+
+                                        c.add(Calendar.MINUTE, -30);
+                                        pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
+                                        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
+                                        ++j;
+                                    } else {
+                                        myDatabase.execSQL("UPDATE timetable_lab SET fri = 'null' WHERE id = " + i);
+                                    }
+
+                                    if (sat.has(i + "lab")) {
+                                        String period = sat.getString(i + "lab");
+                                        myDatabase.execSQL("UPDATE timetable_lab SET sat = '" + period + "' WHERE id = " + i);
+
+                                        Date date = df.parse("04-01-2020 " + start_time);
+
+                                        assert date != null;
+                                        c.setTime(date);
+                                        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
+                                        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
+                                        ++j;
+
+                                        c.add(Calendar.MINUTE, -30);
+                                        pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
+                                        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
+                                        ++j;
+                                    } else {
+                                        myDatabase.execSQL("UPDATE timetable_lab SET sat = 'null' WHERE id = " + i);
+                                    }
+
+                                    if (sun.has(i + "lab")) {
+                                        String period = sun.getString(i + "lab");
+                                        myDatabase.execSQL("UPDATE timetable_lab SET sun = '" + period + "' WHERE id = " + i);
+
+                                        Date date = df.parse("05-01-2020 " + start_time);
+
+                                        assert date != null;
+                                        c.setTime(date);
+                                        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
+                                        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
+                                        ++j;
+
+                                        c.add(Calendar.MINUTE, -30);
+                                        pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
+                                        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
+                                        ++j;
+                                    } else {
+                                        myDatabase.execSQL("UPDATE timetable_lab SET sun = 'null' WHERE id = " + i);
+
+                                    }
+
+                                    start_time = theory.getString(i + "start");
+                                    myDatabase.execSQL("INSERT INTO timetable_theory (id, start_time) VALUES ('" + i + "', '" + start_time + "')");
+
+                                    end_time = theory.getString(i + "end");
+                                    myDatabase.execSQL("UPDATE timetable_theory SET end_time = '" + end_time + "' WHERE id = " + i);
+
+                                    if (mon.has(i + "theory")) {
+                                        String period = mon.getString(i + "theory");
+                                        myDatabase.execSQL("UPDATE timetable_theory SET mon = '" + period + "' WHERE id = " + i);
+
+                                        Date date = df.parse("06-01-2020 " + start_time);
+
+                                        assert date != null;
+                                        c.setTime(date);
+                                        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
+                                        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
+                                        ++j;
+
+                                        c.add(Calendar.MINUTE, -30);
+                                        pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
+                                        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
+                                        ++j;
+                                    } else {
+                                        myDatabase.execSQL("UPDATE timetable_theory SET mon = 'null' WHERE id = " + i);
+                                    }
+
+                                    if (tue.has(i + "theory")) {
+                                        String period = tue.getString(i + "theory");
+                                        myDatabase.execSQL("UPDATE timetable_theory SET tue = '" + period + "' WHERE id = " + i);
+
+                                        Date date = df.parse("07-01-2020 " + start_time);
+
+                                        assert date != null;
+                                        c.setTime(date);
+                                        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
+                                        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
+                                        ++j;
+
+                                        c.add(Calendar.MINUTE, -30);
+                                        pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
+                                        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
+                                        ++j;
+                                    } else {
+                                        myDatabase.execSQL("UPDATE timetable_theory SET tue = 'null' WHERE id = " + i);
+                                    }
+
+                                    if (wed.has(i + "theory")) {
+                                        String period = wed.getString(i + "theory");
+                                        myDatabase.execSQL("UPDATE timetable_theory SET wed = '" + period + "' WHERE id = " + i);
+
+                                        Date date = df.parse("01-01-2020 " + start_time);
+
+                                        assert date != null;
+                                        c.setTime(date);
+                                        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
+                                        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
+                                        ++j;
+
+                                        c.add(Calendar.MINUTE, -30);
+                                        pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
+                                        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
+                                        ++j;
+                                    } else {
+                                        myDatabase.execSQL("UPDATE timetable_theory SET wed = 'null' WHERE id = " + i);
+                                    }
+
+                                    if (thu.has(i + "theory")) {
+                                        String period = thu.getString(i + "theory");
+                                        myDatabase.execSQL("UPDATE timetable_theory SET thu = '" + period + "' WHERE id = " + i);
+
+                                        Date date = df.parse("02-01-2020 " + start_time);
+
+                                        assert date != null;
+                                        c.setTime(date);
+                                        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
+                                        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
+                                        ++j;
+
+                                        c.add(Calendar.MINUTE, -30);
+                                        pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
+                                        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
+                                        ++j;
+                                    } else {
+                                        myDatabase.execSQL("UPDATE timetable_theory SET thu = 'null' WHERE id = " + i);
+                                    }
+
+                                    if (fri.has(i + "theory")) {
+                                        String period = fri.getString(i + "theory");
+                                        myDatabase.execSQL("UPDATE timetable_theory SET fri = '" + period + "' WHERE id = " + i);
+
+                                        Date date = df.parse("03-01-2020 " + start_time);
+
+                                        assert date != null;
+                                        c.setTime(date);
+                                        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
+                                        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
+                                        ++j;
+
+                                        c.add(Calendar.MINUTE, -30);
+                                        pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
+                                        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
+                                        ++j;
+                                    } else {
+                                        myDatabase.execSQL("UPDATE timetable_theory SET fri = 'null' WHERE id = " + i);
+                                    }
+
+                                    if (sat.has(i + "theory")) {
+                                        String period = sat.getString(i + "theory");
+                                        myDatabase.execSQL("UPDATE timetable_theory SET sat = '" + period + "' WHERE id = " + i);
+
+                                        Date date = df.parse("04-01-2020 " + start_time);
+
+                                        assert date != null;
+                                        c.setTime(date);
+                                        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
+                                        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
+                                        ++j;
+
+                                        c.add(Calendar.MINUTE, -30);
+                                        pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
+                                        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
+                                        ++j;
+                                    } else {
+                                        myDatabase.execSQL("UPDATE timetable_theory SET sat = 'null' WHERE id = " + i);
+                                    }
+
+                                    if (sun.has(i + "theory")) {
+                                        String period = sun.getString(i + "theory");
+                                        myDatabase.execSQL("UPDATE timetable_theory SET sun = '" + period + "' WHERE id = " + i);
+
+                                        Date date = df.parse("05-01-2020 " + start_time);
+
+                                        assert date != null;
+                                        c.setTime(date);
+                                        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
+                                        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
+                                        ++j;
+
+                                        c.add(Calendar.MINUTE, -30);
+                                        pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
+                                        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
+                                        ++j;
+                                    } else {
+                                        myDatabase.execSQL("UPDATE timetable_theory SET sun = 'null' WHERE id = " + i);
+                                    }
+                                }
+
+                                sharedPreferences.edit().putInt("alarmCount", j).apply();
+                                ((Activity) context).runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        downloadFaculty();
+                                    }
+                                });
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                error();
+                            }
                         }
-
-                        int j = 0;
-
-                        for (int i = 0; i < lab.length() / 2 && i < theory.length() / 2; ++i) {
-                            String start_time = lab.getString(i + "start");
-                            if (start_time.toLowerCase().equals("lunch")) {
-                                continue;
-                            }
-                            myDatabase.execSQL("INSERT INTO timetable_lab (id, start_time) VALUES ('" + i + "', '" + start_time + "')");
-
-                            String end_time = lab.getString(i + "end");
-                            if (end_time.toLowerCase().equals("lunch")) {
-                                continue;
-                            }
-                            myDatabase.execSQL("UPDATE timetable_lab SET end_time = '" + end_time + "' WHERE id = " + i);
-
-                            if (mon.has(i + "lab")) {
-                                String period = mon.getString(i + "lab");
-                                myDatabase.execSQL("UPDATE timetable_lab SET mon = '" + period + "' WHERE id = " + i);
-
-                                Date date = df.parse("06-01-2020 " + start_time);
-
-                                assert date != null;
-                                c.setTime(date);
-                                PendingIntent pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
-                                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
-                                ++j;
-
-                                c.add(Calendar.MINUTE, -30);
-                                pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
-                                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
-                                ++j;
-                            } else {
-                                myDatabase.execSQL("UPDATE timetable_lab SET mon = 'null' WHERE id = " + i);
-                            }
-
-                            if (tue.has(i + "lab")) {
-                                String period = tue.getString(i + "lab");
-                                myDatabase.execSQL("UPDATE timetable_lab SET tue = '" + period + "' WHERE id = " + i);
-
-                                Date date = df.parse("07-01-2020 " + start_time);
-
-                                assert date != null;
-                                c.setTime(date);
-                                PendingIntent pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
-                                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
-                                ++j;
-
-                                c.add(Calendar.MINUTE, -30);
-                                pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
-                                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
-                                ++j;
-                            } else {
-                                myDatabase.execSQL("UPDATE timetable_lab SET tue = 'null' WHERE id = " + i);
-                            }
-
-                            if (wed.has(i + "lab")) {
-                                String period = wed.getString(i + "lab");
-                                myDatabase.execSQL("UPDATE timetable_lab SET wed = '" + period + "' WHERE id = " + i);
-
-                                Date date = df.parse("01-01-2020 " + start_time);
-
-                                assert date != null;
-                                c.setTime(date);
-                                PendingIntent pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
-                                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
-                                ++j;
-
-                                c.add(Calendar.MINUTE, -30);
-                                pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
-                                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
-                                ++j;
-                            } else {
-                                myDatabase.execSQL("UPDATE timetable_lab SET wed = 'null' WHERE id = " + i);
-                            }
-
-                            if (thu.has(i + "lab")) {
-                                String period = thu.getString(i + "lab");
-                                myDatabase.execSQL("UPDATE timetable_lab SET thu = '" + period + "' WHERE id = " + i);
-
-                                Date date = df.parse("02-01-2020 " + start_time);
-
-                                assert date != null;
-                                c.setTime(date);
-                                PendingIntent pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
-                                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
-                                ++j;
-
-                                c.add(Calendar.MINUTE, -30);
-                                pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
-                                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
-                                ++j;
-                            } else {
-                                myDatabase.execSQL("UPDATE timetable_lab SET thu = 'null' WHERE id = " + i);
-                            }
-
-                            if (fri.has(i + "lab")) {
-                                String period = fri.getString(i + "lab");
-                                myDatabase.execSQL("UPDATE timetable_lab SET fri = '" + period + "' WHERE id = " + i);
-
-                                Date date = df.parse("03-01-2020 " + start_time);
-
-                                assert date != null;
-                                c.setTime(date);
-                                PendingIntent pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
-                                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
-                                ++j;
-
-                                c.add(Calendar.MINUTE, -30);
-                                pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
-                                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
-                                ++j;
-                            } else {
-                                myDatabase.execSQL("UPDATE timetable_lab SET fri = 'null' WHERE id = " + i);
-                            }
-
-                            if (sat.has(i + "lab")) {
-                                String period = sat.getString(i + "lab");
-                                myDatabase.execSQL("UPDATE timetable_lab SET sat = '" + period + "' WHERE id = " + i);
-
-                                Date date = df.parse("04-01-2020 " + start_time);
-
-                                assert date != null;
-                                c.setTime(date);
-                                PendingIntent pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
-                                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
-                                ++j;
-
-                                c.add(Calendar.MINUTE, -30);
-                                pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
-                                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
-                                ++j;
-                            } else {
-                                myDatabase.execSQL("UPDATE timetable_lab SET sat = 'null' WHERE id = " + i);
-                            }
-
-                            if (sun.has(i + "lab")) {
-                                String period = sun.getString(i + "lab");
-                                myDatabase.execSQL("UPDATE timetable_lab SET sun = '" + period + "' WHERE id = " + i);
-
-                                Date date = df.parse("05-01-2020 " + start_time);
-
-                                assert date != null;
-                                c.setTime(date);
-                                PendingIntent pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
-                                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
-                                ++j;
-
-                                c.add(Calendar.MINUTE, -30);
-                                pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
-                                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
-                                ++j;
-                            } else {
-                                myDatabase.execSQL("UPDATE timetable_lab SET sun = 'null' WHERE id = " + i);
-
-                            }
-
-                            start_time = theory.getString(i + "start");
-                            myDatabase.execSQL("INSERT INTO timetable_theory (id, start_time) VALUES ('" + i + "', '" + start_time + "')");
-
-                            end_time = theory.getString(i + "end");
-                            myDatabase.execSQL("UPDATE timetable_theory SET end_time = '" + end_time + "' WHERE id = " + i);
-
-                            if (mon.has(i + "theory")) {
-                                String period = mon.getString(i + "theory");
-                                myDatabase.execSQL("UPDATE timetable_theory SET mon = '" + period + "' WHERE id = " + i);
-
-                                Date date = df.parse("06-01-2020 " + start_time);
-
-                                assert date != null;
-                                c.setTime(date);
-                                PendingIntent pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
-                                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
-                                ++j;
-
-                                c.add(Calendar.MINUTE, -30);
-                                pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
-                                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
-                                ++j;
-                            } else {
-                                myDatabase.execSQL("UPDATE timetable_theory SET mon = 'null' WHERE id = " + i);
-                            }
-
-                            if (tue.has(i + "theory")) {
-                                String period = tue.getString(i + "theory");
-                                myDatabase.execSQL("UPDATE timetable_theory SET tue = '" + period + "' WHERE id = " + i);
-
-                                Date date = df.parse("07-01-2020 " + start_time);
-
-                                assert date != null;
-                                c.setTime(date);
-                                PendingIntent pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
-                                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
-                                ++j;
-
-                                c.add(Calendar.MINUTE, -30);
-                                pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
-                                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
-                                ++j;
-                            } else {
-                                myDatabase.execSQL("UPDATE timetable_theory SET tue = 'null' WHERE id = " + i);
-                            }
-
-                            if (wed.has(i + "theory")) {
-                                String period = wed.getString(i + "theory");
-                                myDatabase.execSQL("UPDATE timetable_theory SET wed = '" + period + "' WHERE id = " + i);
-
-                                Date date = df.parse("01-01-2020 " + start_time);
-
-                                assert date != null;
-                                c.setTime(date);
-                                PendingIntent pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
-                                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
-                                ++j;
-
-                                c.add(Calendar.MINUTE, -30);
-                                pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
-                                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
-                                ++j;
-                            } else {
-                                myDatabase.execSQL("UPDATE timetable_theory SET wed = 'null' WHERE id = " + i);
-                            }
-
-                            if (thu.has(i + "theory")) {
-                                String period = thu.getString(i + "theory");
-                                myDatabase.execSQL("UPDATE timetable_theory SET thu = '" + period + "' WHERE id = " + i);
-
-                                Date date = df.parse("02-01-2020 " + start_time);
-
-                                assert date != null;
-                                c.setTime(date);
-                                PendingIntent pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
-                                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
-                                ++j;
-
-                                c.add(Calendar.MINUTE, -30);
-                                pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
-                                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
-                                ++j;
-                            } else {
-                                myDatabase.execSQL("UPDATE timetable_theory SET thu = 'null' WHERE id = " + i);
-                            }
-
-                            if (fri.has(i + "theory")) {
-                                String period = fri.getString(i + "theory");
-                                myDatabase.execSQL("UPDATE timetable_theory SET fri = '" + period + "' WHERE id = " + i);
-
-                                Date date = df.parse("03-01-2020 " + start_time);
-
-                                assert date != null;
-                                c.setTime(date);
-                                PendingIntent pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
-                                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
-                                ++j;
-
-                                c.add(Calendar.MINUTE, -30);
-                                pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
-                                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
-                                ++j;
-                            } else {
-                                myDatabase.execSQL("UPDATE timetable_theory SET fri = 'null' WHERE id = " + i);
-                            }
-
-                            if (sat.has(i + "theory")) {
-                                String period = sat.getString(i + "theory");
-                                myDatabase.execSQL("UPDATE timetable_theory SET sat = '" + period + "' WHERE id = " + i);
-
-                                Date date = df.parse("04-01-2020 " + start_time);
-
-                                assert date != null;
-                                c.setTime(date);
-                                PendingIntent pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
-                                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
-                                ++j;
-
-                                c.add(Calendar.MINUTE, -30);
-                                pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
-                                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
-                                ++j;
-                            } else {
-                                myDatabase.execSQL("UPDATE timetable_theory SET sat = 'null' WHERE id = " + i);
-                            }
-
-                            if (sun.has(i + "theory")) {
-                                String period = sun.getString(i + "theory");
-                                myDatabase.execSQL("UPDATE timetable_theory SET sun = '" + period + "' WHERE id = " + i);
-
-                                Date date = df.parse("05-01-2020 " + start_time);
-
-                                assert date != null;
-                                c.setTime(date);
-                                PendingIntent pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
-                                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
-                                ++j;
-
-                                c.add(Calendar.MINUTE, -30);
-                                pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
-                                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
-                                ++j;
-                            } else {
-                                myDatabase.execSQL("UPDATE timetable_theory SET sun = 'null' WHERE id = " + i);
-                            }
-                        }
-
-                        //sharedPreferences.edit().putString("alarms", Integer.toString(j)).apply();
-                        downloadFaculty();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
-                        isOpened = false;
-                        reloadPage();
-                    }
+                    }).start();
                 }
             }
         });
@@ -933,46 +937,60 @@ public class VTOP {
                 "return obj;" +
                 "})();", new ValueCallback<String>() {
             @Override
-            public void onReceiveValue(String obj) {
+            public void onReceiveValue(final String obj) {
                 String temp = obj.substring(1, obj.length() - 1);
                 if (obj.equals("null")) {
-                    Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
-                    isOpened = false;
-                    reloadPage();
+                    error();
                 } else if (temp.equals("")) {
-                    try {
-                        myDatabase.execSQL("DROP TABLE IF EXISTS faculty");
-                        myDatabase.execSQL("CREATE TABLE IF NOT EXISTS faculty (id INT(3) PRIMARY KEY, course VARCHAR, faculty VARCHAR)");
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                myDatabase.execSQL("DROP TABLE IF EXISTS faculty");
+                                myDatabase.execSQL("CREATE TABLE IF NOT EXISTS faculty (id INT(3) PRIMARY KEY, course VARCHAR, faculty VARCHAR)");
 
-                        downloadProctor();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
-                        isOpened = false;
-                        reloadPage();
-                    }
-                } else {
-                    try {
-                        JSONObject myObj = new JSONObject(obj);
-
-                        myDatabase.execSQL("DROP TABLE IF EXISTS faculty");
-                        myDatabase.execSQL("CREATE TABLE IF NOT EXISTS faculty (id INT(3) PRIMARY KEY, course VARCHAR, faculty VARCHAR)");
-
-                        for (int i = 0; i < myObj.length(); ++i) {
-                            JSONObject tempObj = new JSONObject(myObj.getString(Integer.toString(i)));
-                            String course = tempObj.getString("course");
-                            String faculty = tempObj.getString("faculty");
-
-                            myDatabase.execSQL("INSERT INTO faculty (course, faculty) VALUES('" + course + "', '" + faculty + "')");
+                                ((Activity) context).runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        downloadProctor();
+                                    }
+                                });
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                error();
+                            }
                         }
+                    }).start();
+                } else {
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                JSONObject myObj = new JSONObject(obj);
 
-                        downloadProctor();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
-                        isOpened = false;
-                        reloadPage();
-                    }
+                                myDatabase.execSQL("DROP TABLE IF EXISTS faculty");
+                                myDatabase.execSQL("CREATE TABLE IF NOT EXISTS faculty (id INT(3) PRIMARY KEY, course VARCHAR, faculty VARCHAR)");
+
+                                for (int i = 0; i < myObj.length(); ++i) {
+                                    JSONObject tempObj = new JSONObject(myObj.getString(Integer.toString(i)));
+                                    String course = tempObj.getString("course");
+                                    String faculty = tempObj.getString("faculty");
+
+                                    myDatabase.execSQL("INSERT INTO faculty (course, faculty) VALUES('" + course + "', '" + faculty + "')");
+                                }
+
+                                ((Activity) context).runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        downloadProctor();
+                                    }
+                                });
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                error();
+                            }
+                        }
+                    }).start();
                 }
             }
         });
@@ -1012,47 +1030,61 @@ public class VTOP {
                 "return obj;" +
                 "})();", new ValueCallback<String>() {
             @Override
-            public void onReceiveValue(String obj) {
+            public void onReceiveValue(final String obj) {
                 String temp = obj.substring(1, obj.length() - 1);
                 if (obj.equals("null")) {
-                    Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
-                    isOpened = false;
-                    reloadPage();
+                    error();
                 } else if (temp.equals("unavailable") || temp.equals("")) {
-                    try {
-                        myDatabase.execSQL("DROP TABLE IF EXISTS proctor");
-                        myDatabase.execSQL("CREATE TABLE IF NOT EXISTS proctor (id INT(3) PRIMARY KEY, column1 VARCHAR, column2 VARCHAR)");
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                myDatabase.execSQL("DROP TABLE IF EXISTS proctor");
+                                myDatabase.execSQL("CREATE TABLE IF NOT EXISTS proctor (id INT(3) PRIMARY KEY, column1 VARCHAR, column2 VARCHAR)");
 
-                        downloadDeanHOD();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
-                        isOpened = false;
-                        reloadPage();
-                    }
-                } else {
-                    try {
-                        JSONObject myObj = new JSONObject(obj);
-
-                        myDatabase.execSQL("DROP TABLE IF EXISTS proctor");
-                        myDatabase.execSQL("CREATE TABLE IF NOT EXISTS proctor (id INT(3) PRIMARY KEY, column1 VARCHAR, column2 VARCHAR)");
-
-                        Iterator<?> keys = myObj.keys();
-
-                        while (keys.hasNext()) {
-                            String key = (String) keys.next();
-                            String value = myObj.getString(key);
-
-                            myDatabase.execSQL("INSERT INTO proctor (column1, column2) VALUES('" + key + "', '" + value + "')");
+                                ((Activity) context).runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        downloadDeanHOD();
+                                    }
+                                });
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                error();
+                            }
                         }
+                    }).start();
+                } else {
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                JSONObject myObj = new JSONObject(obj);
 
-                        downloadDeanHOD();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
-                        isOpened = false;
-                        reloadPage();
-                    }
+                                myDatabase.execSQL("DROP TABLE IF EXISTS proctor");
+                                myDatabase.execSQL("CREATE TABLE IF NOT EXISTS proctor (id INT(3) PRIMARY KEY, column1 VARCHAR, column2 VARCHAR)");
+
+                                Iterator<?> keys = myObj.keys();
+
+                                while (keys.hasNext()) {
+                                    String key = (String) keys.next();
+                                    String value = myObj.getString(key);
+
+                                    myDatabase.execSQL("INSERT INTO proctor (column1, column2) VALUES('" + key + "', '" + value + "')");
+                                }
+
+                                ((Activity) context).runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        downloadDeanHOD();
+                                    }
+                                });
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                error();
+                            }
+                        }
+                    }).start();
                 }
             }
         });
@@ -1125,64 +1157,78 @@ public class VTOP {
                 "return obj;" +
                 "})();", new ValueCallback<String>() {
             @Override
-            public void onReceiveValue(String obj) {
+            public void onReceiveValue(final String obj) {
                 String temp = obj.substring(1, obj.length() - 1);
                 if (obj.equals("null")) {
-                    Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
-                    isOpened = false;
-                    reloadPage();
+                    error();
                 } else if (temp.equals("unavailable") || temp.equals("")) {
-                    try {
-                        myDatabase.execSQL("DROP TABLE IF EXISTS dean");
-                        myDatabase.execSQL("CREATE TABLE IF NOT EXISTS dean (id INT(3) PRIMARY KEY, column1 VARCHAR, column2 VARCHAR)");
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                myDatabase.execSQL("DROP TABLE IF EXISTS dean");
+                                myDatabase.execSQL("CREATE TABLE IF NOT EXISTS dean (id INT(3) PRIMARY KEY, column1 VARCHAR, column2 VARCHAR)");
 
-                        myDatabase.execSQL("DROP TABLE IF EXISTS hod");
-                        myDatabase.execSQL("CREATE TABLE IF NOT EXISTS hod (id INT(3) PRIMARY KEY, column1 VARCHAR, column2 VARCHAR)");
+                                myDatabase.execSQL("DROP TABLE IF EXISTS hod");
+                                myDatabase.execSQL("CREATE TABLE IF NOT EXISTS hod (id INT(3) PRIMARY KEY, column1 VARCHAR, column2 VARCHAR)");
 
-                        openAttendance();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
-                        isOpened = false;
-                        reloadPage();
-                    }
+                                ((Activity) context).runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        openAttendance();
+                                    }
+                                });
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                error();
+                            }
+                        }
+                    }).start();
                 } else {
-                    try {
-                        JSONObject myObj = new JSONObject(obj);
-                        JSONObject dean = new JSONObject(myObj.getString("dean"));
-                        JSONObject hod = new JSONObject(myObj.getString("hod"));
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                JSONObject myObj = new JSONObject(obj);
+                                JSONObject dean = new JSONObject(myObj.getString("dean"));
+                                JSONObject hod = new JSONObject(myObj.getString("hod"));
 
-                        myDatabase.execSQL("DROP TABLE IF EXISTS dean");
-                        myDatabase.execSQL("CREATE TABLE IF NOT EXISTS dean (id INT(3) PRIMARY KEY, column1 VARCHAR, column2 VARCHAR)");
+                                myDatabase.execSQL("DROP TABLE IF EXISTS dean");
+                                myDatabase.execSQL("CREATE TABLE IF NOT EXISTS dean (id INT(3) PRIMARY KEY, column1 VARCHAR, column2 VARCHAR)");
 
-                        myDatabase.execSQL("DROP TABLE IF EXISTS hod");
-                        myDatabase.execSQL("CREATE TABLE IF NOT EXISTS hod (id INT(3) PRIMARY KEY, column1 VARCHAR, column2 VARCHAR)");
+                                myDatabase.execSQL("DROP TABLE IF EXISTS hod");
+                                myDatabase.execSQL("CREATE TABLE IF NOT EXISTS hod (id INT(3) PRIMARY KEY, column1 VARCHAR, column2 VARCHAR)");
 
-                        Iterator<?> keys = dean.keys();
+                                Iterator<?> keys = dean.keys();
 
-                        while (keys.hasNext()) {
-                            String key = (String) keys.next();
-                            String value = dean.getString(key);
+                                while (keys.hasNext()) {
+                                    String key = (String) keys.next();
+                                    String value = dean.getString(key);
 
-                            myDatabase.execSQL("INSERT INTO dean (column1, column2) VALUES('" + key + "', '" + value + "')");
+                                    myDatabase.execSQL("INSERT INTO dean (column1, column2) VALUES('" + key + "', '" + value + "')");
+                                }
+
+                                keys = hod.keys();
+
+                                while (keys.hasNext()) {
+                                    String key = (String) keys.next();
+                                    String value = hod.getString(key);
+
+                                    myDatabase.execSQL("INSERT INTO hod (column1, column2) VALUES('" + key + "', '" + value + "')");
+                                }
+
+                                ((Activity) context).runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        openAttendance();
+                                    }
+                                });
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                error();
+                            }
                         }
-
-                        keys = hod.keys();
-
-                        while (keys.hasNext()) {
-                            String key = (String) keys.next();
-                            String value = hod.getString(key);
-
-                            myDatabase.execSQL("INSERT INTO hod (column1, column2) VALUES('" + key + "', '" + value + "')");
-                        }
-
-                        openAttendance();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
-                        isOpened = false;
-                        reloadPage();
-                    }
+                    }).start();
                 }
             }
         });
@@ -1216,9 +1262,7 @@ public class VTOP {
                 if (value.equals("true")) {
                     downloadAttendance();
                 } else {
-                    Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
-                    isOpened = false;
-                    reloadPage();
+                    error();
                 }
             }
         });
@@ -1303,49 +1347,62 @@ public class VTOP {
                 "return obj;" +
                 "})();", new ValueCallback<String>() {
             @Override
-            public void onReceiveValue(String obj) {
+            public void onReceiveValue(final String obj) {
                 String temp = obj.substring(1, obj.length() - 1);
                 if (obj.equals("null")) {
-                    Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
-                    isOpened = false;
-                    reloadPage();
+                    error();
                 } else if (temp.equals("unavailable") || temp.equals("")) {
-                    try {
-                        myDatabase.execSQL("DROP TABLE IF EXISTS attendance");
-                        myDatabase.execSQL("CREATE TABLE IF NOT EXISTS attendance (id INT(3) PRIMARY KEY, course VARCHAR, type VARCHAR, attended VARCHAR, total VARCHAR, percent VARCHAR)");
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                myDatabase.execSQL("DROP TABLE IF EXISTS attendance");
+                                myDatabase.execSQL("CREATE TABLE IF NOT EXISTS attendance (id INT(3) PRIMARY KEY, course VARCHAR, type VARCHAR, attended VARCHAR, total VARCHAR, percent VARCHAR)");
 
-                        downloadExams();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
-                        isOpened = false;
-                        reloadPage();
-                    }
-                } else {
-                    try {
-                        JSONObject myObj = new JSONObject(obj);
-
-                        myDatabase.execSQL("DROP TABLE IF EXISTS attendance");
-                        myDatabase.execSQL("CREATE TABLE IF NOT EXISTS attendance (id INT(3) PRIMARY KEY, course VARCHAR, type VARCHAR, attended VARCHAR, total VARCHAR, percent VARCHAR)");
-
-                        for (int i = 0; i < myObj.length(); ++i) {
-                            JSONObject tempObj = new JSONObject(myObj.getString(Integer.toString(i)));
-                            String course = tempObj.getString("course");
-                            String type = tempObj.getString("type");
-                            String attended = tempObj.getString("attended");
-                            String total = tempObj.getString("total");
-                            String percent = tempObj.getString("percent");
-
-                            myDatabase.execSQL("INSERT INTO attendance (course, type, attended, total, percent) VALUES('" + course + "', '" + type + "', '" + attended + "', '" + total + "', '" + percent + "')");
+                                ((Activity) context).runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        downloadExams();
+                                    }
+                                });
+                            } catch (Exception e) {
+                                error();
+                            }
                         }
+                    }).start();
+                } else {
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                JSONObject myObj = new JSONObject(obj);
 
-                        downloadExams();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
-                        isOpened = false;
-                        reloadPage();
-                    }
+                                myDatabase.execSQL("DROP TABLE IF EXISTS attendance");
+                                myDatabase.execSQL("CREATE TABLE IF NOT EXISTS attendance (id INT(3) PRIMARY KEY, course VARCHAR, type VARCHAR, attended VARCHAR, total VARCHAR, percent VARCHAR)");
+
+                                for (int i = 0; i < myObj.length(); ++i) {
+                                    JSONObject tempObj = new JSONObject(myObj.getString(Integer.toString(i)));
+                                    String course = tempObj.getString("course");
+                                    String type = tempObj.getString("type");
+                                    String attended = tempObj.getString("attended");
+                                    String total = tempObj.getString("total");
+                                    String percent = tempObj.getString("percent");
+
+                                    myDatabase.execSQL("INSERT INTO attendance (course, type, attended, total, percent) VALUES('" + course + "', '" + type + "', '" + attended + "', '" + total + "', '" + percent + "')");
+                                }
+
+                                ((Activity) context).runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        downloadExams();
+                                    }
+                                });
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                error();
+                            }
+                        }
+                    }).start();
                 }
             }
         });
@@ -1417,49 +1474,63 @@ public class VTOP {
                 "return obj;" +
                 "})();", new ValueCallback<String>() {
             @Override
-            public void onReceiveValue(String obj) {
+            public void onReceiveValue(final String obj) {
                 String temp = obj.substring(1, obj.length() - 1);
                 if (obj.equals("null")) {
-                    Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
-                    isOpened = false;
-                    reloadPage();
+                    error();
                 } else if (temp.equals("nothing") || temp.equals("")) {
-                    try {
-                        myDatabase.execSQL("DROP TABLE IF EXISTS exams");
-                        myDatabase.execSQL("CREATE TABLE IF NOT EXISTS exams (id INT(3) PRIMARY KEY, course VARCHAR, date VARCHAR, time VARCHAR)");
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                myDatabase.execSQL("DROP TABLE IF EXISTS exams");
+                                myDatabase.execSQL("CREATE TABLE IF NOT EXISTS exams (id INT(3) PRIMARY KEY, course VARCHAR, date VARCHAR, time VARCHAR)");
 
-                        downloadReceipts();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
-                        isOpened = false;
-                        reloadPage();
-                    }
-                } else {
-                    try {
-                        JSONObject myObj = new JSONObject(obj);
-
-                        myDatabase.execSQL("DROP TABLE IF EXISTS exams");
-                        myDatabase.execSQL("CREATE TABLE IF NOT EXISTS exams (id INT(3) PRIMARY KEY, course VARCHAR, date VARCHAR, start_time VARCHAR, end_time VARCHAR)");
-
-                        for (int i = 0; i < myObj.length(); ++i) {
-                            JSONObject tempObj = new JSONObject(myObj.getString(Integer.toString(i)));
-                            String course = tempObj.getString("course");
-                            String date = tempObj.getString("date").toUpperCase();
-                            String[] time = tempObj.getString("time").split("-");
-                            String startTime = time[0].trim();
-                            String endTime = time[1].trim();
-
-                            myDatabase.execSQL("INSERT INTO exams (course, date, start_time, end_time) VALUES('" + course + "', '" + date + "', '" + startTime + "', '" + endTime + "')");
+                                ((Activity) context).runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        downloadReceipts();
+                                    }
+                                });
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                error();
+                            }
                         }
+                    }).start();
+                } else {
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                JSONObject myObj = new JSONObject(obj);
 
-                        downloadReceipts();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
-                        isOpened = false;
-                        reloadPage();
-                    }
+                                myDatabase.execSQL("DROP TABLE IF EXISTS exams");
+                                myDatabase.execSQL("CREATE TABLE IF NOT EXISTS exams (id INT(3) PRIMARY KEY, course VARCHAR, date VARCHAR, start_time VARCHAR, end_time VARCHAR)");
+
+                                for (int i = 0; i < myObj.length(); ++i) {
+                                    JSONObject tempObj = new JSONObject(myObj.getString(Integer.toString(i)));
+                                    String course = tempObj.getString("course");
+                                    String date = tempObj.getString("date").toUpperCase();
+                                    String[] time = tempObj.getString("time").split("-");
+                                    String startTime = time[0].trim();
+                                    String endTime = time[1].trim();
+
+                                    myDatabase.execSQL("INSERT INTO exams (course, date, start_time, end_time) VALUES('" + course + "', '" + date + "', '" + startTime + "', '" + endTime + "')");
+                                }
+
+                                ((Activity) context).runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        downloadReceipts();
+                                    }
+                                });
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                error();
+                            }
+                        }
+                    }).start();
                 }
             }
         });
@@ -1517,47 +1588,61 @@ public class VTOP {
                 "return obj;" +
                 "})();", new ValueCallback<String>() {
             @Override
-            public void onReceiveValue(String obj) {
+            public void onReceiveValue(final String obj) {
                 String temp = obj.substring(1, obj.length() - 1);
                 if (obj.equals("null")) {
-                    Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
-                    isOpened = false;
-                    reloadPage();
+                    error();
                 } else if (temp.equals("")) {
-                    try {
-                        myDatabase.execSQL("DROP TABLE IF EXISTS receipts");
-                        myDatabase.execSQL("CREATE TABLE IF NOT EXISTS receipts (id INT(3) PRIMARY KEY, receipt VARCHAR, date VARCHAR, amount VARCHAR)");
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                myDatabase.execSQL("DROP TABLE IF EXISTS receipts");
+                                myDatabase.execSQL("CREATE TABLE IF NOT EXISTS receipts (id INT(3) PRIMARY KEY, receipt VARCHAR, date VARCHAR, amount VARCHAR)");
 
-                        downloadMessages();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
-                        isOpened = false;
-                        reloadPage();
-                    }
-                } else {
-                    try {
-                        JSONObject myObj = new JSONObject(obj);
-
-                        myDatabase.execSQL("DROP TABLE IF EXISTS receipts");
-                        myDatabase.execSQL("CREATE TABLE IF NOT EXISTS receipts (id INT(3) PRIMARY KEY, receipt VARCHAR, date VARCHAR, amount VARCHAR)");
-
-                        for (int i = 0; i < myObj.length(); ++i) {
-                            JSONObject tempObj = new JSONObject(myObj.getString(Integer.toString(i)));
-                            String receipt = tempObj.getString("receipt");
-                            String date = tempObj.getString("date").toUpperCase();
-                            String amount = tempObj.getString("amount");
-
-                            myDatabase.execSQL("INSERT INTO receipts (receipt, date, amount) VALUES('" + receipt + "', '" + date + "', '" + amount + "')");
+                                ((Activity) context).runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        downloadMessages();
+                                    }
+                                });
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                error();
+                            }
                         }
+                    }).start();
+                } else {
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                JSONObject myObj = new JSONObject(obj);
 
-                        downloadMessages();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
-                        isOpened = false;
-                        reloadPage();
-                    }
+                                myDatabase.execSQL("DROP TABLE IF EXISTS receipts");
+                                myDatabase.execSQL("CREATE TABLE IF NOT EXISTS receipts (id INT(3) PRIMARY KEY, receipt VARCHAR, date VARCHAR, amount VARCHAR)");
+
+                                for (int i = 0; i < myObj.length(); ++i) {
+                                    JSONObject tempObj = new JSONObject(myObj.getString(Integer.toString(i)));
+                                    String receipt = tempObj.getString("receipt");
+                                    String date = tempObj.getString("date").toUpperCase();
+                                    String amount = tempObj.getString("amount");
+
+                                    myDatabase.execSQL("INSERT INTO receipts (receipt, date, amount) VALUES('" + receipt + "', '" + date + "', '" + amount + "')");
+                                }
+
+                                ((Activity) context).runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        downloadMessages();
+                                    }
+                                });
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                error();
+                            }
+                        }
+                    }).start();
                 }
             }
         });
@@ -1594,38 +1679,54 @@ public class VTOP {
                     /*
                         Dropping and recreating an empty table
                      */
-                    try {
-                        myDatabase.execSQL("DROP TABLE IF EXISTS messages");
-                        myDatabase.execSQL("CREATE TABLE IF NOT EXISTS messages (id INT(3) PRIMARY KEY, faculty VARCHAR, time VARCHAR, message VARCHAR)");
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                myDatabase.execSQL("DROP TABLE IF EXISTS messages");
+                                myDatabase.execSQL("CREATE TABLE IF NOT EXISTS messages (id INT(3) PRIMARY KEY, faculty VARCHAR, time VARCHAR, message VARCHAR)");
 
-                        downloadSpotlight();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
-                        isOpened = false;
-                        reloadPage();
-                    }
+                                ((Activity) context).runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        downloadSpotlight();
+                                    }
+                                });
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
+                                isOpened = false;
+                                reloadPage();
+                            }
+                        }
+                    }).start();
                 } else if (temp.equals("new")) {
                     /*
                         Dropping, recreating and adding announcements
                      */
-                    try {
-                        myDatabase.execSQL("DROP TABLE IF EXISTS messages");
-                        myDatabase.execSQL("CREATE TABLE IF NOT EXISTS messages (id INT(3) PRIMARY KEY, faculty VARCHAR, time VARCHAR, message VARCHAR)");
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                myDatabase.execSQL("DROP TABLE IF EXISTS messages");
+                                myDatabase.execSQL("CREATE TABLE IF NOT EXISTS messages (id INT(3) PRIMARY KEY, faculty VARCHAR, time VARCHAR, message VARCHAR)");
 
-                        myDatabase.execSQL("INSERT INTO messages (faculty, time, message) VALUES('null', 'null', 'null')"); //To be changed with the actual announcements
+                                myDatabase.execSQL("INSERT INTO messages (faculty, time, message) VALUES('null', 'null', 'null')"); //To be changed with the actual announcements
 
-                        downloadSpotlight();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
-                        isOpened = false;
-                        reloadPage();
-                    }
+                                ((Activity) context).runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        downloadSpotlight();
+                                    }
+                                });
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                error();
+                            }
+                        }
+                    }).start();
                 } else {
-                    Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
-                    isOpened = false;
-                    reloadPage();
+                    error();
                 }
             }
         });
@@ -1666,55 +1767,69 @@ public class VTOP {
                 "return obj;" +
                 "})();", new ValueCallback<String>() {
             @Override
-            public void onReceiveValue(String obj) {
+            public void onReceiveValue(final String obj) {
                 String temp = obj.substring(1, obj.length() - 1);
                 if (obj.equals("null")) {
-                    Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
-                    isOpened = false;
-                    reloadPage();
+                    error();
                 } else if (temp.equals("nothing") || temp.equals("")) {
                     /*
                         Dropping and recreating an empty table
                      */
-                    try {
-                        myDatabase.execSQL("DROP TABLE IF EXISTS spotlight");
-                        myDatabase.execSQL("CREATE TABLE IF NOT EXISTS spotlight (id INT(3) PRIMARY KEY, category VARCHAR, announcement VARCHAR)");
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                myDatabase.execSQL("DROP TABLE IF EXISTS spotlight");
+                                myDatabase.execSQL("CREATE TABLE IF NOT EXISTS spotlight (id INT(3) PRIMARY KEY, category VARCHAR, announcement VARCHAR)");
 
-                        finishUp();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
-                        isOpened = false;
-                        reloadPage();
-                    }
+                                ((Activity) context).runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        finishUp();
+                                    }
+                                });
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                error();
+                            }
+                        }
+                    }).start();
                 } else {
                     /*
                         Dropping, recreating and adding announcements
                      */
-                    try {
-                        JSONObject myObj = new JSONObject(obj);
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                JSONObject myObj = new JSONObject(obj);
 
-                        myDatabase.execSQL("DROP TABLE IF EXISTS spotlight");
-                        myDatabase.execSQL("CREATE TABLE IF NOT EXISTS spotlight (id INT(3) PRIMARY KEY, category VARCHAR, announcement VARCHAR)");
+                                myDatabase.execSQL("DROP TABLE IF EXISTS spotlight");
+                                myDatabase.execSQL("CREATE TABLE IF NOT EXISTS spotlight (id INT(3) PRIMARY KEY, category VARCHAR, announcement VARCHAR)");
 
-                        Iterator<?> keys = myObj.keys();
+                                Iterator<?> keys = myObj.keys();
 
-                        while (keys.hasNext()) {
-                            String key = (String) keys.next();
-                            JSONObject tempObj = new JSONObject(myObj.getString(key));
+                                while (keys.hasNext()) {
+                                    String key = (String) keys.next();
+                                    JSONObject tempObj = new JSONObject(myObj.getString(key));
 
-                            for (int i = 0; i < tempObj.length(); ++i) {
-                                myDatabase.execSQL("INSERT INTO spotlight (category, announcement) VALUES('" + key + "', '" + tempObj.getString(Integer.toString(i)) + "')");
+                                    for (int i = 0; i < tempObj.length(); ++i) {
+                                        myDatabase.execSQL("INSERT INTO spotlight (category, announcement) VALUES('" + key + "', '" + tempObj.getString(Integer.toString(i)) + "')");
+                                    }
+                                }
+
+                                ((Activity) context).runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        finishUp();
+                                    }
+                                });
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                error();
                             }
                         }
-
-                        finishUp();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
-                        isOpened = false;
-                        reloadPage();
-                    }
+                    }).start();
                 }
             }
         });
@@ -1751,5 +1866,16 @@ public class VTOP {
         loadingLayout.setVisibility(View.INVISIBLE);
         captchaLayout.setVisibility(View.INVISIBLE);
         semesterLayout.setVisibility(View.INVISIBLE);
+    }
+
+    public void error() {
+        ((Activity) context).runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
+                isOpened = false;
+                reloadPage();
+            }
+        });
     }
 }
