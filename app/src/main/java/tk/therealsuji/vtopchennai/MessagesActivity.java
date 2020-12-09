@@ -20,22 +20,39 @@ public class MessagesActivity extends AppCompatActivity {
         setContentView(R.layout.activity_messages);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
-        SQLiteDatabase myDatabase = this.openOrCreateDatabase("vtop", Context.MODE_PRIVATE, null);
+        /*
+            At the time of writing this code, there were no class messages in the vtop portal and so I had no idea how to extract the data
+         */
 
-        myDatabase.execSQL("CREATE TABLE IF NOT EXISTS messages (id INT(3) PRIMARY KEY, faculty VARCHAR, time VARCHAR, message VARCHAR)");
-        Cursor c = myDatabase.rawQuery("SELECT * FROM messages", null);
+        final Context context = this;
 
-        int facultyIndex = c.getColumnIndex("faculty");
-        c.moveToFirst();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                SQLiteDatabase myDatabase = context.openOrCreateDatabase("vtop", Context.MODE_PRIVATE, null);
 
-        for (int i = 0; i < c.getCount(); ++i, c.moveToNext()) {
-            if (c.getString(facultyIndex).equals("null")) {
-                findViewById(R.id.noData).setVisibility(View.INVISIBLE);
-                findViewById(R.id.newData).setVisibility(View.VISIBLE);
+                myDatabase.execSQL("CREATE TABLE IF NOT EXISTS messages (id INT(3) PRIMARY KEY, faculty VARCHAR, time VARCHAR, message VARCHAR)");
+                Cursor c = myDatabase.rawQuery("SELECT * FROM messages", null);
+
+                int facultyIndex = c.getColumnIndex("faculty");
+                c.moveToFirst();
+
+                for (int i = 0; i < c.getCount(); ++i, c.moveToNext()) {
+                    if (c.getString(facultyIndex).equals("null")) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                findViewById(R.id.noData).setVisibility(View.INVISIBLE);
+                                findViewById(R.id.newData).setVisibility(View.VISIBLE);
+                            }
+                        });
+                    }
+                }
+
+                c.close();
+                myDatabase.close();
             }
-        }
-
-        c.close();
+        }).start();
 
         TextView myLink = (TextView) findViewById(R.id.newData);
         myLink.setMovementMethod(LinkMovementMethod.getInstance());

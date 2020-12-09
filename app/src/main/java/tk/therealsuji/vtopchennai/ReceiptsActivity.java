@@ -37,121 +37,133 @@ public class ReceiptsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_receipts);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
-        LinearLayout receipts = findViewById(R.id.receiptsList);
-        float pixelDensity = this.getResources().getDisplayMetrics().density;
+        final Context context = this;
+        final LinearLayout receipts = findViewById(R.id.receiptsList);
 
-        SQLiteDatabase myDatabase = this.openOrCreateDatabase("vtop", Context.MODE_PRIVATE, null);
-        myDatabase.execSQL("CREATE TABLE IF NOT EXISTS receipts (id INT(3) PRIMARY KEY, receipt VARCHAR, date VARCHAR, amount VARCHAR)");
-        Cursor c = myDatabase.rawQuery("SELECT * FROM receipts", null);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                float pixelDensity = context.getResources().getDisplayMetrics().density;
 
-        int receiptIndex = c.getColumnIndex("receipt");
-        int dateIndex = c.getColumnIndex("date");
-        int amountIndex = c.getColumnIndex("amount");
-        c.moveToFirst();
+                SQLiteDatabase myDatabase = context.openOrCreateDatabase("vtop", Context.MODE_PRIVATE, null);
+                myDatabase.execSQL("CREATE TABLE IF NOT EXISTS receipts (id INT(3) PRIMARY KEY, receipt VARCHAR, date VARCHAR, amount VARCHAR)");
+                Cursor c = myDatabase.rawQuery("SELECT * FROM receipts", null);
 
-        for (int i = 0; i < c.getCount(); ++i) {
-            /*
-                The outer block
-             */
-            LinearLayout block = new LinearLayout(this);
-            LinearLayout.LayoutParams blockParams = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT
-            );
-            blockParams.setMarginStart((int) (20 * pixelDensity));
-            blockParams.setMarginEnd((int) (20 * pixelDensity));
-            if (i == 0) {
-                findViewById(R.id.noData).setVisibility(View.INVISIBLE);
-                blockParams.setMargins(0, (int) (20 * pixelDensity), 0, (int) (5 * pixelDensity));
-            } else if (i == c.getCount() - 1) {
-                blockParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (20 * pixelDensity));
-            } else {
-                blockParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (5 * pixelDensity));
+                int receiptIndex = c.getColumnIndex("receipt");
+                int dateIndex = c.getColumnIndex("date");
+                int amountIndex = c.getColumnIndex("amount");
+                c.moveToFirst();
+
+                for (int i = 0; i < c.getCount(); ++i) {
+                    /*
+                        The outer block
+                     */
+                    final LinearLayout block = new LinearLayout(context);
+                    LinearLayout.LayoutParams blockParams = new LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.MATCH_PARENT,
+                            LinearLayout.LayoutParams.WRAP_CONTENT
+                    );
+                    blockParams.setMarginStart((int) (20 * pixelDensity));
+                    blockParams.setMarginEnd((int) (20 * pixelDensity));
+                    if (i == 0) {
+                        findViewById(R.id.noData).setVisibility(View.INVISIBLE);
+                        blockParams.setMargins(0, (int) (20 * pixelDensity), 0, (int) (5 * pixelDensity));
+                    } else if (i == c.getCount() - 1) {
+                        blockParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (20 * pixelDensity));
+                    } else {
+                        blockParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (5 * pixelDensity));
+                    }
+                    block.setLayoutParams(blockParams);
+                    block.setBackground(ContextCompat.getDrawable(context, R.drawable.plain_card));
+                    block.setGravity(Gravity.CENTER_VERTICAL);
+                    block.setOrientation(LinearLayout.VERTICAL);
+
+                    /*
+                        The amount TextView
+                     */
+                    String amountString = "₹" + separateAmount(c.getString(amountIndex)) + "/-";
+
+                    TextView amount = new TextView(context);
+                    TableRow.LayoutParams amountParams = new TableRow.LayoutParams(
+                            TableRow.LayoutParams.MATCH_PARENT,
+                            TableRow.LayoutParams.WRAP_CONTENT
+                    );
+                    amountParams.setMarginStart((int) (20 * pixelDensity));
+                    amountParams.setMarginEnd((int) (20 * pixelDensity));
+                    amountParams.setMargins(0, (int) (20 * pixelDensity), 0, (int) (5 * pixelDensity));
+                    amount.setLayoutParams(amountParams);
+                    amount.setText(amountString);
+                    amount.setTextColor(getColor(R.color.colorPrimary));
+                    amount.setTextSize(20);
+                    amount.setTypeface(ResourcesCompat.getFont(context, R.font.rubik), Typeface.BOLD);
+
+                    block.addView(amount); //Adding amount to block
+
+                    /*
+                        The inner LinearLayout
+                     */
+                    LinearLayout innerBlock = new LinearLayout(context);
+                    innerBlock.setLayoutParams(new LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.MATCH_PARENT,
+                            LinearLayout.LayoutParams.WRAP_CONTENT
+                    ));
+                    innerBlock.setOrientation(LinearLayout.HORIZONTAL);
+
+                    /*
+                        The receipt number TextView
+                     */
+                    TextView receipt = new TextView(context);
+                    TableRow.LayoutParams receiptParams = new TableRow.LayoutParams(
+                            TableRow.LayoutParams.WRAP_CONTENT,
+                            TableRow.LayoutParams.WRAP_CONTENT
+                    );
+                    receiptParams.setMarginStart((int) (20 * pixelDensity));
+                    receiptParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (20 * pixelDensity));
+                    receipt.setLayoutParams(receiptParams);
+                    receipt.setText(c.getString(receiptIndex));
+                    receipt.setTextColor(getColor(R.color.colorPrimary));
+                    receipt.setTextSize(16);
+                    receipt.setTypeface(ResourcesCompat.getFont(context, R.font.rubik));
+
+                    innerBlock.addView(receipt); //Adding receipt to innerBlock
+
+                    /*
+                        The date TextView
+                     */
+                    TextView date = new TextView(context);
+                    TableRow.LayoutParams dateParams = new TableRow.LayoutParams(
+                            TableRow.LayoutParams.MATCH_PARENT,
+                            TableRow.LayoutParams.WRAP_CONTENT
+                    );
+                    dateParams.setMarginEnd((int) (20 * pixelDensity));
+                    dateParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (20 * pixelDensity));
+                    date.setLayoutParams(dateParams);
+                    date.setText(c.getString(dateIndex));
+                    date.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
+                    date.setTextColor(getColor(R.color.colorPrimary));
+                    date.setTextSize(16);
+                    date.setTypeface(ResourcesCompat.getFont(context, R.font.rubik));
+
+                    innerBlock.addView(date);   //Adding date to innerBlock
+
+                    block.addView(innerBlock);  //Adding innerBlock to block
+
+                    /*
+                        Finally adding the block to the activity
+                     */
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            receipts.addView(block);
+                        }
+                    });
+
+                    c.moveToNext();
+                }
+
+                c.close();
+                myDatabase.close();
             }
-            block.setLayoutParams(blockParams);
-            block.setBackground(ContextCompat.getDrawable(this, R.drawable.plain_card));
-            block.setGravity(Gravity.CENTER_VERTICAL);
-            block.setOrientation(LinearLayout.VERTICAL);
-
-            /*
-                The amount TextView
-             */
-            String amountString = "₹" + separateAmount(c.getString(amountIndex)) + "/-";
-
-            TextView amount = new TextView(this);
-            TableRow.LayoutParams amountParams = new TableRow.LayoutParams(
-                    TableRow.LayoutParams.MATCH_PARENT,
-                    TableRow.LayoutParams.WRAP_CONTENT
-            );
-            amountParams.setMarginStart((int) (20 * pixelDensity));
-            amountParams.setMarginEnd((int) (20 * pixelDensity));
-            amountParams.setMargins(0, (int) (20 * pixelDensity), 0, (int) (5 * pixelDensity));
-            amount.setLayoutParams(amountParams);
-            amount.setText(amountString);
-            amount.setTextColor(getColor(R.color.colorPrimary));
-            amount.setTextSize(20);
-            amount.setTypeface(ResourcesCompat.getFont(this, R.font.rubik), Typeface.BOLD);
-
-            block.addView(amount); //Adding amount to block
-
-            /*
-                The inner LinearLayout
-             */
-            LinearLayout innerBlock = new LinearLayout(this);
-            innerBlock.setLayoutParams(new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT
-            ));
-            innerBlock.setOrientation(LinearLayout.HORIZONTAL);
-
-            /*
-                The receipt number TextView
-             */
-            TextView receipt = new TextView(this);
-            TableRow.LayoutParams receiptParams = new TableRow.LayoutParams(
-                    TableRow.LayoutParams.WRAP_CONTENT,
-                    TableRow.LayoutParams.WRAP_CONTENT
-            );
-            receiptParams.setMarginStart((int) (20 * pixelDensity));
-            receiptParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (20 * pixelDensity));
-            receipt.setLayoutParams(receiptParams);
-            receipt.setText(c.getString(receiptIndex));
-            receipt.setTextColor(getColor(R.color.colorPrimary));
-            receipt.setTextSize(16);
-            receipt.setTypeface(ResourcesCompat.getFont(this, R.font.rubik));
-
-            innerBlock.addView(receipt); //Adding receipt to innerBlock
-
-            /*
-                The date TextView
-             */
-            TextView date = new TextView(this);
-            TableRow.LayoutParams dateParams = new TableRow.LayoutParams(
-                    TableRow.LayoutParams.MATCH_PARENT,
-                    TableRow.LayoutParams.WRAP_CONTENT
-            );
-            dateParams.setMarginEnd((int) (20 * pixelDensity));
-            dateParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (20 * pixelDensity));
-            date.setLayoutParams(dateParams);
-            date.setText(c.getString(dateIndex));
-            date.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
-            date.setTextColor(getColor(R.color.colorPrimary));
-            date.setTextSize(16);
-            date.setTypeface(ResourcesCompat.getFont(this, R.font.rubik));
-
-            innerBlock.addView(date);   //Adding date to innerBlock
-
-            block.addView(innerBlock);  //Adding innerBlock to block
-
-            /*
-                Finally adding the block to the activity
-             */
-            receipts.addView(block);
-
-            c.moveToNext();
-        }
-
-        c.close();
-        myDatabase.close();
+        }).start();
     }
 }
