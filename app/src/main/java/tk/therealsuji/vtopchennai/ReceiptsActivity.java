@@ -19,6 +19,18 @@ import java.util.Objects;
 
 public class ReceiptsActivity extends AppCompatActivity {
 
+    private String separateAmount(String amount) {
+        StringBuilder separatedAmount = new StringBuilder(amount);
+        int index = amount.length() - 3;
+
+        while (index > 0) {
+            separatedAmount.insert(index, ",");
+            index -= 2;
+        }
+
+        return separatedAmount.toString();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,7 +76,7 @@ public class ReceiptsActivity extends AppCompatActivity {
             /*
                 The amount TextView
              */
-            String amountString = "₹" + c.getString(amountIndex) + "/-";
+            String amountString = "₹" + separateAmount(c.getString(amountIndex)) + "/-";
 
             TextView amount = new TextView(this);
             TableRow.LayoutParams amountParams = new TableRow.LayoutParams(
