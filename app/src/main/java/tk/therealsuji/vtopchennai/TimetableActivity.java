@@ -32,6 +32,7 @@ public class TimetableActivity extends AppCompatActivity {
     int day;
 
     public void setTimetable(View view) {
+        timetable.scrollTo(0, 0);
         timetable.removeAllViews();
 
         if (view != null) {
@@ -153,6 +154,11 @@ public class TimetableActivity extends AppCompatActivity {
         ));
         saturday.setPadding(0, (int) (65 * pixelDensity), 0, (int) (15 * pixelDensity));
         saturday.setOrientation(LinearLayout.VERTICAL);
+
+        Calendar c = Calendar.getInstance();
+        day = c.get(Calendar.DAY_OF_WEEK) - 1;
+
+        setTimetable(null);
 
         new Thread(new Runnable() {
             @Override
@@ -311,14 +317,26 @@ public class TimetableActivity extends AppCompatActivity {
                             /*
                                 Finally adding block to the main sections
                              */
-                            final LinearLayout day = days[j];
+                            final LinearLayout dayBlock = days[j];
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    day.addView(block);
+                                    dayBlock.addView(block);
                                 }
                             });
-                            hasClasses[j] = true;   //Telling everyone that there is something on this day
+
+                            if (!hasClasses[j]) {
+                                hasClasses[j] = true;   //Telling everyone that there is something on this day
+
+                                if (day == j) {
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            findViewById(R.id.noData).setVisibility(View.INVISIBLE);
+                                        }
+                                    });
+                                }
+                            }
                         }
 
                         /*
@@ -428,14 +446,26 @@ public class TimetableActivity extends AppCompatActivity {
                             /*
                                 Finally adding block to the main sections
                              */
-                            final LinearLayout day = days[j];
+                            final LinearLayout dayBlock = days[j];
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    day.addView(block);
+                                    dayBlock.addView(block);
                                 }
                             });
-                            hasClasses[j] = true;
+
+                            if (!hasClasses[j]) {
+                                hasClasses[j] = true;   //Telling everyone that there is something on this day
+
+                                if (day == j) {
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            findViewById(R.id.noData).setVisibility(View.INVISIBLE);
+                                        }
+                                    });
+                                }
+                            }
                         }
                     }
                 }
@@ -445,10 +475,5 @@ public class TimetableActivity extends AppCompatActivity {
                 myDatabase.close();
             }
         }).start();
-
-        Calendar c = Calendar.getInstance();
-        day = c.get(Calendar.DAY_OF_WEEK) - 1;
-
-        setTimetable(null);
     }
 }

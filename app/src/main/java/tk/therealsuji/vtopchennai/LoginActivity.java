@@ -9,6 +9,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -83,5 +84,15 @@ public class LoginActivity extends AppCompatActivity {
                 return false;
             }
         });
+
+        /*
+            Check for a new version
+         */
+        int versionCode = BuildConfig.VERSION_CODE;
+        String latestVersion = sharedPreferences.getString("versionCode", Integer.toString(versionCode));
+
+        if (versionCode <= Integer.parseInt(latestVersion)) {
+            Toast.makeText(this, "Please download the latest version from http://bit.ly/vtopchn", Toast.LENGTH_LONG).show();
+        }
     }
 }

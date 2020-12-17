@@ -159,7 +159,7 @@ public class HomeActivity extends AppCompatActivity {
 
     private void openUpdate() {
         WebView webView = new WebView(this);
-        webView.loadUrl("http://vtopchennai.therealsuji.tk/download");
+        webView.loadUrl("http://vtopchennai.therealsuji.tk");
     }
 
     @SuppressLint("ClickableViewAccessibility")
