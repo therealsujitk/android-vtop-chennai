@@ -113,6 +113,22 @@ public class VTOP {
     }
 
     /*
+        Function to reload the page using javascript in case of an error
+     */
+    public void reloadPage() {
+        loading.setText(context.getString(R.string.loading));
+        if (loadingLayout.getVisibility() == View.INVISIBLE) {
+            hideLayouts();
+            loadingLayout.setVisibility(View.VISIBLE);
+        }
+
+        webView.clearCache(true);
+        webView.clearHistory();
+        CookieManager.getInstance().removeAllCookies(null);
+        webView.loadUrl("http://vtopcc.vit.ac.in/vtop");
+    }
+
+    /*
         Function to open the sign in page
      */
     private void openSignIn() {
@@ -142,22 +158,6 @@ public class VTOP {
                 }
             }
         });
-    }
-
-    /*
-        Function to reload the page using javascript in case of an error
-     */
-    public void reloadPage() {
-        loading.setText(context.getString(R.string.loading));
-        if (loadingLayout.getVisibility() == View.INVISIBLE) {
-            hideLayouts();
-            loadingLayout.setVisibility(View.VISIBLE);
-        }
-
-        webView.clearCache(true);
-        webView.clearHistory();
-        CookieManager.getInstance().removeAllCookies(null);
-        webView.loadUrl("http://vtopcc.vit.ac.in:8080/vtop");
     }
 
     /*
