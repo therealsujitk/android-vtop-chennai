@@ -91,7 +91,7 @@ public class LoginActivity extends AppCompatActivity {
         int versionCode = BuildConfig.VERSION_CODE;
         String latestVersion = sharedPreferences.getString("versionCode", Integer.toString(versionCode));
 
-        if (versionCode <= Integer.parseInt(latestVersion)) {
+        if (versionCode < Integer.parseInt(latestVersion)) {
             Toast.makeText(this, "Please download the latest version from http://bit.ly/vtopchn", Toast.LENGTH_LONG).show();
         }
     }
