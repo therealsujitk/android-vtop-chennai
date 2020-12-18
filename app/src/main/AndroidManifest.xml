@@ -21,6 +21,7 @@
             android:theme="@style/SplashScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -64,8 +65,10 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".TimetableActivity" />
+
             <intent-filter>
                 <action android:name="tk.therealsuji.vtopchennai.LAUNCH_TIMETABLE" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
@@ -86,8 +89,10 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ExamsActivity" />
+
             <intent-filter>
                 <action android:name="tk.therealsuji.vtopchennai.LAUNCH_EXAMS" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
@@ -99,10 +104,21 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MessagesActivity" />
+
             <intent-filter>
                 <action android:name="tk.therealsuji.vtopchennai.LAUNCH_MESSAGES" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".MarksActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:label="Marks"
+            android:screenOrientation="portrait">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MarksActivity" />
         </activity>
         <activity
             android:name=".SpotlightActivity"
@@ -112,8 +128,10 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".SpotlightActivity" />
+
             <intent-filter>
                 <action android:name="tk.therealsuji.vtopchennai.LAUNCH_SPOTLIGHT" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>

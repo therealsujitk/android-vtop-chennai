@@ -62,6 +62,8 @@
     <string name="messages_description">Icon for the messages button.</string>
 
     <string name="academics">Academics</string>
+    <string name="marks">Marks</string>
+    <string name="marks_description">Icon for the marks button.</string>
     <string name="spotlight">Spotlight</string>
     <string name="spotlight_description">Icon for the spotlight button.</string>
     <string name="faculty">Faculty</string>
@@ -105,6 +107,15 @@
     <string name="no_announcements">No Announcements</string>
 
     <string name="new_message">Looks like you do have some new messages, however <a href="https://therealsuji.tk">@therealsujitk</a> was a bit too lazy to add this feature, why don\'t you contact him and give him a piece of your mind.</string>
+
+
+    <string name="type">Course Type</string>
+    <string name="score">Your Score</string>
+    <string name="percent">Weightage Percent</string>
+    <string name="weightage">Weightage Score</string>
+    <string name="status">Status</string>
+    <string name="average">Class Average</string>
+    <string name="remark">Remark</string>
 
 
     <string name="proctor">PROCTOR</string>

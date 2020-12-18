@@ -62,6 +62,10 @@ public class HomeActivity extends AppCompatActivity {
         The following functions are to open the activities in the "Academics" category
      */
 
+    public void openMarks(View view) {
+        startActivity(new Intent(HomeActivity.this, MarksActivity.class));
+    }
+
     public void openSpotlight(View view) {
         startActivity(new Intent(HomeActivity.this, SpotlightActivity.class));
     }

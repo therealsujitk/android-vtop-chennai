@@ -32,7 +32,7 @@
 
     <HorizontalScrollView
         android:id="@+id/days"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/colorDefaultTransparent"
         android:overScrollMode="never"
@@ -44,14 +44,16 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:paddingStart="15dp"
+            android:paddingEnd="15dp">
 
             <Button
                 android:id="@+id/sunday"
                 style="?android:attr/borderlessButtonStyle"
                 android:layout_width="60dp"
                 android:layout_height="25dp"
-                android:layout_marginStart="20dp"
+                android:layout_marginStart="5dp"
                 android:layout_marginTop="20dp"
                 android:layout_marginEnd="5dp"
                 android:layout_marginBottom="20dp"
@@ -167,7 +169,7 @@
                 android:layout_height="25dp"
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="20dp"
-                android:layout_marginEnd="20dp"
+                android:layout_marginEnd="5dp"
                 android:layout_marginBottom="20dp"
                 android:layout_weight="1"
                 android:background="@drawable/button_secondary"
