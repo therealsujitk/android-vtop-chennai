@@ -1489,7 +1489,7 @@ public class VTOP {
                                 ((Activity) context).runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        downloadReceipts();
+                                        downloadMarks();
                                     }
                                 });
                             } catch (Exception e) {
@@ -1517,6 +1517,193 @@ public class VTOP {
                                     String endTime = time[1].trim();
 
                                     myDatabase.execSQL("INSERT INTO exams (course, date, start_time, end_time) VALUES('" + course + "', '" + date + "', '" + startTime + "', '" + endTime + "')");
+                                }
+
+                                ((Activity) context).runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        downloadMarks();
+                                    }
+                                });
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                error();
+                            }
+                        }
+                    }).start();
+                }
+            }
+        });
+    }
+
+    /*
+        Function to download marks
+     */
+    public void downloadMarks() {
+        loading.setText(R.string.downloading_marks);
+
+        String semester = sharedPreferences.getString("semester", "null");
+
+        webView.evaluateJavascript("(function() {" +
+                "var semID = '';" +
+                "var options = document.getElementById('semesterSubId').getElementsByTagName('option');" +
+                "for(var i = 0; i < options.length; ++i) {" +
+                "   if(options[i].innerText.toLowerCase().includes('" + semester + "')) {" +
+                "       semID = options[i].value;" +
+                "   }" +
+                "}" +
+                "var data = 'semesterSubId=' + semID + '&authorizedID=' + $('#authorizedIDX').val();" +
+                "var obj = {};" +
+                "$.ajax({" +
+                "   type: 'POST'," +
+                "   url : 'examinations/doStudentMarkView'," +
+                "   data : data," +
+                "   async: false," +
+                "   success: function(response) {" +
+                "       if(response.toLowerCase().includes('no') && response.toLowerCase().includes('found')) {" +
+                "           obj = 'nothing';" +
+                "       } else {" +
+                "           var doc = new DOMParser().parseFromString(response, 'text/html');" +
+                "           var rows = doc.getElementById('fixedTableContainer').getElementsByTagName('tr');" +
+                "           var heads = rows[0].getElementsByTagName('td');" +
+                "           var columns = heads.length;" +
+                "           var courseIndex, typeIndex, titleIndex, maxIndex, percentIndex, statusIndex, scoredIndex, weightageIndex, averageIndex, postedIndex, remarkIndex;" +
+                "           var course = '', type = '', flag = 0;" +
+                "           for (var i = 0; i < columns; ++i) {" +
+                "               var heading = heads[i].innerText.toLowerCase();" +
+                "               if (heading.includes('code')) {" +
+                "                   courseIndex = i;" +
+                "                   ++flag;" +
+                "               }" +
+                "               if (heading.includes('type')) {" +
+                "                   typeIndex = i;" +
+                "                   ++flag;" +
+                "               }" +
+                "               if (flag >= 2) {" +
+                "                   break;" +
+                "               }" +
+                "           }" +
+                "           flag = 0;" +
+                "           for (var i = 1; i < rows.length; ++i) {" +
+                "               if (rows[i].getElementsByTagName('table').length) {" +
+                "                   var records = rows[i].getElementsByTagName('tr').length - 1;" +
+                "                   var heads = rows[++i].getElementsByTagName('td');" +
+                "                   if (!flag) {" +
+                "                       for (var j = 0; j < heads.length; ++j) {" +
+                "                           var heading = heads[j].innerText.toLowerCase();" +
+                "                           if (heading.includes('title')) {" +
+                "                               titleIndex = j;" +
+                "                               ++flag;" +
+                "                           }" +
+                "                           if (heading.includes('max')) {" +
+                "                               maxIndex = j;" +
+                "                               ++flag;" +
+                "                           }" +
+                "                           if (heading.includes('%')) {" +
+                "                               percentIndex = j;" +
+                "                               ++flag;" +
+                "                           }" +
+                "                           if (heading.includes('status')) {" +
+                "                               statusIndex = j;" +
+                "                               ++flag;" +
+                "                           }" +
+                "                           if (heading.includes('scored')) {" +
+                "                               scoredIndex = j;" +
+                "                               ++flag;" +
+                "                           }" +
+                "                           if (heading.includes('weightage') && heading.includes('mark')) {" +
+                "                               weightageIndex = j;" +
+                "                               ++flag;" +
+                "                           }" +
+                "                           if (heading.includes('average')) {" +
+                "                               averageIndex = j;" +
+                "                               ++flag;" +
+                "                           }" +
+                "                           if (heading.includes('posted')) {" +
+                "                               postedIndex = j;" +
+                "                               ++flag;" +
+                "                           }" +
+                "                           if (heading.includes('remark')) {" +
+                "                               remarkIndex = j;" +
+                "                               ++flag;" +
+                "                       }" +
+                "                       }" +
+                "                   }" +
+                "                   for (var j = 0; j < records; ++j) {" +
+                "                       var values = rows[++i].getElementsByTagName('td');" +
+                "                       var temp = {};" +
+                "                       temp['title'] = values[titleIndex].innerText;" +
+                "                       temp['max'] = values[maxIndex].innerText;" +
+                "                       temp['percent'] = values[percentIndex].innerText;" +
+                "                       temp['status'] = values[statusIndex].innerText;" +
+                "                       temp['scored'] = values[scoredIndex].innerText;" +
+                "                       temp['weightage'] = values[weightageIndex].innerText;" +
+                "                       temp['average'] = values[averageIndex].innerText;" +
+                "                       temp['posted'] = values[postedIndex].innerText;" +
+                "                       temp['remark'] = values[remarkIndex].innerText;" +
+                "                       temp['course'] = course;" +
+                "                       temp['type'] = type;" +
+                "                       obj[j] = temp;" +
+                "                   }" +
+                "               } else {" +
+                "                   course = rows[i].getElementsByTagName('td')[courseIndex].innerText;" +
+                "                   type = rows[i].getElementsByTagName('td')[typeIndex].innerText;" +
+                "               }" +
+                "           }" +
+                "       }" +
+                "   }" +
+                "});" +
+                "return obj;" +
+                "})();", new ValueCallback<String>() {
+            @Override
+            public void onReceiveValue(final String obj) {
+                String temp = obj.substring(1, obj.length() - 1);
+                if (obj.equals("null")) {
+                    error();
+                } else if (temp.equals("nothing") || temp.equals("")) {
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                myDatabase.execSQL("DROP TABLE IF EXISTS marks");
+                                myDatabase.execSQL("CREATE TABLE IF NOT EXISTS marks (id INT(3) PRIMARY KEY, course VARCHAR, type VARCHAR, title VARCHAR, score VARCHAR, percent VARCHAR, status VARCHAR, weightage VARCHAR, average VARCHAR, posted VARCHAR, remark VARCHAR)");
+
+                                ((Activity) context).runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        downloadReceipts();
+                                    }
+                                });
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                error();
+                            }
+                        }
+                    }).start();
+                } else {
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                JSONObject myObj = new JSONObject(obj);
+
+                                myDatabase.execSQL("DROP TABLE IF EXISTS marks");
+                                myDatabase.execSQL("CREATE TABLE IF NOT EXISTS marks (id INT(3) PRIMARY KEY, course VARCHAR, type VARCHAR, title VARCHAR, score VARCHAR, percent VARCHAR, status VARCHAR, weightage VARCHAR, average VARCHAR, posted VARCHAR, remark VARCHAR)");
+
+                                for (int i = 0; i < myObj.length(); ++i) {
+                                    JSONObject tempObj = new JSONObject(myObj.getString(Integer.toString(i)));
+                                    String course = tempObj.getString("course");
+                                    String type = tempObj.getString("type");
+                                    String title = tempObj.getString("title");
+                                    String score = tempObj.getString("scored") + " / " + tempObj.getString("max");
+                                    String percent = tempObj.getString("percent");
+                                    String status = tempObj.getString("status");
+                                    String weightage = tempObj.getString("weightage");
+                                    String average = tempObj.getString("average");
+                                    String posted = tempObj.getString("posted");
+                                    String remark = tempObj.getString("remark");
+
+                                    myDatabase.execSQL("INSERT INTO marks (course, type, title, score, percent, status, weightage, average, posted, remark) VALUES('" + course + "', '" + type + "', '" + title + "', '" + score + "', '" + percent + "', '" + status + "', '" + weightage + "', '" + average + "', '" + posted + "', '" + remark + "')");
                                 }
 
                                 ((Activity) context).runOnUiThread(new Runnable() {
