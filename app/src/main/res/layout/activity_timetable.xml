@@ -50,7 +50,6 @@
 
             <Button
                 android:id="@+id/sunday"
-                style="?android:attr/borderlessButtonStyle"
                 android:layout_width="60dp"
                 android:layout_height="25dp"
                 android:layout_marginStart="5dp"
@@ -65,11 +64,10 @@
                 android:textColor="@color/colorPrimary"
                 android:textSize="12sp"
                 android:textStyle="bold"
-                tools:ignore="InefficientWeight" />
+                tools:ignore="ButtonStyle,InefficientWeight" />
 
             <Button
                 android:id="@+id/monday"
-                style="?android:attr/borderlessButtonStyle"
                 android:layout_width="60dp"
                 android:layout_height="25dp"
                 android:layout_marginStart="5dp"
@@ -84,11 +82,10 @@
                 android:textColor="@color/colorPrimary"
                 android:textSize="12sp"
                 android:textStyle="bold"
-                tools:ignore="InefficientWeight" />
+                tools:ignore="ButtonStyle,InefficientWeight" />
 
             <Button
                 android:id="@+id/tuesday"
-                style="?android:attr/borderlessButtonStyle"
                 android:layout_width="60dp"
                 android:layout_height="25dp"
                 android:layout_marginStart="5dp"
@@ -103,11 +100,10 @@
                 android:textColor="@color/colorPrimary"
                 android:textSize="12sp"
                 android:textStyle="bold"
-                tools:ignore="InefficientWeight" />
+                tools:ignore="ButtonStyle,InefficientWeight" />
 
             <Button
                 android:id="@+id/wednesday"
-                style="?android:attr/borderlessButtonStyle"
                 android:layout_width="60dp"
                 android:layout_height="25dp"
                 android:layout_marginStart="5dp"
@@ -122,11 +118,10 @@
                 android:textColor="@color/colorPrimary"
                 android:textSize="12sp"
                 android:textStyle="bold"
-                tools:ignore="InefficientWeight" />
+                tools:ignore="ButtonStyle,InefficientWeight" />
 
             <Button
                 android:id="@+id/thursday"
-                style="?android:attr/borderlessButtonStyle"
                 android:layout_width="60dp"
                 android:layout_height="25dp"
                 android:layout_marginStart="5dp"
@@ -141,11 +136,10 @@
                 android:textColor="@color/colorPrimary"
                 android:textSize="12sp"
                 android:textStyle="bold"
-                tools:ignore="InefficientWeight" />
+                tools:ignore="ButtonStyle,InefficientWeight" />
 
             <Button
                 android:id="@+id/friday"
-                style="?android:attr/borderlessButtonStyle"
                 android:layout_width="60dp"
                 android:layout_height="25dp"
                 android:layout_marginStart="5dp"
@@ -160,11 +154,10 @@
                 android:textColor="@color/colorPrimary"
                 android:textSize="12sp"
                 android:textStyle="bold"
-                tools:ignore="InefficientWeight" />
+                tools:ignore="ButtonStyle,InefficientWeight" />
 
             <Button
                 android:id="@+id/saturday"
-                style="?android:attr/borderlessButtonStyle"
                 android:layout_width="60dp"
                 android:layout_height="25dp"
                 android:layout_marginStart="5dp"
@@ -179,7 +172,7 @@
                 android:textColor="@color/colorPrimary"
                 android:textSize="12sp"
                 android:textStyle="bold"
-                tools:ignore="InefficientWeight" />
+                tools:ignore="ButtonStyle,InefficientWeight" />
         </LinearLayout>
     </HorizontalScrollView>
 
