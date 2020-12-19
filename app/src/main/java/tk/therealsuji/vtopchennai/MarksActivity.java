@@ -97,7 +97,7 @@ public class MarksActivity extends AppCompatActivity {
                         markButton.setBackground(ContextCompat.getDrawable(context, R.drawable.button_secondary));
                     }
                     markButton.setTag(i);
-                    markButton.setText(markTitle.toUpperCase());
+                    markButton.setText(markTitle);
                     markButton.setTextColor(getColor(R.color.colorPrimary));
                     markButton.setTextSize(12);
                     markButton.setTypeface(ResourcesCompat.getFont(context, R.font.rubik), Typeface.BOLD);

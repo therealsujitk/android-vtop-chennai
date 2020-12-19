@@ -1301,7 +1301,7 @@ public class VTOP {
                 "           var courseIndex, typeIndex, attendedIndex, totalIndex, percentIndex, flag = 0;" +
                 "           var columns = heads.length;" +
                 "           for(var i = 0; i < columns; ++i) {" +
-                "               var heading = heads[i].innerText.trim().toLowerCase();" +
+                "               var heading = heads[i].innerText.toLowerCase();" +
                 "               if(heading.includes('course') &&  heading.includes('code')) {" +
                 "                   courseIndex = i;" +
                 "                   ++flag;" +
@@ -1568,7 +1568,7 @@ public class VTOP {
                 "           var heads = rows[0].getElementsByTagName('td');" +
                 "           var columns = heads.length;" +
                 "           var courseIndex, typeIndex, titleIndex, maxIndex, percentIndex, statusIndex, scoredIndex, weightageIndex, averageIndex, postedIndex, remarkIndex;" +
-                "           var course = '', type = '', flag = 0;" +
+                "           var course = '', type = '', flag = 0, k = 0;" +
                 "           for (var i = 0; i < columns; ++i) {" +
                 "               var heading = heads[i].innerText.toLowerCase();" +
                 "               if (heading.includes('code')) {" +
@@ -1632,22 +1632,22 @@ public class VTOP {
                 "                   for (var j = 0; j < records; ++j) {" +
                 "                       var values = rows[++i].getElementsByTagName('td');" +
                 "                       var temp = {};" +
-                "                       temp['title'] = values[titleIndex].innerText;" +
-                "                       temp['max'] = values[maxIndex].innerText;" +
-                "                       temp['percent'] = values[percentIndex].innerText;" +
-                "                       temp['status'] = values[statusIndex].innerText;" +
-                "                       temp['scored'] = values[scoredIndex].innerText;" +
-                "                       temp['weightage'] = values[weightageIndex].innerText;" +
-                "                       temp['average'] = values[averageIndex].innerText;" +
-                "                       temp['posted'] = values[postedIndex].innerText;" +
-                "                       temp['remark'] = values[remarkIndex].innerText;" +
+                "                       temp['title'] = values[titleIndex].innerText.trim();" +
+                "                       temp['max'] = values[maxIndex].innerText.trim();" +
+                "                       temp['percent'] = values[percentIndex].innerText.trim();" +
+                "                       temp['status'] = values[statusIndex].innerText.trim();" +
+                "                       temp['scored'] = values[scoredIndex].innerText.trim();" +
+                "                       temp['weightage'] = values[weightageIndex].innerText.trim();" +
+                "                       temp['average'] = values[averageIndex].innerText.trim();" +
+                "                       temp['posted'] = values[postedIndex].innerText.trim();" +
+                "                       temp['remark'] = values[remarkIndex].innerText.trim();" +
                 "                       temp['course'] = course;" +
                 "                       temp['type'] = type;" +
-                "                       obj[j] = temp;" +
+                "                       obj[k++] = temp;" +
                 "                   }" +
                 "               } else {" +
-                "                   course = rows[i].getElementsByTagName('td')[courseIndex].innerText;" +
-                "                   type = rows[i].getElementsByTagName('td')[typeIndex].innerText;" +
+                "                   course = rows[i].getElementsByTagName('td')[courseIndex].innerText.trim();" +
+                "                   type = rows[i].getElementsByTagName('td')[typeIndex].innerText.trim();" +
                 "               }" +
                 "           }" +
                 "       }" +
@@ -1694,7 +1694,7 @@ public class VTOP {
                                     JSONObject tempObj = new JSONObject(myObj.getString(Integer.toString(i)));
                                     String course = tempObj.getString("course");
                                     String type = tempObj.getString("type");
-                                    String title = tempObj.getString("title");
+                                    String title = tempObj.getString("title").toUpperCase();
                                     String score = tempObj.getString("scored") + " / " + tempObj.getString("max");
                                     String percent = tempObj.getString("percent");
                                     String status = tempObj.getString("status");
