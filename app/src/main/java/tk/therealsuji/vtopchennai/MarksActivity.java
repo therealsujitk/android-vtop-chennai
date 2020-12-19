@@ -1,12 +1,15 @@
 package tk.therealsuji.vtopchennai;
 
+import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.Button;
+import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TableRow;
@@ -23,6 +26,7 @@ public class MarksActivity extends AppCompatActivity {
     ScrollView marks;
     ArrayList<Button> buttons = new ArrayList<>();
     ArrayList<LinearLayout> markViews = new ArrayList<>();
+    float pixelDensity;
 
     public void setMarks(View view) {
         marks.scrollTo(0, 0);
@@ -35,6 +39,16 @@ public class MarksActivity extends AppCompatActivity {
         int index = Integer.parseInt(view.getTag().toString());
         buttons.get(index).setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary_selected));
         marks.addView(markViews.get(index));
+
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        ((Activity) this).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        int halfWidth = displayMetrics.widthPixels / 2;
+        float location = 0;
+        for (int i = 0; i < index; ++i) {
+            location += 5 * pixelDensity + (float) buttons.get(i).getWidth();
+        }
+        location += 5 * pixelDensity + (float) buttons.get(index).getWidth() / 2;
+        ((HorizontalScrollView) findViewById(R.id.daysContainer)).smoothScrollTo((int) location - halfWidth + (int) (15 * pixelDensity), 0);
     }
 
     @Override
@@ -45,13 +59,12 @@ public class MarksActivity extends AppCompatActivity {
 
         final Context context = this;
         final LinearLayout markButtons = findViewById(R.id.markTitles);
+        pixelDensity = context.getResources().getDisplayMetrics().density;
         marks = findViewById(R.id.marks);
 
         new Thread(new Runnable() {
             @Override
             public void run() {
-                float pixelDensity = context.getResources().getDisplayMetrics().density;
-
                 SQLiteDatabase myDatabase = context.openOrCreateDatabase("vtop", Context.MODE_PRIVATE, null);
 
                 myDatabase.execSQL("CREATE TABLE IF NOT EXISTS marks (id INT(3) PRIMARY KEY, course VARCHAR, type VARCHAR, title VARCHAR, score VARCHAR, percent VARCHAR, status VARCHAR, weightage VARCHAR, average VARCHAR, posted VARCHAR, remark VARCHAR)");

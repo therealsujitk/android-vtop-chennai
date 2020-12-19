@@ -1,13 +1,16 @@
 package tk.therealsuji.vtopchennai;
 
+import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.text.format.DateFormat;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.Button;
+import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TableRow;
@@ -25,9 +28,10 @@ import java.util.Objects;
 
 public class TimetableActivity extends AppCompatActivity {
     ScrollView timetable;
-    LinearLayout sunday, monday, tuesday, wednesday, thursday, friday, saturday;
+    LinearLayout days, sunday, monday, tuesday, wednesday, thursday, friday, saturday;
     Button sun, mon, tue, wed, thu, fri, sat;
     Context context;
+    float pixelDensity;
     boolean[] hasClasses = new boolean[7];
     int day;
 
@@ -87,6 +91,13 @@ public class TimetableActivity extends AppCompatActivity {
             sat.setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary_selected));
             timetable.addView(saturday);
         }
+
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        ((Activity) this).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        int halfWidth = displayMetrics.widthPixels / 2;
+        float dayWidth = (days.getWidth() - 30 * pixelDensity) / 7;
+        int location = (int) (dayWidth * (day + 0.5));
+        ((HorizontalScrollView) findViewById(R.id.daysContainer)).smoothScrollTo(location - halfWidth + (int) (15 * pixelDensity), 0);
     }
 
     @Override
@@ -97,7 +108,9 @@ public class TimetableActivity extends AppCompatActivity {
 
         context = this;
         timetable = findViewById(R.id.timetable);
-        final float pixelDensity = context.getResources().getDisplayMetrics().density;
+        pixelDensity = context.getResources().getDisplayMetrics().density;
+
+        days = findViewById(R.id.days);
 
         sunday = new LinearLayout(context);
         sunday.setLayoutParams(new LinearLayout.LayoutParams(
@@ -158,7 +171,12 @@ public class TimetableActivity extends AppCompatActivity {
         Calendar c = Calendar.getInstance();
         day = c.get(Calendar.DAY_OF_WEEK) - 1;
 
-        setTimetable(null);
+        days.post(new Runnable() {
+            @Override
+            public void run() {
+                setTimetable(null);
+            }
+        });
 
         new Thread(new Runnable() {
             @Override

@@ -40,7 +40,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <HorizontalScrollView
-            android:id="@+id/days"
+            android:id="@+id/daysContainer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:overScrollMode="never"
@@ -48,6 +48,7 @@
             tools:ignore="UselessParent">
 
             <LinearLayout
+                android:id="@+id/days"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
