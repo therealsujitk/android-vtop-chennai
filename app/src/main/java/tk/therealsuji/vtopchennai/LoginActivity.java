@@ -1,15 +1,18 @@
 package tk.therealsuji.vtopchennai;
 
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
+import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -31,6 +34,11 @@ public class LoginActivity extends AppCompatActivity {
 
     public void openPrivacy(View view) {
         startActivity(new Intent(LoginActivity.this, PrivacyActivity.class));
+    }
+
+    public void openUpdate(View view) {
+        WebView webView = new WebView(this);
+        webView.loadUrl("http://vtopchennai.therealsuji.tk");
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -89,10 +97,13 @@ public class LoginActivity extends AppCompatActivity {
             Check for a new version
          */
         int versionCode = BuildConfig.VERSION_CODE;
-        String latestVersion = sharedPreferences.getString("versionCode", Integer.toString(versionCode));
+        int latestVersion = sharedPreferences.getInt("latest", versionCode);
 
-        if (versionCode < Integer.parseInt(latestVersion)) {
-            Toast.makeText(this, "Please download the latest version from http://bit.ly/vtopchn", Toast.LENGTH_LONG).show();
+        if (versionCode < latestVersion) {
+            Dialog update = new Dialog(this);
+            update.setContentView(R.layout.dialog_update);
+            update.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            update.show();
         }
     }
 }

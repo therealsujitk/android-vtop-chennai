@@ -46,7 +46,7 @@ public class VTOP {
     Spinner selectSemester;
     TextView loading;
 
-    Boolean isOpened, isLoggedIn, checkUpdate;
+    Boolean isOpened, isLoggedIn;
     SharedPreferences sharedPreferences;
     int counter;
 
@@ -70,9 +70,7 @@ public class VTOP {
         webView.getSettings().setUserAgentString("Mozilla/5.0 (Linux; Android 10) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.99 Mobile Safari/537.36");
         webView.setWebViewClient(new WebViewClient() {
             public void onPageFinished(WebView view, String url) {
-                if (!checkUpdate) {
-                    checkUpdates();
-                } else if (!isOpened) {
+                if (!isOpened) {
                     if (counter >= 60) {
                         Toast.makeText(context, "Sorry, we had some trouble connecting to the server. Please try again later.", Toast.LENGTH_LONG).show();
                         ((Activity) context).finish();
@@ -87,29 +85,9 @@ public class VTOP {
 
         isOpened = false;
         isLoggedIn = false;
-        checkUpdate = false;
         counter = 0;
 
-        loading.setText(context.getString(R.string.checking_update));
-        webView.loadUrl("http://vtopchennai.therealsuji.tk/latest");
-    }
-
-    public void checkUpdates() {
-        checkUpdate = true;
-
-        webView.evaluateJavascript("(function() {" +
-                "return document.getElementById('vtop-chennai-vc').innerText;" +
-                "})();", new ValueCallback<String>() {
-            @Override
-            public void onReceiveValue(String value) {
-                if (!value.equals("null")) {
-                    int latest = Integer.parseInt(value.substring(1, value.length() - 1));
-                    sharedPreferences.edit().putInt("latest", latest).apply();
-                }
-
-                reloadPage();
-            }
-        });
+        reloadPage();
     }
 
     /*

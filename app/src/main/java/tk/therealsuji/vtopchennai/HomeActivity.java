@@ -1,6 +1,5 @@
 package tk.therealsuji.vtopchennai;
 
-import android.animation.AnimatorInflater;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
@@ -14,10 +13,8 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.text.method.LinkMovementMethod;
-import android.view.Gravity;
 import android.view.View;
 import android.webkit.WebView;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.TableRow;
@@ -26,7 +23,6 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
-import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 
 import java.text.SimpleDateFormat;
@@ -161,7 +157,7 @@ public class HomeActivity extends AppCompatActivity {
         finish();
     }
 
-    private void openUpdate() {
+    public void openUpdate(View view) {
         WebView webView = new WebView(this);
         webView.loadUrl("http://vtopchennai.therealsuji.tk");
     }
@@ -714,63 +710,13 @@ public class HomeActivity extends AppCompatActivity {
             Check for a new version
          */
         int versionCode = BuildConfig.VERSION_CODE;
-        String latestVersion = sharedPreferences.getString("versionCode", Integer.toString(versionCode));
+        int latestVersion = sharedPreferences.getInt("latest", versionCode);
 
-        if (versionCode < Integer.parseInt(latestVersion)) {
-            LinearLayout container = findViewById(R.id.container);
-
-            LinearLayout block = new LinearLayout(this);
-            LinearLayout.LayoutParams blockParams = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT
-            );
-            blockParams.setMarginStart((int) (20 * pixelDensity));
-            blockParams.setMarginEnd((int) (20 * pixelDensity));
-            blockParams.setMargins(0, 0, 0, (int) (10 * pixelDensity));
-            block.setLayoutParams(blockParams);
-            block.setBackground(ContextCompat.getDrawable(this, R.drawable.button_card));
-            block.setOrientation(LinearLayout.HORIZONTAL);
-            block.setGravity(Gravity.CENTER_VERTICAL);
-            block.setFocusable(true);
-            block.setClickable(true);
-            block.setStateListAnimator(AnimatorInflater.loadStateListAnimator(this, R.animator.item_elevation));
-            block.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    openUpdate();
-                }
-            });
-
-            ImageView image = new ImageView(this);
-            image.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_download));
-            TableRow.LayoutParams imageParams = new TableRow.LayoutParams(
-                    TableRow.LayoutParams.WRAP_CONTENT,
-                    TableRow.LayoutParams.MATCH_PARENT
-            );
-            imageParams.setMarginStart((int) (20 * pixelDensity));
-            imageParams.setMargins(0, (int) (20 * pixelDensity), 0, (int) (20 * pixelDensity));
-            imageParams.height = (int) (30 * pixelDensity);
-            image.setLayoutParams(imageParams);
-
-            block.addView(image);
-
-            TextView text = new TextView(this);
-            TableRow.LayoutParams textParams = new TableRow.LayoutParams(
-                    TableRow.LayoutParams.MATCH_PARENT,
-                    TableRow.LayoutParams.WRAP_CONTENT
-            );
-            textParams.setMarginEnd((int) (20 * pixelDensity));
-            textParams.setMargins(0, (int) (20 * pixelDensity), 0, (int) (20 * pixelDensity));
-            text.setLayoutParams(textParams);
-            text.setText(getString(R.string.update));
-            text.setTextColor(getColor(R.color.colorPrimary));
-            text.setTextSize(18);
-            text.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-            text.setTypeface(ResourcesCompat.getFont(this, R.font.rubik));
-
-            block.addView(text);
-
-            container.addView(block);
+        if (versionCode < latestVersion) {
+            Dialog update = new Dialog(this);
+            update.setContentView(R.layout.dialog_update);
+            update.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            update.show();
         }
 
         TextView myLink = findViewById(R.id.builtBy);

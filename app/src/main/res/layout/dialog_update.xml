@@ -35,51 +35,34 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
                 android:layout_marginEnd="20dp"
-                android:text="@string/appearance"
+                android:text="@string/update_title"
                 android:textColor="@color/colorText"
                 android:textSize="20sp" />
 
-            <RadioGroup
+            <TextView
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="20dp"
-                android:layout_marginBottom="20dp">
+                android:text="@string/update_text"
+                android:textColor="@color/colorText"
+                android:textSize="16sp" />
 
-                <RadioButton
-                    android:id="@+id/light"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:buttonTint="@color/colorText"
-                    android:onClick="setAppearance"
-                    android:tag="0"
-                    android:text="@string/light"
-                    android:textColor="@color/colorText"
-                    android:textSize="16sp" />
-
-                <RadioButton
-                    android:id="@+id/dark"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:buttonTint="@color/colorText"
-                    android:onClick="setAppearance"
-                    android:tag="1"
-                    android:text="@string/dark"
-                    android:textColor="@color/colorText"
-                    android:textSize="16sp" />
-
-                <RadioButton
-                    android:id="@+id/system"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:buttonTint="@color/colorText"
-                    android:onClick="setAppearance"
-                    android:tag="2"
-                    android:text="@string/system"
-                    android:textColor="@color/colorText"
-                    android:textSize="16sp" />
-            </RadioGroup>
+            <Button
+                android:id="@+id/update"
+                style="?android:borderlessButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="28dp"
+                android:layout_gravity="end"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/button_tertiary"
+                android:onClick="openUpdate"
+                android:text="@string/update"
+                android:textColor="@color/colorPrimary"
+                android:textSize="14sp" />
 
         </LinearLayout>
     </LinearLayout>

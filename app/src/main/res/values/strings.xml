@@ -30,7 +30,6 @@
     <string name="downloading_spotlight">Downloading Spotlight</string>
     <string name="downloading_staff">Downloading Staff Info</string>
     <string name="downloading_faculty">Downloading Faculty Info</string>
-    <string name="checking_update">Checking for updates</string>
 
     <string name="captcha">Enter Captcha</string>
     <string name="captcha_description">Image that shows the captcha code.</string>
@@ -48,7 +47,10 @@
     <string name="no_upcoming">No Upcoming Classes</string>
     <string name="upcoming">UPCOMING</string>
     <string name="ongoing">ONGOING</string>
-    <string name="update">Download Update</string>
+
+    <string name="update_title">Update Available!</string>
+    <string name="update_text">A new version of VTOP Chennai has been released!</string>
+    <string name="update">Update</string>
     <string name="refresh_alert">Refresh Data</string>
 
     <string name="classes">Classes</string>
