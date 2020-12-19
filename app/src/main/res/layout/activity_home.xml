@@ -14,7 +14,6 @@
         tools:context=".HomeActivity">
 
         <ImageView
-            android:id="@+id/imageView"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:contentDescription="@string/profile_background"
@@ -171,7 +170,6 @@
                     android:stateListAnimator="@animator/item_elevation">
 
                     <ImageView
-                        android:id="@+id/imageTimetable"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:clickable="false"
@@ -180,7 +178,6 @@
                         app:tint="@color/colorPrimary" />
 
                     <TextView
-                        android:id="@+id/textTimetable"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
@@ -208,7 +205,6 @@
                     android:stateListAnimator="@animator/item_elevation">
 
                     <ImageView
-                        android:id="@+id/imageAttendance"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:clickable="false"
@@ -217,7 +213,6 @@
                         app:tint="@color/colorPrimary" />
 
                     <TextView
-                        android:id="@+id/textAttendance"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
@@ -229,7 +224,6 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/exams"
                     android:layout_width="125dp"
                     android:layout_height="125dp"
                     android:layout_marginStart="10dp"
@@ -245,7 +239,6 @@
                     android:stateListAnimator="@animator/item_elevation">
 
                     <ImageView
-                        android:id="@+id/imageExams"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:clickable="false"
@@ -254,7 +247,6 @@
                         app:tint="@color/colorPrimary" />
 
                     <TextView
-                        android:id="@+id/textExams"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
@@ -266,7 +258,6 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/messages"
                     android:layout_width="125dp"
                     android:layout_height="125dp"
                     android:layout_marginStart="10dp"
@@ -282,7 +273,6 @@
                     android:stateListAnimator="@animator/item_elevation">
 
                     <ImageView
-                        android:id="@+id/imageMessages"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:clickable="false"
@@ -291,7 +281,6 @@
                         app:tint="@color/colorPrimary" />
 
                     <TextView
-                        android:id="@+id/textMessages"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
@@ -351,7 +340,6 @@
                     android:stateListAnimator="@animator/item_elevation">
 
                     <ImageView
-                        android:id="@+id/imageMarks"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:clickable="false"
@@ -360,7 +348,6 @@
                         app:tint="@color/colorPrimary" />
 
                     <TextView
-                        android:id="@+id/textMarks"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
@@ -372,7 +359,6 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/spotlight"
                     android:layout_width="125dp"
                     android:layout_height="125dp"
                     android:layout_marginStart="10dp"
@@ -388,7 +374,6 @@
                     android:stateListAnimator="@animator/item_elevation">
 
                     <ImageView
-                        android:id="@+id/imageSpotlight"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:clickable="false"
@@ -397,7 +382,6 @@
                         app:tint="@color/colorPrimary" />
 
                     <TextView
-                        android:id="@+id/textSpotlight"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
@@ -409,7 +393,6 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/faculty"
                     android:layout_width="125dp"
                     android:layout_height="125dp"
                     android:layout_marginStart="10dp"
@@ -425,7 +408,6 @@
                     android:stateListAnimator="@animator/item_elevation">
 
                     <ImageView
-                        android:id="@+id/imageFaculty"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:clickable="false"
@@ -434,7 +416,6 @@
                         app:tint="@color/colorPrimary" />
 
                     <TextView
-                        android:id="@+id/textFaculty"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
@@ -446,7 +427,6 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/staff"
                     android:layout_width="125dp"
                     android:layout_height="125dp"
                     android:layout_marginStart="10dp"
@@ -462,7 +442,6 @@
                     android:stateListAnimator="@animator/item_elevation">
 
                     <ImageView
-                        android:id="@+id/imageStaff"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:clickable="false"
@@ -471,7 +450,6 @@
                         app:tint="@color/colorPrimary" />
 
                     <TextView
-                        android:id="@+id/textStaff"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
@@ -483,7 +461,6 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/receipts"
                     android:layout_width="125dp"
                     android:layout_height="125dp"
                     android:layout_marginStart="10dp"
@@ -499,7 +476,6 @@
                     android:stateListAnimator="@animator/item_elevation">
 
                     <ImageView
-                        android:id="@+id/imageReceipts"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:clickable="false"
@@ -508,7 +484,6 @@
                         app:tint="@color/colorPrimary" />
 
                     <TextView
-                        android:id="@+id/textReceipts"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
@@ -551,7 +526,6 @@
                 android:orientation="horizontal">
 
                 <LinearLayout
-                    android:id="@+id/share"
                     android:layout_width="125dp"
                     android:layout_height="125dp"
                     android:layout_marginStart="20dp"
@@ -567,7 +541,6 @@
                     android:stateListAnimator="@animator/item_elevation">
 
                     <ImageView
-                        android:id="@+id/imageShare"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:clickable="false"
@@ -576,7 +549,6 @@
                         app:tint="@color/colorPrimary" />
 
                     <TextView
-                        android:id="@+id/textShare"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
@@ -588,7 +560,6 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/refresh"
                     android:layout_width="125dp"
                     android:layout_height="125dp"
                     android:layout_marginStart="10dp"
@@ -604,7 +575,6 @@
                     android:stateListAnimator="@animator/item_elevation">
 
                     <ImageView
-                        android:id="@+id/imageRefresh"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:clickable="false"
@@ -613,7 +583,6 @@
                         app:tint="@color/colorPrimary" />
 
                     <TextView
-                        android:id="@+id/textRefresh"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
@@ -625,7 +594,6 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/appearance"
                     android:layout_width="125dp"
                     android:layout_height="125dp"
                     android:layout_marginStart="10dp"
@@ -641,7 +609,6 @@
                     android:stateListAnimator="@animator/item_elevation">
 
                     <ImageView
-                        android:id="@+id/imageAppearance"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:clickable="false"
@@ -650,7 +617,6 @@
                         app:tint="@color/colorPrimary" />
 
                     <TextView
-                        android:id="@+id/textAppearance"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
@@ -662,7 +628,6 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/notifications"
                     android:layout_width="125dp"
                     android:layout_height="125dp"
                     android:layout_marginStart="10dp"
@@ -678,7 +643,6 @@
                     android:stateListAnimator="@animator/item_elevation">
 
                     <ImageView
-                        android:id="@+id/imageNotifications"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:clickable="false"
@@ -687,7 +651,6 @@
                         app:tint="@color/colorPrimary" />
 
                     <TextView
-                        android:id="@+id/textNotifications"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
@@ -699,7 +662,6 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/privacy"
                     android:layout_width="125dp"
                     android:layout_height="125dp"
                     android:layout_marginStart="10dp"
@@ -715,7 +677,6 @@
                     android:stateListAnimator="@animator/item_elevation">
 
                     <ImageView
-                        android:id="@+id/imagePrivacy"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:clickable="false"
@@ -724,7 +685,6 @@
                         app:tint="@color/colorPrimary" />
 
                     <TextView
-                        android:id="@+id/textPrivacy"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
@@ -736,7 +696,6 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/signOut"
                     android:layout_width="125dp"
                     android:layout_height="125dp"
                     android:layout_marginStart="10dp"
@@ -752,7 +711,6 @@
                     android:stateListAnimator="@animator/item_elevation">
 
                     <ImageView
-                        android:id="@+id/imageSignOut"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:clickable="false"
@@ -761,7 +719,6 @@
                         app:tint="@color/colorPrimary" />
 
                     <TextView
-                        android:id="@+id/textSignOut"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"

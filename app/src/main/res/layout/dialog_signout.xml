@@ -40,7 +40,6 @@
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/cancel"
                 style="?android:borderlessButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="28dp"
@@ -52,7 +51,6 @@
                 android:textSize="14sp" />
 
             <Button
-                android:id="@+id/signOutConfirm"
                 style="?android:borderlessButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="28dp"

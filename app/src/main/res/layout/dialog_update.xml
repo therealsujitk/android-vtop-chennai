@@ -33,7 +33,6 @@
             android:textSize="16sp" />
 
         <Button
-            android:id="@+id/update"
             style="?android:borderlessButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="28dp"

@@ -51,7 +51,6 @@
     <string name="update_title">Update Available</string>
     <string name="update_text">A new version of VTOP Chennai has been released!</string>
     <string name="update">Update</string>
-    <string name="refresh_alert">Refresh Data</string>
 
     <string name="classes">Classes</string>
     <string name="timetable">Timetable</string>

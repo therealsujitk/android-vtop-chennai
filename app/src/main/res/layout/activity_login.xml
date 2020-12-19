@@ -7,7 +7,6 @@
     tools:context=".LoginActivity">
 
     <ImageView
-        android:id="@+id/loginBackground"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:contentDescription="@string/login_background_description"
