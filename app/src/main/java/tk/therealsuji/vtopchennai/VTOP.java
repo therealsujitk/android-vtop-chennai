@@ -1436,21 +1436,21 @@ public class VTOP {
                 "           obj = 'nothing';" +
                 "       } else {" +
                 "           var doc = new DOMParser().parseFromString(response, 'text/html');" +
-                "           var heads = doc.getElementsByTagName('th');" +
+                "           var heads = doc.getElementsByTagName('tr')[0].getElementsByTagName('td');" +
                 "           var courseIndex, dateIndex, timeIndex, flag = 0;" +
                 "           var columns = heads.length;" +
                 "           for(var i = 0; i < columns; ++i) {" +
                 "               var heading = heads[i].innerText.toLowerCase();" +
                 "               if(heading.includes('course') && heading.includes('code')) {" +
-                "                   courseIndex = i + 1;" + // +1 is a correction due to an extra 'td' element at the top
+                "                   courseIndex = columns + i + 1;" + // +1 is a correction due to an extra 'td' element at the top
                 "                   ++flag;" +
                 "               }" +
                 "               if(heading.includes('date')) {" +
-                "                   dateIndex = i + 1;" + // +1 is a correction due to an extra 'td' element at the top
+                "                   dateIndex = columns + i + 1;" + // +1 is a correction due to an extra 'td' element at the top
                 "                   ++flag;" +
                 "               }" +
                 "               if(heading.includes('exam') && heading.includes('time')) {" +
-                "                   timeIndex = i + 1;" + // +1 is a correction due to an extra 'td' element at the top
+                "                   timeIndex = columns + i + 1;" + // +1 is a correction due to an extra 'td' element at the top
                 "                   ++flag;" +
                 "               }" +
                 "               if(flag >= 3) {" +
