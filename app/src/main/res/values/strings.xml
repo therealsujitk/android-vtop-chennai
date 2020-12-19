@@ -48,7 +48,7 @@
     <string name="upcoming">UPCOMING</string>
     <string name="ongoing">ONGOING</string>
 
-    <string name="update_title">Update Available!</string>
+    <string name="update_title">Update Available</string>
     <string name="update_text">A new version of VTOP Chennai has been released!</string>
     <string name="update">Update</string>
     <string name="refresh_alert">Refresh Data</string>
@@ -86,7 +86,10 @@
     <string name="notifications_description">Icon for the notification settings button.</string>
     <string name="privacy_description">Icon for the privacy button.</string>
     <string name="sign_out">Sign Out</string>
+    <string name="sign_out_text">Are you sure you want to sign out?</string>
     <string name="sign_out_description">Icon for the sign out button.</string>
+
+    <string name="cancel">Cancel</string>
 
     <string name="refreshed">Last Refreshed</string>
     <string name="refreshed_unavailable">Last Refreshed: Unavailable</string>

@@ -1,7 +1,9 @@
 package tk.therealsuji.vtopchennai;
 
 import android.annotation.SuppressLint;
+import android.app.AlarmManager;
 import android.app.Dialog;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -32,7 +34,8 @@ import java.util.Locale;
 
 public class HomeActivity extends AppCompatActivity {
     SharedPreferences sharedPreferences;
-    Dialog appearance;
+    Dialog appearance, signOut;
+    Context context;
 
     /*
         The following functions are to open the activities in the "Classes" category
@@ -151,10 +154,36 @@ public class HomeActivity extends AppCompatActivity {
         startActivity(new Intent(HomeActivity.this, PrivacyActivity.class));
     }
 
+    public void openSignOut(View view) {
+        signOut = new Dialog(this);
+        signOut.setContentView(R.layout.dialog_signout);
+        signOut.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        signOut.show();
+    }
+
     public void signOut(View view) {
         sharedPreferences.edit().remove("isSignedIn").apply();
         startActivity(new Intent(HomeActivity.this, LoginActivity.class));
         finish();
+
+        /*
+            Clearing all Alarm manager tasks
+         */
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
+                Intent notificationIntent = new Intent(context, NotificationReceiver.class);
+                for (int j = 0; j < sharedPreferences.getInt("alarmCount", 0); ++j) {
+                    PendingIntent pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
+                    alarmManager.cancel(pendingIntent);
+                }
+            }
+        }).start();
+    }
+
+    public void cancelSignOut(View view) {
+        signOut.dismiss();
     }
 
     public void openUpdate(View view) {
@@ -186,7 +215,7 @@ public class HomeActivity extends AppCompatActivity {
         final SimpleDateFormat hour24 = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
         final SimpleDateFormat hour12 = new SimpleDateFormat("h:mm a", Locale.ENGLISH);
 
-        final Context context = this;
+        context = this;
         final LinearLayout upcoming = findViewById(R.id.upcoming);
 
         new Thread(new Runnable() {

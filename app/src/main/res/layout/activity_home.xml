@@ -747,7 +747,7 @@
                     android:clickable="true"
                     android:focusable="true"
                     android:gravity="center_vertical"
-                    android:onClick="signOut"
+                    android:onClick="openSignOut"
                     android:orientation="vertical"
                     android:stateListAnimator="@animator/item_elevation">
 

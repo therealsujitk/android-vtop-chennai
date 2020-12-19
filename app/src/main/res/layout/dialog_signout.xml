@@ -20,7 +20,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/update_title"
+            android:text="@string/sign_out"
             android:textColor="@color/colorText"
             android:textSize="20sp" />
 
@@ -28,21 +28,40 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:text="@string/update_text"
+            android:text="@string/sign_out_text"
             android:textColor="@color/colorText"
             android:textSize="16sp" />
 
-        <Button
-            android:id="@+id/update"
-            style="?android:borderlessButtonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="28dp"
-            android:layout_gravity="end"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:background="@drawable/button_tertiary"
-            android:onClick="openUpdate"
-            android:text="@string/update"
-            android:textColor="@color/colorPrimary"
-            android:textSize="14sp" />
+            android:gravity="end"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/cancel"
+                style="?android:borderlessButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="28dp"
+                android:layout_marginEnd="1dp"
+                android:background="@drawable/button_tertiary"
+                android:onClick="cancelSignOut"
+                android:text="@string/cancel"
+                android:textColor="@color/colorPrimary"
+                android:textSize="14sp" />
+
+            <Button
+                android:id="@+id/signOutConfirm"
+                style="?android:borderlessButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="28dp"
+                android:layout_marginStart="1dp"
+                android:background="@drawable/button_tertiary"
+                android:onClick="signOut"
+                android:text="@string/sign_out"
+                android:textColor="@color/colorPrimary"
+                android:textSize="14sp" />
+        </LinearLayout>
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

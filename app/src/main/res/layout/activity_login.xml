@@ -103,7 +103,7 @@
             android:paddingBottom="15dp"
             android:text="@string/sign_in"
             android:textAllCaps="true"
-            android:textColor="@color/colorText"
+            android:textColor="@color/colorDefault"
             android:textSize="16sp" />
     </LinearLayout>
 
