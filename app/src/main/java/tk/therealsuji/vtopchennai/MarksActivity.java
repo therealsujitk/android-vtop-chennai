@@ -48,7 +48,7 @@ public class MarksActivity extends AppCompatActivity {
             location += 5 * pixelDensity + (float) buttons.get(i).getWidth();
         }
         location += 5 * pixelDensity + (float) buttons.get(index).getWidth() / 2;
-        ((HorizontalScrollView) findViewById(R.id.daysContainer)).smoothScrollTo((int) location - halfWidth + (int) (15 * pixelDensity), 0);
+        ((HorizontalScrollView) findViewById(R.id.markTitlesContainer)).smoothScrollTo((int) location - halfWidth + (int) (15 * pixelDensity), 0);
     }
 
     @Override
