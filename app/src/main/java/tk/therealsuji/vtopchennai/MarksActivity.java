@@ -1,14 +1,13 @@
 package tk.therealsuji.vtopchennai;
 
-import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.view.Gravity;
 import android.view.View;
-import android.widget.Button;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -24,7 +23,7 @@ import java.util.Objects;
 
 public class MarksActivity extends AppCompatActivity {
     ScrollView marks;
-    ArrayList<Button> buttons = new ArrayList<>();
+    ArrayList<TextView> buttons = new ArrayList<>();
     ArrayList<LinearLayout> markViews = new ArrayList<>();
     float pixelDensity;
 
@@ -41,14 +40,14 @@ public class MarksActivity extends AppCompatActivity {
         marks.addView(markViews.get(index));
 
         DisplayMetrics displayMetrics = new DisplayMetrics();
-        ((Activity) this).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        this.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         int halfWidth = displayMetrics.widthPixels / 2;
         float location = 0;
         for (int i = 0; i < index; ++i) {
-            location += 5 * pixelDensity + (float) buttons.get(i).getWidth();
+            location += 10 * pixelDensity + (float) buttons.get(i).getWidth();
         }
-        location += 5 * pixelDensity + (float) buttons.get(index).getWidth() / 2;
-        ((HorizontalScrollView) findViewById(R.id.markTitlesContainer)).smoothScrollTo((int) location - halfWidth + (int) (15 * pixelDensity), 0);
+        location += 20 * pixelDensity + (float) buttons.get(index).getWidth() / 2;
+        ((HorizontalScrollView) findViewById(R.id.markTitlesContainer)).smoothScrollTo((int) location - halfWidth, 0);
     }
 
     @Override
@@ -93,7 +92,7 @@ public class MarksActivity extends AppCompatActivity {
                     /*
                         Creating the markTitle button
                      */
-                    final Button markButton = new Button(context);
+                    final TextView markButton = new TextView(context);
                     LinearLayout.LayoutParams buttonParams = new LinearLayout.LayoutParams(
                             LinearLayout.LayoutParams.WRAP_CONTENT,
                             (int) (25 * pixelDensity)
@@ -102,7 +101,7 @@ public class MarksActivity extends AppCompatActivity {
                     buttonParams.setMarginEnd((int) (5 * pixelDensity));
                     buttonParams.setMargins(0, (int) (20 * pixelDensity), 0, (int) (20 * pixelDensity));
                     markButton.setLayoutParams(buttonParams);
-                    markButton.setPadding(0, 0, 0, 0);
+                    markButton.setPadding((int) (20 * pixelDensity), 0, (int) (20 * pixelDensity), 0);
                     if (i == 0) {
                         markButton.setBackground(ContextCompat.getDrawable(context, R.drawable.button_secondary_selected));
                         findViewById(R.id.noData).setVisibility(View.INVISIBLE);
@@ -113,6 +112,7 @@ public class MarksActivity extends AppCompatActivity {
                     markButton.setText(markTitle);
                     markButton.setTextColor(getColor(R.color.colorPrimary));
                     markButton.setTextSize(12);
+                    markButton.setGravity(Gravity.CENTER_VERTICAL);
                     markButton.setTypeface(ResourcesCompat.getFont(context, R.font.rubik), Typeface.BOLD);
                     markButton.setOnClickListener(new View.OnClickListener() {
                         @Override

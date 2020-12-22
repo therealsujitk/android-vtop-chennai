@@ -1,6 +1,5 @@
 package tk.therealsuji.vtopchennai;
 
-import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -9,7 +8,6 @@ import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.util.DisplayMetrics;
 import android.view.View;
-import android.widget.Button;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -28,8 +26,9 @@ import java.util.Objects;
 
 public class TimetableActivity extends AppCompatActivity {
     ScrollView timetable;
-    LinearLayout days, sunday, monday, tuesday, wednesday, thursday, friday, saturday;
-    Button sun, mon, tue, wed, thu, fri, sat;
+    LinearLayout days;
+    LinearLayout[] dayViews = new LinearLayout[7];
+    TextView[] buttons = new TextView[7];
     Context context;
     float pixelDensity;
     boolean[] hasClasses = new boolean[7];
@@ -49,55 +48,25 @@ public class TimetableActivity extends AppCompatActivity {
             findViewById(R.id.noData).setVisibility(View.VISIBLE);
         }
 
-        if (sun == null) {
-            sun = findViewById(R.id.sunday);
-            mon = findViewById(R.id.monday);
-            tue = findViewById(R.id.tuesday);
-            wed = findViewById(R.id.wednesday);
-            thu = findViewById(R.id.thursday);
-            fri = findViewById(R.id.friday);
-            sat = findViewById(R.id.saturday);
-        }
-
         if (view != null) {
-            sun.setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary));
-            mon.setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary));
-            tue.setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary));
-            wed.setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary));
-            thu.setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary));
-            fri.setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary));
-            sat.setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary));
+            for (int i = 0; i < 7; ++i) {
+                buttons[i].setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary));
+            }
         }
 
-        if (day == 0) {
-            sun.setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary_selected));
-            timetable.addView(sunday);
-        } else if (day == 1) {
-            mon.setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary_selected));
-            timetable.addView(monday);
-        } else if (day == 2) {
-            tue.setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary_selected));
-            timetable.addView(tuesday);
-        } else if (day == 3) {
-            wed.setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary_selected));
-            timetable.addView(wednesday);
-        } else if (day == 4) {
-            thu.setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary_selected));
-            timetable.addView(thursday);
-        } else if (day == 5) {
-            fri.setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary_selected));
-            timetable.addView(friday);
-        } else if (day == 6) {
-            sat.setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary_selected));
-            timetable.addView(saturday);
-        }
+        buttons[day].setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary_selected));
+        timetable.addView(dayViews[day]);
 
         DisplayMetrics displayMetrics = new DisplayMetrics();
-        ((Activity) this).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        this.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         int halfWidth = displayMetrics.widthPixels / 2;
-        float dayWidth = (days.getWidth() - 30 * pixelDensity) / 7;
-        int location = (int) (dayWidth * (day + 0.5));
-        ((HorizontalScrollView) findViewById(R.id.daysContainer)).smoothScrollTo(location - halfWidth + (int) (15 * pixelDensity), 0);
+        float location = 0;
+        for (int i = 0; i < day; ++i) {
+            location += 10 * pixelDensity + (float) buttons[i].getWidth();
+        }
+        location += 20 * pixelDensity + (float) buttons[day].getWidth() / 2;
+
+        ((HorizontalScrollView) findViewById(R.id.daysContainer)).smoothScrollTo((int) location - halfWidth, 0);
     }
 
     @Override
@@ -112,61 +81,69 @@ public class TimetableActivity extends AppCompatActivity {
 
         days = findViewById(R.id.days);
 
-        sunday = new LinearLayout(context);
-        sunday.setLayoutParams(new LinearLayout.LayoutParams(
+        dayViews[0] = new LinearLayout(context);
+        dayViews[0].setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
         ));
-        sunday.setPadding(0, (int) (65 * pixelDensity), 0, (int) (15 * pixelDensity));
-        sunday.setOrientation(LinearLayout.VERTICAL);
+        dayViews[0].setPadding(0, (int) (65 * pixelDensity), 0, (int) (15 * pixelDensity));
+        dayViews[0].setOrientation(LinearLayout.VERTICAL);
 
-        monday = new LinearLayout(context);
-        monday.setLayoutParams(new LinearLayout.LayoutParams(
+        dayViews[1] = new LinearLayout(context);
+        dayViews[1].setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
         ));
-        monday.setPadding(0, (int) (65 * pixelDensity), 0, (int) (15 * pixelDensity));
-        monday.setOrientation(LinearLayout.VERTICAL);
+        dayViews[1].setPadding(0, (int) (65 * pixelDensity), 0, (int) (15 * pixelDensity));
+        dayViews[1].setOrientation(LinearLayout.VERTICAL);
 
-        tuesday = new LinearLayout(context);
-        tuesday.setLayoutParams(new LinearLayout.LayoutParams(
+        dayViews[2] = new LinearLayout(context);
+        dayViews[2].setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
         ));
-        tuesday.setPadding(0, (int) (65 * pixelDensity), 0, (int) (15 * pixelDensity));
-        tuesday.setOrientation(LinearLayout.VERTICAL);
+        dayViews[2].setPadding(0, (int) (65 * pixelDensity), 0, (int) (15 * pixelDensity));
+        dayViews[2].setOrientation(LinearLayout.VERTICAL);
 
-        wednesday = new LinearLayout(context);
-        wednesday.setLayoutParams(new LinearLayout.LayoutParams(
+        dayViews[3] = new LinearLayout(context);
+        dayViews[3].setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
         ));
-        wednesday.setPadding(0, (int) (65 * pixelDensity), 0, (int) (15 * pixelDensity));
-        wednesday.setOrientation(LinearLayout.VERTICAL);
+        dayViews[3].setPadding(0, (int) (65 * pixelDensity), 0, (int) (15 * pixelDensity));
+        dayViews[3].setOrientation(LinearLayout.VERTICAL);
 
-        thursday = new LinearLayout(context);
-        thursday.setLayoutParams(new LinearLayout.LayoutParams(
+        dayViews[4] = new LinearLayout(context);
+        dayViews[4].setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
         ));
-        thursday.setPadding(0, (int) (65 * pixelDensity), 0, (int) (15 * pixelDensity));
-        thursday.setOrientation(LinearLayout.VERTICAL);
+        dayViews[4].setPadding(0, (int) (65 * pixelDensity), 0, (int) (15 * pixelDensity));
+        dayViews[4].setOrientation(LinearLayout.VERTICAL);
 
-        friday = new LinearLayout(context);
-        friday.setLayoutParams(new LinearLayout.LayoutParams(
+        dayViews[5] = new LinearLayout(context);
+        dayViews[5].setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
         ));
-        friday.setPadding(0, (int) (65 * pixelDensity), 0, (int) (15 * pixelDensity));
-        friday.setOrientation(LinearLayout.VERTICAL);
+        dayViews[5].setPadding(0, (int) (65 * pixelDensity), 0, (int) (15 * pixelDensity));
+        dayViews[5].setOrientation(LinearLayout.VERTICAL);
 
-        saturday = new LinearLayout(context);
-        saturday.setLayoutParams(new LinearLayout.LayoutParams(
+        dayViews[6] = new LinearLayout(context);
+        dayViews[6].setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
         ));
-        saturday.setPadding(0, (int) (65 * pixelDensity), 0, (int) (15 * pixelDensity));
-        saturday.setOrientation(LinearLayout.VERTICAL);
+        dayViews[6].setPadding(0, (int) (65 * pixelDensity), 0, (int) (15 * pixelDensity));
+        dayViews[6].setOrientation(LinearLayout.VERTICAL);
+
+        buttons[0] = findViewById(R.id.sunday);
+        buttons[1] = findViewById(R.id.monday);
+        buttons[2] = findViewById(R.id.tuesday);
+        buttons[3] = findViewById(R.id.wednesday);
+        buttons[4] = findViewById(R.id.thursday);
+        buttons[5] = findViewById(R.id.friday);
+        buttons[6] = findViewById(R.id.saturday);
 
         Calendar c = Calendar.getInstance();
         day = c.get(Calendar.DAY_OF_WEEK) - 1;
@@ -215,7 +192,6 @@ public class TimetableActivity extends AppCompatActivity {
                 theory.moveToFirst();
                 lab.moveToFirst();
 
-                final LinearLayout[] days = {sunday, monday, tuesday, wednesday, thursday, friday, saturday};
                 int[] theoryIndexes = {sundayTheory, mondayTheory, tuesdayTheory, wednesdayTheory, thursdayTheory, fridayTheory, saturdayTheory};
                 int[] labIndexes = {sundayLab, mondayLab, tuesdayLab, wednesdayLab, thursdayLab, fridayLab, saturdayLab};
 
@@ -337,7 +313,7 @@ public class TimetableActivity extends AppCompatActivity {
                             /*
                                 Finally adding block to the main sections
                              */
-                            final LinearLayout dayBlock = days[j];
+                            final LinearLayout dayBlock = dayViews[j];
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
@@ -468,7 +444,7 @@ public class TimetableActivity extends AppCompatActivity {
                             /*
                                 Finally adding block to the main sections
                              */
-                            final LinearLayout dayBlock = days[j];
+                            final LinearLayout dayBlock = dayViews[j];
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {

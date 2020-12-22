@@ -32,11 +32,12 @@
             android:textColor="@color/colorText"
             android:textSize="16sp" />
 
-        <Button
-            style="?android:borderlessButtonStyle"
+        <TextView
             android:layout_width="wrap_content"
-            android:layout_height="28dp"
+            android:layout_height="wrap_content"
             android:layout_gravity="end"
+            android:padding="10dp"
+            android:textAllCaps="true"
             android:layout_marginTop="10dp"
             android:background="@drawable/button_tertiary"
             android:onClick="openUpdate"

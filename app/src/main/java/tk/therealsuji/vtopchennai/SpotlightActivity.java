@@ -1,6 +1,5 @@
 package tk.therealsuji.vtopchennai;
 
-import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -9,7 +8,6 @@ import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.View;
-import android.widget.Button;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -25,7 +23,7 @@ import java.util.Objects;
 
 public class SpotlightActivity extends AppCompatActivity {
     ScrollView announcements;
-    ArrayList<Button> categories = new ArrayList<>();
+    ArrayList<TextView> categories = new ArrayList<>();
     ArrayList<LinearLayout> announcementViews = new ArrayList<>();
     float pixelDensity;
 
@@ -42,14 +40,14 @@ public class SpotlightActivity extends AppCompatActivity {
         announcements.addView(announcementViews.get(index));
 
         DisplayMetrics displayMetrics = new DisplayMetrics();
-        ((Activity) this).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        this.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         int halfWidth = displayMetrics.widthPixels / 2;
         float location = 0;
         for (int i = 0; i < index; ++i) {
-            location += 5 * pixelDensity + (float) categories.get(i).getWidth();
+            location += 10 * pixelDensity + (float) categories.get(i).getWidth();
         }
-        location += 5 * pixelDensity + (float) categories.get(index).getWidth() / 2;
-        ((HorizontalScrollView) findViewById(R.id.categoriesContainer)).smoothScrollTo((int) location - halfWidth + (int) (15 * pixelDensity), 0);
+        location += 20 * pixelDensity + (float) categories.get(index).getWidth() / 2;
+        ((HorizontalScrollView) findViewById(R.id.categoriesContainer)).smoothScrollTo((int) location - halfWidth, 0);
     }
 
     @Override
@@ -94,7 +92,7 @@ public class SpotlightActivity extends AppCompatActivity {
                     /*
                         Creating the category button
                      */
-                    final Button category = new Button(context);
+                    final TextView category = new TextView(context);
                     LinearLayout.LayoutParams categoryParams = new LinearLayout.LayoutParams(
                             LinearLayout.LayoutParams.WRAP_CONTENT,
                             (int) (25 * pixelDensity)
@@ -103,7 +101,7 @@ public class SpotlightActivity extends AppCompatActivity {
                     categoryParams.setMarginEnd((int) (5 * pixelDensity));
                     categoryParams.setMargins(0, (int) (20 * pixelDensity), 0, (int) (20 * pixelDensity));
                     category.setLayoutParams(categoryParams);
-                    category.setPadding(0, 0, 0, 0);
+                    category.setPadding((int) (20 * pixelDensity), 0, (int) (20 * pixelDensity), 0);
                     if (i == 0) {
                         category.setBackground(ContextCompat.getDrawable(context, R.drawable.button_secondary_selected));
                         findViewById(R.id.noData).setVisibility(View.INVISIBLE);
@@ -111,9 +109,10 @@ public class SpotlightActivity extends AppCompatActivity {
                         category.setBackground(ContextCompat.getDrawable(context, R.drawable.button_secondary));
                     }
                     category.setTag(i);
-                    category.setText(categoryTitle);
+                    category.setText(categoryTitle.toUpperCase());
                     category.setTextColor(getColor(R.color.colorPrimary));
                     category.setTextSize(12);
+                    category.setGravity(Gravity.CENTER_VERTICAL);
                     category.setTypeface(ResourcesCompat.getFont(context, R.font.rubik), Typeface.BOLD);
                     category.setOnClickListener(new View.OnClickListener() {
                         @Override

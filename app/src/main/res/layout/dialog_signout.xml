@@ -39,22 +39,24 @@
             android:gravity="end"
             android:orientation="horizontal">
 
-            <Button
-                style="?android:borderlessButtonStyle"
+            <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="28dp"
-                android:layout_marginEnd="1dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="2dp"
                 android:background="@drawable/button_tertiary"
+                android:padding="10dp"
+                android:textAllCaps="true"
                 android:onClick="cancelSignOut"
                 android:text="@string/cancel"
                 android:textColor="@color/colorPrimary"
                 android:textSize="14sp" />
 
-            <Button
-                style="?android:borderlessButtonStyle"
+            <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="28dp"
-                android:layout_marginStart="1dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="2dp"
+                android:padding="10dp"
+                android:textAllCaps="true"
                 android:background="@drawable/button_tertiary"
                 android:onClick="signOut"
                 android:text="@string/sign_out"
