@@ -60,11 +60,7 @@ public class TimetableActivity extends AppCompatActivity {
         DisplayMetrics displayMetrics = new DisplayMetrics();
         this.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         int halfWidth = displayMetrics.widthPixels / 2;
-        float location = 0;
-        for (int i = 0; i < day; ++i) {
-            location += 10 * pixelDensity + (float) buttons[i].getWidth();
-        }
-        location += 20 * pixelDensity + (float) buttons[day].getWidth() / 2;
+        float location = (50 + 70 * day) * pixelDensity;
 
         ((HorizontalScrollView) findViewById(R.id.daysContainer)).smoothScrollTo((int) location - halfWidth, 0);
     }
@@ -81,61 +77,15 @@ public class TimetableActivity extends AppCompatActivity {
 
         days = findViewById(R.id.days);
 
-        dayViews[0] = new LinearLayout(context);
-        dayViews[0].setLayoutParams(new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-        ));
-        dayViews[0].setPadding(0, (int) (65 * pixelDensity), 0, (int) (15 * pixelDensity));
-        dayViews[0].setOrientation(LinearLayout.VERTICAL);
-
-        dayViews[1] = new LinearLayout(context);
-        dayViews[1].setLayoutParams(new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-        ));
-        dayViews[1].setPadding(0, (int) (65 * pixelDensity), 0, (int) (15 * pixelDensity));
-        dayViews[1].setOrientation(LinearLayout.VERTICAL);
-
-        dayViews[2] = new LinearLayout(context);
-        dayViews[2].setLayoutParams(new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-        ));
-        dayViews[2].setPadding(0, (int) (65 * pixelDensity), 0, (int) (15 * pixelDensity));
-        dayViews[2].setOrientation(LinearLayout.VERTICAL);
-
-        dayViews[3] = new LinearLayout(context);
-        dayViews[3].setLayoutParams(new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-        ));
-        dayViews[3].setPadding(0, (int) (65 * pixelDensity), 0, (int) (15 * pixelDensity));
-        dayViews[3].setOrientation(LinearLayout.VERTICAL);
-
-        dayViews[4] = new LinearLayout(context);
-        dayViews[4].setLayoutParams(new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-        ));
-        dayViews[4].setPadding(0, (int) (65 * pixelDensity), 0, (int) (15 * pixelDensity));
-        dayViews[4].setOrientation(LinearLayout.VERTICAL);
-
-        dayViews[5] = new LinearLayout(context);
-        dayViews[5].setLayoutParams(new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-        ));
-        dayViews[5].setPadding(0, (int) (65 * pixelDensity), 0, (int) (15 * pixelDensity));
-        dayViews[5].setOrientation(LinearLayout.VERTICAL);
-
-        dayViews[6] = new LinearLayout(context);
-        dayViews[6].setLayoutParams(new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-        ));
-        dayViews[6].setPadding(0, (int) (65 * pixelDensity), 0, (int) (15 * pixelDensity));
-        dayViews[6].setOrientation(LinearLayout.VERTICAL);
+        for (int i = 0; i < 7; ++i) {
+            dayViews[i] = new LinearLayout(context);
+            dayViews[i].setLayoutParams(new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+            ));
+            dayViews[i].setPadding(0, (int) (65 * pixelDensity), 0, (int) (15 * pixelDensity));
+            dayViews[i].setOrientation(LinearLayout.VERTICAL);
+        }
 
         buttons[0] = findViewById(R.id.sunday);
         buttons[1] = findViewById(R.id.monday);

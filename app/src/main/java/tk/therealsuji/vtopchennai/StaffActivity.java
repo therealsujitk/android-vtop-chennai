@@ -67,29 +67,15 @@ public class StaffActivity extends AppCompatActivity {
         pixelDensity = context.getResources().getDisplayMetrics().density;
         staff = findViewById(R.id.staff);
 
-        staffViews[0] = new LinearLayout(context);
-        staffViews[0].setLayoutParams(new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-        ));
-        staffViews[0].setPadding(0, (int) (65 * pixelDensity), 0, (int) (15 * pixelDensity));
-        staffViews[0].setOrientation(LinearLayout.VERTICAL);
-
-        staffViews[1] = new LinearLayout(context);
-        staffViews[1].setLayoutParams(new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-        ));
-        staffViews[1].setPadding(0, (int) (65 * pixelDensity), 0, (int) (15 * pixelDensity));
-        staffViews[1].setOrientation(LinearLayout.VERTICAL);
-
-        staffViews[2] = new LinearLayout(context);
-        staffViews[2].setLayoutParams(new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-        ));
-        staffViews[2].setPadding(0, (int) (65 * pixelDensity), 0, (int) (15 * pixelDensity));
-        staffViews[2].setOrientation(LinearLayout.VERTICAL);
+        for (int i = 0; i < 3; ++i) {
+            staffViews[i] = new LinearLayout(context);
+            staffViews[i].setLayoutParams(new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+            ));
+            staffViews[i].setPadding(0, (int) (65 * pixelDensity), 0, (int) (15 * pixelDensity));
+            staffViews[i].setOrientation(LinearLayout.VERTICAL);
+        }
 
         staff.addView(staffViews[0]);
 
@@ -97,9 +83,9 @@ public class StaffActivity extends AppCompatActivity {
         staffButtons[1] = findViewById(R.id.dean);
         staffButtons[2] = findViewById(R.id.hod);
 
-        hasStaff[0] = false;
-        hasStaff[1] = false;
-        hasStaff[2] = false;
+        for (int i = 0; i < 3; ++i) {
+            hasStaff[i] = false;
+        }
 
         new Thread(new Runnable() {
             @Override
