@@ -5,8 +5,12 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.View;
+import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TableRow;
 import android.widget.TextView;
 
@@ -17,6 +21,42 @@ import androidx.core.content.res.ResourcesCompat;
 import java.util.Objects;
 
 public class StaffActivity extends AppCompatActivity {
+    ScrollView staff;
+    TextView[] staffButtons = new TextView[3];
+    LinearLayout[] staffViews = new LinearLayout[3];
+    boolean[] hasStaff = new boolean[3];
+    float pixelDensity;
+
+    public void setStaff(View view) {
+        staff.scrollTo(0, 0);
+        staff.removeAllViews();
+
+        int staffID = Integer.parseInt(view.getTag().toString());
+
+        if (hasStaff[staffID]) {
+            findViewById(R.id.noData).setVisibility(View.INVISIBLE);
+            staff.addView(staffViews[staffID]);
+        } else {
+            findViewById(R.id.noData).setVisibility(View.VISIBLE);
+        }
+
+        for (int i = 0; i < 3; ++i) {
+            staffButtons[i].setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary));
+        }
+
+        staffButtons[staffID].setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary_selected));
+
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        this.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        int halfWidth = displayMetrics.widthPixels / 2;
+        float location = 0;
+        for (int i = 0; i < staffID; ++i) {
+            location += 10 * pixelDensity + (float) staffButtons[i].getWidth();
+        }
+        location += 20 * pixelDensity + (float) staffButtons[staffID].getWidth() / 2;
+
+        ((HorizontalScrollView) findViewById(R.id.staffContainer)).smoothScrollTo((int) location - halfWidth, 0);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,16 +65,47 @@ public class StaffActivity extends AppCompatActivity {
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
         final Context context = this;
-        final LinearLayout staffInfo = findViewById(R.id.staffInfo);
+        pixelDensity = context.getResources().getDisplayMetrics().density;
+        staff = findViewById(R.id.staff);
+
+        staffViews[0] = new LinearLayout(context);
+        staffViews[0].setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        ));
+        staffViews[0].setPadding(0, (int) (65 * pixelDensity), 0, (int) (15 * pixelDensity));
+        staffViews[0].setOrientation(LinearLayout.VERTICAL);
+
+        staffViews[1] = new LinearLayout(context);
+        staffViews[1].setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        ));
+        staffViews[1].setPadding(0, (int) (65 * pixelDensity), 0, (int) (15 * pixelDensity));
+        staffViews[1].setOrientation(LinearLayout.VERTICAL);
+
+        staffViews[2] = new LinearLayout(context);
+        staffViews[2].setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        ));
+        staffViews[2].setPadding(0, (int) (65 * pixelDensity), 0, (int) (15 * pixelDensity));
+        staffViews[2].setOrientation(LinearLayout.VERTICAL);
+
+        staff.addView(staffViews[0]);
+
+        staffButtons[0] = findViewById(R.id.proctor);
+        staffButtons[1] = findViewById(R.id.dean);
+        staffButtons[2] = findViewById(R.id.hod);
+
+        hasStaff[0] = false;
+        hasStaff[1] = false;
+        hasStaff[2] = false;
 
         new Thread(new Runnable() {
             @Override
             public void run() {
-                float pixelDensity = context.getResources().getDisplayMetrics().density;
-
                 SQLiteDatabase myDatabase = context.openOrCreateDatabase("vtop", Context.MODE_PRIVATE, null);
-
-                boolean flag = false;
 
                 /*
                     Proctor
@@ -43,46 +114,11 @@ public class StaffActivity extends AppCompatActivity {
                 Cursor c = myDatabase.rawQuery("SELECT * FROM proctor", null);
 
                 if (c.getCount() > 0) {
-                    findViewById(R.id.noData).setVisibility(View.INVISIBLE);
+                    hasStaff[0] = true;
 
                     int column1Index = c.getColumnIndex("column1");
                     int column2Index = c.getColumnIndex("column2");
                     c.moveToFirst();
-
-                    /*
-                        The outer block for proctor
-                     */
-                    final LinearLayout block = new LinearLayout(context);
-                    LinearLayout.LayoutParams blockParams = new LinearLayout.LayoutParams(
-                            LinearLayout.LayoutParams.MATCH_PARENT,
-                            LinearLayout.LayoutParams.WRAP_CONTENT
-                    );
-                    blockParams.setMarginStart((int) (20 * pixelDensity));
-                    blockParams.setMarginEnd((int) (20 * pixelDensity));
-                    blockParams.setMargins(0, (int) (20 * pixelDensity), 0, (int) (5 * pixelDensity));
-                    block.setPadding(0, 0, 0, (int) (17 * pixelDensity));
-                    block.setLayoutParams(blockParams);
-                    block.setBackground(ContextCompat.getDrawable(context, R.drawable.plain_card));
-                    block.setOrientation(LinearLayout.VERTICAL);
-
-                    /*
-                        The proctor TextView
-                     */
-                    TextView proctor = new TextView(context);
-                    TableRow.LayoutParams proctorParams = new TableRow.LayoutParams(
-                            TableRow.LayoutParams.MATCH_PARENT,
-                            TableRow.LayoutParams.WRAP_CONTENT
-                    );
-                    proctorParams.setMarginStart((int) (20 * pixelDensity));
-                    proctorParams.setMarginEnd((int) (20 * pixelDensity));
-                    proctorParams.setMargins(0, (int) (20 * pixelDensity), 0, (int) (5 * pixelDensity));
-                    proctor.setLayoutParams(proctorParams);
-                    proctor.setText(getString(R.string.proctor));
-                    proctor.setTextColor(getColor(R.color.colorPrimary));
-                    proctor.setTextSize(20);
-                    proctor.setTypeface(ResourcesCompat.getFont(context, R.font.rubik), Typeface.BOLD);
-
-                    block.addView(proctor);   //Adding proctor to block
 
                     for (int i = 0; i < c.getCount(); ++i, c.moveToNext()) {
                         String key = c.getString(column1Index);
@@ -92,24 +128,17 @@ public class StaffActivity extends AppCompatActivity {
                             continue;
                         }
 
-                        /*
-                            The key TextView
-                         */
-                        TextView keyView = new TextView(context);
-                        TableRow.LayoutParams keyViewParams = new TableRow.LayoutParams(
-                                TableRow.LayoutParams.WRAP_CONTENT,
-                                TableRow.LayoutParams.WRAP_CONTENT
+                        final LinearLayout block = new LinearLayout(context);
+                        LinearLayout.LayoutParams blockParams = new LinearLayout.LayoutParams(
+                                LinearLayout.LayoutParams.MATCH_PARENT,
+                                LinearLayout.LayoutParams.WRAP_CONTENT
                         );
-                        keyViewParams.setMarginStart((int) (20 * pixelDensity));
-                        keyViewParams.setMarginEnd((int) (20 * pixelDensity));
-                        keyViewParams.setMargins(0, (int) (3 * pixelDensity), 0, (int) (2 * pixelDensity));
-                        keyView.setLayoutParams(keyViewParams);
-                        keyView.setText(key);
-                        keyView.setTextColor(getColor(R.color.colorPrimary));
-                        keyView.setTextSize(16);
-                        keyView.setTypeface(ResourcesCompat.getFont(context, R.font.rubik));
-
-                        block.addView(keyView);   //Adding key to block
+                        blockParams.setMarginStart((int) (20 * pixelDensity));
+                        blockParams.setMarginEnd((int) (20 * pixelDensity));
+                        blockParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (5 * pixelDensity));
+                        block.setLayoutParams(blockParams);
+                        block.setBackground(ContextCompat.getDrawable(context, R.drawable.plain_card));
+                        block.setOrientation(LinearLayout.VERTICAL);
 
                         /*
                             The value TextView
@@ -121,23 +150,46 @@ public class StaffActivity extends AppCompatActivity {
                         );
                         valueViewParams.setMarginStart((int) (20 * pixelDensity));
                         valueViewParams.setMarginEnd((int) (20 * pixelDensity));
-                        valueViewParams.setMargins(0, (int) (2 * pixelDensity), 0, (int) (3 * pixelDensity));
+                        valueViewParams.setMargins(0, (int) (20 * pixelDensity), 0, (int) (5 * pixelDensity));
                         valueView.setLayoutParams(valueViewParams);
                         valueView.setText(value);
                         valueView.setTextColor(getColor(R.color.colorPrimary));
-                        valueView.setTextSize(16);
+                        valueView.setTextSize(20);
                         valueView.setTypeface(ResourcesCompat.getFont(context, R.font.rubik), Typeface.BOLD);
 
                         block.addView(valueView);   //Adding key to block
-                    }
 
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            staffInfo.addView(block);
-                        }
-                    });
-                    flag = true;
+                        /*
+                            The key TextView
+                         */
+                        TextView keyView = new TextView(context);
+                        TableRow.LayoutParams keyViewParams = new TableRow.LayoutParams(
+                                TableRow.LayoutParams.WRAP_CONTENT,
+                                TableRow.LayoutParams.WRAP_CONTENT
+                        );
+                        keyViewParams.setMarginStart((int) (20 * pixelDensity));
+                        keyViewParams.setMarginEnd((int) (20 * pixelDensity));
+                        keyViewParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (20 * pixelDensity));
+                        keyView.setLayoutParams(keyViewParams);
+                        keyView.setText(key);
+                        keyView.setTextColor(getColor(R.color.colorPrimary));
+                        keyView.setTextSize(16);
+                        keyView.setTypeface(ResourcesCompat.getFont(context, R.font.rubik));
+
+                        block.addView(keyView);   //Adding key to block
+
+                        /*
+                            Finally adding the block to the view
+                         */
+                        final LinearLayout proctorView = staffViews[0];
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                findViewById(R.id.noData).setVisibility(View.INVISIBLE);
+                                proctorView.addView(block);
+                            }
+                        });
+                    }
                 }
 
                 /*
@@ -147,77 +199,32 @@ public class StaffActivity extends AppCompatActivity {
                 c = myDatabase.rawQuery("SELECT * FROM dean", null);
 
                 if (c.getCount() > 0) {
-                    findViewById(R.id.noData).setVisibility(View.INVISIBLE);
+                    hasStaff[1] = true;
 
                     int column1Index = c.getColumnIndex("column1");
                     int column2Index = c.getColumnIndex("column2");
                     c.moveToFirst();
 
-                    /*
-                        The outer block for dean
-                     */
-                    final LinearLayout block = new LinearLayout(context);
-                    LinearLayout.LayoutParams blockParams = new LinearLayout.LayoutParams(
-                            LinearLayout.LayoutParams.MATCH_PARENT,
-                            LinearLayout.LayoutParams.WRAP_CONTENT
-                    );
-                    blockParams.setMarginStart((int) (20 * pixelDensity));
-                    blockParams.setMarginEnd((int) (20 * pixelDensity));
-                    if (!flag) {
-                        blockParams.setMargins(0, (int) (20 * pixelDensity), 0, (int) (5 * pixelDensity));
-                    } else {
-                        blockParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (5 * pixelDensity));
-                    }
-                    block.setPadding(0, 0, 0, (int) (17 * pixelDensity));
-                    block.setLayoutParams(blockParams);
-                    block.setBackground(ContextCompat.getDrawable(context, R.drawable.plain_card));
-                    block.setOrientation(LinearLayout.VERTICAL);
-
-                    /*
-                        The dean TextView
-                     */
-                    TextView dean = new TextView(context);
-                    TableRow.LayoutParams deanParams = new TableRow.LayoutParams(
-                            TableRow.LayoutParams.MATCH_PARENT,
-                            TableRow.LayoutParams.WRAP_CONTENT
-                    );
-                    deanParams.setMarginStart((int) (20 * pixelDensity));
-                    deanParams.setMarginEnd((int) (20 * pixelDensity));
-                    deanParams.setMargins(0, (int) (20 * pixelDensity), 0, (int) (5 * pixelDensity));
-                    dean.setLayoutParams(deanParams);
-                    dean.setText(getString(R.string.dean));
-                    dean.setTextColor(getColor(R.color.colorPrimary));
-                    dean.setTextSize(20);
-                    dean.setTypeface(ResourcesCompat.getFont(context, R.font.rubik), Typeface.BOLD);
-
-                    block.addView(dean);   //Adding dean to block
-
                     for (int i = 0; i < c.getCount(); ++i, c.moveToNext()) {
                         String key = c.getString(column1Index);
                         String value = c.getString(column2Index);
+                        Log.i("key", key);
 
                         if (key.equals("") || value.equals("")) {
                             continue;
                         }
 
-                        /*
-                            The key TextView
-                         */
-                        TextView keyView = new TextView(context);
-                        TableRow.LayoutParams keyViewParams = new TableRow.LayoutParams(
-                                TableRow.LayoutParams.WRAP_CONTENT,
-                                TableRow.LayoutParams.WRAP_CONTENT
+                        final LinearLayout block = new LinearLayout(context);
+                        LinearLayout.LayoutParams blockParams = new LinearLayout.LayoutParams(
+                                LinearLayout.LayoutParams.MATCH_PARENT,
+                                LinearLayout.LayoutParams.WRAP_CONTENT
                         );
-                        keyViewParams.setMarginStart((int) (20 * pixelDensity));
-                        keyViewParams.setMarginEnd((int) (20 * pixelDensity));
-                        keyViewParams.setMargins(0, (int) (3 * pixelDensity), 0, (int) (2 * pixelDensity));
-                        keyView.setLayoutParams(keyViewParams);
-                        keyView.setText(key);
-                        keyView.setTextColor(getColor(R.color.colorPrimary));
-                        keyView.setTextSize(16);
-                        keyView.setTypeface(ResourcesCompat.getFont(context, R.font.rubik));
-
-                        block.addView(keyView);   //Adding key to block
+                        blockParams.setMarginStart((int) (20 * pixelDensity));
+                        blockParams.setMarginEnd((int) (20 * pixelDensity));
+                        blockParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (5 * pixelDensity));
+                        block.setLayoutParams(blockParams);
+                        block.setBackground(ContextCompat.getDrawable(context, R.drawable.plain_card));
+                        block.setOrientation(LinearLayout.VERTICAL);
 
                         /*
                             The value TextView
@@ -229,23 +236,45 @@ public class StaffActivity extends AppCompatActivity {
                         );
                         valueViewParams.setMarginStart((int) (20 * pixelDensity));
                         valueViewParams.setMarginEnd((int) (20 * pixelDensity));
-                        valueViewParams.setMargins(0, (int) (2 * pixelDensity), 0, (int) (3 * pixelDensity));
+                        valueViewParams.setMargins(0, (int) (20 * pixelDensity), 0, (int) (5 * pixelDensity));
                         valueView.setLayoutParams(valueViewParams);
                         valueView.setText(value);
                         valueView.setTextColor(getColor(R.color.colorPrimary));
-                        valueView.setTextSize(16);
+                        valueView.setTextSize(20);
                         valueView.setTypeface(ResourcesCompat.getFont(context, R.font.rubik), Typeface.BOLD);
 
                         block.addView(valueView);   //Adding key to block
-                    }
 
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            staffInfo.addView(block);
-                        }
-                    });
-                    flag = true;
+                        /*
+                            The key TextView
+                         */
+                        TextView keyView = new TextView(context);
+                        TableRow.LayoutParams keyViewParams = new TableRow.LayoutParams(
+                                TableRow.LayoutParams.WRAP_CONTENT,
+                                TableRow.LayoutParams.WRAP_CONTENT
+                        );
+                        keyViewParams.setMarginStart((int) (20 * pixelDensity));
+                        keyViewParams.setMarginEnd((int) (20 * pixelDensity));
+                        keyViewParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (20 * pixelDensity));
+                        keyView.setLayoutParams(keyViewParams);
+                        keyView.setText(key);
+                        keyView.setTextColor(getColor(R.color.colorPrimary));
+                        keyView.setTextSize(16);
+                        keyView.setTypeface(ResourcesCompat.getFont(context, R.font.rubik));
+
+                        block.addView(keyView);   //Adding key to block
+
+                        /*
+                            Finally adding the block to the view
+                         */
+                        final LinearLayout deanView = staffViews[1];
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                deanView.addView(block);
+                            }
+                        });
+                    }
                 }
 
                 /*
@@ -255,50 +284,11 @@ public class StaffActivity extends AppCompatActivity {
                 c = myDatabase.rawQuery("SELECT * FROM hod", null);
 
                 if (c.getCount() > 0) {
-                    findViewById(R.id.noData).setVisibility(View.INVISIBLE);
+                    hasStaff[2] = true;
 
                     int column1Index = c.getColumnIndex("column1");
                     int column2Index = c.getColumnIndex("column2");
                     c.moveToFirst();
-
-                    /*
-                        The outer block for hod
-                     */
-                    final LinearLayout block = new LinearLayout(context);
-                    LinearLayout.LayoutParams blockParams = new LinearLayout.LayoutParams(
-                            LinearLayout.LayoutParams.MATCH_PARENT,
-                            LinearLayout.LayoutParams.WRAP_CONTENT
-                    );
-                    blockParams.setMarginStart((int) (20 * pixelDensity));
-                    blockParams.setMarginEnd((int) (20 * pixelDensity));
-                    if (!flag) {
-                        blockParams.setMargins(0, (int) (20 * pixelDensity), 0, (int) (5 * pixelDensity));
-                    } else {
-                        blockParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (5 * pixelDensity));
-                    }
-                    block.setPadding(0, 0, 0, (int) (17 * pixelDensity));
-                    block.setLayoutParams(blockParams);
-                    block.setBackground(ContextCompat.getDrawable(context, R.drawable.plain_card));
-                    block.setOrientation(LinearLayout.VERTICAL);
-
-                    /*
-                        The hod TextView
-                     */
-                    TextView hod = new TextView(context);
-                    TableRow.LayoutParams hodParams = new TableRow.LayoutParams(
-                            TableRow.LayoutParams.MATCH_PARENT,
-                            TableRow.LayoutParams.WRAP_CONTENT
-                    );
-                    hodParams.setMarginStart((int) (20 * pixelDensity));
-                    hodParams.setMarginEnd((int) (20 * pixelDensity));
-                    hodParams.setMargins(0, (int) (20 * pixelDensity), 0, (int) (5 * pixelDensity));
-                    hod.setLayoutParams(hodParams);
-                    hod.setText(getString(R.string.hod));
-                    hod.setTextColor(getColor(R.color.colorPrimary));
-                    hod.setTextSize(20);
-                    hod.setTypeface(ResourcesCompat.getFont(context, R.font.rubik), Typeface.BOLD);
-
-                    block.addView(hod);   //Adding hod to block
 
                     for (int i = 0; i < c.getCount(); ++i, c.moveToNext()) {
                         String key = c.getString(column1Index);
@@ -308,24 +298,17 @@ public class StaffActivity extends AppCompatActivity {
                             continue;
                         }
 
-                        /*
-                            The key TextView
-                         */
-                        TextView keyView = new TextView(context);
-                        TableRow.LayoutParams keyViewParams = new TableRow.LayoutParams(
-                                TableRow.LayoutParams.WRAP_CONTENT,
-                                TableRow.LayoutParams.WRAP_CONTENT
+                        final LinearLayout block = new LinearLayout(context);
+                        LinearLayout.LayoutParams blockParams = new LinearLayout.LayoutParams(
+                                LinearLayout.LayoutParams.MATCH_PARENT,
+                                LinearLayout.LayoutParams.WRAP_CONTENT
                         );
-                        keyViewParams.setMarginStart((int) (20 * pixelDensity));
-                        keyViewParams.setMarginEnd((int) (20 * pixelDensity));
-                        keyViewParams.setMargins(0, (int) (3 * pixelDensity), 0, (int) (2 * pixelDensity));
-                        keyView.setLayoutParams(keyViewParams);
-                        keyView.setText(key);
-                        keyView.setTextColor(getColor(R.color.colorPrimary));
-                        keyView.setTextSize(16);
-                        keyView.setTypeface(ResourcesCompat.getFont(context, R.font.rubik));
-
-                        block.addView(keyView);   //Adding key to block
+                        blockParams.setMarginStart((int) (20 * pixelDensity));
+                        blockParams.setMarginEnd((int) (20 * pixelDensity));
+                        blockParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (5 * pixelDensity));
+                        block.setLayoutParams(blockParams);
+                        block.setBackground(ContextCompat.getDrawable(context, R.drawable.plain_card));
+                        block.setOrientation(LinearLayout.VERTICAL);
 
                         /*
                             The value TextView
@@ -337,22 +320,45 @@ public class StaffActivity extends AppCompatActivity {
                         );
                         valueViewParams.setMarginStart((int) (20 * pixelDensity));
                         valueViewParams.setMarginEnd((int) (20 * pixelDensity));
-                        valueViewParams.setMargins(0, (int) (2 * pixelDensity), 0, (int) (3 * pixelDensity));
+                        valueViewParams.setMargins(0, (int) (20 * pixelDensity), 0, (int) (5 * pixelDensity));
                         valueView.setLayoutParams(valueViewParams);
                         valueView.setText(value);
                         valueView.setTextColor(getColor(R.color.colorPrimary));
-                        valueView.setTextSize(16);
+                        valueView.setTextSize(20);
                         valueView.setTypeface(ResourcesCompat.getFont(context, R.font.rubik), Typeface.BOLD);
 
                         block.addView(valueView);   //Adding key to block
-                    }
 
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            staffInfo.addView(block);
-                        }
-                    });
+                        /*
+                            The key TextView
+                         */
+                        TextView keyView = new TextView(context);
+                        TableRow.LayoutParams keyViewParams = new TableRow.LayoutParams(
+                                TableRow.LayoutParams.WRAP_CONTENT,
+                                TableRow.LayoutParams.WRAP_CONTENT
+                        );
+                        keyViewParams.setMarginStart((int) (20 * pixelDensity));
+                        keyViewParams.setMarginEnd((int) (20 * pixelDensity));
+                        keyViewParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (20 * pixelDensity));
+                        keyView.setLayoutParams(keyViewParams);
+                        keyView.setText(key);
+                        keyView.setTextColor(getColor(R.color.colorPrimary));
+                        keyView.setTextSize(16);
+                        keyView.setTypeface(ResourcesCompat.getFont(context, R.font.rubik));
+
+                        block.addView(keyView);   //Adding key to block
+
+                        /*
+                            Finally adding the block to the view
+                         */
+                        final LinearLayout hodView = staffViews[2];
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                hodView.addView(block);
+                            }
+                        });
+                    }
                 }
 
                 c.close();

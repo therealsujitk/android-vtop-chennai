@@ -122,8 +122,8 @@
     <string name="remark">Remark</string>
 
 
-    <string name="proctor">PROCTOR</string>
-    <string name="dean">DEAN</string>
+    <string name="proctor">Proctor</string>
+    <string name="dean">Dean</string>
     <string name="hod">HOD</string>
 
     <string name="light">Light</string>

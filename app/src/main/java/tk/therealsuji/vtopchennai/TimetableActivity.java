@@ -44,6 +44,7 @@ public class TimetableActivity extends AppCompatActivity {
 
         if (hasClasses[day]) {
             findViewById(R.id.noData).setVisibility(View.INVISIBLE);
+            timetable.addView(dayViews[day]);
         } else {
             findViewById(R.id.noData).setVisibility(View.VISIBLE);
         }
@@ -55,7 +56,6 @@ public class TimetableActivity extends AppCompatActivity {
         }
 
         buttons[day].setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary_selected));
-        timetable.addView(dayViews[day]);
 
         DisplayMetrics displayMetrics = new DisplayMetrics();
         this.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
