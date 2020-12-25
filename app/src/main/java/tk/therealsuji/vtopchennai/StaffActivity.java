@@ -6,7 +6,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.View;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
@@ -208,7 +207,6 @@ public class StaffActivity extends AppCompatActivity {
                     for (int i = 0; i < c.getCount(); ++i, c.moveToNext()) {
                         String key = c.getString(column1Index);
                         String value = c.getString(column2Index);
-                        Log.i("key", key);
 
                         if (key.equals("") || value.equals("")) {
                             continue;

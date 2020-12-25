@@ -1644,7 +1644,7 @@ public class VTOP {
                         public void run() {
                             try {
                                 myDatabase.execSQL("DROP TABLE IF EXISTS marks");
-                                myDatabase.execSQL("CREATE TABLE IF NOT EXISTS marks (id INTEGER PRIMARY KEY, course VARCHAR, type VARCHAR, title VARCHAR, score VARCHAR, percent VARCHAR, status VARCHAR, weightage VARCHAR, average VARCHAR, posted VARCHAR, remark VARCHAR)");
+                                myDatabase.execSQL("CREATE TABLE IF NOT EXISTS marks (id INTEGER PRIMARY KEY, course VARCHAR, type VARCHAR, title VARCHAR, score VARCHAR, status VARCHAR, weightage VARCHAR, average VARCHAR, posted VARCHAR, remark VARCHAR)");
 
                                 ((Activity) context).runOnUiThread(new Runnable() {
                                     @Override
@@ -1666,7 +1666,7 @@ public class VTOP {
                                 JSONObject myObj = new JSONObject(obj);
 
                                 myDatabase.execSQL("DROP TABLE IF EXISTS marks");
-                                myDatabase.execSQL("CREATE TABLE IF NOT EXISTS marks (id INTEGER PRIMARY KEY, course VARCHAR, type VARCHAR, title VARCHAR, score VARCHAR, percent VARCHAR, status VARCHAR, weightage VARCHAR, average VARCHAR, posted VARCHAR, remark VARCHAR)");
+                                myDatabase.execSQL("CREATE TABLE IF NOT EXISTS marks (id INTEGER PRIMARY KEY, course VARCHAR, type VARCHAR, title VARCHAR, score VARCHAR, status VARCHAR, weightage VARCHAR, average VARCHAR, posted VARCHAR, remark VARCHAR)");
 
                                 for (int i = 0; i < myObj.length(); ++i) {
                                     JSONObject tempObj = new JSONObject(myObj.getString(Integer.toString(i)));
@@ -1674,14 +1674,13 @@ public class VTOP {
                                     String type = tempObj.getString("type");
                                     String title = tempObj.getString("title").toUpperCase();
                                     String score = tempObj.getString("scored") + " / " + tempObj.getString("max");
-                                    String percent = tempObj.getString("percent");
                                     String status = tempObj.getString("status");
-                                    String weightage = tempObj.getString("weightage");
+                                    String weightage = tempObj.getString("weightage") + " / " + tempObj.getString("percent");
                                     String average = tempObj.getString("average");
                                     String posted = tempObj.getString("posted");
                                     String remark = tempObj.getString("remark");
 
-                                    myDatabase.execSQL("INSERT INTO marks (course, type, title, score, percent, status, weightage, average, posted, remark) VALUES('" + course + "', '" + type + "', '" + title + "', '" + score + "', '" + percent + "', '" + status + "', '" + weightage + "', '" + average + "', '" + posted + "', '" + remark + "')");
+                                    myDatabase.execSQL("INSERT INTO marks (course, type, title, score, status, weightage, average, posted, remark) VALUES('" + course + "', '" + type + "', '" + title + "', '" + score + "', '" + status + "', '" + weightage + "', '" + average + "', '" + posted + "', '" + remark + "')");
                                 }
 
                                 ((Activity) context).runOnUiThread(new Runnable() {

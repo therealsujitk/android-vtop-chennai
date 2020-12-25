@@ -66,7 +66,7 @@ public class MarksActivity extends AppCompatActivity {
             public void run() {
                 SQLiteDatabase myDatabase = context.openOrCreateDatabase("vtop", Context.MODE_PRIVATE, null);
 
-                myDatabase.execSQL("CREATE TABLE IF NOT EXISTS marks (id INT(3) PRIMARY KEY, course VARCHAR, type VARCHAR, title VARCHAR, score VARCHAR, percent VARCHAR, status VARCHAR, weightage VARCHAR, average VARCHAR, posted VARCHAR, remark VARCHAR)");
+                myDatabase.execSQL("CREATE TABLE IF NOT EXISTS marks (id INT(3) PRIMARY KEY, course VARCHAR, type VARCHAR, title VARCHAR, score VARCHAR, status VARCHAR, weightage VARCHAR, average VARCHAR, posted VARCHAR, remark VARCHAR)");
                 Cursor c = myDatabase.rawQuery("SELECT DISTINCT title FROM marks", null);
 
                 int titleIndex = c.getColumnIndex("title");
@@ -138,14 +138,13 @@ public class MarksActivity extends AppCompatActivity {
                     int courseIndex = s.getColumnIndex("course");
                     int typeIndex = s.getColumnIndex("type");
                     int scoreIndex = s.getColumnIndex("score");
-                    int percentIndex = s.getColumnIndex("percent");
                     int statusIndex = s.getColumnIndex("status");
                     int weightageIndex = s.getColumnIndex("weightage");
                     int averageIndex = s.getColumnIndex("average");
                     int remarkIndex = s.getColumnIndex("remark");
 
-                    int[] indexes = {typeIndex, scoreIndex, weightageIndex, percentIndex, averageIndex, statusIndex, remarkIndex};
-                    String[] titles = {getString(R.string.type), getString(R.string.score), getString(R.string.weightage), getString(R.string.percent), getString(R.string.average), getString(R.string.status), getString(R.string.remark)};
+                    int[] indexes = {typeIndex, scoreIndex, weightageIndex, averageIndex, statusIndex, remarkIndex};
+                    String[] titles = {getString(R.string.type), getString(R.string.score), getString(R.string.weightage), getString(R.string.average), getString(R.string.status), getString(R.string.remark)};
 
                     s.moveToFirst();
 
@@ -185,7 +184,7 @@ public class MarksActivity extends AppCompatActivity {
 
                         block.addView(course);  //Adding the course to block
 
-                        for (int k = 0; k < 7; ++k) {
+                        for (int k = 0; k < 6; ++k) {
                             String valueString = s.getString(indexes[k]);
                             if (!valueString.equals("")) {
                                 /*
