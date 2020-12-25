@@ -115,7 +115,6 @@
 
     <string name="type">Course Type</string>
     <string name="score">Your Score</string>
-    <string name="percent">Weightage Percent</string>
     <string name="weightage">Weightage Score</string>
     <string name="status">Status</string>
     <string name="average">Class Average</string>
