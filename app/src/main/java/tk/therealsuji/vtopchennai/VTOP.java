@@ -556,9 +556,9 @@ public class VTOP {
                                 SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
                                 Date today = dateFormat.parse(dateFormat.format(c.getTime()));
                                 Date now = timeFormat.parse(timeFormat.format(c.getTime()));
+                                int day = c.get(Calendar.DAY_OF_WEEK) - 1;
 
                                 JSONObject[] days = {sun, mon, tue, wed, thu, fri, sat};
-                                int day = c.get(Calendar.DAY_OF_WEEK) - 1;
 
                                 for (int j = 0; j < sharedPreferences.getInt("alarmCount", 0); ++j) {
                                     PendingIntent pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
