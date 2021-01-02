@@ -78,7 +78,7 @@ public class NotificationReceiver extends BroadcastReceiver {
                 assert currentTime != null;
                 assert futureTime != null;
 
-                if ((futureTime.after(hour24.parse(startTimeTheory)) || futureTime.equals(hour24.parse(startTimeTheory))) && currentTime.before(hour24.parse(startTimeTheory)) && !theory.getString(dayTheory).equals("null")) {
+                if (!theory.getString(dayTheory).equals("null") && (futureTime.after(hour24.parse(startTimeTheory)) || futureTime.equals(hour24.parse(startTimeTheory))) && currentTime.before(hour24.parse(startTimeTheory))) {
                     title = "Upcoming: ";
                     if (DateFormat.is24HourFormat(context)) {
                         title += startTimeTheory + " - " + endTimeTheory;
@@ -96,7 +96,7 @@ public class NotificationReceiver extends BroadcastReceiver {
                     flag = true;
                 }
 
-                if ((futureTime.after(hour24.parse(startTimeLab)) || futureTime.equals(hour24.parse(startTimeLab))) && currentTime.before(hour24.parse(startTimeLab)) && !lab.getString(dayLab).equals("null")) {
+                if (!lab.getString(dayLab).equals("null") && (futureTime.after(hour24.parse(startTimeLab)) || futureTime.equals(hour24.parse(startTimeLab))) && currentTime.before(hour24.parse(startTimeLab))) {
                     title = "Upcoming: ";
                     if (DateFormat.is24HourFormat(context)) {
                         title += startTimeLab + " - " + endTimeLab;
@@ -118,7 +118,7 @@ public class NotificationReceiver extends BroadcastReceiver {
                     break;
                 }
 
-                if ((currentTime.after(hour24.parse(startTimeTheory)) || currentTime.equals(hour24.parse(startTimeTheory))) && (currentTime.before(hour24.parse(endTimeTheory)) || currentTime.equals(hour24.parse(endTimeTheory))) && !theory.getString(dayTheory).equals("null")) {
+                if (!theory.getString(dayTheory).equals("null") && (currentTime.after(hour24.parse(startTimeTheory)) || currentTime.equals(hour24.parse(startTimeTheory))) && (currentTime.before(hour24.parse(endTimeTheory)) || currentTime.equals(hour24.parse(endTimeTheory)))) {
                     title = "Ongoing: ";
                     if (DateFormat.is24HourFormat(context)) {
                         title += startTimeTheory + " - " + endTimeTheory;
@@ -136,7 +136,7 @@ public class NotificationReceiver extends BroadcastReceiver {
                     flag = true;
                 }
 
-                if ((currentTime.after(hour24.parse(startTimeLab)) || currentTime.equals(hour24.parse(startTimeLab))) && (currentTime.before(hour24.parse(endTimeLab)) || currentTime.equals(hour24.parse(endTimeLab))) && !lab.getString(dayLab).equals("null")) {
+                if (!lab.getString(dayLab).equals("null") && (currentTime.after(hour24.parse(startTimeLab)) || currentTime.equals(hour24.parse(startTimeLab))) && (currentTime.before(hour24.parse(endTimeLab)) || currentTime.equals(hour24.parse(endTimeLab)))) {
                     title = "Ongoing: ";
                     if (DateFormat.is24HourFormat(context)) {
                         title += startTimeLab + " - " + endTimeLab;
