@@ -73,6 +73,7 @@ public class VTOP {
                 if (!isOpened) {
                     if (counter >= 60) {
                         Toast.makeText(context, "Sorry, we had some trouble connecting to the server. Please try again later.", Toast.LENGTH_LONG).show();
+                        myDatabase.close();
                         ((Activity) context).finish();
                         return;
                     }
@@ -218,6 +219,7 @@ public class VTOP {
                         value = value.substring(1, value.length() - 1);
                         if (value.equals("Invalid User Id / Password") || value.equals("User Id Not available")) {
                             sharedPreferences.edit().putString("isLoggedIn", "false").apply();
+                            myDatabase.close();
                             context.startActivity(new Intent(context, LoginActivity.class));
                             ((Activity) context).finish();
                         }
@@ -556,7 +558,6 @@ public class VTOP {
                                 Date now = timeFormat.parse(timeFormat.format(c.getTime()));
 
                                 JSONObject[] days = {sun, mon, tue, wed, thu, fri, sat};
-                                String[] dayStrings = {"sun", "mon", "tue", "wed", "thu", "fri", "sat"};
                                 int day = c.get(Calendar.DAY_OF_WEEK) - 1;
 
                                 for (int j = 0; j < sharedPreferences.getInt("alarmCount", 0); ++j) {
@@ -571,24 +572,19 @@ public class VTOP {
                                     if (start_time_lab.toLowerCase().equals("lunch")) {
                                         continue;
                                     }
-                                    myDatabase.execSQL("INSERT INTO timetable_lab (id, start_time) VALUES ('" + i + "', '" + start_time_lab + "')");
-
                                     String end_time_lab = lab.getString(i + "end");
-                                    myDatabase.execSQL("UPDATE timetable_lab SET end_time = '" + end_time_lab + "' WHERE id = " + i);
-
                                     String start_time_theory = theory.getString(i + "start");
-                                    myDatabase.execSQL("INSERT INTO timetable_theory (id, start_time) VALUES ('" + i + "', '" + start_time_theory + "')");
-
                                     String end_time_theory = theory.getString(i + "end");
-                                    myDatabase.execSQL("UPDATE timetable_theory SET end_time = '" + end_time_theory + "' WHERE id = " + i);
+
+                                    String[] labPeriods = {"null", "null", "null", "null", "null", "null", "null"};
+                                    String[] theoryPeriods = {"null", "null", "null", "null", "null", "null", "null"};
 
                                     for (int k = 0; k < 7; ++k) {
                                         /*
                                             Inserting Lab Periods
                                          */
                                         if (days[k].has(i + "lab")) {
-                                            String period = days[k].getString(i + "lab");
-                                            myDatabase.execSQL("UPDATE timetable_lab SET " + dayStrings[k] + " = '" + period + "' WHERE id = " + i);
+                                            labPeriods[k] = days[k].getString(i + "lab");
 
                                             if (k == day) {
                                                 Date current = timeFormat.parse(start_time_lab);
@@ -623,16 +619,13 @@ public class VTOP {
                                             pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
                                             alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
                                             ++j;
-                                        } else {
-                                            myDatabase.execSQL("UPDATE timetable_lab SET " + dayStrings[k] + " = 'null' WHERE id = " + i);
                                         }
 
                                         /*
                                             Inserting Theory periods
                                          */
                                         if (days[k].has(i + "theory")) {
-                                            String period = days[k].getString(i + "theory");
-                                            myDatabase.execSQL("UPDATE timetable_theory SET " + dayStrings[k] + " = '" + period + "' WHERE id = " + i);
+                                            theoryPeriods[k] = days[k].getString(i + "theory");
 
                                             if (k == day) {
                                                 Date current = timeFormat.parse(start_time_theory);
@@ -667,10 +660,11 @@ public class VTOP {
                                             pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
                                             alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
                                             ++j;
-                                        } else {
-                                            myDatabase.execSQL("UPDATE timetable_theory SET " + dayStrings[k] + " = 'null' WHERE id = " + i);
                                         }
                                     }
+
+                                    myDatabase.execSQL("INSERT INTO timetable_lab (start_time, end_time, sun, mon, tue, wed, thu, fri, sat) VALUES ('" + start_time_lab + "', '" + end_time_lab + "', '" + labPeriods[0] + "', '" + labPeriods[1] + "', '" + labPeriods[2] + "', '" + labPeriods[3] + "', '" + labPeriods[4] + "', '" + labPeriods[5] + "', '" + labPeriods[6] + "')");
+                                    myDatabase.execSQL("INSERT INTO timetable_theory (start_time, end_time, sun, mon, tue, wed, thu, fri, sat) VALUES ('" + start_time_theory + "', '" + end_time_theory + "', '" + theoryPeriods[0] + "', '" + theoryPeriods[1] + "', '" + theoryPeriods[2] + "', '" + theoryPeriods[3] + "', '" + theoryPeriods[4] + "', '" + theoryPeriods[5] + "', '" + theoryPeriods[6] + "')");
                                 }
 
                                 sharedPreferences.edit().putInt("alarmCount", j).apply();
