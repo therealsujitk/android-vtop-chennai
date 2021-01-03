@@ -560,11 +560,6 @@ public class VTOP {
 
                                 JSONObject[] days = {sun, mon, tue, wed, thu, fri, sat};
 
-                                for (int j = 0; j < sharedPreferences.getInt("alarmCount", 0); ++j) {
-                                    PendingIntent pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
-                                    alarmManager.cancel(pendingIntent);
-                                }
-
                                 int j = 0;
 
                                 for (int i = 0; i < lab.length() / 2 && i < theory.length() / 2; ++i) {
@@ -665,6 +660,11 @@ public class VTOP {
 
                                     myDatabase.execSQL("INSERT INTO timetable_lab (start_time, end_time, sun, mon, tue, wed, thu, fri, sat) VALUES ('" + start_time_lab + "', '" + end_time_lab + "', '" + labPeriods[0] + "', '" + labPeriods[1] + "', '" + labPeriods[2] + "', '" + labPeriods[3] + "', '" + labPeriods[4] + "', '" + labPeriods[5] + "', '" + labPeriods[6] + "')");
                                     myDatabase.execSQL("INSERT INTO timetable_theory (start_time, end_time, sun, mon, tue, wed, thu, fri, sat) VALUES ('" + start_time_theory + "', '" + end_time_theory + "', '" + theoryPeriods[0] + "', '" + theoryPeriods[1] + "', '" + theoryPeriods[2] + "', '" + theoryPeriods[3] + "', '" + theoryPeriods[4] + "', '" + theoryPeriods[5] + "', '" + theoryPeriods[6] + "')");
+                                }
+
+                                for (int i = j; i < sharedPreferences.getInt("alarmCount", 0); ++i) {
+                                    PendingIntent pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
+                                    alarmManager.cancel(pendingIntent);
                                 }
 
                                 sharedPreferences.edit().putInt("alarmCount", j).apply();
