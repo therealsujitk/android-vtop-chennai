@@ -744,7 +744,7 @@ public class HomeActivity extends AppCompatActivity {
             today = dateFormat.parse(dateFormat.format(c.getTime()));
             lastRefreshed = dateFormat.parse(refreshedDate);
             c.setTime(lastRefreshed);
-            c.add(Calendar.DATE, 13);
+            c.add(Calendar.DATE, 6);
             futureRefresh = dateFormat.parse(dateFormat.format(c.getTime()));
 
             Log.i("today", dateFormat.format(today));
@@ -764,7 +764,7 @@ public class HomeActivity extends AppCompatActivity {
             update.setContentView(R.layout.dialog_update);
             update.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
             update.show();
-        } else if (today != null && futureRefresh != null && (today.after(futureRefresh) || lastRefreshed.after(today))) {  // Next, check if data has been refreshed recently (2 weeks)
+        } else if (today != null && futureRefresh != null && (today.after(futureRefresh) || lastRefreshed.after(today))) {  // Next, check if data has been refreshed recently (1 week)
             Dialog refresh = new Dialog(this);
             refresh.setContentView(R.layout.dialog_refresh);
             refresh.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
