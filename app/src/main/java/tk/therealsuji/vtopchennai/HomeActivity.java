@@ -15,6 +15,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.text.method.LinkMovementMethod;
+import android.util.Log;
 import android.view.View;
 import android.webkit.WebView;
 import android.widget.LinearLayout;
@@ -27,6 +28,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.content.res.ResourcesCompat;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -735,6 +737,22 @@ public class HomeActivity extends AppCompatActivity {
             refreshedView.setText(refreshed);
         }
 
+        Calendar c = Calendar.getInstance();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MMM d", Locale.ENGLISH);
+        Date today = null, lastRefreshed = null, futureRefresh = null;
+        try {
+            today = dateFormat.parse(dateFormat.format(c.getTime()));
+            lastRefreshed = dateFormat.parse(refreshedDate);
+            c.setTime(lastRefreshed);
+            c.add(Calendar.DATE, 13);
+            futureRefresh = dateFormat.parse(dateFormat.format(c.getTime()));
+
+            Log.i("today", dateFormat.format(today));
+            Log.i("future", dateFormat.format(futureRefresh));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
         /*
             Check for a new version
          */
@@ -746,6 +764,11 @@ public class HomeActivity extends AppCompatActivity {
             update.setContentView(R.layout.dialog_update);
             update.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
             update.show();
+        } else if (today != null && futureRefresh != null && (today.after(futureRefresh) || lastRefreshed.after(today))) {  // Next, check if data has been refreshed recently (2 weeks)
+            Dialog refresh = new Dialog(this);
+            refresh.setContentView(R.layout.dialog_refresh);
+            refresh.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            refresh.show();
         }
 
         TextView myLink = findViewById(R.id.builtBy);

@@ -52,6 +52,9 @@
     <string name="update_text">A new version of VTOP Chennai has been released!</string>
     <string name="update">Update</string>
 
+    <string name="refresh_text">Your data hasn\'t been refreshed in a while. It might be out of date.</string>
+    <string name="refresh_button">Refresh</string>
+
     <string name="classes">Classes</string>
     <string name="timetable">Timetable</string>
     <string name="timetable_description">Icon for the timetable button.</string>
