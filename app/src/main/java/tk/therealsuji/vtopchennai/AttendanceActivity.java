@@ -56,12 +56,8 @@ public class AttendanceActivity extends AppCompatActivity {
                     blockParams.setMarginEnd((int) (20 * pixelDensity));
                     if (i == 0) {
                         findViewById(R.id.noData).setVisibility(View.INVISIBLE);
-                        blockParams.setMargins(0, (int) (20 * pixelDensity), 0, (int) (5 * pixelDensity));
-                    } else if (i == c.getCount() - 1) {
-                        blockParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (20 * pixelDensity));
-                    } else {
-                        blockParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (5 * pixelDensity));
                     }
+                    blockParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (5 * pixelDensity));
                     block.setLayoutParams(blockParams);
                     block.setBackground(ContextCompat.getDrawable(context, R.drawable.plain_card));
                     block.setOrientation(LinearLayout.VERTICAL);
