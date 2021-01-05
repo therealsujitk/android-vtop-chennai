@@ -606,14 +606,12 @@ public class VTOP {
 
                                             assert date != null;
                                             c.setTime(date);
-                                            PendingIntent pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
+                                            PendingIntent pendingIntent = PendingIntent.getBroadcast(context, j++, notificationIntent, 0);
                                             alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
-                                            ++j;
 
                                             c.add(Calendar.MINUTE, -30);
-                                            pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
+                                            pendingIntent = PendingIntent.getBroadcast(context, j++, notificationIntent, 0);
                                             alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
-                                            ++j;
                                         }
 
                                         /*
@@ -647,14 +645,12 @@ public class VTOP {
 
                                             assert date != null;
                                             c.setTime(date);
-                                            PendingIntent pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
+                                            PendingIntent pendingIntent = PendingIntent.getBroadcast(context, j++, notificationIntent, 0);
                                             alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
-                                            ++j;
 
                                             c.add(Calendar.MINUTE, -30);
-                                            pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
+                                            pendingIntent = PendingIntent.getBroadcast(context, j++, notificationIntent, 0);
                                             alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
-                                            ++j;
                                         }
                                     }
 
