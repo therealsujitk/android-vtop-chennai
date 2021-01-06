@@ -12,16 +12,41 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.security.crypto.EncryptedSharedPreferences;
+import androidx.security.crypto.MasterKey;
 
 import java.util.Objects;
 
 public class DownloadActivity extends AppCompatActivity {
     VTOP vtop;
-    SharedPreferences sharedPreferences;
+    SharedPreferences sharedPreferences, encryptedSharedPreferences;
 
     public void signIn(View view) {
-        String username = sharedPreferences.getString("username", null);
-        String password = sharedPreferences.getString("password", null);
+        String username = encryptedSharedPreferences.getString("username", null);
+        String password = encryptedSharedPreferences.getString("password", null);
+
+        /*
+            If the credentials aren't encrypted
+         */
+        if (username == null) {
+            /*
+                Get the non-encrypted credentials
+             */
+            username = sharedPreferences.getString("username", null);
+            password = sharedPreferences.getString("password", null);
+
+            /*
+                Encrypt them
+             */
+            encryptedSharedPreferences.edit().putString("username", username).apply();
+            encryptedSharedPreferences.edit().putString("password", password).apply();
+
+            /*
+                Remove the non-encrypted credentials
+             */
+            sharedPreferences.edit().remove("username").apply();
+            sharedPreferences.edit().remove("password").apply();
+        }
 
         EditText captchaView = findViewById(R.id.captcha);
         String captcha = captchaView.getText().toString();
@@ -50,6 +75,24 @@ public class DownloadActivity extends AppCompatActivity {
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
         sharedPreferences = this.getSharedPreferences("tk.therealsuji.vtopchennai", Context.MODE_PRIVATE);
+
+        try {
+            MasterKey masterKey = new MasterKey.Builder(this, MasterKey.DEFAULT_MASTER_KEY_ALIAS)
+                    .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
+                    .build();
+
+            encryptedSharedPreferences = EncryptedSharedPreferences.create(
+                    this,
+                    "CREDENTIALS",
+                    masterKey,
+                    EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                    EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+            );
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
         vtop = new VTOP(this);
 
         final Button submit = findViewById(R.id.submit);

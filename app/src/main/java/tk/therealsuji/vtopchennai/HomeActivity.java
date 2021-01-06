@@ -27,6 +27,8 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.content.res.ResourcesCompat;
+import androidx.security.crypto.EncryptedSharedPreferences;
+import androidx.security.crypto.MasterKey;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -35,7 +37,7 @@ import java.util.Date;
 import java.util.Locale;
 
 public class HomeActivity extends AppCompatActivity {
-    SharedPreferences sharedPreferences;
+    SharedPreferences sharedPreferences, encryptedSharedPreferences;
     Dialog appearance, signOut;
     Context context;
 
@@ -169,7 +171,7 @@ public class HomeActivity extends AppCompatActivity {
         finish();
 
         /*
-            Clearing all Alarm manager tasks
+            Clearing all Alarm manager tasks and deleting credentials
          */
         new Thread(new Runnable() {
             @Override
@@ -180,6 +182,18 @@ public class HomeActivity extends AppCompatActivity {
                     PendingIntent pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
                     alarmManager.cancel(pendingIntent);
                 }
+
+                /*
+                    Remove any non-encrypted credentials
+                 */
+                sharedPreferences.edit().remove("username").apply();
+                sharedPreferences.edit().remove("password").apply();
+
+                /*
+                    Remove the encrypted credentials
+                 */
+                encryptedSharedPreferences.edit().remove("username").apply();
+                encryptedSharedPreferences.edit().remove("password").apply();
             }
         }).start();
     }
@@ -197,9 +211,25 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_home);
 
         sharedPreferences = this.getSharedPreferences("tk.therealsuji.vtopchennai", Context.MODE_PRIVATE);
-        setContentView(R.layout.activity_home);
+
+        try {
+            MasterKey masterKey = new MasterKey.Builder(this, MasterKey.DEFAULT_MASTER_KEY_ALIAS)
+                    .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
+                    .build();
+
+            encryptedSharedPreferences = EncryptedSharedPreferences.create(
+                    this,
+                    "CREDENTIALS",
+                    masterKey,
+                    EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                    EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+            );
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         String name = sharedPreferences.getString("name", getString(R.string.name));
         String id = sharedPreferences.getString("id", getString(R.string.id));

@@ -15,9 +15,11 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.security.crypto.EncryptedSharedPreferences;
+import androidx.security.crypto.MasterKey;
 
 public class LoginActivity extends AppCompatActivity {
-    SharedPreferences sharedPreferences;
+    SharedPreferences sharedPreferences, encryptedSharedPreferences;
 
     public void signIn(View view) {
         EditText usernameView = findViewById(R.id.username);
@@ -26,10 +28,16 @@ public class LoginActivity extends AppCompatActivity {
         String username = usernameView.getText().toString();
         String password = passwordView.getText().toString();
 
-        sharedPreferences.edit().putString("username", username).apply();
-        sharedPreferences.edit().putString("password", password).apply();
+        encryptedSharedPreferences.edit().putString("username", username).apply();
+        encryptedSharedPreferences.edit().putString("password", password).apply();
 
         startActivity(new Intent(LoginActivity.this, DownloadActivity.class));
+
+        /*
+            Remove any non-encrypted credentials
+         */
+        sharedPreferences.edit().remove("username").apply();
+        sharedPreferences.edit().remove("password").apply();
     }
 
     public void openPrivacy(View view) {
@@ -48,6 +56,22 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         sharedPreferences = this.getSharedPreferences("tk.therealsuji.vtopchennai", Context.MODE_PRIVATE);
+
+        try {
+            MasterKey masterKey = new MasterKey.Builder(this, MasterKey.DEFAULT_MASTER_KEY_ALIAS)
+                    .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
+                    .build();
+
+            encryptedSharedPreferences = EncryptedSharedPreferences.create(
+                    this,
+                    "CREDENTIALS",
+                    masterKey,
+                    EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                    EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+            );
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         final EditText username = findViewById(R.id.username);
         username.setOnFocusChangeListener(new View.OnFocusChangeListener() {
