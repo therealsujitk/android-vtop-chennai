@@ -560,7 +560,7 @@ public class VTOP {
 
                                 JSONObject[] days = {sun, mon, tue, wed, thu, fri, sat};
 
-                                int j = 0;
+                                int alarmCount = 0;
 
                                 for (int i = 0; i < lab.length() / 2 && i < theory.length() / 2; ++i) {
                                     String start_time_lab = lab.getString(i + "start");
@@ -574,14 +574,14 @@ public class VTOP {
                                     String[] labPeriods = {"null", "null", "null", "null", "null", "null", "null"};
                                     String[] theoryPeriods = {"null", "null", "null", "null", "null", "null", "null"};
 
-                                    for (int k = 0; k < 7; ++k) {
+                                    for (int j = 0; j < 7; ++j) {
                                         /*
                                             Inserting Lab Periods
                                          */
-                                        if (days[k].has(i + "lab")) {
-                                            labPeriods[k] = days[k].getString(i + "lab");
+                                        if (days[j].has(i + "lab")) {
+                                            labPeriods[j] = days[j].getString(i + "lab");
 
-                                            if (k == day) {
+                                            if (j == day) {
                                                 Date current = timeFormat.parse(start_time_lab);
                                                 assert current != null;
                                                 if (current.after(now) || current.equals(now)) {
@@ -592,35 +592,35 @@ public class VTOP {
                                                     c.setTime(today);
                                                     c.add(Calendar.DATE, 7);
                                                 }
-                                            } else if (k > day) {
+                                            } else if (j > day) {
                                                 assert today != null;
                                                 c.setTime(today);
-                                                c.add(Calendar.DATE, k - day);
+                                                c.add(Calendar.DATE, j - day);
                                             } else {
                                                 assert today != null;
                                                 c.setTime(today);
-                                                c.add(Calendar.DATE, 7 - day + k);
+                                                c.add(Calendar.DATE, 7 - day + j);
                                             }
 
                                             Date date = df.parse(dateFormat.format(c.getTime()) + " " + start_time_lab);
 
                                             assert date != null;
                                             c.setTime(date);
-                                            PendingIntent pendingIntent = PendingIntent.getBroadcast(context, j++, notificationIntent, 0);
+                                            PendingIntent pendingIntent = PendingIntent.getBroadcast(context, alarmCount++, notificationIntent, 0);
                                             alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
 
                                             c.add(Calendar.MINUTE, -30);
-                                            pendingIntent = PendingIntent.getBroadcast(context, j++, notificationIntent, 0);
+                                            pendingIntent = PendingIntent.getBroadcast(context, alarmCount++, notificationIntent, 0);
                                             alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
                                         }
 
                                         /*
                                             Inserting Theory periods
                                          */
-                                        if (days[k].has(i + "theory")) {
-                                            theoryPeriods[k] = days[k].getString(i + "theory");
+                                        if (days[j].has(i + "theory")) {
+                                            theoryPeriods[j] = days[j].getString(i + "theory");
 
-                                            if (k == day) {
+                                            if (j == day) {
                                                 Date current = timeFormat.parse(start_time_theory);
                                                 assert current != null;
                                                 if (current.after(now) || current.equals(now)) {
@@ -631,25 +631,25 @@ public class VTOP {
                                                     c.setTime(today);
                                                     c.add(Calendar.DATE, 7);
                                                 }
-                                            } else if (k > day) {
+                                            } else if (j > day) {
                                                 assert today != null;
                                                 c.setTime(today);
-                                                c.add(Calendar.DATE, k - day);
+                                                c.add(Calendar.DATE, j - day);
                                             } else {
                                                 assert today != null;
                                                 c.setTime(today);
-                                                c.add(Calendar.DATE, 7 - day + k);
+                                                c.add(Calendar.DATE, 7 - day + j);
                                             }
 
                                             Date date = df.parse(dateFormat.format(c.getTime()) + " " + start_time_theory);
 
                                             assert date != null;
                                             c.setTime(date);
-                                            PendingIntent pendingIntent = PendingIntent.getBroadcast(context, j++, notificationIntent, 0);
+                                            PendingIntent pendingIntent = PendingIntent.getBroadcast(context, alarmCount++, notificationIntent, 0);
                                             alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
 
                                             c.add(Calendar.MINUTE, -30);
-                                            pendingIntent = PendingIntent.getBroadcast(context, j++, notificationIntent, 0);
+                                            pendingIntent = PendingIntent.getBroadcast(context, alarmCount++, notificationIntent, 0);
                                             alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
                                         }
                                     }
@@ -658,12 +658,12 @@ public class VTOP {
                                     myDatabase.execSQL("INSERT INTO timetable_theory (start_time, end_time, sun, mon, tue, wed, thu, fri, sat) VALUES ('" + start_time_theory + "', '" + end_time_theory + "', '" + theoryPeriods[0] + "', '" + theoryPeriods[1] + "', '" + theoryPeriods[2] + "', '" + theoryPeriods[3] + "', '" + theoryPeriods[4] + "', '" + theoryPeriods[5] + "', '" + theoryPeriods[6] + "')");
                                 }
 
-                                for (int i = j; i < sharedPreferences.getInt("alarmCount", 0); ++i) {
-                                    PendingIntent pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
+                                for (int i = alarmCount; i < sharedPreferences.getInt("alarmCount", 0); ++i) {
+                                    PendingIntent pendingIntent = PendingIntent.getBroadcast(context, i, notificationIntent, 0);
                                     alarmManager.cancel(pendingIntent);
                                 }
 
-                                sharedPreferences.edit().putInt("alarmCount", j).apply();
+                                sharedPreferences.edit().putInt("alarmCount", alarmCount).apply();
                                 ((Activity) context).runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {

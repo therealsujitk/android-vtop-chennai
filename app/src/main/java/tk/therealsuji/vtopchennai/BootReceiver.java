@@ -81,15 +81,15 @@ public class BootReceiver extends BroadcastReceiver {
         }
         int day = c.get(Calendar.DAY_OF_WEEK) - 1;
 
-        int j = 0;
+        int alarmCount = 0;
 
         for (int i = 0; i < theory.getCount() && i < lab.getCount(); ++i, theory.moveToNext(), lab.moveToNext()) {
             String start_time_lab = lab.getString(startLab);
             String start_time_theory = theory.getString(startTheory);
 
-            for (int k = 0; k < 7; ++k) {
-                if (!lab.getString(labIndexes[k]).equals("null")) {
-                    if (k == day) {
+            for (int j = 0; j < 7; ++j) {
+                if (!lab.getString(labIndexes[j]).equals("null")) {
+                    if (j == day) {
                         Date current = null;
                         try {
                             current = timeFormat.parse(start_time_lab);
@@ -105,14 +105,14 @@ public class BootReceiver extends BroadcastReceiver {
                             c.setTime(today);
                             c.add(Calendar.DATE, 7);
                         }
-                    } else if (k > day) {
+                    } else if (j > day) {
                         assert today != null;
                         c.setTime(today);
-                        c.add(Calendar.DATE, k - day);
+                        c.add(Calendar.DATE, j - day);
                     } else {
                         assert today != null;
                         c.setTime(today);
-                        c.add(Calendar.DATE, 7 - day + k);
+                        c.add(Calendar.DATE, 7 - day + j);
                     }
 
                     Date date = null;
@@ -124,16 +124,16 @@ public class BootReceiver extends BroadcastReceiver {
 
                     assert date != null;
                     c.setTime(date);
-                    PendingIntent pendingIntent = PendingIntent.getBroadcast(context, j++, notificationIntent, 0);
+                    PendingIntent pendingIntent = PendingIntent.getBroadcast(context, alarmCount++, notificationIntent, 0);
                     alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
 
                     c.add(Calendar.MINUTE, -30);
-                    pendingIntent = PendingIntent.getBroadcast(context, j++, notificationIntent, 0);
+                    pendingIntent = PendingIntent.getBroadcast(context, alarmCount++, notificationIntent, 0);
                     alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
                 }
 
-                if (!theory.getString(theoryIndexes[k]).equals("null")) {
-                    if (k == day) {
+                if (!theory.getString(theoryIndexes[j]).equals("null")) {
+                    if (j == day) {
                         Date current = null;
                         try {
                             current = timeFormat.parse(start_time_theory);
@@ -149,14 +149,14 @@ public class BootReceiver extends BroadcastReceiver {
                             c.setTime(today);
                             c.add(Calendar.DATE, 7);
                         }
-                    } else if (k > day) {
+                    } else if (j > day) {
                         assert today != null;
                         c.setTime(today);
-                        c.add(Calendar.DATE, k - day);
+                        c.add(Calendar.DATE, j - day);
                     } else {
                         assert today != null;
                         c.setTime(today);
-                        c.add(Calendar.DATE, 7 - day + k);
+                        c.add(Calendar.DATE, 7 - day + j);
                     }
 
                     Date date = null;
@@ -168,11 +168,11 @@ public class BootReceiver extends BroadcastReceiver {
 
                     assert date != null;
                     c.setTime(date);
-                    PendingIntent pendingIntent = PendingIntent.getBroadcast(context, j++, notificationIntent, 0);
+                    PendingIntent pendingIntent = PendingIntent.getBroadcast(context, alarmCount++, notificationIntent, 0);
                     alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
 
                     c.add(Calendar.MINUTE, -30);
-                    pendingIntent = PendingIntent.getBroadcast(context, j++, notificationIntent, 0);
+                    pendingIntent = PendingIntent.getBroadcast(context, alarmCount++, notificationIntent, 0);
                     alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
                 }
             }
