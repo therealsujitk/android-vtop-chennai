@@ -222,7 +222,7 @@ public class HomeActivity extends AppCompatActivity {
 
             encryptedSharedPreferences = EncryptedSharedPreferences.create(
                     this,
-                    "CREDENTIALS",
+                    "credentials",
                     masterKey,
                     EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
                     EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
@@ -773,11 +773,14 @@ public class HomeActivity extends AppCompatActivity {
         try {
             today = dateFormat.parse(dateFormat.format(c.getTime()));
             lastRefreshed = dateFormat.parse(refreshedDate);
+            assert lastRefreshed != null;
             c.setTime(lastRefreshed);
             c.add(Calendar.DATE, 6);
             futureRefresh = dateFormat.parse(dateFormat.format(c.getTime()));
 
+            assert today != null;
             Log.i("today", dateFormat.format(today));
+            assert futureRefresh != null;
             Log.i("future", dateFormat.format(futureRefresh));
         } catch (ParseException e) {
             e.printStackTrace();

@@ -83,7 +83,7 @@ public class DownloadActivity extends AppCompatActivity {
 
             encryptedSharedPreferences = EncryptedSharedPreferences.create(
                     this,
-                    "CREDENTIALS",
+                    "credentials",
                     masterKey,
                     EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
                     EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
