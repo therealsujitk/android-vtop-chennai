@@ -443,7 +443,7 @@ public class VTOP {
                 "       i = 0;" +
                 "       continue;" +
                 "   }" +
-                "   subcat = i.toString() + postfix;" +
+                "   subcat = i + postfix;" +
                 "   if(category == 'theory') {" +
                 "      theory[subcat] = cells[j].innerText.trim();" +
                 "   } else if(category == 'lab') {" +
@@ -712,7 +712,7 @@ public class VTOP {
                 "   var temp = {};" +
                 "   temp['course'] = cells[courseIndex].innerText.trim();" +
                 "   temp['faculty'] = cells[facultyIndex].innerText.trim();" +
-                "   obj[i.toString()] = temp;" +
+                "   obj[i] = temp;" +
                 "   courseIndex += columns;" +
                 "   facultyIndex += columns;" +
                 "}" +
@@ -1116,7 +1116,7 @@ public class VTOP {
                 "               temp['attended'] = cells[attendedIndex].innerText.trim();" +
                 "               temp['total'] = cells[totalIndex].innerText.trim();" +
                 "               temp['percent'] = cells[percentIndex].innerText.trim();" +
-                "               obj[i.toString()] = temp;" +
+                "               obj[i] = temp;" +
                 "               courseIndex += columns;" +
                 "               attendedIndex += columns;" +
                 "               totalIndex += columns;" +
@@ -1245,7 +1245,7 @@ public class VTOP {
                 "               temp['course'] = cells[courseIndex].innerText.trim();" +
                 "               temp['date'] = cells[dateIndex].innerText.trim();" +
                 "               temp['time'] = cells[timeIndex].innerText.trim();" +
-                "               obj[i.toString()] = temp;" +
+                "               obj[i] = temp;" +
                 "               courseIndex += columns;" +
                 "               dateIndex += columns;" +
                 "               timeIndex += columns;" +
@@ -1546,7 +1546,7 @@ public class VTOP {
                 "           temp['receipt'] = cells[receiptIndex].innerText.trim();" +
                 "           temp['date'] = cells[dateIndex].innerText.trim();" +
                 "           temp['amount'] = cells[amountIndex].innerText.trim();" +
-                "           obj[i.toString()] = temp;" +
+                "           obj[i] = temp;" +
                 "           receiptIndex += columns;" +
                 "           dateIndex += columns;" +
                 "           amountIndex += columns;" +
@@ -1719,13 +1719,25 @@ public class VTOP {
                 "       if(!doc.getElementsByClassName('box-info')) {" +
                 "           obj = 'nothing';" +
                 "       } else {" +
-                "           boxes = doc.getElementsByClassName('box-info');" +
-                "           for(var i = 0; i < boxes.length; ++i) {" +
-                "               var category = boxes[i].getElementsByTagName('h4')[0].innerText.trim();" +
-                "               var links = boxes[i].getElementsByTagName('a');" +
+                "           var modals = doc.getElementsByClassName('modal-content');" +
+                "           for(var i = 0; i < modals.length; ++i) {" +
+                "               var category = modals[i].getElementsByTagName('h5')[0].innerText.trim().replaceAll('\\t','').replaceAll('\\n','');" +
+                "               category = category.substring(0, category.length - 9).trim();" +
+                "               var announcements = modals[i].getElementsByTagName('li');" +
+                "               if (announcements.length == 0) {" +
+                "                   continue;" +
+                "               }" +
                 "               var temp = {};" +
-                "               for(var j = 0; j < links.length; ++j) {" +
-                "                   temp[j] = links[j].innerText.trim();" +
+                "               for(var j = 0; j < announcements.length; ++j) {" +
+                "                   temp[j + 'announcement'] = announcements[j].innerText.trim().replaceAll('\\t','').replaceAll('\\n','');" +
+                "                   if(!announcements[j].getElementsByTagName('a').length) {" +
+                "                       temp[j + 'link'] = 'NA';" +
+                "                   } else {" +
+                "                       temp[j + 'link'] = announcements[j].getElementsByTagName('a')[0].href;" +
+                "                       if(temp[j + 'link'].includes('\\'')) {" +
+                "                           temp[j + 'link'] = announcements[j].getElementsByTagName('a')[0].href.split('\\'')[1];" +
+                "                       }" +
+                "                   }" +
                 "               }" +
                 "               obj[category] = temp;" +
                 "           }" +
@@ -1748,7 +1760,7 @@ public class VTOP {
                         public void run() {
                             try {
                                 myDatabase.execSQL("DROP TABLE IF EXISTS spotlight");
-                                myDatabase.execSQL("CREATE TABLE IF NOT EXISTS spotlight (id INTEGER PRIMARY KEY, category VARCHAR, announcement VARCHAR)");
+                                myDatabase.execSQL("CREATE TABLE IF NOT EXISTS spotlight (id INTEGER PRIMARY KEY, category VARCHAR, announcement VARCHAR, link VARCHAR)");
 
                                 ((Activity) context).runOnUiThread(new Runnable() {
                                     @Override
@@ -1773,16 +1785,19 @@ public class VTOP {
                                 JSONObject myObj = new JSONObject(obj);
 
                                 myDatabase.execSQL("DROP TABLE IF EXISTS spotlight");
-                                myDatabase.execSQL("CREATE TABLE IF NOT EXISTS spotlight (id INTEGER PRIMARY KEY, category VARCHAR, announcement VARCHAR)");
+                                myDatabase.execSQL("CREATE TABLE IF NOT EXISTS spotlight (id INTEGER PRIMARY KEY, category VARCHAR, announcement VARCHAR, link VARCHAR)");
 
                                 Iterator<?> keys = myObj.keys();
 
                                 while (keys.hasNext()) {
-                                    String key = (String) keys.next();
-                                    JSONObject tempObj = new JSONObject(myObj.getString(key));
+                                    String category = (String) keys.next();
+                                    JSONObject tempObj = new JSONObject(myObj.getString(category));
 
-                                    for (int i = 0; i < tempObj.length(); ++i) {
-                                        myDatabase.execSQL("INSERT INTO spotlight (category, announcement) VALUES('" + key + "', '" + tempObj.getString(Integer.toString(i)) + "')");
+                                    for (int i = 0; i < tempObj.length() / 2; ++i) {
+                                        String announcement = tempObj.getString(i + "announcement");
+                                        String link = tempObj.getString(i + "link");
+
+                                        myDatabase.execSQL("INSERT INTO spotlight (category, announcement, link) VALUES('" + category + "', '" + announcement + "', '" + link + "')");
                                     }
                                 }
 
