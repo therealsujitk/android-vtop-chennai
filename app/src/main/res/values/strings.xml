@@ -113,6 +113,9 @@
     <string name="no_messages">No Messages</string>
     <string name="no_announcements">No Announcements</string>
 
+    <string name="no_link">Link Unavailable</string>
+    <string name="no_link_text">Sorry, there is no link attached to this announcement.</string>
+
     <string name="new_message">Looks like you do have some new messages, however <a href="https://therealsuji.tk">@therealsujitk</a> was a bit too lazy to add this feature, why don\'t you contact him and give him a piece of your mind.</string>
 
 

@@ -1,9 +1,15 @@
 package tk.therealsuji.vtopchennai;
 
+import android.animation.AnimatorInflater;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.graphics.Typeface;
+import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
@@ -50,6 +56,22 @@ public class SpotlightActivity extends AppCompatActivity {
         ((HorizontalScrollView) findViewById(R.id.categoriesContainer)).smoothScrollTo((int) location - halfWidth, 0);
     }
 
+    public void openLink(String link) {
+        if (link.equals("NA")) {
+            Dialog noLink = new Dialog(this);
+            noLink.setContentView(R.layout.dialog_nolink);
+            noLink.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            noLink.show();
+        } else if (link.startsWith("http")) {
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(link));
+            startActivity(browserIntent);
+        } else {
+            String downloadLink = "http://vtopcc.vit.ac.in/vtop/" + link + "?&x=";
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(downloadLink));
+            startActivity(browserIntent);
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,7 +88,7 @@ public class SpotlightActivity extends AppCompatActivity {
             public void run() {
                 SQLiteDatabase myDatabase = context.openOrCreateDatabase("vtop", Context.MODE_PRIVATE, null);
 
-                myDatabase.execSQL("CREATE TABLE IF NOT EXISTS spotlight (id INT(3) PRIMARY KEY, category VARCHAR, announcement VARCHAR)");
+                myDatabase.execSQL("CREATE TABLE IF NOT EXISTS spotlight (id INT(3) PRIMARY KEY, category VARCHAR, announcement VARCHAR, link VARCHAR)");
                 Cursor c = myDatabase.rawQuery("SELECT DISTINCT category FROM spotlight", null);
 
                 int categoryIndex = c.getColumnIndex("category");
@@ -84,7 +106,7 @@ public class SpotlightActivity extends AppCompatActivity {
                             LinearLayout.LayoutParams.MATCH_PARENT
                     );
                     announcementsView.setLayoutParams(announcementsViewParams);
-                    announcementsView.setPadding(0, (int) (65 * pixelDensity), 0, (int) (15 * pixelDensity));
+                    announcementsView.setPadding(0, (int) (65 * pixelDensity), 0, 0);
                     announcementsView.setOrientation(LinearLayout.VERTICAL);
 
                     announcementViews.add(announcementsView);    //Storing the view
@@ -133,9 +155,10 @@ public class SpotlightActivity extends AppCompatActivity {
                         }
                     });
 
-                    Cursor s = myDatabase.rawQuery("SELECT announcement FROM spotlight WHERE category = '" + categoryTitle + "'", null);
+                    Cursor s = myDatabase.rawQuery("SELECT announcement, link FROM spotlight WHERE category = '" + categoryTitle + "'", null);
 
                     int announcementIndex = s.getColumnIndex("announcement");
+                    int linkIndex = s.getColumnIndex("link");
                     s.moveToFirst();
 
                     for (int j = 0; j < s.getCount(); ++j, s.moveToNext()) {
@@ -149,11 +172,29 @@ public class SpotlightActivity extends AppCompatActivity {
                         );
                         blockParams.setMarginStart((int) (20 * pixelDensity));
                         blockParams.setMarginEnd((int) (20 * pixelDensity));
-                        blockParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (5 * pixelDensity));
+                        if (j == s.getCount() - 1) {
+                            blockParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (20 * pixelDensity));
+                        } else {
+                            blockParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (5 * pixelDensity));
+                        }
                         block.setLayoutParams(blockParams);
-                        block.setBackground(ContextCompat.getDrawable(context, R.drawable.plain_card));
+                        block.setClickable(true);
+                        block.isFocusable();
+                        block.setBackground(ContextCompat.getDrawable(context, R.drawable.button_card));
+                        block.setStateListAnimator(AnimatorInflater.loadStateListAnimator(context, R.animator.item_elevation));
                         block.setGravity(Gravity.CENTER_VERTICAL);
                         block.setOrientation(LinearLayout.VERTICAL);
+
+                        /*
+                            Setting the onClickListener
+                         */
+                        final String link = s.getString(linkIndex);
+                        block.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                openLink(link);
+                            }
+                        });
 
                         /*
                             The announcement TextView
