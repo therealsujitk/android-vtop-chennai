@@ -1721,8 +1721,13 @@ public class VTOP {
                 "       } else {" +
                 "           var modals = doc.getElementsByClassName('modal-content');" +
                 "           for(var i = 0; i < modals.length; ++i) {" +
-                "               var category = modals[i].getElementsByTagName('h5')[0].innerText.trim().replaceAll('\\t','').replaceAll('\\n','');" +
-                "               category = category.substring(0, category.length - 9).trim();" +
+                "               var category = modals[i].getElementsByTagName('h5')[0].innerText;" +
+                "               if(category.toLowerCase().includes('finance')) {" +
+                "                   category = 'Others';" +
+                "               } else {" +
+                "                   category = category.trim().replaceAll('\\t','').replaceAll('\\n','');" +
+                "                   category = category.substring(0, category.length - 9).trim();" +
+                "               }" +
                 "               var announcements = modals[i].getElementsByTagName('li');" +
                 "               if (announcements.length == 0) {" +
                 "                   continue;" +
