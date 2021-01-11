@@ -12,11 +12,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.text.method.LinkMovementMethod;
 import android.view.View;
-import android.webkit.WebView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.TableRow;
@@ -202,8 +202,9 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     public void openUpdate(View view) {
-        WebView webView = new WebView(this);
-        webView.loadUrl("http://vtopchennai.therealsuji.tk");
+        String link = "http://vtopchennai.therealsuji.tk";
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(link));
+        startActivity(browserIntent);
     }
 
     @SuppressLint("ClickableViewAccessibility")

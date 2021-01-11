@@ -7,10 +7,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
-import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -45,8 +45,9 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void openUpdate(View view) {
-        WebView webView = new WebView(this);
-        webView.loadUrl("http://vtopchennai.therealsuji.tk");
+        String link = "http://vtopchennai.therealsuji.tk";
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(link));
+        startActivity(browserIntent);
     }
 
     @SuppressLint("ClickableViewAccessibility")
