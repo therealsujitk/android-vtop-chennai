@@ -54,8 +54,13 @@ public class VTOP {
 
     @SuppressLint("SetJavaScriptEnabled")
     public VTOP(final Context context) {
+        /*
+            Uncomment line 62 and Comment line 63 for debugging
+         */
+
         this.context = context;
-        webView = ((Activity) context).findViewById(R.id.vtopPortal);
+//        webView = ((Activity) context).findViewById(R.id.vtopPortal);
+        webView = new WebView(context);
         captcha = ((Activity) context).findViewById(R.id.captchaCode);
         captchaLayout = ((Activity) context).findViewById(R.id.captchaLayout);
         captchaView = ((Activity) context).findViewById(R.id.captcha);

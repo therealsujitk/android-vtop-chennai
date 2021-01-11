@@ -74,27 +74,41 @@ public class DownloadActivity extends AppCompatActivity {
         setContentView(R.layout.activity_download);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
-        sharedPreferences = this.getSharedPreferences("tk.therealsuji.vtopchennai", Context.MODE_PRIVATE);
+        final Context context = this;
 
-        try {
-            MasterKey masterKey = new MasterKey.Builder(this, MasterKey.DEFAULT_MASTER_KEY_ALIAS)
-                    .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
-                    .build();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                sharedPreferences = context.getSharedPreferences("tk.therealsuji.vtopchennai", Context.MODE_PRIVATE);
 
-            encryptedSharedPreferences = EncryptedSharedPreferences.create(
-                    this,
-                    "credentials",
-                    masterKey,
-                    EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-                    EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-            );
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+                try {
+                    MasterKey masterKey = new MasterKey.Builder(context, MasterKey.DEFAULT_MASTER_KEY_ALIAS)
+                            .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
+                            .build();
 
+                    encryptedSharedPreferences = EncryptedSharedPreferences.create(
+                            context,
+                            "credentials",
+                            masterKey,
+                            EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                            EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+                    );
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
 
-        vtop = new VTOP(this);
+        findViewById(R.id.loading).post(new Runnable() {
+            @Override
+            public void run() {
+                vtop = new VTOP(context);
+            }
+        });
 
+        /*
+            Animating the buttons
+         */
         final Button submit = findViewById(R.id.submit);
         submit.setOnTouchListener(new View.OnTouchListener() {
 
