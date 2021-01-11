@@ -8,8 +8,8 @@ android {
         applicationId "tk.therealsuji.vtopchennai"
         minSdkVersion 24
         targetSdkVersion 30
-        versionCode 11
-        versionName "v2.2.0"
+        versionCode 12
+        versionName "v2.2.1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
