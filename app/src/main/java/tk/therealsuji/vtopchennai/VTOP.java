@@ -1354,7 +1354,7 @@ public class VTOP {
                 "           var rows = doc.getElementById('fixedTableContainer').getElementsByTagName('tr');" +
                 "           var heads = rows[0].getElementsByTagName('td');" +
                 "           var columns = heads.length;" +
-                "           var courseIndex, typeIndex, titleIndex, maxIndex, percentIndex, statusIndex, scoredIndex, weightageIndex, averageIndex, postedIndex, remarkIndex;" +
+                "           var courseIndex, typeIndex, titleIndex, maxIndex, percentIndex, statusIndex, scoredIndex, weightageIndex, averageIndex, postedIndex;" +
                 "           var course = '', type = '', flag = 0, k = 0;" +
                 "           for (var i = 0; i < columns; ++i) {" +
                 "               var heading = heads[i].innerText.toLowerCase();" +
@@ -1380,41 +1380,30 @@ public class VTOP {
                 "                           var heading = heads[j].innerText.toLowerCase();" +
                 "                           if (heading.includes('title')) {" +
                 "                               titleIndex = j;" +
-                "                               ++flag;" +
                 "                           }" +
                 "                           if (heading.includes('max')) {" +
                 "                               maxIndex = j;" +
-                "                               ++flag;" +
                 "                           }" +
                 "                           if (heading.includes('%')) {" +
                 "                               percentIndex = j;" +
-                "                               ++flag;" +
                 "                           }" +
                 "                           if (heading.includes('status')) {" +
                 "                               statusIndex = j;" +
-                "                               ++flag;" +
                 "                           }" +
                 "                           if (heading.includes('scored')) {" +
                 "                               scoredIndex = j;" +
-                "                               ++flag;" +
                 "                           }" +
                 "                           if (heading.includes('weightage') && heading.includes('mark')) {" +
                 "                               weightageIndex = j;" +
-                "                               ++flag;" +
                 "                           }" +
                 "                           if (heading.includes('average')) {" +
                 "                               averageIndex = j;" +
-                "                               ++flag;" +
                 "                           }" +
                 "                           if (heading.includes('posted')) {" +
                 "                               postedIndex = j;" +
-                "                               ++flag;" +
                 "                           }" +
-                "                           if (heading.includes('remark')) {" +
-                "                               remarkIndex = j;" +
-                "                               ++flag;" +
                 "                       }" +
-                "                       }" +
+                "                       ++flag;" +
                 "                   }" +
                 "                   for (var j = 0; j < records; ++j) {" +
                 "                       var values = rows[++i].getElementsByTagName('td');" +
@@ -1427,7 +1416,6 @@ public class VTOP {
                 "                       temp['weightage'] = values[weightageIndex].innerText.trim();" +
                 "                       temp['average'] = values[averageIndex].innerText.trim();" +
                 "                       temp['posted'] = values[postedIndex].innerText.trim();" +
-                "                       temp['remark'] = values[remarkIndex].innerText.trim();" +
                 "                       temp['course'] = course;" +
                 "                       temp['type'] = type;" +
                 "                       obj[k++] = temp;" +
@@ -1453,7 +1441,7 @@ public class VTOP {
                         public void run() {
                             try {
                                 myDatabase.execSQL("DROP TABLE IF EXISTS marks");
-                                myDatabase.execSQL("CREATE TABLE IF NOT EXISTS marks (id INTEGER PRIMARY KEY, course VARCHAR, type VARCHAR, title VARCHAR, score VARCHAR, status VARCHAR, weightage VARCHAR, average VARCHAR, posted VARCHAR, remark VARCHAR)");
+                                myDatabase.execSQL("CREATE TABLE IF NOT EXISTS marks (id INTEGER PRIMARY KEY, course VARCHAR, type VARCHAR, title VARCHAR, score VARCHAR, status VARCHAR, weightage VARCHAR, average VARCHAR, posted VARCHAR)");
 
                                 ((Activity) context).runOnUiThread(new Runnable() {
                                     @Override
@@ -1475,7 +1463,7 @@ public class VTOP {
                                 JSONObject myObj = new JSONObject(obj);
 
                                 myDatabase.execSQL("DROP TABLE IF EXISTS marks");
-                                myDatabase.execSQL("CREATE TABLE IF NOT EXISTS marks (id INTEGER PRIMARY KEY, course VARCHAR, type VARCHAR, title VARCHAR, score VARCHAR, status VARCHAR, weightage VARCHAR, average VARCHAR, posted VARCHAR, remark VARCHAR)");
+                                myDatabase.execSQL("CREATE TABLE IF NOT EXISTS marks (id INTEGER PRIMARY KEY, course VARCHAR, type VARCHAR, title VARCHAR, score VARCHAR, status VARCHAR, weightage VARCHAR, average VARCHAR, posted VARCHAR)");
 
                                 for (int i = 0; i < myObj.length(); ++i) {
                                     JSONObject tempObj = new JSONObject(myObj.getString(Integer.toString(i)));
@@ -1487,9 +1475,8 @@ public class VTOP {
                                     String weightage = tempObj.getString("weightage") + " / " + tempObj.getString("percent");
                                     String average = tempObj.getString("average");
                                     String posted = tempObj.getString("posted");
-                                    String remark = tempObj.getString("remark");
 
-                                    myDatabase.execSQL("INSERT INTO marks (course, type, title, score, status, weightage, average, posted, remark) VALUES('" + course + "', '" + type + "', '" + title + "', '" + score + "', '" + status + "', '" + weightage + "', '" + average + "', '" + posted + "', '" + remark + "')");
+                                    myDatabase.execSQL("INSERT INTO marks (course, type, title, score, status, weightage, average, posted) VALUES('" + course + "', '" + type + "', '" + title + "', '" + score + "', '" + status + "', '" + weightage + "', '" + average + "', '" + posted + "')");
                                 }
 
                                 ((Activity) context).runOnUiThread(new Runnable() {
