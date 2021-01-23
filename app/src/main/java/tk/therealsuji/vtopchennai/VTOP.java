@@ -671,7 +671,7 @@ public class VTOP {
                                     alarmManager.cancel(pendingIntent);
                                 }
 
-                                if (alarmCount > sharedPreferences.getInt("alarmCount", 0)) {
+                                if (alarmCount != sharedPreferences.getInt("alarmCount", 0)) {
                                     sharedPreferences.edit().putBoolean("newTimetable", true).apply();
                                 }
 
@@ -1325,7 +1325,7 @@ public class VTOP {
                                     myDatabase.execSQL("INSERT INTO exams (course, date, start_time, end_time) VALUES('" + course + "', '" + date + "', '" + startTime + "', '" + endTime + "')");
                                 }
 
-                                if (i > sharedPreferences.getInt("examsCount", 0)) {
+                                if (i != sharedPreferences.getInt("examsCount", 0)) {
                                     sharedPreferences.edit().putBoolean("newExams", true).apply();
                                     sharedPreferences.edit().putInt("examsCount", i).apply();
                                 }
@@ -1507,7 +1507,7 @@ public class VTOP {
                                     myDatabase.execSQL("INSERT INTO marks (course, type, title, score, status, weightage, average, posted) VALUES('" + course + "', '" + type + "', '" + title + "', '" + score + "', '" + status + "', '" + weightage + "', '" + average + "', '" + posted + "')");
                                 }
 
-                                if (i > sharedPreferences.getInt("marksCount", 0)) {
+                                if (i != sharedPreferences.getInt("marksCount", 0)) {
                                     sharedPreferences.edit().putBoolean("newMarks", true).apply();
                                     sharedPreferences.edit().putInt("marksCount", i).apply();
                                 }
@@ -1628,7 +1628,7 @@ public class VTOP {
                                     myDatabase.execSQL("INSERT INTO receipts (receipt, date, amount) VALUES('" + receipt + "', '" + date + "', '" + amount + "')");
                                 }
 
-                                if (i > sharedPreferences.getInt("receiptsCount", 0)) {
+                                if (i != sharedPreferences.getInt("receiptsCount", 0)) {
                                     sharedPreferences.edit().putBoolean("newReceipts", true).apply();
                                     sharedPreferences.edit().putInt("receiptsCount", i).apply();
                                 }
