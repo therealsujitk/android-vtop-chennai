@@ -58,7 +58,7 @@ public class SpotlightActivity extends AppCompatActivity {
     }
 
     public void openLink(String link) {
-        if (link.equals("NA")) {
+        if (link.equals("null")) {
             Dialog noLink = new Dialog(this);
             noLink.setContentView(R.layout.dialog_nolink);
             noLink.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));

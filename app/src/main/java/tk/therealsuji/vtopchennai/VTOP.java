@@ -1862,7 +1862,7 @@ public class VTOP {
                 "               for(var j = 0; j < announcements.length; ++j) {" +
                 "                   temp[j + 'announcement'] = announcements[j].innerText.trim().replaceAll('\\t','').replaceAll('\\n','');" +
                 "                   if(!announcements[j].getElementsByTagName('a').length) {" +
-                "                       temp[j + 'link'] = 'NA';" +
+                "                       temp[j + 'link'] = 'null';" +
                 "                   } else {" +
                 "                       temp[j + 'link'] = announcements[j].getElementsByTagName('a')[0].href;" +
                 "                       if(temp[j + 'link'].includes('\\'')) {" +

@@ -334,26 +334,62 @@ public class HomeActivity extends AppCompatActivity {
                             }
 
                             /*
+                                The inner LinearLayout
+                             */
+                            final LinearLayout innerBlockHeading = new LinearLayout(context);
+                            LinearLayout.LayoutParams innerBlockHeadingParams = new LinearLayout.LayoutParams(
+                                    LinearLayout.LayoutParams.MATCH_PARENT,
+                                    LinearLayout.LayoutParams.WRAP_CONTENT
+                            );
+                            innerBlockHeading.setLayoutParams(innerBlockHeadingParams);
+                            innerBlockHeading.setOrientation(LinearLayout.HORIZONTAL);
+
+                            /*
                                 The upcoming text
                              */
-                            final TextView heading = new TextView(context);
+                            TextView heading = new TextView(context);
                             TableRow.LayoutParams headingParams = new TableRow.LayoutParams(
                                     TableRow.LayoutParams.WRAP_CONTENT,
                                     TableRow.LayoutParams.WRAP_CONTENT
                             );
                             headingParams.setMarginStart((int) (20 * pixelDensity));
-                            headingParams.setMarginEnd((int) (20 * pixelDensity));
                             headingParams.setMargins(0, 0, 0, (int) (5 * pixelDensity));
                             heading.setLayoutParams(headingParams);
                             heading.setText(getString(R.string.upcoming));
                             heading.setTextColor(getColor(R.color.colorPrimary));
                             heading.setTextSize(20);
-                            heading.setTypeface(ResourcesCompat.getFont(context, R.font.rubik));
+                            heading.setTypeface(ResourcesCompat.getFont(context, R.font.rubik), Typeface.BOLD);
 
+                            innerBlockHeading.addView(heading);
+
+                            /*
+                                The upcoming class course code
+                             */
+                            String course = theory.getString(dayTheory).split("-")[1].trim();
+
+                            TextView period = new TextView(context);
+                            TableRow.LayoutParams periodParams = new TableRow.LayoutParams(
+                                    TableRow.LayoutParams.MATCH_PARENT,
+                                    TableRow.LayoutParams.WRAP_CONTENT
+                            );
+                            periodParams.setMarginEnd((int) (20 * pixelDensity));
+                            periodParams.setMargins(0, 0, 0, (int) (5 * pixelDensity));
+                            period.setLayoutParams(periodParams);
+                            period.setText(course);
+                            period.setTextColor(getColor(R.color.colorPrimary));
+                            period.setTextSize(20);
+                            period.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
+                            period.setTypeface(ResourcesCompat.getFont(context, R.font.rubik), Typeface.BOLD);
+
+                            innerBlockHeading.addView(period);
+
+                            /*
+                                Adding the innerBlockHeading to the main block
+                             */
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    upcoming.addView(heading);  //Adding the upcoming text to the block
+                                    upcoming.addView(innerBlockHeading);
                                 }
                             });
 
@@ -367,26 +403,6 @@ public class HomeActivity extends AppCompatActivity {
                             );
                             innerBlock.setLayoutParams(innerBlockParams);
                             innerBlock.setOrientation(LinearLayout.HORIZONTAL);
-
-                            /*
-                                The upcoming class course code
-                             */
-                            String course = theory.getString(dayTheory).split("-")[1].trim() + " - Theory";
-
-                            TextView period = new TextView(context);
-                            TableRow.LayoutParams periodParams = new TableRow.LayoutParams(
-                                    TableRow.LayoutParams.WRAP_CONTENT,
-                                    TableRow.LayoutParams.WRAP_CONTENT
-                            );
-                            periodParams.setMarginStart((int) (20 * pixelDensity));
-                            periodParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (20 * pixelDensity));
-                            period.setLayoutParams(periodParams);
-                            period.setText(course);
-                            period.setTextColor(getColor(R.color.colorPrimary));
-                            period.setTextSize(16);
-                            period.setTypeface(ResourcesCompat.getFont(context, R.font.rubik), Typeface.BOLD);
-
-                            innerBlock.addView(period); //Adding the upcoming class to innerBlock
 
                             /*
                                 Making a proper string of the timings
@@ -409,22 +425,40 @@ public class HomeActivity extends AppCompatActivity {
                              */
                             TextView timing = new TextView(context);
                             TableRow.LayoutParams timingParams = new TableRow.LayoutParams(
-                                    TableRow.LayoutParams.MATCH_PARENT,
+                                    TableRow.LayoutParams.WRAP_CONTENT,
                                     TableRow.LayoutParams.WRAP_CONTENT
                             );
-                            timingParams.setMarginEnd((int) (20 * pixelDensity));
+                            timingParams.setMarginStart((int) (20 * pixelDensity));
                             timingParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (20 * pixelDensity));
                             timing.setLayoutParams(timingParams);
                             timing.setText(timings);
                             timing.setTextColor(getColor(R.color.colorPrimary));
                             timing.setTextSize(16);
-                            timing.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
-                            timing.setTypeface(ResourcesCompat.getFont(context, R.font.rubik), Typeface.BOLD);
+                            timing.setTypeface(ResourcesCompat.getFont(context, R.font.rubik));
 
                             innerBlock.addView(timing); //Adding timing to innerBlock
 
                             /*
-                                Finally adding the innerBlock to the main block
+                                The upcoming class course type
+                             */
+                            TextView courseType = new TextView(context);
+                            TableRow.LayoutParams courseTypeParams = new TableRow.LayoutParams(
+                                    TableRow.LayoutParams.MATCH_PARENT,
+                                    TableRow.LayoutParams.WRAP_CONTENT
+                            );
+                            courseTypeParams.setMarginEnd((int) (20 * pixelDensity));
+                            courseTypeParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (20 * pixelDensity));
+                            courseType.setLayoutParams(courseTypeParams);
+                            courseType.setText(getString(R.string.theory));
+                            courseType.setTextColor(getColor(R.color.colorPrimary));
+                            courseType.setTextSize(16);
+                            courseType.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
+                            courseType.setTypeface(ResourcesCompat.getFont(context, R.font.rubik));
+
+                            innerBlock.addView(courseType); //Adding the upcoming class type to innerBlock
+
+                            /*
+                                Adding the innerBlock to the main block
                              */
                             runOnUiThread(new Runnable() {
                                 @Override
@@ -441,26 +475,59 @@ public class HomeActivity extends AppCompatActivity {
                             }
 
                             /*
+                                The inner LinearLayout
+                             */
+                            final LinearLayout innerBlockHeading = new LinearLayout(context);
+                            LinearLayout.LayoutParams innerBlockHeadingParams = new LinearLayout.LayoutParams(
+                                    LinearLayout.LayoutParams.MATCH_PARENT,
+                                    LinearLayout.LayoutParams.WRAP_CONTENT
+                            );
+                            innerBlockHeading.setLayoutParams(innerBlockHeadingParams);
+                            innerBlockHeading.setOrientation(LinearLayout.HORIZONTAL);
+
+                            /*
                                 The upcoming text
                              */
-                            final TextView heading = new TextView(context);
+                            TextView heading = new TextView(context);
                             TableRow.LayoutParams headingParams = new TableRow.LayoutParams(
                                     TableRow.LayoutParams.WRAP_CONTENT,
                                     TableRow.LayoutParams.WRAP_CONTENT
                             );
                             headingParams.setMarginStart((int) (20 * pixelDensity));
-                            headingParams.setMarginEnd((int) (20 * pixelDensity));
                             headingParams.setMargins(0, 0, 0, (int) (5 * pixelDensity));
                             heading.setLayoutParams(headingParams);
                             heading.setText(getString(R.string.upcoming));
                             heading.setTextColor(getColor(R.color.colorPrimary));
                             heading.setTextSize(20);
-                            heading.setTypeface(ResourcesCompat.getFont(context, R.font.rubik));
+                            heading.setTypeface(ResourcesCompat.getFont(context, R.font.rubik), Typeface.BOLD);
+
+                            innerBlockHeading.addView(heading);
+
+                            /*
+                                The upcoming class course code
+                             */
+                            String course = lab.getString(dayLab).split("-")[1].trim();
+
+                            TextView period = new TextView(context);
+                            TableRow.LayoutParams periodParams = new TableRow.LayoutParams(
+                                    TableRow.LayoutParams.MATCH_PARENT,
+                                    TableRow.LayoutParams.WRAP_CONTENT
+                            );
+                            periodParams.setMarginEnd((int) (20 * pixelDensity));
+                            periodParams.setMargins(0, 0, 0, (int) (5 * pixelDensity));
+                            period.setLayoutParams(periodParams);
+                            period.setText(course);
+                            period.setTextColor(getColor(R.color.colorPrimary));
+                            period.setTextSize(20);
+                            period.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
+                            period.setTypeface(ResourcesCompat.getFont(context, R.font.rubik), Typeface.BOLD);
+
+                            innerBlockHeading.addView(period); //Adding the upcoming class to innerBlock
 
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    upcoming.addView(heading);  //Adding the upcoming text to the block
+                                    upcoming.addView(innerBlockHeading);  //Adding the upcoming text to the block
                                 }
                             });
 
@@ -474,26 +541,6 @@ public class HomeActivity extends AppCompatActivity {
                             );
                             innerBlock.setLayoutParams(innerBlockParams);
                             innerBlock.setOrientation(LinearLayout.HORIZONTAL);
-
-                            /*
-                                The upcoming class course code
-                             */
-                            String course = lab.getString(dayLab).split("-")[1].trim() + " - Lab";
-
-                            TextView period = new TextView(context);
-                            TableRow.LayoutParams periodParams = new TableRow.LayoutParams(
-                                    TableRow.LayoutParams.WRAP_CONTENT,
-                                    TableRow.LayoutParams.WRAP_CONTENT
-                            );
-                            periodParams.setMarginStart((int) (20 * pixelDensity));
-                            periodParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (20 * pixelDensity));
-                            period.setLayoutParams(periodParams);
-                            period.setText(course);
-                            period.setTextColor(getColor(R.color.colorPrimary));
-                            period.setTextSize(16);
-                            period.setTypeface(ResourcesCompat.getFont(context, R.font.rubik), Typeface.BOLD);
-
-                            innerBlock.addView(period); //Adding the upcoming class to innerBlock
 
                             /*
                                 Making a proper string of the timings
@@ -516,19 +563,37 @@ public class HomeActivity extends AppCompatActivity {
                              */
                             TextView timing = new TextView(context);
                             TableRow.LayoutParams timingParams = new TableRow.LayoutParams(
-                                    TableRow.LayoutParams.MATCH_PARENT,
+                                    TableRow.LayoutParams.WRAP_CONTENT,
                                     TableRow.LayoutParams.WRAP_CONTENT
                             );
-                            timingParams.setMarginEnd((int) (20 * pixelDensity));
+                            timingParams.setMarginStart((int) (20 * pixelDensity));
                             timingParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (20 * pixelDensity));
                             timing.setLayoutParams(timingParams);
                             timing.setText(timings);
                             timing.setTextColor(getColor(R.color.colorPrimary));
                             timing.setTextSize(16);
-                            timing.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
-                            timing.setTypeface(ResourcesCompat.getFont(context, R.font.rubik), Typeface.BOLD);
+                            timing.setTypeface(ResourcesCompat.getFont(context, R.font.rubik));
 
                             innerBlock.addView(timing); //Adding timing to innerBlock
+
+                            /*
+                                The upcoming class course code
+                             */
+                            TextView courseType = new TextView(context);
+                            TableRow.LayoutParams courseTypeParams = new TableRow.LayoutParams(
+                                    TableRow.LayoutParams.MATCH_PARENT,
+                                    TableRow.LayoutParams.WRAP_CONTENT
+                            );
+                            courseTypeParams.setMarginEnd((int) (20 * pixelDensity));
+                            courseTypeParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (20 * pixelDensity));
+                            courseType.setLayoutParams(courseTypeParams);
+                            courseType.setText(getString(R.string.lab));
+                            courseType.setTextColor(getColor(R.color.colorPrimary));
+                            courseType.setTextSize(16);
+                            courseType.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
+                            courseType.setTypeface(ResourcesCompat.getFont(context, R.font.rubik));
+
+                            innerBlock.addView(courseType); //Adding the upcoming class type to innerBlock
 
                             /*
                                 Finally adding the innerBlock to the main block
@@ -550,26 +615,58 @@ public class HomeActivity extends AppCompatActivity {
                             upcoming.removeAllViews();
 
                             /*
+                                The inner LinearLayout
+                             */
+                            final LinearLayout innerBlockHeading = new LinearLayout(context);
+                            LinearLayout.LayoutParams innerBlockHeadingParams = new LinearLayout.LayoutParams(
+                                    LinearLayout.LayoutParams.MATCH_PARENT,
+                                    LinearLayout.LayoutParams.WRAP_CONTENT
+                            );
+                            innerBlockHeading.setLayoutParams(innerBlockHeadingParams);
+                            innerBlockHeading.setOrientation(LinearLayout.HORIZONTAL);
+
+                            /*
                                 The ongoing text
                              */
-                            final TextView heading = new TextView(context);
+                            TextView heading = new TextView(context);
                             TableRow.LayoutParams headingParams = new TableRow.LayoutParams(
                                     TableRow.LayoutParams.WRAP_CONTENT,
                                     TableRow.LayoutParams.WRAP_CONTENT
                             );
                             headingParams.setMarginStart((int) (20 * pixelDensity));
-                            headingParams.setMarginEnd((int) (20 * pixelDensity));
                             headingParams.setMargins(0, 0, 0, (int) (5 * pixelDensity));
                             heading.setLayoutParams(headingParams);
                             heading.setText(getString(R.string.ongoing));
                             heading.setTextColor(getColor(R.color.colorPrimary));
                             heading.setTextSize(20);
-                            heading.setTypeface(ResourcesCompat.getFont(context, R.font.rubik));
+                            heading.setTypeface(ResourcesCompat.getFont(context, R.font.rubik), Typeface.BOLD);
+
+                            innerBlockHeading.addView(heading);
+
+                            /*
+                                The ongoing class course code
+                             */
+                            String course = theory.getString(dayTheory).split("-")[1].trim();
+                            TextView period = new TextView(context);
+                            TableRow.LayoutParams periodParams = new TableRow.LayoutParams(
+                                    TableRow.LayoutParams.MATCH_PARENT,
+                                    TableRow.LayoutParams.WRAP_CONTENT
+                            );
+                            periodParams.setMarginEnd((int) (20 * pixelDensity));
+                            periodParams.setMargins(0, 0, 0, (int) (5 * pixelDensity));
+                            period.setLayoutParams(periodParams);
+                            period.setText(course);
+                            period.setTextColor(getColor(R.color.colorPrimary));
+                            period.setTextSize(20);
+                            period.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
+                            period.setTypeface(ResourcesCompat.getFont(context, R.font.rubik), Typeface.BOLD);
+
+                            innerBlockHeading.addView(period); //Adding the ongoing class to innerBlock
 
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    upcoming.addView(heading);  //Adding the ongoing text to the block
+                                    upcoming.addView(innerBlockHeading);  //Adding the ongoing text to the block
                                 }
                             });
 
@@ -583,25 +680,6 @@ public class HomeActivity extends AppCompatActivity {
                             );
                             innerBlock.setLayoutParams(innerBlockParams);
                             innerBlock.setOrientation(LinearLayout.HORIZONTAL);
-
-                            /*
-                                The ongoing class course code
-                             */
-                            String course = theory.getString(dayTheory).split("-")[1].trim() + " - Theory";
-                            TextView period = new TextView(context);
-                            TableRow.LayoutParams periodParams = new TableRow.LayoutParams(
-                                    TableRow.LayoutParams.WRAP_CONTENT,
-                                    TableRow.LayoutParams.WRAP_CONTENT
-                            );
-                            periodParams.setMarginStart((int) (20 * pixelDensity));
-                            periodParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (20 * pixelDensity));
-                            period.setLayoutParams(periodParams);
-                            period.setText(course);
-                            period.setTextColor(getColor(R.color.colorPrimary));
-                            period.setTextSize(16);
-                            period.setTypeface(ResourcesCompat.getFont(context, R.font.rubik), Typeface.BOLD);
-
-                            innerBlock.addView(period); //Adding the ongoing class to innerBlock
 
                             /*
                                 Making a proper string of the timings
@@ -624,22 +702,40 @@ public class HomeActivity extends AppCompatActivity {
                              */
                             TextView timing = new TextView(context);
                             TableRow.LayoutParams timingParams = new TableRow.LayoutParams(
-                                    TableRow.LayoutParams.MATCH_PARENT,
+                                    TableRow.LayoutParams.WRAP_CONTENT,
                                     TableRow.LayoutParams.WRAP_CONTENT
                             );
-                            timingParams.setMarginEnd((int) (20 * pixelDensity));
+                            timingParams.setMarginStart((int) (20 * pixelDensity));
                             timingParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (20 * pixelDensity));
                             timing.setLayoutParams(timingParams);
                             timing.setText(timings);
                             timing.setTextColor(getColor(R.color.colorPrimary));
                             timing.setTextSize(16);
-                            timing.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
-                            timing.setTypeface(ResourcesCompat.getFont(context, R.font.rubik), Typeface.BOLD);
+                            timing.setTypeface(ResourcesCompat.getFont(context, R.font.rubik));
 
                             /*
                                 Finally adding the innerBlock to the main block
                              */
                             innerBlock.addView(timing);
+
+                            /*
+                                The ongoing class course code
+                             */
+                            TextView courseType = new TextView(context);
+                            TableRow.LayoutParams courseTypeParams = new TableRow.LayoutParams(
+                                    TableRow.LayoutParams.MATCH_PARENT,
+                                    TableRow.LayoutParams.WRAP_CONTENT
+                            );
+                            courseTypeParams.setMarginEnd((int) (20 * pixelDensity));
+                            courseTypeParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (20 * pixelDensity));
+                            courseType.setLayoutParams(courseTypeParams);
+                            courseType.setText(getString(R.string.theory));
+                            courseType.setTextColor(getColor(R.color.colorPrimary));
+                            courseType.setTextSize(16);
+                            courseType.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
+                            courseType.setTypeface(ResourcesCompat.getFont(context, R.font.rubik));
+
+                            innerBlock.addView(courseType); //Adding the ongoing class type to innerBlock
 
                             runOnUiThread(new Runnable() {
                                 @Override
@@ -656,26 +752,58 @@ public class HomeActivity extends AppCompatActivity {
                             }
 
                             /*
+                                The inner LinearLayout
+                             */
+                            final LinearLayout innerBlockHeading = new LinearLayout(context);
+                            LinearLayout.LayoutParams innerBlockHeadingParams = new LinearLayout.LayoutParams(
+                                    LinearLayout.LayoutParams.MATCH_PARENT,
+                                    LinearLayout.LayoutParams.WRAP_CONTENT
+                            );
+                            innerBlockHeading.setLayoutParams(innerBlockHeadingParams);
+                            innerBlockHeading.setOrientation(LinearLayout.HORIZONTAL);
+
+                            /*
                                 The ongoing text
                              */
-                            final TextView heading = new TextView(context);
+                            TextView heading = new TextView(context);
                             TableRow.LayoutParams headingParams = new TableRow.LayoutParams(
                                     TableRow.LayoutParams.WRAP_CONTENT,
                                     TableRow.LayoutParams.WRAP_CONTENT
                             );
                             headingParams.setMarginStart((int) (20 * pixelDensity));
-                            headingParams.setMarginEnd((int) (20 * pixelDensity));
                             headingParams.setMargins(0, 0, 0, (int) (5 * pixelDensity));
                             heading.setLayoutParams(headingParams);
                             heading.setText(getString(R.string.ongoing));
                             heading.setTextColor(getColor(R.color.colorPrimary));
                             heading.setTextSize(20);
-                            heading.setTypeface(ResourcesCompat.getFont(context, R.font.rubik));
+                            heading.setTypeface(ResourcesCompat.getFont(context, R.font.rubik), Typeface.BOLD);
+
+                            innerBlockHeading.addView(heading);
+
+                            /*
+                                The ongoing class course code
+                             */
+                            String course = lab.getString(dayLab).split("-")[1].trim();
+                            TextView period = new TextView(context);
+                            TableRow.LayoutParams periodParams = new TableRow.LayoutParams(
+                                    TableRow.LayoutParams.MATCH_PARENT,
+                                    TableRow.LayoutParams.WRAP_CONTENT
+                            );
+                            periodParams.setMarginEnd((int) (20 * pixelDensity));
+                            periodParams.setMargins(0, 0, 0, (int) (5 * pixelDensity));
+                            period.setLayoutParams(periodParams);
+                            period.setText(course);
+                            period.setTextColor(getColor(R.color.colorPrimary));
+                            period.setTextSize(20);
+                            period.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
+                            period.setTypeface(ResourcesCompat.getFont(context, R.font.rubik), Typeface.BOLD);
+
+                            innerBlockHeading.addView(period); //Adding the ongoing class to innerBlock
 
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    upcoming.addView(heading);  //Adding the ongoing text to the block
+                                    upcoming.addView(innerBlockHeading);  //Adding the ongoing text to the block
                                 }
                             });
 
@@ -689,25 +817,6 @@ public class HomeActivity extends AppCompatActivity {
                             );
                             innerBlock.setLayoutParams(innerBlockParams);
                             innerBlock.setOrientation(LinearLayout.HORIZONTAL);
-
-                            /*
-                                The ongoing class course code
-                             */
-                            String course = lab.getString(dayLab).split("-")[1].trim() + " - Lab";
-                            TextView period = new TextView(context);
-                            TableRow.LayoutParams periodParams = new TableRow.LayoutParams(
-                                    TableRow.LayoutParams.WRAP_CONTENT,
-                                    TableRow.LayoutParams.WRAP_CONTENT
-                            );
-                            periodParams.setMarginStart((int) (20 * pixelDensity));
-                            periodParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (20 * pixelDensity));
-                            period.setLayoutParams(periodParams);
-                            period.setText(course);
-                            period.setTextColor(getColor(R.color.colorPrimary));
-                            period.setTextSize(16);
-                            period.setTypeface(ResourcesCompat.getFont(context, R.font.rubik), Typeface.BOLD);
-
-                            innerBlock.addView(period); //Adding the ongoing class to innerBlock
 
                             /*
                                 Making a proper string of the timings
@@ -730,22 +839,40 @@ public class HomeActivity extends AppCompatActivity {
                              */
                             TextView timing = new TextView(context);
                             TableRow.LayoutParams timingParams = new TableRow.LayoutParams(
-                                    TableRow.LayoutParams.MATCH_PARENT,
+                                    TableRow.LayoutParams.WRAP_CONTENT,
                                     TableRow.LayoutParams.WRAP_CONTENT
                             );
-                            timingParams.setMarginEnd((int) (20 * pixelDensity));
+                            timingParams.setMarginStart((int) (20 * pixelDensity));
                             timingParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (20 * pixelDensity));
                             timing.setLayoutParams(timingParams);
                             timing.setText(timings);
                             timing.setTextColor(getColor(R.color.colorPrimary));
                             timing.setTextSize(16);
-                            timing.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
-                            timing.setTypeface(ResourcesCompat.getFont(context, R.font.rubik), Typeface.BOLD);
+                            timing.setTypeface(ResourcesCompat.getFont(context, R.font.rubik));
 
                             /*
                                 Finally adding the innerBlock to the main block
                              */
                             innerBlock.addView(timing);
+
+                            /*
+                                The ongoing class course type
+                             */
+                            TextView courseType = new TextView(context);
+                            TableRow.LayoutParams courseTypeParams = new TableRow.LayoutParams(
+                                    TableRow.LayoutParams.MATCH_PARENT,
+                                    TableRow.LayoutParams.WRAP_CONTENT
+                            );
+                            courseTypeParams.setMarginEnd((int) (20 * pixelDensity));
+                            courseTypeParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (20 * pixelDensity));
+                            courseType.setLayoutParams(courseTypeParams);
+                            courseType.setText(getString(R.string.lab));
+                            courseType.setTextColor(getColor(R.color.colorPrimary));
+                            courseType.setTextSize(16);
+                            courseType.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
+                            courseType.setTypeface(ResourcesCompat.getFont(context, R.font.rubik));
+
+                            innerBlock.addView(courseType); //Adding the ongoing class type to innerBlock
 
                             runOnUiThread(new Runnable() {
                                 @Override
