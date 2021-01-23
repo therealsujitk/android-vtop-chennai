@@ -85,7 +85,7 @@
         <activity
             android:name=".MessagesActivity"
             android:configChanges="orientation|keyboardHidden"
-            android:label="Messages"
+            android:label="Class Messages"
             android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -162,6 +162,15 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".StaffActivity" />
+        </activity>
+        <activity
+            android:name=".ProctorActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:label="Proctor Messages"
+            android:screenOrientation="portrait">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ProctorActivity" />
         </activity>
         <activity
             android:name=".ReceiptsActivity"

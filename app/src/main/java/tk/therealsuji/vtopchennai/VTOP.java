@@ -1702,7 +1702,7 @@ public class VTOP {
                             }
 
                             sharedPreferences.edit().putBoolean("newMessages", false).apply();
-                            sharedPreferences.edit().putInt("messageCount", 0).apply();
+                            sharedPreferences.edit().putInt("messagesCount", 0).apply();
                         }
                     }).start();
                 } else if (temp.equals("new")) {
@@ -1721,11 +1721,98 @@ public class VTOP {
                                 ((Activity) context).runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        downloadSpotlight();
+                                        downloadProctorMessages();
                                     }
                                 });
 
                                 sharedPreferences.edit().putBoolean("newMessages", true).apply();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                error();
+                            }
+                        }
+                    }).start();
+                } else {
+                    error();
+                }
+            }
+        });
+    }
+
+    /*
+        Function to store the proctor messages in the SQLite database.
+     */
+    public void downloadProctorMessages() {
+        webView.evaluateJavascript("(function() {" +
+                "var data = 'verifyMenu=true&winImage=' + $('#winImage').val() + '&authorizedID=' + $('#authorizedIDX').val() + '&nocache=@(new Date().getTime())';" +
+                "var successFlag = false;" +
+                "$.ajax({" +
+                "   type: 'POST'," +
+                "   url : 'proctor/viewMessagesSendByProctor'," +
+                "   data : data," +
+                "   async: false," +
+                "   success: function(response) {" +
+                "       if(response.toLowerCase().includes('no messages')) {" +
+                "           successFlag = true;" +
+                "       } else {" +
+                "           successFlag = 'new';" +
+                "       }" +
+                "   }" +
+                "});" +
+                "return successFlag;" +
+                "})();", new ValueCallback<String>() {
+            @Override
+            public void onReceiveValue(String value) {
+                String temp = value.substring(1, value.length() - 1);
+                if (value.equals("true")) {
+                    /*
+                        Dropping and recreating an empty table
+                     */
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                myDatabase.execSQL("DROP TABLE IF EXISTS proctor_messages");
+                                myDatabase.execSQL("CREATE TABLE IF NOT EXISTS proctor_messages (id INTEGER PRIMARY KEY, time VARCHAR, message VARCHAR)");
+
+                                ((Activity) context).runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        downloadSpotlight();
+                                    }
+                                });
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
+                                isOpened = false;
+                                reloadPage();
+                            }
+
+                            sharedPreferences.edit().putBoolean("newProctorMessages", false).apply();
+                            sharedPreferences.edit().putInt("proctorMessagesCount", 0).apply();
+                        }
+                    }).start();
+                } else if (temp.equals("new")) {
+                    /*
+                        Dropping, recreating and adding announcements
+                     */
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                myDatabase.execSQL("DROP TABLE IF EXISTS proctor_messages");
+                                myDatabase.execSQL("CREATE TABLE IF NOT EXISTS proctor_messages (id INTEGER PRIMARY KEY, time VARCHAR, message VARCHAR)");
+
+                                myDatabase.execSQL("INSERT INTO proctor_messages (time, message) VALUES('null', 'null')"); //To be changed with the actual announcements
+
+                                ((Activity) context).runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        downloadSpotlight();
+                                    }
+                                });
+
+                                sharedPreferences.edit().putBoolean("newProctorMessages", true).apply();
                             } catch (Exception e) {
                                 e.printStackTrace();
                                 error();

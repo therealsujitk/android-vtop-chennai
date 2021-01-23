@@ -93,6 +93,11 @@ public class HomeActivity extends AppCompatActivity {
         startActivity(new Intent(HomeActivity.this, StaffActivity.class));
     }
 
+    public void openProctorMessages(View view) {
+        startActivity(new Intent(HomeActivity.this, ProctorActivity.class));
+        findViewById(R.id.proctor_messages_notification).animate().scaleX(0).scaleY(0);
+    }
+
     public void openReceipts(View view) {
         startActivity(new Intent(HomeActivity.this, ReceiptsActivity.class));
         findViewById(R.id.receipts_notification).animate().scaleX(0).scaleY(0);
@@ -810,6 +815,15 @@ public class HomeActivity extends AppCompatActivity {
                         @Override
                         public void run() {
                             findViewById(R.id.spotlight_notification).animate().scaleX(1).scaleY(1);
+                        }
+                    });
+                }
+
+                if (sharedPreferences.getBoolean("newProctorMessages", false)) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            findViewById(R.id.proctor_messages_notification).animate().scaleX(1).scaleY(1);
                         }
                     });
                 }
