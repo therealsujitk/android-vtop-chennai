@@ -520,6 +520,9 @@ public class VTOP {
                                 alarmManager.cancel(pendingIntent);
                             }
 
+                            sharedPreferences.edit().putBoolean("newTimetable", false).apply();
+                            sharedPreferences.edit().putInt("alarmCount", 0).apply();
+
                             ((Activity) context).runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
@@ -666,6 +669,10 @@ public class VTOP {
                                 for (int i = alarmCount; i < sharedPreferences.getInt("alarmCount", 0); ++i) {
                                     PendingIntent pendingIntent = PendingIntent.getBroadcast(context, i, notificationIntent, 0);
                                     alarmManager.cancel(pendingIntent);
+                                }
+
+                                if (alarmCount > sharedPreferences.getInt("alarmCount", 0)) {
+                                    sharedPreferences.edit().putBoolean("newTimetable", true).apply();
                                 }
 
                                 sharedPreferences.edit().putInt("alarmCount", alarmCount).apply();
@@ -1155,6 +1162,8 @@ public class VTOP {
                             } catch (Exception e) {
                                 error();
                             }
+
+                            sharedPreferences.edit().putBoolean("failedAttendance", false).apply();
                         }
                     }).start();
                 } else {
@@ -1167,6 +1176,8 @@ public class VTOP {
                                 myDatabase.execSQL("DROP TABLE IF EXISTS attendance");
                                 myDatabase.execSQL("CREATE TABLE IF NOT EXISTS attendance (id INTEGER PRIMARY KEY, course VARCHAR, type VARCHAR, attended VARCHAR, total VARCHAR, percent VARCHAR)");
 
+                                sharedPreferences.edit().putBoolean("failedAttendance", false).apply();
+
                                 for (int i = 0; i < myObj.length(); ++i) {
                                     JSONObject tempObj = new JSONObject(myObj.getString(Integer.toString(i)));
                                     String course = tempObj.getString("course");
@@ -1176,6 +1187,10 @@ public class VTOP {
                                     String percent = tempObj.getString("percent");
 
                                     myDatabase.execSQL("INSERT INTO attendance (course, type, attended, total, percent) VALUES('" + course + "', '" + type + "', '" + attended + "', '" + total + "', '" + percent + "')");
+
+                                    if (Integer.parseInt(percent) <= 75) {
+                                        sharedPreferences.edit().putBoolean("failedAttendance", true).apply();
+                                    }
                                 }
 
                                 ((Activity) context).runOnUiThread(new Runnable() {
@@ -1283,6 +1298,9 @@ public class VTOP {
                                 e.printStackTrace();
                                 error();
                             }
+
+                            sharedPreferences.edit().putBoolean("newExams", false).apply();
+                            sharedPreferences.edit().putInt("examsCount", 0).apply();
                         }
                     }).start();
                 } else {
@@ -1295,7 +1313,8 @@ public class VTOP {
                                 myDatabase.execSQL("DROP TABLE IF EXISTS exams");
                                 myDatabase.execSQL("CREATE TABLE IF NOT EXISTS exams (id INTEGER PRIMARY KEY, course VARCHAR, date VARCHAR, start_time VARCHAR, end_time VARCHAR)");
 
-                                for (int i = 0; i < myObj.length(); ++i) {
+                                int i;
+                                for (i = 0; i < myObj.length(); ++i) {
                                     JSONObject tempObj = new JSONObject(myObj.getString(Integer.toString(i)));
                                     String course = tempObj.getString("course");
                                     String date = tempObj.getString("date").toUpperCase();
@@ -1304,6 +1323,11 @@ public class VTOP {
                                     String endTime = time[1].trim();
 
                                     myDatabase.execSQL("INSERT INTO exams (course, date, start_time, end_time) VALUES('" + course + "', '" + date + "', '" + startTime + "', '" + endTime + "')");
+                                }
+
+                                if (i > sharedPreferences.getInt("examsCount", 0)) {
+                                    sharedPreferences.edit().putBoolean("newExams", true).apply();
+                                    sharedPreferences.edit().putInt("examsCount", i).apply();
                                 }
 
                                 ((Activity) context).runOnUiThread(new Runnable() {
@@ -1453,6 +1477,9 @@ public class VTOP {
                                 e.printStackTrace();
                                 error();
                             }
+
+                            sharedPreferences.edit().putBoolean("newMarks", false).apply();
+                            sharedPreferences.edit().putInt("marksCount", 0).apply();
                         }
                     }).start();
                 } else {
@@ -1465,7 +1492,8 @@ public class VTOP {
                                 myDatabase.execSQL("DROP TABLE IF EXISTS marks");
                                 myDatabase.execSQL("CREATE TABLE IF NOT EXISTS marks (id INTEGER PRIMARY KEY, course VARCHAR, type VARCHAR, title VARCHAR, score VARCHAR, status VARCHAR, weightage VARCHAR, average VARCHAR, posted VARCHAR)");
 
-                                for (int i = 0; i < myObj.length(); ++i) {
+                                int i;
+                                for (i = 0; i < myObj.length(); ++i) {
                                     JSONObject tempObj = new JSONObject(myObj.getString(Integer.toString(i)));
                                     String course = tempObj.getString("course");
                                     String type = tempObj.getString("type");
@@ -1477,6 +1505,11 @@ public class VTOP {
                                     String posted = tempObj.getString("posted");
 
                                     myDatabase.execSQL("INSERT INTO marks (course, type, title, score, status, weightage, average, posted) VALUES('" + course + "', '" + type + "', '" + title + "', '" + score + "', '" + status + "', '" + weightage + "', '" + average + "', '" + posted + "')");
+                                }
+
+                                if (i > sharedPreferences.getInt("marksCount", 0)) {
+                                    sharedPreferences.edit().putBoolean("newMarks", true).apply();
+                                    sharedPreferences.edit().putInt("marksCount", i).apply();
                                 }
 
                                 ((Activity) context).runOnUiThread(new Runnable() {
@@ -1570,6 +1603,9 @@ public class VTOP {
                                 e.printStackTrace();
                                 error();
                             }
+
+                            sharedPreferences.edit().putBoolean("newReceipts", false).apply();
+                            sharedPreferences.edit().putInt("receiptsCount", 0).apply();
                         }
                     }).start();
                 } else {
@@ -1582,13 +1618,19 @@ public class VTOP {
                                 myDatabase.execSQL("DROP TABLE IF EXISTS receipts");
                                 myDatabase.execSQL("CREATE TABLE IF NOT EXISTS receipts (id INTEGER PRIMARY KEY, receipt VARCHAR, date VARCHAR, amount VARCHAR)");
 
-                                for (int i = 0; i < myObj.length(); ++i) {
+                                int i;
+                                for (i = 0; i < myObj.length(); ++i) {
                                     JSONObject tempObj = new JSONObject(myObj.getString(Integer.toString(i)));
                                     String receipt = tempObj.getString("receipt");
                                     String date = tempObj.getString("date").toUpperCase();
                                     String amount = tempObj.getString("amount");
 
                                     myDatabase.execSQL("INSERT INTO receipts (receipt, date, amount) VALUES('" + receipt + "', '" + date + "', '" + amount + "')");
+                                }
+
+                                if (i > sharedPreferences.getInt("receiptsCount", 0)) {
+                                    sharedPreferences.edit().putBoolean("newReceipts", true).apply();
+                                    sharedPreferences.edit().putInt("receiptsCount", i).apply();
                                 }
 
                                 ((Activity) context).runOnUiThread(new Runnable() {
@@ -1658,6 +1700,9 @@ public class VTOP {
                                 isOpened = false;
                                 reloadPage();
                             }
+
+                            sharedPreferences.edit().putBoolean("newMessages", false).apply();
+                            sharedPreferences.edit().putInt("messageCount", 0).apply();
                         }
                     }).start();
                 } else if (temp.equals("new")) {
@@ -1679,6 +1724,8 @@ public class VTOP {
                                         downloadSpotlight();
                                     }
                                 });
+
+                                sharedPreferences.edit().putBoolean("newMessages", true).apply();
                             } catch (Exception e) {
                                 e.printStackTrace();
                                 error();
@@ -1769,6 +1816,9 @@ public class VTOP {
                                 e.printStackTrace();
                                 error();
                             }
+
+                            sharedPreferences.edit().putBoolean("newSpotlight", false).apply();
+                            sharedPreferences.edit().putInt("spotlightCount", 0).apply();
                         }
                     }).start();
                 } else {
@@ -1786,6 +1836,7 @@ public class VTOP {
 
                                 Iterator<?> keys = myObj.keys();
 
+                                int count = 0;
                                 while (keys.hasNext()) {
                                     String category = (String) keys.next();
                                     JSONObject tempObj = new JSONObject(myObj.getString(category));
@@ -1795,7 +1846,13 @@ public class VTOP {
                                         String link = tempObj.getString(i + "link");
 
                                         myDatabase.execSQL("INSERT INTO spotlight (category, announcement, link) VALUES('" + category + "', '" + announcement + "', '" + link + "')");
+                                        ++count;
                                     }
+                                }
+
+                                if (count > sharedPreferences.getInt("spotlightCount", 0)) {
+                                    sharedPreferences.edit().putBoolean("newSpotlight", true).apply();
+                                    sharedPreferences.edit().putInt("spotlightCount", count).apply();
                                 }
 
                                 ((Activity) context).runOnUiThread(new Runnable() {

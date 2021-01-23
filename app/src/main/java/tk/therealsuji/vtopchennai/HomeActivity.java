@@ -46,34 +46,47 @@ public class HomeActivity extends AppCompatActivity {
 
     public void openTimetable(View view) {
         startActivity(new Intent(HomeActivity.this, TimetableActivity.class));
+        findViewById(R.id.timetable_notification).animate().scaleX(0).scaleY(0);
     }
 
     public void openAttendance(View view) {
         startActivity(new Intent(HomeActivity.this, AttendanceActivity.class));
     }
 
-    public void openExams(View view) {
-        startActivity(new Intent(HomeActivity.this, ExamsActivity.class));
-    }
-
     public void openMessages(View view) {
         startActivity(new Intent(HomeActivity.this, MessagesActivity.class));
+        findViewById(R.id.messages_notification).animate().scaleX(0).scaleY(0);
+    }
+
+    public void openFaculty(View view) {
+        startActivity(new Intent(HomeActivity.this, FacultyActivity.class));
     }
 
     /*
         The following functions are to open the activities in the "Academics" category
      */
 
+    public void openExams(View view) {
+        startActivity(new Intent(HomeActivity.this, ExamsActivity.class));
+        findViewById(R.id.exams_notification).animate().scaleX(0).scaleY(0);
+    }
+
     public void openMarks(View view) {
         startActivity(new Intent(HomeActivity.this, MarksActivity.class));
+        findViewById(R.id.marks_notification).animate().scaleX(0).scaleY(0);
     }
 
     public void openSpotlight(View view) {
         startActivity(new Intent(HomeActivity.this, SpotlightActivity.class));
+        findViewById(R.id.spotlight_notification).animate().scaleX(0).scaleY(0);
     }
 
-    public void openFaculty(View view) {
-        startActivity(new Intent(HomeActivity.this, FacultyActivity.class));
+    /*
+        The following functions are to open the activities in the "Campus" category
+     */
+
+    public void openDirections(View view) {
+        startActivity(new Intent(HomeActivity.this, DirectionsActivity.class));
     }
 
     public void openStaff(View view) {
@@ -82,6 +95,7 @@ public class HomeActivity extends AppCompatActivity {
 
     public void openReceipts(View view) {
         startActivity(new Intent(HomeActivity.this, ReceiptsActivity.class));
+        findViewById(R.id.receipts_notification).animate().scaleX(0).scaleY(0);
     }
 
     /*
@@ -744,6 +758,70 @@ public class HomeActivity extends AppCompatActivity {
                 theory.close();
                 lab.close();
                 myDatabase.close();
+
+                if (sharedPreferences.getBoolean("newTimetable", false)) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            findViewById(R.id.timetable_notification).animate().scaleX(1).scaleY(1);
+                        }
+                    });
+                }
+
+                if (sharedPreferences.getBoolean("failedAttendance", false)) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            findViewById(R.id.attendance_notification).animate().scaleX(1).scaleY(1);
+                        }
+                    });
+                }
+
+                if (sharedPreferences.getBoolean("newMessages", false)) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            findViewById(R.id.messages_notification).animate().scaleX(1).scaleY(1);
+                        }
+                    });
+                }
+
+
+                if (sharedPreferences.getBoolean("newExams", false)) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            findViewById(R.id.exams_notification).animate().scaleX(1).scaleY(1);
+                        }
+                    });
+                }
+
+                if (sharedPreferences.getBoolean("newMarks", false)) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            findViewById(R.id.marks_notification).animate().scaleX(1).scaleY(1);
+                        }
+                    });
+                }
+
+                if (sharedPreferences.getBoolean("newSpotlight", false)) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            findViewById(R.id.spotlight_notification).animate().scaleX(1).scaleY(1);
+                        }
+                    });
+                }
+
+                if (sharedPreferences.getBoolean("newReceipts", false)) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            findViewById(R.id.receipts_notification).animate().scaleX(1).scaleY(1);
+                        }
+                    });
+                }
             }
         }).start();
 

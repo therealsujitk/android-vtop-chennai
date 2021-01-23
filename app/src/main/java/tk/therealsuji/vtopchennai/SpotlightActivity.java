@@ -4,6 +4,7 @@ import android.animation.AnimatorInflater;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
@@ -235,6 +236,9 @@ public class SpotlightActivity extends AppCompatActivity {
 
                 c.close();
                 myDatabase.close();
+
+                SharedPreferences sharedPreferences = context.getSharedPreferences("tk.therealsuji.vtopchennai", Context.MODE_PRIVATE);
+                sharedPreferences.edit().putBoolean("newSpotlight", false).apply();
             }
         }).start();
     }

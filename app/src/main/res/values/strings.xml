@@ -77,6 +77,10 @@
     <string name="receipts">Receipts</string>
     <string name="receipts_description">Icon for the receipts button.</string>
 
+    <string name="campus">Campus</string>
+    <string name="directions">Directions</string>
+    <string name="directions_description">Icon for the directions button.</string>
+
     <string name="app">Application</string>
     <string name="share">Share</string>
     <string name="share_description">Icon for the share button.</string>
@@ -92,6 +96,8 @@
     <string name="sign_out_description">Icon for the sign out button.</string>
 
     <string name="cancel">Cancel</string>
+
+    <string name="notification_description">Activity has new data.</string>
 
     <string name="refreshed">Last Refreshed</string>
     <string name="refreshed_unavailable">Last Refreshed: Unavailable</string>

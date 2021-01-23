@@ -83,21 +83,6 @@
                 android:value=".AttendanceActivity" />
         </activity>
         <activity
-            android:name=".ExamsActivity"
-            android:configChanges="orientation|keyboardHidden"
-            android:label="Exam Schedule"
-            android:screenOrientation="portrait">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ExamsActivity" />
-
-            <intent-filter>
-                <action android:name="tk.therealsuji.vtopchennai.LAUNCH_EXAMS" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-        <activity
             android:name=".MessagesActivity"
             android:configChanges="orientation|keyboardHidden"
             android:label="Messages"
@@ -108,6 +93,30 @@
 
             <intent-filter>
                 <action android:name="tk.therealsuji.vtopchennai.LAUNCH_MESSAGES" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".FacultyActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:label="Faculty"
+            android:screenOrientation="portrait">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".FacultyActivity" />
+        </activity>
+        <activity
+            android:name=".ExamsActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:label="Exam Schedule"
+            android:screenOrientation="portrait">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ExamsActivity" />
+
+            <intent-filter>
+                <action android:name="tk.therealsuji.vtopchennai.LAUNCH_EXAMS" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
@@ -137,13 +146,13 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".FacultyActivity"
+            android:name=".DirectionsActivity"
             android:configChanges="orientation|keyboardHidden"
-            android:label="Faculty"
+            android:label="Directions"
             android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".FacultyActivity" />
+                android:value=".DirectionsActivity" />
         </activity>
         <activity
             android:name=".StaffActivity"
