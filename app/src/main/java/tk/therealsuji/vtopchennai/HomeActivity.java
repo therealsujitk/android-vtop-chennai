@@ -76,6 +76,11 @@ public class HomeActivity extends AppCompatActivity {
         findViewById(R.id.marks_notification).animate().scaleX(0).scaleY(0);
     }
 
+    public void openGrades(View view) {
+        startActivity(new Intent(HomeActivity.this, GradesActivity.class));
+        findViewById(R.id.grades_notification).animate().scaleX(0).scaleY(0);
+    }
+
     public void openSpotlight(View view) {
         startActivity(new Intent(HomeActivity.this, SpotlightActivity.class));
         findViewById(R.id.spotlight_notification).animate().scaleX(0).scaleY(0);

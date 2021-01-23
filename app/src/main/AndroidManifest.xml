@@ -22,6 +22,7 @@
             android:theme="@style/SplashScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -65,6 +66,7 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".TimetableActivity" />
+
             <intent-filter>
                 <action android:name="tk.therealsuji.vtopchennai.LAUNCH_TIMETABLE" />
 
@@ -115,6 +117,15 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MarksActivity" />
+        </activity>
+        <activity
+            android:name=".GradesActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:label="Grades"
+            android:screenOrientation="portrait">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".GradesActivity" />
         </activity>
         <activity
             android:name=".SpotlightActivity"
@@ -173,4 +184,5 @@
             </intent-filter>
         </receiver>
     </application>
+
 </manifest>

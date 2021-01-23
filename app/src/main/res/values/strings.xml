@@ -48,6 +48,9 @@
     <string name="upcoming">UPCOMING</string>
     <string name="ongoing">ONGOING</string>
 
+    <string name="theory">Theory</string>
+    <string name="lab">Lab</string>
+
     <string name="update_title">Update Available</string>
     <string name="update_text">A new version of VTOP Chennai has been released!</string>
     <string name="update">Update</string>
@@ -60,26 +63,28 @@
     <string name="timetable_description">Icon for the timetable button.</string>
     <string name="attendance">Attendance</string>
     <string name="attendance_description">Icon for the attendance button.</string>
-    <string name="exams">Exams</string>
-    <string name="exams_description">Icon for the exams button.</string>
     <string name="messages">Messages</string>
     <string name="messages_description">Icon for the messages button.</string>
-
-    <string name="academics">Academics</string>
-    <string name="marks">Marks</string>
-    <string name="marks_description">Icon for the marks button.</string>
-    <string name="spotlight">Spotlight</string>
-    <string name="spotlight_description">Icon for the spotlight button.</string>
     <string name="faculty">Faculty</string>
     <string name="faculty_description">Icon for the faculty button.</string>
-    <string name="staff">Staff</string>
-    <string name="staff_description">Icon for the staff button.</string>
-    <string name="receipts">Receipts</string>
-    <string name="receipts_description">Icon for the receipts button.</string>
+
+    <string name="academics">Academics</string>
+    <string name="exams">Exams</string>
+    <string name="exams_description">Icon for the exams button.</string>
+    <string name="marks">Marks</string>
+    <string name="marks_description">Icon for the marks button.</string>
+    <string name="grades">Grades</string>
+    <string name="grades_description">Icon for the grades button.</string>
+    <string name="spotlight">Spotlight</string>
+    <string name="spotlight_description">Icon for the spotlight button.</string>
 
     <string name="campus">Campus</string>
     <string name="directions">Directions</string>
     <string name="directions_description">Icon for the directions button.</string>
+    <string name="staff">Staff</string>
+    <string name="staff_description">Icon for the staff button.</string>
+    <string name="receipts">Receipts</string>
+    <string name="receipts_description">Icon for the receipts button.</string>
 
     <string name="app">Application</string>
     <string name="share">Share</string>
@@ -103,6 +108,7 @@
     <string name="refreshed_unavailable">Last Refreshed: Unavailable</string>
     <string name="about">Built by <a href="https://therealsuji.tk">@therealsujitk</a></string>
 
+
     <string name="sun">Sun</string>
     <string name="mon">Mon</string>
     <string name="tue">Tue</string>
@@ -111,17 +117,12 @@
     <string name="fri">Fri</string>
     <string name="sat">Sat</string>
 
-    <string name="theory">Theory</string>
-    <string name="lab">Lab</string>
-
 
     <string name="no_data">No Data Available</string>
     <string name="no_messages">No Messages</string>
     <string name="no_announcements">No Announcements</string>
-
     <string name="no_link">Link Unavailable</string>
     <string name="no_link_text">Sorry, there is no link attached to this announcement.</string>
-
     <string name="new_message">Looks like you do have some new messages, however <a href="https://therealsuji.tk">@therealsujitk</a> was a bit too lazy to add this feature, why don\'t you contact him and give him a piece of your mind.</string>
 
 
@@ -135,6 +136,7 @@
     <string name="proctor">Proctor</string>
     <string name="dean">Dean</string>
     <string name="hod">HOD</string>
+
 
     <string name="light">Light</string>
     <string name="dark">Dark</string>
