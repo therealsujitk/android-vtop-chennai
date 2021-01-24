@@ -47,6 +47,10 @@ public class HomeActivity extends AppCompatActivity {
     public void openTimetable(View view) {
         startActivity(new Intent(HomeActivity.this, TimetableActivity.class));
         findViewById(R.id.timetable_notification).animate().scaleX(0).scaleY(0);
+
+        if (!sharedPreferences.getBoolean("newMessages", false) && !sharedPreferences.getBoolean("newFaculty", false)) {
+            findViewById(R.id.classes_notification).animate().scaleX(0).scaleY(0);
+        }
     }
 
     public void openAttendance(View view) {
@@ -56,11 +60,19 @@ public class HomeActivity extends AppCompatActivity {
     public void openMessages(View view) {
         startActivity(new Intent(HomeActivity.this, MessagesActivity.class));
         findViewById(R.id.messages_notification).animate().scaleX(0).scaleY(0);
+
+        if (!sharedPreferences.getBoolean("newTimetable", false) && !sharedPreferences.getBoolean("newFaculty", false)) {
+            findViewById(R.id.classes_notification).animate().scaleX(0).scaleY(0);
+        }
     }
 
     public void openFaculty(View view) {
         startActivity(new Intent(HomeActivity.this, FacultyActivity.class));
         findViewById(R.id.faculty_notification).animate().scaleX(0).scaleY(0);
+
+        if (!sharedPreferences.getBoolean("newTimetable", false) && !sharedPreferences.getBoolean("newMessages", false)) {
+            findViewById(R.id.classes_notification).animate().scaleX(0).scaleY(0);
+        }
     }
 
     /*
@@ -70,21 +82,37 @@ public class HomeActivity extends AppCompatActivity {
     public void openExams(View view) {
         startActivity(new Intent(HomeActivity.this, ExamsActivity.class));
         findViewById(R.id.exams_notification).animate().scaleX(0).scaleY(0);
+
+        if (!sharedPreferences.getBoolean("newMarks", false) && !sharedPreferences.getBoolean("newGrades", false) && !sharedPreferences.getBoolean("newSpotlight", false)) {
+            findViewById(R.id.academics_notification).animate().scaleX(0).scaleY(0);
+        }
     }
 
     public void openMarks(View view) {
         startActivity(new Intent(HomeActivity.this, MarksActivity.class));
         findViewById(R.id.marks_notification).animate().scaleX(0).scaleY(0);
+
+        if (!sharedPreferences.getBoolean("newExams", false) && !sharedPreferences.getBoolean("newGrades", false) && !sharedPreferences.getBoolean("newSpotlight", false)) {
+            findViewById(R.id.academics_notification).animate().scaleX(0).scaleY(0);
+        }
     }
 
     public void openGrades(View view) {
         startActivity(new Intent(HomeActivity.this, GradesActivity.class));
         findViewById(R.id.grades_notification).animate().scaleX(0).scaleY(0);
+
+        if (!sharedPreferences.getBoolean("newExams", false) && !sharedPreferences.getBoolean("newMarks", false) && !sharedPreferences.getBoolean("newSpotlight", false)) {
+            findViewById(R.id.academics_notification).animate().scaleX(0).scaleY(0);
+        }
     }
 
     public void openSpotlight(View view) {
         startActivity(new Intent(HomeActivity.this, SpotlightActivity.class));
         findViewById(R.id.spotlight_notification).animate().scaleX(0).scaleY(0);
+
+        if (!sharedPreferences.getBoolean("newExams", false) && !sharedPreferences.getBoolean("newMarks", false) && !sharedPreferences.getBoolean("newGrades", false)) {
+            findViewById(R.id.academics_notification).animate().scaleX(0).scaleY(0);
+        }
     }
 
     /*
@@ -102,11 +130,19 @@ public class HomeActivity extends AppCompatActivity {
     public void openProctorMessages(View view) {
         startActivity(new Intent(HomeActivity.this, ProctorActivity.class));
         findViewById(R.id.proctor_messages_notification).animate().scaleX(0).scaleY(0);
+
+        if (!sharedPreferences.getBoolean("newReceipts", false)) {
+            findViewById(R.id.campus_notification).animate().scaleX(0).scaleY(0);
+        }
     }
 
     public void openReceipts(View view) {
         startActivity(new Intent(HomeActivity.this, ReceiptsActivity.class));
         findViewById(R.id.receipts_notification).animate().scaleX(0).scaleY(0);
+
+        if (!sharedPreferences.getBoolean("newProctorMessages", false)) {
+            findViewById(R.id.campus_notification).animate().scaleX(0).scaleY(0);
+        }
     }
 
     /*
@@ -897,7 +933,10 @@ public class HomeActivity extends AppCompatActivity {
                 lab.close();
                 myDatabase.close();
 
+                boolean classesFlag = false;
+
                 if (sharedPreferences.getBoolean("newTimetable", false)) {
+                    classesFlag = true;
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -916,6 +955,7 @@ public class HomeActivity extends AppCompatActivity {
                 }
 
                 if (sharedPreferences.getBoolean("newMessages", false)) {
+                    classesFlag = true;
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -925,6 +965,7 @@ public class HomeActivity extends AppCompatActivity {
                 }
 
                 if (sharedPreferences.getBoolean("newFaculty", false)) {
+                    classesFlag = true;
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -933,8 +974,20 @@ public class HomeActivity extends AppCompatActivity {
                     });
                 }
 
+                if (classesFlag) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            findViewById(R.id.classes_notification).animate().scaleX(1).scaleY(1);
+                        }
+                    });
+                }
+
+
+                boolean academicsFlag = false;
 
                 if (sharedPreferences.getBoolean("newExams", false)) {
+                    academicsFlag = true;
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -944,6 +997,7 @@ public class HomeActivity extends AppCompatActivity {
                 }
 
                 if (sharedPreferences.getBoolean("newMarks", false)) {
+                    academicsFlag = true;
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -953,6 +1007,7 @@ public class HomeActivity extends AppCompatActivity {
                 }
 
                 if (sharedPreferences.getBoolean("newSpotlight", false)) {
+                    academicsFlag = true;
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -961,7 +1016,20 @@ public class HomeActivity extends AppCompatActivity {
                     });
                 }
 
+                if (academicsFlag) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            findViewById(R.id.academics_notification).animate().scaleX(1).scaleY(1);
+                        }
+                    });
+                }
+
+
+                boolean campusFlag = false;
+
                 if (sharedPreferences.getBoolean("newProctorMessages", false)) {
+                    campusFlag = true;
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -971,10 +1039,20 @@ public class HomeActivity extends AppCompatActivity {
                 }
 
                 if (sharedPreferences.getBoolean("newReceipts", false)) {
+                    campusFlag = true;
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             findViewById(R.id.receipts_notification).animate().scaleX(1).scaleY(1);
+                        }
+                    });
+                }
+
+                if (campusFlag) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            findViewById(R.id.campus_notification).animate().scaleX(1).scaleY(1);
                         }
                     });
                 }

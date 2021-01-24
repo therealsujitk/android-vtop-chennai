@@ -137,6 +137,22 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/container" />
 
+        <ImageView
+            android:id="@+id/classes_notification"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:contentDescription="@string/notification_description"
+            android:scaleX="0"
+            android:scaleY="0"
+            android:src="@drawable/ic_notification_dot"
+            android:stateListAnimator="@animator/item_elevation"
+            app:layout_constraintBottom_toTopOf="@+id/classes"
+            app:layout_constraintStart_toEndOf="@+id/classesHeading"
+            app:layout_constraintTop_toBottomOf="@+id/container"
+            app:tint="@color/colorPrimaryTransparent" />
+
         <HorizontalScrollView
             android:id="@+id/classes"
             android:layout_width="match_parent"
@@ -378,6 +394,22 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/classes" />
 
+        <ImageView
+            android:id="@+id/academics_notification"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:contentDescription="@string/notification_description"
+            android:scaleX="0"
+            android:scaleY="0"
+            android:src="@drawable/ic_notification_dot"
+            android:stateListAnimator="@animator/item_elevation"
+            app:layout_constraintBottom_toTopOf="@+id/academics"
+            app:layout_constraintStart_toEndOf="@+id/academicsHeading"
+            app:layout_constraintTop_toBottomOf="@+id/classes"
+            app:tint="@color/colorPrimaryTransparent" />
+
         <HorizontalScrollView
             android:id="@+id/academics"
             android:layout_width="match_parent"
@@ -618,6 +650,22 @@
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/academics" />
+
+        <ImageView
+            android:id="@+id/campus_notification"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:contentDescription="@string/notification_description"
+            android:scaleX="0"
+            android:scaleY="0"
+            android:src="@drawable/ic_notification_dot"
+            android:stateListAnimator="@animator/item_elevation"
+            app:layout_constraintBottom_toTopOf="@+id/campus"
+            app:layout_constraintStart_toEndOf="@+id/campusHeading"
+            app:layout_constraintTop_toBottomOf="@+id/academics"
+            app:tint="@color/colorPrimaryTransparent" />
 
         <HorizontalScrollView
             android:id="@+id/campus"
