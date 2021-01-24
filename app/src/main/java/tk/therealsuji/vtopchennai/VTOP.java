@@ -521,6 +521,7 @@ public class VTOP {
                             }
 
                             sharedPreferences.edit().putBoolean("newTimetable", false).apply();
+                            sharedPreferences.edit().putBoolean("newFaculty", false).apply();
                             sharedPreferences.edit().putInt("alarmCount", 0).apply();
 
                             ((Activity) context).runOnUiThread(new Runnable() {
