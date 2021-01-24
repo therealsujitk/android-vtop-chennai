@@ -674,9 +674,10 @@ public class VTOP {
 
                                 if (alarmCount != sharedPreferences.getInt("timetableCount", 0)) {
                                     sharedPreferences.edit().putInt("timetableCount", alarmCount).apply();
+                                    sharedPreferences.edit().putInt("alarmCount", alarmCount).apply();
+                                    sharedPreferences.edit().putBoolean("newTimetable", true).apply();
                                 }
 
-                                sharedPreferences.edit().putInt("alarmCount", alarmCount).apply();
                                 ((Activity) context).runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {

@@ -63,7 +63,7 @@ public class DownloadActivity extends AppCompatActivity {
         Spinner selectSemester = findViewById(R.id.selectSemester);
         String semester = selectSemester.getSelectedItem().toString();
 
-        if (!sharedPreferences.getString("semester", "null").equals(semester)) {
+        if (!sharedPreferences.getString("semester", "null").equals(semester.toLowerCase())) {
             sharedPreferences.edit().putInt("timetableCount", 0).apply();
             sharedPreferences.edit().putInt("facultyCount", 0).apply();
         }
