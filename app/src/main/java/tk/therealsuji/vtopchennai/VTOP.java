@@ -1860,7 +1860,7 @@ public class VTOP {
                 "               }" +
                 "               var temp = {};" +
                 "               for(var j = 0; j < announcements.length; ++j) {" +
-                "                   temp[j + 'announcement'] = announcements[j].innerText.trim().replaceAll('\\t','').replaceAll('\\n','');" +
+                "                   temp[j + 'announcement'] = announcements[j].innerText.trim().replaceAll('\\t','').replaceAll('\\n',' ');" +
                 "                   if(!announcements[j].getElementsByTagName('a').length) {" +
                 "                       temp[j + 'link'] = 'null';" +
                 "                   } else {" +
