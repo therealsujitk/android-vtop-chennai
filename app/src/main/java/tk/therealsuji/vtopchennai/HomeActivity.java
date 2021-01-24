@@ -60,6 +60,7 @@ public class HomeActivity extends AppCompatActivity {
 
     public void openFaculty(View view) {
         startActivity(new Intent(HomeActivity.this, FacultyActivity.class));
+        findViewById(R.id.faculty_notification).animate().scaleX(0).scaleY(0);
     }
 
     /*
@@ -919,6 +920,15 @@ public class HomeActivity extends AppCompatActivity {
                         @Override
                         public void run() {
                             findViewById(R.id.messages_notification).animate().scaleX(1).scaleY(1);
+                        }
+                    });
+                }
+
+                if (sharedPreferences.getBoolean("newFaculty", false)) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            findViewById(R.id.faculty_notification).animate().scaleX(1).scaleY(1);
                         }
                     });
                 }

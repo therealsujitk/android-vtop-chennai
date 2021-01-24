@@ -1,6 +1,7 @@
 package tk.therealsuji.vtopchennai;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Typeface;
@@ -157,6 +158,9 @@ public class FacultyActivity extends AppCompatActivity {
 
                 c.close();
                 myDatabase.close();
+
+                SharedPreferences sharedPreferences = context.getSharedPreferences("tk.therealsuji.vtopchennai", Context.MODE_PRIVATE);
+                sharedPreferences.edit().putBoolean("newFaculty", false).apply();
             }
         }).start();
     }

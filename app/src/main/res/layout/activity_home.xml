@@ -311,39 +311,57 @@
                         app:tint="@color/colorPrimaryTransparent" />
                 </RelativeLayout>
 
-                <LinearLayout
-                    android:layout_width="125dp"
-                    android:layout_height="125dp"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginEnd="20dp"
-                    android:layout_marginBottom="10dp"
-                    android:background="@drawable/button_card"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:gravity="center_vertical"
-                    android:onClick="openFaculty"
-                    android:orientation="vertical"
-                    android:stateListAnimator="@animator/item_elevation">
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:layout_width="125dp"
+                        android:layout_height="125dp"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginEnd="20dp"
+                        android:layout_marginBottom="10dp"
+                        android:background="@drawable/button_card"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:gravity="center_vertical"
+                        android:onClick="openFaculty"
+                        android:orientation="vertical"
+                        android:stateListAnimator="@animator/item_elevation">
+
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:clickable="false"
+                            android:contentDescription="@string/faculty_description"
+                            app:srcCompat="@drawable/ic_faculty"
+                            app:tint="@color/colorPrimary" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:clickable="false"
+                            android:text="@string/faculty"
+                            android:textAlignment="center"
+                            android:textColor="@color/colorPrimary"
+                            android:textStyle="bold" />
+                    </LinearLayout>
 
                     <ImageView
-                        android:layout_width="match_parent"
+                        android:id="@+id/faculty_notification"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:clickable="false"
-                        android:contentDescription="@string/faculty_description"
-                        app:srcCompat="@drawable/ic_faculty"
-                        app:tint="@color/colorPrimary" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp"
-                        android:clickable="false"
-                        android:text="@string/faculty"
-                        android:textAlignment="center"
-                        android:textColor="@color/colorPrimary"
-                        android:textStyle="bold" />
-                </LinearLayout>
+                        android:layout_marginStart="125dp"
+                        android:layout_marginTop="10dp"
+                        android:contentDescription="@string/notification_description"
+                        android:scaleX="0"
+                        android:scaleY="0"
+                        android:src="@drawable/ic_notification_dot"
+                        android:stateListAnimator="@animator/item_elevation"
+                        app:tint="@color/colorPrimaryTransparent" />
+                </RelativeLayout>
             </LinearLayout>
         </HorizontalScrollView>
 

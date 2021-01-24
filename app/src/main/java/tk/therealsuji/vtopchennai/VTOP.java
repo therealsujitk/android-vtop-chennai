@@ -754,6 +754,9 @@ public class VTOP {
                                 e.printStackTrace();
                                 error();
                             }
+
+                            sharedPreferences.edit().putInt("facultyCount", 0).apply();
+                            sharedPreferences.edit().putBoolean("newFaculty", false).apply();
                         }
                     }).start();
                 } else {
@@ -766,12 +769,18 @@ public class VTOP {
                                 myDatabase.execSQL("DROP TABLE IF EXISTS faculty");
                                 myDatabase.execSQL("CREATE TABLE IF NOT EXISTS faculty (id INTEGER PRIMARY KEY, course VARCHAR, faculty VARCHAR)");
 
-                                for (int i = 0; i < myObj.length(); ++i) {
+                                int i;
+                                for (i = 0; i < myObj.length(); ++i) {
                                     JSONObject tempObj = new JSONObject(myObj.getString(Integer.toString(i)));
                                     String course = tempObj.getString("course");
                                     String faculty = tempObj.getString("faculty");
 
                                     myDatabase.execSQL("INSERT INTO faculty (course, faculty) VALUES('" + course + "', '" + faculty + "')");
+                                }
+
+                                if (i != sharedPreferences.getInt("facultyCount", 0)) {
+                                    sharedPreferences.edit().putInt("facultyCount", i).apply();
+                                    sharedPreferences.edit().putBoolean("newFaculty", true).apply();
                                 }
 
                                 ((Activity) context).runOnUiThread(new Runnable() {
