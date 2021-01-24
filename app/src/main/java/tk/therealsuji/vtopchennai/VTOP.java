@@ -521,6 +521,7 @@ public class VTOP {
                             }
 
                             sharedPreferences.edit().putBoolean("newTimetable", false).apply();
+                            sharedPreferences.edit().putInt("timetableCount", 0).apply();
                             sharedPreferences.edit().putInt("alarmCount", 0).apply();
 
                             ((Activity) context).runOnUiThread(new Runnable() {
@@ -671,8 +672,8 @@ public class VTOP {
                                     alarmManager.cancel(pendingIntent);
                                 }
 
-                                if (alarmCount != sharedPreferences.getInt("alarmCount", 0)) {
-                                    sharedPreferences.edit().putBoolean("newTimetable", true).apply();
+                                if (alarmCount != sharedPreferences.getInt("timetableCount", 0)) {
+                                    sharedPreferences.edit().putInt("timetableCount", alarmCount).apply();
                                 }
 
                                 sharedPreferences.edit().putInt("alarmCount", alarmCount).apply();

@@ -62,6 +62,11 @@ public class DownloadActivity extends AppCompatActivity {
     public void downloadTimetable(View view) {
         Spinner selectSemester = findViewById(R.id.selectSemester);
         String semester = selectSemester.getSelectedItem().toString();
+
+        if (!sharedPreferences.getString("semester", "null").equals(semester)) {
+            sharedPreferences.edit().putInt("timetableCount", 0).apply();
+        }
+
         sharedPreferences.edit().putString("semester", semester.toLowerCase()).apply();
 
         vtop.selectTimetable();
