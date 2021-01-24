@@ -521,7 +521,6 @@ public class VTOP {
                             }
 
                             sharedPreferences.edit().putBoolean("newTimetable", false).apply();
-                            sharedPreferences.edit().putInt("timetableCount", 0).apply();
                             sharedPreferences.edit().putInt("alarmCount", 0).apply();
 
                             ((Activity) context).runOnUiThread(new Runnable() {
@@ -672,11 +671,7 @@ public class VTOP {
                                     alarmManager.cancel(pendingIntent);
                                 }
 
-                                if (alarmCount != sharedPreferences.getInt("timetableCount", 0)) {
-                                    sharedPreferences.edit().putInt("timetableCount", alarmCount).apply();
-                                    sharedPreferences.edit().putInt("alarmCount", alarmCount).apply();
-                                    sharedPreferences.edit().putBoolean("newTimetable", true).apply();
-                                }
+                                sharedPreferences.edit().putInt("alarmCount", alarmCount).apply();
 
                                 ((Activity) context).runOnUiThread(new Runnable() {
                                     @Override
@@ -756,7 +751,6 @@ public class VTOP {
                                 error();
                             }
 
-                            sharedPreferences.edit().putInt("facultyCount", 0).apply();
                             sharedPreferences.edit().putBoolean("newFaculty", false).apply();
                         }
                     }).start();
@@ -770,18 +764,12 @@ public class VTOP {
                                 myDatabase.execSQL("DROP TABLE IF EXISTS faculty");
                                 myDatabase.execSQL("CREATE TABLE IF NOT EXISTS faculty (id INTEGER PRIMARY KEY, course VARCHAR, faculty VARCHAR)");
 
-                                int i;
-                                for (i = 0; i < myObj.length(); ++i) {
+                                for (int i = 0; i < myObj.length(); ++i) {
                                     JSONObject tempObj = new JSONObject(myObj.getString(Integer.toString(i)));
                                     String course = tempObj.getString("course");
                                     String faculty = tempObj.getString("faculty");
 
                                     myDatabase.execSQL("INSERT INTO faculty (course, faculty) VALUES('" + course + "', '" + faculty + "')");
-                                }
-
-                                if (i != sharedPreferences.getInt("facultyCount", 0)) {
-                                    sharedPreferences.edit().putInt("facultyCount", i).apply();
-                                    sharedPreferences.edit().putBoolean("newFaculty", true).apply();
                                 }
 
                                 ((Activity) context).runOnUiThread(new Runnable() {
