@@ -133,6 +133,36 @@
     <string name="average">Class Average</string>
 
 
+    <string name="hostels">Hostels</string>
+    <string name="food">Food</string>
+    <string name="atm">ATM\'s</string>
+    <string name="amenities">Amenities</string>
+    <string name="admin_block">Admin Block</string>
+    <string name="academic_block_1">Academic Block 1</string>
+    <string name="academic_block_2">Academic Block 2</string>
+    <string name="alpha_block">Alpha Block</string>
+    <string name="library">Library</string>
+    <string name="boys_hostel_a">Boys Hostel A Block</string>
+    <string name="boys_hostel_b">Boys Hostel B Block</string>
+    <string name="boys_hostel_c">Boys Hostel C Block</string>
+    <string name="girls_hostel">Girls Hostel</string>
+    <string name="aavin">Aavin Milk Parlour</string>
+    <string name="crcl_food">CRCL Food Park</string>
+    <string name="dominos">Domino\'s Pizza</string>
+    <string name="food_court">Food Court</string>
+    <string name="gazebo">Gazebo</string>
+    <string name="lassi">Lassi House</string>
+    <string name="quality_taste">Quality And Taste</string>
+    <string name="kvb_bank">KVB Bank</string>
+    <string name="india_bank">India Bank</string>
+    <string name="new_clock">New Clock Tower</string>
+    <string name="north_square">North Square</string>
+    <string name="vmart">V-Mart</string>
+    <string name="vit_fun">VIT Fun Park</string>
+    <string name="vit_garden">VIT Garden</string>
+    <string name="vit_pond">VIT Pond</string>
+
+
     <string name="proctor">Proctor</string>
     <string name="dean">Dean</string>
     <string name="hod">HOD</string>
