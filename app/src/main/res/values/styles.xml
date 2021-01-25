@@ -18,4 +18,14 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
+
+    <style name="AppTheme.MarksTheme">
+        <item name="actionOverflowButtonStyle">@style/FilterButtonOverflow</item>
+    </style>
+
+    <style name="FilterButtonOverflow" parent="android:style/Widget.Holo.Light.ActionButton.Overflow">
+        <item name="android:src">@drawable/ic_filter</item>
+        <item name="android:background">?android:attr/actionBarItemBackground</item>
+        <item name="android:contentDescription">Filter Marks</item>
+    </style>
 </resources>

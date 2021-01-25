@@ -131,6 +131,8 @@
     <string name="weightage">Weightage Score</string>
     <string name="status">Status</string>
     <string name="average">Class Average</string>
+    <string name="filter_by_course">Filter By Course</string>
+    <string name="filter_by_title">Filter By Title</string>
 
 
     <string name="hostels">Hostels</string>

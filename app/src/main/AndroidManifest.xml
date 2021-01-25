@@ -113,6 +113,7 @@
             android:name=".MarksActivity"
             android:configChanges="orientation|keyboardHidden"
             android:label="Marks"
+            android:theme="@style/AppTheme.MarksTheme"
             android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
