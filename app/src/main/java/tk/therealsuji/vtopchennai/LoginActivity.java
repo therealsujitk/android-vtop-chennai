@@ -9,6 +9,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -75,6 +76,8 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         final EditText username = findViewById(R.id.username);
+        final EditText password = findViewById(R.id.password);
+
         username.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean b) {
@@ -85,8 +88,17 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
         });
+        username.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_ENTER) {
+                    password.requestFocus();
+                }
 
-        final EditText password = findViewById(R.id.password);
+                return false;
+            }
+        });
+
         password.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean b) {
@@ -95,6 +107,16 @@ public class LoginActivity extends AppCompatActivity {
                 } else {
                     password.animate().scaleX(1f).scaleY(1f).setDuration(200);
                 }
+            }
+        });
+        password.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_ENTER) {
+                    signIn(null);
+                }
+
+                return false;
             }
         });
 

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -109,6 +110,17 @@ public class DownloadActivity extends AppCompatActivity {
             @Override
             public void run() {
                 vtop = new VTOP(context);
+            }
+        });
+
+        findViewById(R.id.captcha).setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_ENTER) {
+                    signIn(null);
+                }
+
+                return false;
             }
         });
 
