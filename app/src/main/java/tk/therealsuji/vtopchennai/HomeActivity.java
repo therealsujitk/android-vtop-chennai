@@ -83,7 +83,7 @@ public class HomeActivity extends AppCompatActivity {
         startActivity(new Intent(HomeActivity.this, ExamsActivity.class));
         findViewById(R.id.exams_notification).animate().scaleX(0).scaleY(0);
 
-        if (!sharedPreferences.getBoolean("newMarks", false) && !sharedPreferences.getBoolean("newGrades", false) && !sharedPreferences.getBoolean("newSpotlight", false)) {
+        if (sharedPreferences.getString("newMarks", "{}}").equals("{}") && !sharedPreferences.getBoolean("newGrades", false) && !sharedPreferences.getBoolean("newSpotlight", false)) {
             findViewById(R.id.academics_notification).animate().scaleX(0).scaleY(0);
         }
     }
@@ -101,7 +101,7 @@ public class HomeActivity extends AppCompatActivity {
         startActivity(new Intent(HomeActivity.this, GradesActivity.class));
         findViewById(R.id.grades_notification).animate().scaleX(0).scaleY(0);
 
-        if (!sharedPreferences.getBoolean("newExams", false) && !sharedPreferences.getBoolean("newMarks", false) && !sharedPreferences.getBoolean("newSpotlight", false)) {
+        if (!sharedPreferences.getBoolean("newExams", false) && sharedPreferences.getString("newMarks", "{}}").equals("{}") && !sharedPreferences.getBoolean("newSpotlight", false)) {
             findViewById(R.id.academics_notification).animate().scaleX(0).scaleY(0);
         }
     }
@@ -110,7 +110,7 @@ public class HomeActivity extends AppCompatActivity {
         startActivity(new Intent(HomeActivity.this, SpotlightActivity.class));
         findViewById(R.id.spotlight_notification).animate().scaleX(0).scaleY(0);
 
-        if (!sharedPreferences.getBoolean("newExams", false) && !sharedPreferences.getBoolean("newMarks", false) && !sharedPreferences.getBoolean("newGrades", false)) {
+        if (!sharedPreferences.getBoolean("newExams", false) && sharedPreferences.getString("newMarks", "{}}").equals("{}") && !sharedPreferences.getBoolean("newGrades", false)) {
             findViewById(R.id.academics_notification).animate().scaleX(0).scaleY(0);
         }
     }
@@ -996,7 +996,7 @@ public class HomeActivity extends AppCompatActivity {
                     });
                 }
 
-                if (sharedPreferences.getBoolean("newMarks", false)) {
+                if (!sharedPreferences.getString("newMarks", "{}}").equals("{}")) {
                     academicsFlag = true;
                     runOnUiThread(new Runnable() {
                         @Override

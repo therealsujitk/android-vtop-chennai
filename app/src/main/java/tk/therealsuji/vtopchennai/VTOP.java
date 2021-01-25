@@ -7,6 +7,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -1478,8 +1479,8 @@ public class VTOP {
                                 error();
                             }
 
-                            sharedPreferences.edit().putBoolean("newMarks", false).apply();
-                            sharedPreferences.edit().putInt("marksCount", 0).apply();
+                            sharedPreferences.edit().remove("newMarks").apply();
+                            sharedPreferences.edit().remove("marksCount").apply();
                         }
                     }).start();
                 } else {
@@ -1489,11 +1490,11 @@ public class VTOP {
                             try {
                                 JSONObject myObj = new JSONObject(obj);
 
-                                myDatabase.execSQL("DROP TABLE IF EXISTS marks");
                                 myDatabase.execSQL("CREATE TABLE IF NOT EXISTS marks (id INTEGER PRIMARY KEY, course VARCHAR, type VARCHAR, title VARCHAR, score VARCHAR, status VARCHAR, weightage VARCHAR, average VARCHAR, posted VARCHAR)");
+                                myDatabase.execSQL("DROP TABLE IF EXISTS marks_new");
+                                myDatabase.execSQL("CREATE TABLE IF NOT EXISTS marks_new (id INTEGER PRIMARY KEY, course VARCHAR, type VARCHAR, title VARCHAR, score VARCHAR, status VARCHAR, weightage VARCHAR, average VARCHAR, posted VARCHAR)");
 
-                                int i;
-                                for (i = 0; i < myObj.length(); ++i) {
+                                for (int i = 0; i < myObj.length(); ++i) {
                                     JSONObject tempObj = new JSONObject(myObj.getString(Integer.toString(i)));
                                     String course = tempObj.getString("course");
                                     String type = tempObj.getString("type");
@@ -1504,13 +1505,61 @@ public class VTOP {
                                     String average = tempObj.getString("average");
                                     String posted = tempObj.getString("posted");
 
-                                    myDatabase.execSQL("INSERT INTO marks (course, type, title, score, status, weightage, average, posted) VALUES('" + course + "', '" + type + "', '" + title + "', '" + score + "', '" + status + "', '" + weightage + "', '" + average + "', '" + posted + "')");
+                                    myDatabase.execSQL("INSERT INTO marks_new (course, type, title, score, status, weightage, average, posted) VALUES('" + course + "', '" + type + "', '" + title + "', '" + score + "', '" + status + "', '" + weightage + "', '" + average + "', '" + posted + "')");
                                 }
 
-                                if (i != sharedPreferences.getInt("marksCount", 0)) {
-                                    sharedPreferences.edit().putBoolean("newMarks", true).apply();
-                                    sharedPreferences.edit().putInt("marksCount", i).apply();
+                                Cursor delete = myDatabase.rawQuery("SELECT id FROM marks WHERE (course, title, type) NOT IN (SELECT course, title, type FROM marks_new)", null);
+
+                                int deleteIndex = delete.getColumnIndex("id");
+                                delete.moveToFirst();
+
+                                String newMarksString = sharedPreferences.getString("newMarks", "{}");
+                                JSONObject newMarks = new JSONObject(newMarksString);
+
+                                if (!newMarksString.equals("{}")) {
+                                    for (int i = 0; i < delete.getCount(); ++i, delete.moveToNext()) {
+                                        String id = delete.getString(deleteIndex);
+
+                                        if (newMarks.has(id)) {
+                                            newMarks.remove(id);
+                                        }
+                                    }
                                 }
+
+                                delete.close();
+
+                                Iterator<?> keys = newMarks.keys();
+
+                                JSONObject tempObj = new JSONObject(newMarks.toString());
+                                while (keys.hasNext()) {
+                                    String oldID = (String) keys.next();
+                                    Cursor update = myDatabase.rawQuery("SELECT id FROM marks_new WHERE (course, title, type) IN (SELECT course, title, type FROM marks WHERE id = " + oldID + ")", null);
+                                    update.moveToFirst();
+                                    String newID = update.getString(update.getColumnIndex("id"));
+
+                                    tempObj.remove(oldID);
+                                    tempObj.put(newID, true);
+
+                                    update.close();
+                                }
+                                newMarks = new JSONObject(tempObj.toString());
+
+                                Cursor add = myDatabase.rawQuery("SELECT id FROM marks_new WHERE (course, title, type) NOT IN (SELECT course, title, type FROM marks)", null);
+
+                                int addIndex = add.getColumnIndex("id");
+                                add.moveToFirst();
+
+                                for (int i = 0; i < add.getCount(); ++i, add.moveToNext()) {
+                                    String id = add.getString(addIndex);
+                                    newMarks.put(id, true);
+                                }
+
+                                add.close();
+
+                                myDatabase.execSQL("DROP TABLE IF EXISTS marks");
+                                myDatabase.execSQL("ALTER TABLE marks_new RENAME TO marks");
+
+                                sharedPreferences.edit().putString("newMarks", newMarks.toString()).apply();
 
                                 ((Activity) context).runOnUiThread(new Runnable() {
                                     @Override
