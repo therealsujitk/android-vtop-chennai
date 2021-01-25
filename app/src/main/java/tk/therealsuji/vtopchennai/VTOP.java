@@ -1953,8 +1953,7 @@ public class VTOP {
                                 error();
                             }
 
-                            sharedPreferences.edit().putBoolean("newSpotlight", false).apply();
-                            sharedPreferences.edit().putInt("spotlightCount", 0).apply();
+                            sharedPreferences.edit().remove("newSpotlight").apply();
                         }
                     }).start();
                 } else {
@@ -1967,12 +1966,12 @@ public class VTOP {
                             try {
                                 JSONObject myObj = new JSONObject(obj);
 
-                                myDatabase.execSQL("DROP TABLE IF EXISTS spotlight");
                                 myDatabase.execSQL("CREATE TABLE IF NOT EXISTS spotlight (id INTEGER PRIMARY KEY, category VARCHAR, announcement VARCHAR, link VARCHAR)");
+                                myDatabase.execSQL("DROP TABLE IF EXISTS spotlight_new");
+                                myDatabase.execSQL("CREATE TABLE IF NOT EXISTS spotlight_new (id INTEGER PRIMARY KEY, category VARCHAR, announcement VARCHAR, link VARCHAR)");
 
                                 Iterator<?> keys = myObj.keys();
 
-                                int count = 0;
                                 while (keys.hasNext()) {
                                     String category = (String) keys.next();
                                     JSONObject tempObj = new JSONObject(myObj.getString(category));
@@ -1981,15 +1980,20 @@ public class VTOP {
                                         String announcement = tempObj.getString(i + "announcement");
                                         String link = tempObj.getString(i + "link");
 
-                                        myDatabase.execSQL("INSERT INTO spotlight (category, announcement, link) VALUES('" + category + "', '" + announcement + "', '" + link + "')");
-                                        ++count;
+                                        myDatabase.execSQL("INSERT INTO spotlight_new (category, announcement, link) VALUES('" + category + "', '" + announcement + "', '" + link + "')");
                                     }
                                 }
 
-                                if (count > sharedPreferences.getInt("spotlightCount", 0)) {
+                                Cursor newSpotlight = myDatabase.rawQuery("SELECT id FROM spotlight_new WHERE announcement NOT IN (SELECT announcement FROM spotlight)", null);
+
+                                if (newSpotlight.getCount() > 0) {
                                     sharedPreferences.edit().putBoolean("newSpotlight", true).apply();
-                                    sharedPreferences.edit().putInt("spotlightCount", count).apply();
                                 }
+
+                                newSpotlight.close();
+
+                                myDatabase.execSQL("DROP TABLE spotlight");
+                                myDatabase.execSQL("ALTER TABLE spotlight_new RENAME TO spotlight");
 
                                 ((Activity) context).runOnUiThread(new Runnable() {
                                     @Override

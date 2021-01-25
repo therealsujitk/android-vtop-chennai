@@ -238,7 +238,7 @@ public class SpotlightActivity extends AppCompatActivity {
                 myDatabase.close();
 
                 SharedPreferences sharedPreferences = context.getSharedPreferences("tk.therealsuji.vtopchennai", Context.MODE_PRIVATE);
-                sharedPreferences.edit().putBoolean("newSpotlight", false).apply();
+                sharedPreferences.edit().remove("newSpotlight").apply();
             }
         }).start();
     }
