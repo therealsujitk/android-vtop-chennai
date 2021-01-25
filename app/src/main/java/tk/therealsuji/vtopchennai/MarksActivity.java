@@ -2,6 +2,7 @@ package tk.therealsuji.vtopchennai;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Typeface;
@@ -13,7 +14,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.HorizontalScrollView;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -21,6 +24,10 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
+import androidx.core.widget.ImageViewCompat;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -32,6 +39,7 @@ public class MarksActivity extends AppCompatActivity {
     LinearLayout markButtons;
     Context context;
     float pixelDensity;
+    int screenWidth;
     SharedPreferences sharedPreferences;
 
     public void setMarks(View view) {
@@ -46,9 +54,7 @@ public class MarksActivity extends AppCompatActivity {
         buttons.get(index).setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary_selected));
         marks.addView(markViews.get(index));
 
-        DisplayMetrics displayMetrics = new DisplayMetrics();
-        this.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-        int halfWidth = displayMetrics.widthPixels / 2;
+        int halfWidth = screenWidth / 2;
         float location = 0;
         for (int i = 0; i < index; ++i) {
             location += 10 * pixelDensity + (float) buttons.get(i).getWidth();
@@ -74,6 +80,13 @@ public class MarksActivity extends AppCompatActivity {
             @Override
             public void run() {
                 SQLiteDatabase myDatabase = context.openOrCreateDatabase("vtop", Context.MODE_PRIVATE, null);
+
+                JSONObject newMarks = new JSONObject();
+                try {
+                    newMarks = new JSONObject(sharedPreferences.getString("newMarks", "{}"));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
 
                 myDatabase.execSQL("CREATE TABLE IF NOT EXISTS marks (id INT(3) PRIMARY KEY, course VARCHAR, type VARCHAR, title VARCHAR, score VARCHAR, status VARCHAR, weightage VARCHAR, average VARCHAR, posted VARCHAR)");
                 Cursor c = myDatabase.rawQuery("SELECT course FROM marks GROUP BY course", null);
@@ -144,6 +157,7 @@ public class MarksActivity extends AppCompatActivity {
 
                     Cursor s = myDatabase.rawQuery("SELECT * FROM marks WHERE course = '" + course + "' ORDER BY type DESC", null);
 
+                    int idIndex = s.getColumnIndex("id");
                     int titleIndex = s.getColumnIndex("title");
                     int typeIndex = s.getColumnIndex("type");
                     int scoreIndex = s.getColumnIndex("score");
@@ -252,7 +266,39 @@ public class MarksActivity extends AppCompatActivity {
                         /*
                             Finally adding the main block to the view
                          */
-                        markView.addView(block);
+                        if (newMarks.has(s.getString(idIndex))) {
+                            RelativeLayout container = new RelativeLayout(context);
+                            RelativeLayout.LayoutParams containerParams = new RelativeLayout.LayoutParams(
+                                    RelativeLayout.LayoutParams.WRAP_CONTENT,
+                                    RelativeLayout.LayoutParams.WRAP_CONTENT
+                            );
+                            container.setLayoutParams(containerParams);
+
+                            container.addView(block);
+
+                            int marginStart = (int) (screenWidth - 30 * pixelDensity);
+
+                            ImageView notification = new ImageView(context);
+                            LinearLayout.LayoutParams notificationParams = new LinearLayout.LayoutParams(
+                                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                                    LinearLayout.LayoutParams.WRAP_CONTENT
+                            );
+                            notificationParams.setMarginStart(marginStart);
+                            notificationParams.setMargins(0, (int) (5 * pixelDensity), 0, 0);
+                            notification.setLayoutParams(notificationParams);
+                            notification.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_notification_dot));
+                            ImageViewCompat.setImageTintList(notification, ColorStateList.valueOf(getColor(R.color.colorPrimaryTransparent)));
+                            notification.setScaleX(0);
+                            notification.setScaleY(0);
+
+                            notification.animate().scaleX(1).scaleY(1);
+
+                            container.addView(notification);
+
+                            markView.addView(container);
+                        } else {
+                            markView.addView(block);
+                        }
                     }
 
                     if (i == 0) {
@@ -290,6 +336,13 @@ public class MarksActivity extends AppCompatActivity {
             @Override
             public void run() {
                 SQLiteDatabase myDatabase = context.openOrCreateDatabase("vtop", Context.MODE_PRIVATE, null);
+
+                JSONObject newMarks = new JSONObject();
+                try {
+                    newMarks = new JSONObject(sharedPreferences.getString("newMarks", "{}"));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
 
                 myDatabase.execSQL("CREATE TABLE IF NOT EXISTS marks (id INT(3) PRIMARY KEY, course VARCHAR, type VARCHAR, title VARCHAR, score VARCHAR, status VARCHAR, weightage VARCHAR, average VARCHAR, posted VARCHAR)");
                 Cursor c = myDatabase.rawQuery("SELECT title FROM marks GROUP BY title", null);
@@ -360,6 +413,7 @@ public class MarksActivity extends AppCompatActivity {
 
                     Cursor s = myDatabase.rawQuery("SELECT * FROM marks WHERE title = '" + markTitle + "' ORDER BY course", null);
 
+                    int idIndex = s.getColumnIndex("id");
                     int courseIndex = s.getColumnIndex("course");
                     int typeIndex = s.getColumnIndex("type");
                     int scoreIndex = s.getColumnIndex("score");
@@ -468,7 +522,39 @@ public class MarksActivity extends AppCompatActivity {
                         /*
                             Finally adding the main block to the view
                          */
-                        markView.addView(block);
+                        if (newMarks.has(s.getString(idIndex))) {
+                            RelativeLayout container = new RelativeLayout(context);
+                            RelativeLayout.LayoutParams containerParams = new RelativeLayout.LayoutParams(
+                                    RelativeLayout.LayoutParams.WRAP_CONTENT,
+                                    RelativeLayout.LayoutParams.WRAP_CONTENT
+                            );
+                            container.setLayoutParams(containerParams);
+
+                            container.addView(block);
+
+                            int marginStart = (int) (screenWidth - 30 * pixelDensity);
+
+                            ImageView notification = new ImageView(context);
+                            LinearLayout.LayoutParams notificationParams = new LinearLayout.LayoutParams(
+                                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                                    LinearLayout.LayoutParams.WRAP_CONTENT
+                            );
+                            notificationParams.setMarginStart(marginStart);
+                            notificationParams.setMargins(0, (int) (5 * pixelDensity), 0, 0);
+                            notification.setLayoutParams(notificationParams);
+                            notification.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_notification_dot));
+                            ImageViewCompat.setImageTintList(notification, ColorStateList.valueOf(getColor(R.color.colorPrimaryTransparent)));
+                            notification.setScaleX(0);
+                            notification.setScaleY(0);
+
+                            notification.animate().scaleX(1).scaleY(1);
+
+                            container.addView(notification);
+
+                            markView.addView(container);
+                        } else {
+                            markView.addView(block);
+                        }
                     }
 
                     if (i == 0) {
@@ -499,6 +585,10 @@ public class MarksActivity extends AppCompatActivity {
         markButtons = findViewById(R.id.markTitles);
         pixelDensity = context.getResources().getDisplayMetrics().density;
         marks = findViewById(R.id.marks);
+
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        this.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        screenWidth = displayMetrics.widthPixels;
 
         sharedPreferences = this.getSharedPreferences("tk.therealsuji.vtopchennai", MODE_PRIVATE);
         if (sharedPreferences.getBoolean("filterByCourse", true)) {
