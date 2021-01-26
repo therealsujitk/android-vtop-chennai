@@ -1239,37 +1239,88 @@ public class VTOP {
                 "           obj = 'nothing';" +
                 "       } else {" +
                 "           var doc = new DOMParser().parseFromString(response, 'text/html');" +
-                "           var heads = doc.getElementsByTagName('tr')[0].getElementsByTagName('td');" +
-                "           var courseIndex, dateIndex, timeIndex, flag = 0;" +
-                "           var columns = heads.length;" +
-                "           for(var i = 0; i < columns; ++i) {" +
-                "               var heading = heads[i].innerText.toLowerCase();" +
-                "               if(heading.includes('course') && heading.includes('code')) {" +
-                "                   courseIndex = columns + i + 1;" + // +1 is a correction due to an extra 'td' element at the top
+                "           var courseIndex, titleIndex, slotIndex, dateIndex, reportingIndex, timingIndex, venueIndex, locationIndex, seatIndex, flag = 0;" +
+                "           var columns = document.getElementsByTagName('tr')[0].getElementsByTagName('td');" +
+                "           for (var i = 0; i < columns.length; ++i) {" +
+                "               var heading = columns[i].innerText.toLowerCase();" +
+                "               if (heading.includes('code')) {" +
+                "                   courseIndex = i;" +
+                "                   ++flag;" +
+                "               } else if (heading.includes('title')) {" +
+                "                   titleIndex = i;" +
+                "                   ++flag;" +
+                "               } else if (heading.includes('slot')) {" +
+                "                   slotIndex = i;" +
+                "                   ++flag;" +
+                "               } else if (heading.includes('date')) {" +
+                "                   dateIndex = i;" +
+                "                   ++flag;" +
+                "               } else if (heading.includes('reporting')) {" +
+                "                   reportingIndex = i;" +
+                "                   ++flag;" +
+                "               } else if (heading.includes('exam') && heading.includes('time')) {" +
+                "                   timingIndex = i;" +
+                "                   ++flag;" +
+                "               } else if (heading.includes('venu')) {" +
+                "                   venueIndex = i;" +
+                "                   ++flag;" +
+                "               } else if (heading.includes('location')) {" +
+                "                   locationIndex = i;" +
+                "                   ++flag;" +
+                "               } else if (heading.includes('seat') && heading.includes('no.')) {" +
+                "                   seatIndex = i;" +
                 "                   ++flag;" +
                 "               }" +
-                "               if(heading.includes('date')) {" +
-                "                   dateIndex = columns + i + 1;" + // +1 is a correction due to an extra 'td' element at the top
-                "                   ++flag;" +
-                "               }" +
-                "               if(heading.includes('exam') && heading.includes('time')) {" +
-                "                   timeIndex = columns + i + 1;" + // +1 is a correction due to an extra 'td' element at the top
-                "                   ++flag;" +
-                "               }" +
-                "               if(flag >= 3) {" +
+                "               if (flag >= 9) {" +
                 "                   break;" +
                 "               }" +
                 "           }" +
-                "           var cells = doc.getElementsByTagName('td');" +
-                "           for(var i = 0; courseIndex < cells.length && dateIndex < cells.length && timeIndex < cells.length; ++i) {" +
-                "               var temp = {};" +
-                "               temp['course'] = cells[courseIndex].innerText.trim();" +
-                "               temp['date'] = cells[dateIndex].innerText.trim();" +
-                "               temp['time'] = cells[timeIndex].innerText.trim();" +
-                "               obj[i] = temp;" +
-                "               courseIndex += columns;" +
-                "               dateIndex += columns;" +
-                "               timeIndex += columns;" +
+                "           var exam = '', cells = document.getElementsByTagName('td'), remainder = 0, record = -1;" +
+                "           for (var i = columns.length; i < cells.length; ++i) {" +
+                "               if (flag >= 9) {" +
+                "                   flag = 0;" +
+                "                   ++record;" +
+                "               }" +
+                "               if (cells[i].colSpan > 1) {" +
+                "                   exam = cells[i].innerText.trim();" +
+                "                   ++remainder;" +
+                "                   record = 0;" +
+                "                   continue;" +
+                "               }" +
+                "               if (typeof obj[exam] == 'undefined') {" +
+                "                   obj[exam] = {};" +
+                "               }" +
+                "               var index = (i - remainder) % columns.length;" +
+                "               if (index == courseIndex) {" +
+                "                   obj[exam]['course' + record] = cells[i].innerText.trim();" +
+                "                   ++flag;" +
+                "               } else if (index == titleIndex) {" +
+                "                   obj[exam]['title' + record] = cells[i].innerText.trim();" +
+                "                   ++flag;" +
+                "               } else if (index == slotIndex) {" +
+                "                   obj[exam]['slot' + record] = cells[i].innerText.trim();" +
+                "                   ++flag;" +
+                "               } else if (index == dateIndex) {" +
+                "                   obj[exam]['date' + record] = cells[i].innerText.trim();" +
+                "                   ++flag;" +
+                "               } else if (index == reportingIndex) {" +
+                "                   obj[exam]['reporting' + record] = cells[i].innerText.trim();" +
+                "                   ++flag;" +
+                "               } else if (index == timingIndex) {" +
+                "                   var timings = cells[i].innerText.split('-');" +
+                "                   obj[exam]['start' + record] = timings[0].trim();" +
+                "                   obj[exam]['end' + record] = timings[1].trim();" +
+                "                   ++flag;" +
+                "               } else if (index == venueIndex) {" +
+                "                   obj[exam]['venue' + record] = cells[i].innerText.trim();" +
+                "                   ++flag;" +
+                "               } else if (index == locationIndex) {" +
+                "                   obj[exam]['location' + record] = cells[i].innerText.trim();" +
+                "                   ++flag;" +
+                "               } else if (index == seatIndex) {" +
+                "                   obj[exam]['seat' + record] = cells[i].innerText.trim();" +
+                "                   ++flag;" +
+                "               }" +
                 "           }" +
                 "       }" +
                 "   }" +
@@ -1287,7 +1338,7 @@ public class VTOP {
                         public void run() {
                             try {
                                 myDatabase.execSQL("DROP TABLE IF EXISTS exams");
-                                myDatabase.execSQL("CREATE TABLE IF NOT EXISTS exams (id INTEGER PRIMARY KEY, course VARCHAR, date VARCHAR, time VARCHAR)");
+                                myDatabase.execSQL("CREATE TABLE IF NOT EXISTS exams (id INTEGER PRIMARY KEY, exam VARCHAR, course VARCHAR, title VARCHAR, slot VARCHAR, date VARCHAR, reporting VARCHAR, start_time VARCHAR, end_time VARCHAR, venue VARCHAR, location VARCHAR, seat VARCHAR)");
 
                                 ((Activity) context).runOnUiThread(new Runnable() {
                                     @Override
@@ -1300,8 +1351,8 @@ public class VTOP {
                                 error();
                             }
 
-                            sharedPreferences.edit().putBoolean("newExams", false).apply();
-                            sharedPreferences.edit().putInt("examsCount", 0).apply();
+                            sharedPreferences.edit().remove("newExams").apply();
+                            sharedPreferences.edit().remove("examsCount").apply();
                         }
                     }).start();
                 } else {
@@ -1312,23 +1363,34 @@ public class VTOP {
                                 JSONObject myObj = new JSONObject(obj);
 
                                 myDatabase.execSQL("DROP TABLE IF EXISTS exams");
-                                myDatabase.execSQL("CREATE TABLE IF NOT EXISTS exams (id INTEGER PRIMARY KEY, course VARCHAR, date VARCHAR, start_time VARCHAR, end_time VARCHAR)");
+                                myDatabase.execSQL("CREATE TABLE IF NOT EXISTS exams (id INTEGER PRIMARY KEY, exam VARCHAR, course VARCHAR, title VARCHAR, slot VARCHAR, date VARCHAR, reporting VARCHAR, start_time VARCHAR, end_time VARCHAR, venue VARCHAR, location VARCHAR, seat VARCHAR)");
 
-                                int i;
-                                for (i = 0; i < myObj.length(); ++i) {
-                                    JSONObject tempObj = new JSONObject(myObj.getString(Integer.toString(i)));
-                                    String course = tempObj.getString("course");
-                                    String date = tempObj.getString("date").toUpperCase();
-                                    String[] time = tempObj.getString("time").split("-");
-                                    String startTime = time[0].trim();
-                                    String endTime = time[1].trim();
+                                Iterator<?> keys = myObj.keys();
 
-                                    myDatabase.execSQL("INSERT INTO exams (course, date, start_time, end_time) VALUES('" + course + "', '" + date + "', '" + startTime + "', '" + endTime + "')");
+                                while (keys.hasNext()) {
+                                    String exam = (String) keys.next();
+                                    JSONObject schedule = new JSONObject(myObj.getString(exam));
+
+                                    for (int i = 0; i < schedule.length() / 9; ++i) {
+                                        String course = schedule.getString("course" + i);
+                                        String title = schedule.getString("title" + i);
+                                        String slot = schedule.getString("slot" + i);
+                                        String date = schedule.getString("date" + i);
+                                        String reporting = schedule.getString("reporting" + i);
+                                        String start_time = schedule.getString("start" + i);
+                                        String end_time = schedule.getString("end" + i);
+                                        String venue = schedule.getString("venue" + i);
+                                        String location = schedule.getString("location" + i);
+                                        String seat = schedule.getString("seat" + i);
+
+                                        myDatabase.execSQL("INSERT INTO exams (exam, course, title, slot, date, reporting, start_time, end_time, venue, location, seat) VALUES ('" + exam + "', '" + course + "', '" + title + "', '" + slot + "', '" + date + "', '" + reporting + "', '" + start_time + "', '" + end_time + "', '" + venue + "', '" + location + "', '" + seat + "')");
+                                    }
                                 }
 
-                                if (i != sharedPreferences.getInt("examsCount", 0)) {
+                                int objLength = myObj.length();
+                                if (objLength != sharedPreferences.getInt("examsCount", 0)) {
                                     sharedPreferences.edit().putBoolean("newExams", true).apply();
-                                    sharedPreferences.edit().putInt("examsCount", i).apply();
+                                    sharedPreferences.edit().putInt("examsCount", objLength).apply();
                                 }
 
                                 ((Activity) context).runOnUiThread(new Runnable() {
