@@ -17,12 +17,15 @@ import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.text.method.LinkMovementMethod;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
+import android.widget.ScrollView;
 import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.content.res.ResourcesCompat;
@@ -1113,5 +1116,42 @@ public class HomeActivity extends AppCompatActivity {
 
         TextView myLink = findViewById(R.id.builtBy);
         myLink.setMovementMethod(LinkMovementMethod.getInstance());
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (!sharedPreferences.getString("newMarks", "{}").equals("{}")) {
+            findViewById(R.id.marks_notification).animate().scaleX(1).scaleY(1);
+
+            ImageView academicsNotification = findViewById(R.id.academics_notification);
+            if (academicsNotification.getScaleX() == 0) {
+                academicsNotification.animate().scaleX(1).scaleY(1);
+            }
+        }
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        final ScrollView mScrollView = findViewById(R.id.home_layout);
+        final int[] position = savedInstanceState.getIntArray("SCROLL_POSITION");
+        if (position != null) {
+            mScrollView.post(new Runnable() {
+                public void run() {
+                    mScrollView.scrollTo(position[0], position[1]);
+                }
+            });
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        ScrollView mScrollView = findViewById(R.id.home_layout);
+        outState.putIntArray("SCROLL_POSITION", new int[]{mScrollView.getScrollX(), mScrollView.getScrollY()});
     }
 }
