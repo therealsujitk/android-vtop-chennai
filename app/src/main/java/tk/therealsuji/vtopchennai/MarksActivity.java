@@ -41,6 +41,7 @@ public class MarksActivity extends AppCompatActivity {
     float pixelDensity;
     int screenWidth;
     SharedPreferences sharedPreferences;
+    JSONObject newMarks;
 
     public void setMarks(View view) {
         marks.scrollTo(0, 0);
@@ -81,13 +82,6 @@ public class MarksActivity extends AppCompatActivity {
             public void run() {
                 SQLiteDatabase myDatabase = context.openOrCreateDatabase("vtop", Context.MODE_PRIVATE, null);
 
-                JSONObject newMarks = new JSONObject();
-                try {
-                    newMarks = new JSONObject(sharedPreferences.getString("newMarks", "{}"));
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
                 myDatabase.execSQL("CREATE TABLE IF NOT EXISTS marks (id INT(3) PRIMARY KEY, course VARCHAR, type VARCHAR, title VARCHAR, score VARCHAR, status VARCHAR, weightage VARCHAR, average VARCHAR, posted VARCHAR)");
                 Cursor c = myDatabase.rawQuery("SELECT course FROM marks GROUP BY course", null);
 
@@ -111,50 +105,6 @@ public class MarksActivity extends AppCompatActivity {
 
                     markViews.add(markView);    //Storing the view
 
-                    /*
-                        Creating the course button
-                     */
-                    final TextView markButton = new TextView(context);
-                    LinearLayout.LayoutParams buttonParams = new LinearLayout.LayoutParams(
-                            LinearLayout.LayoutParams.WRAP_CONTENT,
-                            (int) (25 * pixelDensity)
-                    );
-                    buttonParams.setMarginStart((int) (5 * pixelDensity));
-                    buttonParams.setMarginEnd((int) (5 * pixelDensity));
-                    buttonParams.setMargins(0, (int) (20 * pixelDensity), 0, (int) (20 * pixelDensity));
-                    markButton.setLayoutParams(buttonParams);
-                    markButton.setPadding((int) (20 * pixelDensity), 0, (int) (20 * pixelDensity), 0);
-                    if (i == 0) {
-                        markButton.setBackground(ContextCompat.getDrawable(context, R.drawable.button_secondary_selected));
-                        findViewById(R.id.noData).setVisibility(View.INVISIBLE);
-                    } else {
-                        markButton.setBackground(ContextCompat.getDrawable(context, R.drawable.button_secondary));
-                    }
-                    markButton.setTag(i);
-                    markButton.setText(course);
-                    markButton.setTextColor(getColor(R.color.colorPrimary));
-                    markButton.setTextSize(12);
-                    markButton.setGravity(Gravity.CENTER_VERTICAL);
-                    markButton.setTypeface(ResourcesCompat.getFont(context, R.font.rubik), Typeface.BOLD);
-                    markButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            setMarks(markButton);
-                        }
-                    });
-
-                    /*
-                        Finally adding the button to the HorizontalScrollView
-                     */
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            markButtons.addView(markButton);
-                        }
-                    });
-
-                    buttons.add(markButton);    //Storing the button
-
                     Cursor s = myDatabase.rawQuery("SELECT * FROM marks WHERE course = '" + course + "' ORDER BY type DESC", null);
 
                     int idIndex = s.getColumnIndex("id");
@@ -169,6 +119,8 @@ public class MarksActivity extends AppCompatActivity {
                     String[] titles = {getString(R.string.type), getString(R.string.score), getString(R.string.weightage), getString(R.string.average), getString(R.string.status)};
 
                     s.moveToFirst();
+
+                    final ArrayList<String> readMarks = new ArrayList<>();
 
                     for (int j = 0; j < s.getCount(); ++j, s.moveToNext()) {
                         /*
@@ -266,7 +218,8 @@ public class MarksActivity extends AppCompatActivity {
                         /*
                             Finally adding the main block to the view
                          */
-                        if (newMarks.has(s.getString(idIndex))) {
+                        String id = s.getString(idIndex);
+                        if (newMarks.has(id)) {
                             RelativeLayout container = new RelativeLayout(context);
                             RelativeLayout.LayoutParams containerParams = new RelativeLayout.LayoutParams(
                                     RelativeLayout.LayoutParams.WRAP_CONTENT,
@@ -296,15 +249,115 @@ public class MarksActivity extends AppCompatActivity {
                             container.addView(notification);
 
                             markView.addView(container);
+
+                            readMarks.add(id);
                         } else {
                             markView.addView(block);
                         }
                     }
 
+                    /*
+                        Creating the course button
+                     */
+                    final TextView markButton = new TextView(context);
+                    LinearLayout.LayoutParams buttonParams = new LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.WRAP_CONTENT,
+                            (int) (25 * pixelDensity)
+                    );
+                    buttonParams.setMarginStart((int) (5 * pixelDensity));
+                    buttonParams.setMarginEnd((int) (5 * pixelDensity));
+                    buttonParams.setMargins(0, (int) (20 * pixelDensity), 0, (int) (20 * pixelDensity));
+                    markButton.setLayoutParams(buttonParams);
+                    markButton.setPadding((int) (20 * pixelDensity), 0, (int) (20 * pixelDensity), 0);
+                    if (i == 0) {
+                        markButton.setBackground(ContextCompat.getDrawable(context, R.drawable.button_secondary_selected));
+
+                        for (int j = 0; j < readMarks.size(); ++j) {
+                            String id = readMarks.get(j);
+                            if (newMarks.has(id)) {
+                                newMarks.remove(id);
+                            }
+                        }
+
+                        sharedPreferences.edit().putString("newMarks", newMarks.toString()).apply();
+                    } else {
+                        markButton.setBackground(ContextCompat.getDrawable(context, R.drawable.button_secondary));
+                    }
+                    markButton.setTag(i);
+                    markButton.setText(course);
+                    markButton.setTextColor(getColor(R.color.colorPrimary));
+                    markButton.setTextSize(12);
+                    markButton.setGravity(Gravity.CENTER_VERTICAL);
+                    markButton.setTypeface(ResourcesCompat.getFont(context, R.font.rubik), Typeface.BOLD);
+                    markButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            setMarks(markButton);
+
+                            for (int i = 0; i < readMarks.size(); ++i) {
+                                String id = readMarks.get(i);
+                                if (newMarks.has(id)) {
+                                    newMarks.remove(id);
+                                }
+                            }
+
+                            sharedPreferences.edit().putString("newMarks", newMarks.toString()).apply();
+                        }
+                    });
+
+                    /*
+                        Finally adding the button to the HorizontalScrollView
+                     */
+                    if (readMarks.isEmpty()) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                markButtons.addView(markButton);
+                            }
+                        });
+                    } else {
+                        final RelativeLayout container = new RelativeLayout(context);
+                        RelativeLayout.LayoutParams containerParams = new RelativeLayout.LayoutParams(
+                                RelativeLayout.LayoutParams.WRAP_CONTENT,
+                                RelativeLayout.LayoutParams.WRAP_CONTENT
+                        );
+                        container.setLayoutParams(containerParams);
+
+                        container.addView(markButton);
+
+                        ImageView notification = new ImageView(context);
+                        LinearLayout.LayoutParams notificationParams = new LinearLayout.LayoutParams(
+                                LinearLayout.LayoutParams.WRAP_CONTENT,
+                                LinearLayout.LayoutParams.WRAP_CONTENT
+                        );
+                        notificationParams.setMarginStart((int) (3 * pixelDensity));
+                        notificationParams.setMargins(0, (int) (20 * pixelDensity), 0, 0);
+                        notification.setLayoutParams(notificationParams);
+                        notification.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_notification_dot));
+                        ImageViewCompat.setImageTintList(notification, ColorStateList.valueOf(getColor(R.color.colorPrimaryTransparent)));
+                        notification.setScaleX(0);
+                        notification.setScaleY(0);
+
+                        notification.animate().scaleX(1).scaleY(1);
+
+                        container.addView(notification);
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                findViewById(R.id.noData).setVisibility(View.GONE);
+                                markButtons.addView(container);
+                            }
+                        });
+                    }
+
+                    buttons.add(markButton);    //Storing the button
+
                     if (i == 0) {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
+                                findViewById(R.id.noData).setVisibility(View.GONE);
                                 marks.addView(markView);
                             }
                         });
@@ -337,13 +390,6 @@ public class MarksActivity extends AppCompatActivity {
             public void run() {
                 SQLiteDatabase myDatabase = context.openOrCreateDatabase("vtop", Context.MODE_PRIVATE, null);
 
-                JSONObject newMarks = new JSONObject();
-                try {
-                    newMarks = new JSONObject(sharedPreferences.getString("newMarks", "{}"));
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
                 myDatabase.execSQL("CREATE TABLE IF NOT EXISTS marks (id INT(3) PRIMARY KEY, course VARCHAR, type VARCHAR, title VARCHAR, score VARCHAR, status VARCHAR, weightage VARCHAR, average VARCHAR, posted VARCHAR)");
                 Cursor c = myDatabase.rawQuery("SELECT title FROM marks GROUP BY title", null);
 
@@ -367,50 +413,6 @@ public class MarksActivity extends AppCompatActivity {
 
                     markViews.add(markView);    //Storing the view
 
-                    /*
-                        Creating the markTitle button
-                     */
-                    final TextView markButton = new TextView(context);
-                    LinearLayout.LayoutParams buttonParams = new LinearLayout.LayoutParams(
-                            LinearLayout.LayoutParams.WRAP_CONTENT,
-                            (int) (25 * pixelDensity)
-                    );
-                    buttonParams.setMarginStart((int) (5 * pixelDensity));
-                    buttonParams.setMarginEnd((int) (5 * pixelDensity));
-                    buttonParams.setMargins(0, (int) (20 * pixelDensity), 0, (int) (20 * pixelDensity));
-                    markButton.setLayoutParams(buttonParams);
-                    markButton.setPadding((int) (20 * pixelDensity), 0, (int) (20 * pixelDensity), 0);
-                    if (i == 0) {
-                        markButton.setBackground(ContextCompat.getDrawable(context, R.drawable.button_secondary_selected));
-                        findViewById(R.id.noData).setVisibility(View.INVISIBLE);
-                    } else {
-                        markButton.setBackground(ContextCompat.getDrawable(context, R.drawable.button_secondary));
-                    }
-                    markButton.setTag(i);
-                    markButton.setText(markTitle);
-                    markButton.setTextColor(getColor(R.color.colorPrimary));
-                    markButton.setTextSize(12);
-                    markButton.setGravity(Gravity.CENTER_VERTICAL);
-                    markButton.setTypeface(ResourcesCompat.getFont(context, R.font.rubik), Typeface.BOLD);
-                    markButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            setMarks(markButton);
-                        }
-                    });
-
-                    /*
-                        Finally adding the button to the HorizontalScrollView
-                     */
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            markButtons.addView(markButton);
-                        }
-                    });
-
-                    buttons.add(markButton);    //Storing the button
-
                     Cursor s = myDatabase.rawQuery("SELECT * FROM marks WHERE title = '" + markTitle + "' ORDER BY course", null);
 
                     int idIndex = s.getColumnIndex("id");
@@ -425,6 +427,8 @@ public class MarksActivity extends AppCompatActivity {
                     String[] titles = {getString(R.string.type), getString(R.string.score), getString(R.string.weightage), getString(R.string.average), getString(R.string.status)};
 
                     s.moveToFirst();
+
+                    final ArrayList<String> readMarks = new ArrayList<>();
 
                     for (int j = 0; j < s.getCount(); ++j, s.moveToNext()) {
                         /*
@@ -522,7 +526,8 @@ public class MarksActivity extends AppCompatActivity {
                         /*
                             Finally adding the main block to the view
                          */
-                        if (newMarks.has(s.getString(idIndex))) {
+                        String id = s.getString(idIndex);
+                        if (newMarks.has(id)) {
                             RelativeLayout container = new RelativeLayout(context);
                             RelativeLayout.LayoutParams containerParams = new RelativeLayout.LayoutParams(
                                     RelativeLayout.LayoutParams.WRAP_CONTENT,
@@ -552,15 +557,115 @@ public class MarksActivity extends AppCompatActivity {
                             container.addView(notification);
 
                             markView.addView(container);
+
+                            readMarks.add(id);
                         } else {
                             markView.addView(block);
                         }
                     }
 
+                    /*
+                        Creating the markTitle button
+                     */
+                    final TextView markButton = new TextView(context);
+                    LinearLayout.LayoutParams buttonParams = new LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.WRAP_CONTENT,
+                            (int) (25 * pixelDensity)
+                    );
+                    buttonParams.setMarginStart((int) (5 * pixelDensity));
+                    buttonParams.setMarginEnd((int) (5 * pixelDensity));
+                    buttonParams.setMargins(0, (int) (20 * pixelDensity), 0, (int) (20 * pixelDensity));
+                    markButton.setLayoutParams(buttonParams);
+                    markButton.setPadding((int) (20 * pixelDensity), 0, (int) (20 * pixelDensity), 0);
+                    if (i == 0) {
+                        markButton.setBackground(ContextCompat.getDrawable(context, R.drawable.button_secondary_selected));
+
+                        for (int j = 0; j < readMarks.size(); ++j) {
+                            String id = readMarks.get(j);
+                            if (newMarks.has(id)) {
+                                newMarks.remove(id);
+                            }
+                        }
+
+                        sharedPreferences.edit().putString("newMarks", newMarks.toString()).apply();
+                    } else {
+                        markButton.setBackground(ContextCompat.getDrawable(context, R.drawable.button_secondary));
+                    }
+                    markButton.setTag(i);
+                    markButton.setText(markTitle);
+                    markButton.setTextColor(getColor(R.color.colorPrimary));
+                    markButton.setTextSize(12);
+                    markButton.setGravity(Gravity.CENTER_VERTICAL);
+                    markButton.setTypeface(ResourcesCompat.getFont(context, R.font.rubik), Typeface.BOLD);
+                    markButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            setMarks(markButton);
+
+                            for (int i = 0; i < readMarks.size(); ++i) {
+                                String id = readMarks.get(i);
+                                if (newMarks.has(id)) {
+                                    newMarks.remove(id);
+                                }
+                            }
+
+                            sharedPreferences.edit().putString("newMarks", newMarks.toString()).apply();
+                        }
+                    });
+
+                    /*
+                        Finally adding the button to the HorizontalScrollView
+                     */
+                    if (readMarks.isEmpty()) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                markButtons.addView(markButton);
+                            }
+                        });
+                    } else {
+                        final RelativeLayout container = new RelativeLayout(context);
+                        RelativeLayout.LayoutParams containerParams = new RelativeLayout.LayoutParams(
+                                RelativeLayout.LayoutParams.WRAP_CONTENT,
+                                RelativeLayout.LayoutParams.WRAP_CONTENT
+                        );
+                        container.setLayoutParams(containerParams);
+
+                        container.addView(markButton);
+
+                        ImageView notification = new ImageView(context);
+                        LinearLayout.LayoutParams notificationParams = new LinearLayout.LayoutParams(
+                                LinearLayout.LayoutParams.WRAP_CONTENT,
+                                LinearLayout.LayoutParams.WRAP_CONTENT
+                        );
+                        notificationParams.setMarginStart((int) (3 * pixelDensity));
+                        notificationParams.setMargins(0, (int) (20 * pixelDensity), 0, 0);
+                        notification.setLayoutParams(notificationParams);
+                        notification.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_notification_dot));
+                        ImageViewCompat.setImageTintList(notification, ColorStateList.valueOf(getColor(R.color.colorPrimaryTransparent)));
+                        notification.setScaleX(0);
+                        notification.setScaleY(0);
+
+                        notification.animate().scaleX(1).scaleY(1);
+
+                        container.addView(notification);
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                findViewById(R.id.noData).setVisibility(View.GONE);
+                                markButtons.addView(container);
+                            }
+                        });
+                    }
+
+                    buttons.add(markButton);    //Storing the button
+
                     if (i == 0) {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
+                                findViewById(R.id.noData).setVisibility(View.GONE);
                                 marks.addView(markView);
                             }
                         });
@@ -591,6 +696,13 @@ public class MarksActivity extends AppCompatActivity {
         screenWidth = displayMetrics.widthPixels;
 
         sharedPreferences = this.getSharedPreferences("tk.therealsuji.vtopchennai", MODE_PRIVATE);
+        newMarks = new JSONObject();
+        try {
+            newMarks = new JSONObject(sharedPreferences.getString("newMarks", "{}"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
         if (sharedPreferences.getBoolean("filterByCourse", true)) {
             filterByCourse(null);
         } else {
