@@ -1,5 +1,8 @@
 package tk.therealsuji.vtopchennai;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.Dialog;
@@ -17,6 +20,7 @@ import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.text.method.LinkMovementMethod;
 import android.view.View;
+import android.view.animation.AccelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
@@ -271,6 +275,56 @@ public class HomeActivity extends AppCompatActivity {
         startActivity(browserIntent);
     }
 
+    public static void expand(final View view) {
+        view.measure(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        final int targetHeight = view.getMeasuredHeight();
+
+        view.getLayoutParams().height = 0;
+        view.setVisibility(View.VISIBLE);
+
+        ValueAnimator anim = ValueAnimator.ofInt(0, targetHeight);
+        anim.setInterpolator(new AccelerateInterpolator());
+        anim.setDuration(500);
+        anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) view.getLayoutParams();
+                layoutParams.height = (int) (targetHeight * animation.getAnimatedFraction());
+                view.setLayoutParams(layoutParams);
+            }
+        });
+        anim.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) view.getLayoutParams();
+                layoutParams.height = LinearLayout.LayoutParams.WRAP_CONTENT;
+            }
+        });
+        anim.start();
+    }
+
+    public static void compress(final View view) {
+        final int viewHeight = view.getMeasuredHeight();
+        ValueAnimator anim = ValueAnimator.ofInt(viewHeight, 0);
+        anim.setInterpolator(new AccelerateInterpolator());
+        anim.setDuration(200);
+        anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) view.getLayoutParams();
+                layoutParams.height = (int) (viewHeight * (1 - animation.getAnimatedFraction()));
+                view.setLayoutParams(layoutParams);
+            }
+        });
+        anim.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                view.setVisibility(View.GONE);
+            }
+        });
+        anim.start();
+    }
+
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -313,6 +367,7 @@ public class HomeActivity extends AppCompatActivity {
 
         context = this;
         final LinearLayout upcoming = findViewById(R.id.upcoming);
+        final LinearLayout noUpcoming = findViewById(R.id.no_upcoming);
 
         new Thread(new Runnable() {
             @Override
@@ -375,13 +430,30 @@ public class HomeActivity extends AppCompatActivity {
 
                         if ((futureTime.after(hour24.parse(startTimeTheory)) || futureTime.equals(hour24.parse(startTimeTheory))) && currentTime.before(hour24.parse(startTimeTheory)) && !theory.getString(dayTheory).equals("null")) {
                             if (!flag) {
-                                upcoming.removeAllViews();
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        compress(noUpcoming);
+                                    }
+                                });
                             }
+
+                            /*
+                                The outer block
+                             */
+                            final LinearLayout block = new LinearLayout(context);
+                            LinearLayout.LayoutParams blockParams = new LinearLayout.LayoutParams(
+                                    LinearLayout.LayoutParams.MATCH_PARENT,
+                                    LinearLayout.LayoutParams.WRAP_CONTENT
+                            );
+                            block.setLayoutParams(blockParams);
+                            block.setOrientation(LinearLayout.VERTICAL);
+                            block.setVisibility(View.GONE);
 
                             /*
                                 The inner LinearLayout
                              */
-                            final LinearLayout innerBlockHeading = new LinearLayout(context);
+                            LinearLayout innerBlockHeading = new LinearLayout(context);
                             LinearLayout.LayoutParams innerBlockHeadingParams = new LinearLayout.LayoutParams(
                                     LinearLayout.LayoutParams.MATCH_PARENT,
                                     LinearLayout.LayoutParams.WRAP_CONTENT
@@ -428,20 +500,12 @@ public class HomeActivity extends AppCompatActivity {
 
                             innerBlockHeading.addView(period);
 
-                            /*
-                                Adding the innerBlockHeading to the main block
-                             */
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    upcoming.addView(innerBlockHeading);
-                                }
-                            });
+                            block.addView(innerBlockHeading);
 
                             /*
                                 The inner LinearLayout
                              */
-                            final LinearLayout innerBlock = new LinearLayout(context);
+                            LinearLayout innerBlock = new LinearLayout(context);
                             LinearLayout.LayoutParams innerBlockParams = new LinearLayout.LayoutParams(
                                     LinearLayout.LayoutParams.MATCH_PARENT,
                                     LinearLayout.LayoutParams.WRAP_CONTENT
@@ -502,13 +566,16 @@ public class HomeActivity extends AppCompatActivity {
 
                             innerBlock.addView(courseType); //Adding the upcoming class type to innerBlock
 
+                            block.addView(innerBlock);
+
                             /*
                                 Adding the innerBlock to the main block
                              */
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    upcoming.addView(innerBlock);
+                                    upcoming.addView(block);
+                                    expand(block);
                                 }
                             });
                             flag = true;    //Flag is set so that the next code doesn't erase everything
@@ -516,13 +583,30 @@ public class HomeActivity extends AppCompatActivity {
 
                         if ((futureTime.after(hour24.parse(startTimeLab)) || futureTime.equals(hour24.parse(startTimeLab))) && currentTime.before(hour24.parse(startTimeLab)) && !lab.getString(dayLab).equals("null")) {
                             if (!flag) {
-                                upcoming.removeAllViews();
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        compress(noUpcoming);
+                                    }
+                                });
                             }
+
+                            /*
+                                The outer block
+                             */
+                            final LinearLayout block = new LinearLayout(context);
+                            LinearLayout.LayoutParams blockParams = new LinearLayout.LayoutParams(
+                                    LinearLayout.LayoutParams.MATCH_PARENT,
+                                    LinearLayout.LayoutParams.WRAP_CONTENT
+                            );
+                            block.setLayoutParams(blockParams);
+                            block.setOrientation(LinearLayout.VERTICAL);
+                            block.setVisibility(View.GONE);
 
                             /*
                                 The inner LinearLayout
                              */
-                            final LinearLayout innerBlockHeading = new LinearLayout(context);
+                            LinearLayout innerBlockHeading = new LinearLayout(context);
                             LinearLayout.LayoutParams innerBlockHeadingParams = new LinearLayout.LayoutParams(
                                     LinearLayout.LayoutParams.MATCH_PARENT,
                                     LinearLayout.LayoutParams.WRAP_CONTENT
@@ -569,17 +653,12 @@ public class HomeActivity extends AppCompatActivity {
 
                             innerBlockHeading.addView(period); //Adding the upcoming class to innerBlock
 
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    upcoming.addView(innerBlockHeading);  //Adding the upcoming text to the block
-                                }
-                            });
+                            block.addView(innerBlockHeading);
 
                             /*
                                 The inner LinearLayout
                              */
-                            final LinearLayout innerBlock = new LinearLayout(context);
+                            LinearLayout innerBlock = new LinearLayout(context);
                             LinearLayout.LayoutParams innerBlockParams = new LinearLayout.LayoutParams(
                                     LinearLayout.LayoutParams.MATCH_PARENT,
                                     LinearLayout.LayoutParams.WRAP_CONTENT
@@ -640,13 +719,16 @@ public class HomeActivity extends AppCompatActivity {
 
                             innerBlock.addView(courseType); //Adding the upcoming class type to innerBlock
 
+                            block.addView(innerBlock);
+
                             /*
-                                Finally adding the innerBlock to the main block
+                                Finally adding the block to the main block
                              */
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    upcoming.addView(innerBlock);
+                                    upcoming.addView(block);
+                                    expand(block);
                                 }
                             });
                             flag = true;    //Flag is set so that the next code doesn't erase everything
@@ -657,12 +739,29 @@ public class HomeActivity extends AppCompatActivity {
                         }
 
                         if ((currentTime.after(hour24.parse(startTimeTheory)) || currentTime.equals(hour24.parse(startTimeTheory))) && (currentTime.before(hour24.parse(endTimeTheory)) || currentTime.equals(hour24.parse(endTimeTheory))) && !theory.getString(dayTheory).equals("null")) {
-                            upcoming.removeAllViews();
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    compress(noUpcoming);
+                                }
+                            });
+
+                            /*
+                                The outer block
+                             */
+                            final LinearLayout block = new LinearLayout(context);
+                            LinearLayout.LayoutParams blockParams = new LinearLayout.LayoutParams(
+                                    LinearLayout.LayoutParams.MATCH_PARENT,
+                                    LinearLayout.LayoutParams.WRAP_CONTENT
+                            );
+                            block.setLayoutParams(blockParams);
+                            block.setOrientation(LinearLayout.VERTICAL);
+                            block.setVisibility(View.GONE);
 
                             /*
                                 The inner LinearLayout
                              */
-                            final LinearLayout innerBlockHeading = new LinearLayout(context);
+                            LinearLayout innerBlockHeading = new LinearLayout(context);
                             LinearLayout.LayoutParams innerBlockHeadingParams = new LinearLayout.LayoutParams(
                                     LinearLayout.LayoutParams.MATCH_PARENT,
                                     LinearLayout.LayoutParams.WRAP_CONTENT
@@ -708,17 +807,12 @@ public class HomeActivity extends AppCompatActivity {
 
                             innerBlockHeading.addView(period); //Adding the ongoing class to innerBlock
 
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    upcoming.addView(innerBlockHeading);  //Adding the ongoing text to the block
-                                }
-                            });
+                            block.addView(innerBlockHeading);
 
                             /*
                                 The inner LinearLayout
                              */
-                            final LinearLayout innerBlock = new LinearLayout(context);
+                            LinearLayout innerBlock = new LinearLayout(context);
                             LinearLayout.LayoutParams innerBlockParams = new LinearLayout.LayoutParams(
                                     LinearLayout.LayoutParams.MATCH_PARENT,
                                     LinearLayout.LayoutParams.WRAP_CONTENT
@@ -782,10 +876,13 @@ public class HomeActivity extends AppCompatActivity {
 
                             innerBlock.addView(courseType); //Adding the ongoing class type to innerBlock
 
+                            block.addView(innerBlock);
+
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    upcoming.addView(innerBlock);
+                                    upcoming.addView(block);
+                                    expand(block);
                                 }
                             });
                             flag = true;    //Flag is set so that the next code doesn't erase everything
@@ -793,13 +890,30 @@ public class HomeActivity extends AppCompatActivity {
 
                         if ((currentTime.after(hour24.parse(startTimeLab)) || currentTime.equals(hour24.parse(startTimeLab))) && (currentTime.before(hour24.parse(endTimeLab)) || currentTime.equals(hour24.parse(endTimeLab))) && !lab.getString(dayLab).equals("null")) {
                             if (!flag) {
-                                upcoming.removeAllViews();
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        compress(noUpcoming);
+                                    }
+                                });
                             }
+
+                            /*
+                                The outer block
+                             */
+                            final LinearLayout block = new LinearLayout(context);
+                            LinearLayout.LayoutParams blockParams = new LinearLayout.LayoutParams(
+                                    LinearLayout.LayoutParams.MATCH_PARENT,
+                                    LinearLayout.LayoutParams.WRAP_CONTENT
+                            );
+                            block.setLayoutParams(blockParams);
+                            block.setOrientation(LinearLayout.VERTICAL);
+                            block.setVisibility(View.GONE);
 
                             /*
                                 The inner LinearLayout
                              */
-                            final LinearLayout innerBlockHeading = new LinearLayout(context);
+                            LinearLayout innerBlockHeading = new LinearLayout(context);
                             LinearLayout.LayoutParams innerBlockHeadingParams = new LinearLayout.LayoutParams(
                                     LinearLayout.LayoutParams.MATCH_PARENT,
                                     LinearLayout.LayoutParams.WRAP_CONTENT
@@ -845,17 +959,12 @@ public class HomeActivity extends AppCompatActivity {
 
                             innerBlockHeading.addView(period); //Adding the ongoing class to innerBlock
 
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    upcoming.addView(innerBlockHeading);  //Adding the ongoing text to the block
-                                }
-                            });
+                            block.addView(innerBlockHeading);
 
                             /*
                                 The inner LinearLayout
                              */
-                            final LinearLayout innerBlock = new LinearLayout(context);
+                            LinearLayout innerBlock = new LinearLayout(context);
                             LinearLayout.LayoutParams innerBlockParams = new LinearLayout.LayoutParams(
                                     LinearLayout.LayoutParams.MATCH_PARENT,
                                     LinearLayout.LayoutParams.WRAP_CONTENT
@@ -919,10 +1028,13 @@ public class HomeActivity extends AppCompatActivity {
 
                             innerBlock.addView(courseType); //Adding the ongoing class type to innerBlock
 
+                            block.addView(innerBlock);
+
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    upcoming.addView(innerBlock);
+                                    upcoming.addView(block);
+                                    expand(block);
                                 }
                             });
                             flag = true;    //Flag is set so that the next code doesn't erase everything
