@@ -1301,7 +1301,7 @@ public class VTOP {
                 "                   obj[exam]['slot' + record] = cells[i].innerText.trim();" +
                 "                   ++flag;" +
                 "               } else if (index == dateIndex) {" +
-                "                   obj[exam]['date' + record] = cells[i].innerText.trim();" +
+                "                   obj[exam]['date' + record] = cells[i].innerText.trim().toUpperCase();" +
                 "                   ++flag;" +
                 "               } else if (index == reportingIndex) {" +
                 "                   obj[exam]['reporting' + record] = cells[i].innerText.trim();" +
@@ -1383,7 +1383,7 @@ public class VTOP {
                                         String location = schedule.getString("location" + i);
                                         String seat = schedule.getString("seat" + i);
 
-                                        myDatabase.execSQL("INSERT INTO exams (exam, course, title, slot, date, reporting, start_time, end_time, venue, location, seat) VALUES ('" + exam + "', '" + course + "', '" + title + "', '" + slot + "', '" + date + "', '" + reporting + "', '" + start_time + "', '" + end_time + "', '" + venue + "', '" + location + "', '" + seat + "')");
+                                        myDatabase.execSQL("INSERT INTO exams (exam, course, title, slot, date, reporting, start_time, end_time, venue, location, seat) VALUES ('" + exam.toUpperCase() + "', '" + course + "', '" + title + "', '" + slot + "', '" + date + "', '" + reporting + "', '" + start_time + "', '" + end_time + "', '" + venue + "', '" + location + "', '" + seat + "')");
                                     }
                                 }
 
