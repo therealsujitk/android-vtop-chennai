@@ -67,6 +67,9 @@ public class DownloadActivity extends AppCompatActivity {
         if (!sharedPreferences.getString("semester", "null").equals(semester.toLowerCase())) {
             sharedPreferences.edit().putBoolean("newTimetable", true).apply();
             sharedPreferences.edit().putBoolean("newFaculty", true).apply();
+            sharedPreferences.edit().remove("newExams").apply();
+            sharedPreferences.edit().remove("newMarks").apply();
+            sharedPreferences.edit().remove("newGrades").apply();
         }
 
         sharedPreferences.edit().putString("semester", semester.toLowerCase()).apply();

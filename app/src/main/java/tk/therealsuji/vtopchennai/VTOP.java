@@ -521,9 +521,9 @@ public class VTOP {
                                 alarmManager.cancel(pendingIntent);
                             }
 
-                            sharedPreferences.edit().putBoolean("newTimetable", false).apply();
-                            sharedPreferences.edit().putBoolean("newFaculty", false).apply();
-                            sharedPreferences.edit().putInt("alarmCount", 0).apply();
+                            sharedPreferences.edit().remove("newTimetable").apply();
+                            sharedPreferences.edit().remove("newFaculty").apply();
+                            sharedPreferences.edit().remove("alarmCount").apply();
 
                             ((Activity) context).runOnUiThread(new Runnable() {
                                 @Override
@@ -753,7 +753,7 @@ public class VTOP {
                                 error();
                             }
 
-                            sharedPreferences.edit().putBoolean("newFaculty", false).apply();
+                            sharedPreferences.edit().remove("newFaculty").apply();
                         }
                     }).start();
                 } else {
@@ -1164,7 +1164,7 @@ public class VTOP {
                                 error();
                             }
 
-                            sharedPreferences.edit().putBoolean("failedAttendance", false).apply();
+                            sharedPreferences.edit().remove("failedAttendance").apply();
                         }
                     }).start();
                 } else {
@@ -1177,7 +1177,7 @@ public class VTOP {
                                 myDatabase.execSQL("DROP TABLE IF EXISTS attendance");
                                 myDatabase.execSQL("CREATE TABLE IF NOT EXISTS attendance (id INTEGER PRIMARY KEY, course VARCHAR, type VARCHAR, attended VARCHAR, total VARCHAR, percent VARCHAR)");
 
-                                sharedPreferences.edit().putBoolean("failedAttendance", false).apply();
+                                sharedPreferences.edit().remove("failedAttendance").apply();
 
                                 for (int i = 0; i < myObj.length(); ++i) {
                                     JSONObject tempObj = new JSONObject(myObj.getString(Integer.toString(i)));
@@ -1715,8 +1715,8 @@ public class VTOP {
                                 error();
                             }
 
-                            sharedPreferences.edit().putBoolean("newReceipts", false).apply();
-                            sharedPreferences.edit().putInt("receiptsCount", 0).apply();
+                            sharedPreferences.edit().remove("newReceipts").apply();
+                            sharedPreferences.edit().remove("receiptsCount").apply();
                         }
                     }).start();
                 } else {
@@ -1812,8 +1812,7 @@ public class VTOP {
                                 reloadPage();
                             }
 
-                            sharedPreferences.edit().putBoolean("newMessages", false).apply();
-                            sharedPreferences.edit().putInt("messagesCount", 0).apply();
+                            sharedPreferences.edit().remove("newMessages").apply();
                         }
                     }).start();
                 } else if (temp.equals("new")) {
@@ -1899,8 +1898,7 @@ public class VTOP {
                                 reloadPage();
                             }
 
-                            sharedPreferences.edit().putBoolean("newProctorMessages", false).apply();
-                            sharedPreferences.edit().putInt("proctorMessagesCount", 0).apply();
+                            sharedPreferences.edit().remove("newProctorMessages").apply();
                         }
                     }).start();
                 } else if (temp.equals("new")) {

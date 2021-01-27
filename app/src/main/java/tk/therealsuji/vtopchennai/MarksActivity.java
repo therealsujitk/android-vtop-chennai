@@ -305,6 +305,8 @@ public class MarksActivity extends AppCompatActivity {
                         }
                     });
 
+                    buttons.add(markButton);    //Storing the button
+
                     /*
                         Finally adding the button to the HorizontalScrollView
                      */
@@ -325,7 +327,7 @@ public class MarksActivity extends AppCompatActivity {
 
                         container.addView(markButton);
 
-                        ImageView notification = new ImageView(context);
+                        final ImageView notification = new ImageView(context);
                         LinearLayout.LayoutParams notificationParams = new LinearLayout.LayoutParams(
                                 LinearLayout.LayoutParams.WRAP_CONTENT,
                                 LinearLayout.LayoutParams.WRAP_CONTENT
@@ -338,8 +340,6 @@ public class MarksActivity extends AppCompatActivity {
                         notification.setScaleX(0);
                         notification.setScaleY(0);
 
-                        notification.animate().scaleX(1).scaleY(1);
-
                         container.addView(notification);
 
                         runOnUiThread(new Runnable() {
@@ -347,11 +347,10 @@ public class MarksActivity extends AppCompatActivity {
                             public void run() {
                                 findViewById(R.id.noData).setVisibility(View.GONE);
                                 markButtons.addView(container);
+                                notification.animate().scaleX(1).scaleY(1);
                             }
                         });
                     }
-
-                    buttons.add(markButton);    //Storing the button
 
                     if (i == 0) {
                         runOnUiThread(new Runnable() {
@@ -613,6 +612,8 @@ public class MarksActivity extends AppCompatActivity {
                         }
                     });
 
+                    buttons.add(markButton);    //Storing the button
+
                     /*
                         Finally adding the button to the HorizontalScrollView
                      */
@@ -633,7 +634,7 @@ public class MarksActivity extends AppCompatActivity {
 
                         container.addView(markButton);
 
-                        ImageView notification = new ImageView(context);
+                        final ImageView notification = new ImageView(context);
                         LinearLayout.LayoutParams notificationParams = new LinearLayout.LayoutParams(
                                 LinearLayout.LayoutParams.WRAP_CONTENT,
                                 LinearLayout.LayoutParams.WRAP_CONTENT
@@ -646,8 +647,6 @@ public class MarksActivity extends AppCompatActivity {
                         notification.setScaleX(0);
                         notification.setScaleY(0);
 
-                        notification.animate().scaleX(1).scaleY(1);
-
                         container.addView(notification);
 
                         runOnUiThread(new Runnable() {
@@ -655,11 +654,10 @@ public class MarksActivity extends AppCompatActivity {
                             public void run() {
                                 findViewById(R.id.noData).setVisibility(View.GONE);
                                 markButtons.addView(container);
+                                notification.animate().scaleX(1).scaleY(1);
                             }
                         });
                     }
-
-                    buttons.add(markButton);    //Storing the button
 
                     if (i == 0) {
                         runOnUiThread(new Runnable() {
