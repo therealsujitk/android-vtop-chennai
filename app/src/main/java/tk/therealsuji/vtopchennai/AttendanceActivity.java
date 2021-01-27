@@ -1,18 +1,23 @@
 package tk.therealsuji.vtopchennai;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
+import androidx.core.widget.ImageViewCompat;
 
 import java.util.Objects;
 
@@ -26,6 +31,10 @@ public class AttendanceActivity extends AppCompatActivity {
 
         final LinearLayout attendance = findViewById(R.id.attendance);
         final Context context = this;
+
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        this.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        final int screenWidth = displayMetrics.widthPixels;
 
         new Thread(new Runnable() {
             @Override
@@ -55,7 +64,7 @@ public class AttendanceActivity extends AppCompatActivity {
                     blockParams.setMarginStart((int) (20 * pixelDensity));
                     blockParams.setMarginEnd((int) (20 * pixelDensity));
                     if (i == 0) {
-                        findViewById(R.id.noData).setVisibility(View.INVISIBLE);
+                        findViewById(R.id.noData).setVisibility(View.GONE);
                     }
                     blockParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (5 * pixelDensity));
                     block.setLayoutParams(blockParams);
@@ -93,7 +102,8 @@ public class AttendanceActivity extends AppCompatActivity {
                     /*
                         The attendance percentage TextView
                      */
-                    String percentString = c.getString(percentIndex) + "%";
+                    String percentage = c.getString(percentIndex);
+                    String percentString = percentage + "%";
 
                     TextView percent = new TextView(context);
                     TableRow.LayoutParams percentParams = new TableRow.LayoutParams(
@@ -163,12 +173,48 @@ public class AttendanceActivity extends AppCompatActivity {
                     /*
                         Finally adding the block to the activity
                      */
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            attendance.addView(block);
-                        }
-                    });
+                    if (Integer.parseInt(percentage) <= 75) {
+                        final RelativeLayout container = new RelativeLayout(context);
+                        RelativeLayout.LayoutParams containerParams = new RelativeLayout.LayoutParams(
+                                RelativeLayout.LayoutParams.WRAP_CONTENT,
+                                RelativeLayout.LayoutParams.WRAP_CONTENT
+                        );
+                        container.setLayoutParams(containerParams);
+
+                        container.addView(block);
+
+                        int marginStart = (int) (screenWidth - 30 * pixelDensity);
+
+                        final ImageView notification = new ImageView(context);
+                        LinearLayout.LayoutParams notificationParams = new LinearLayout.LayoutParams(
+                                LinearLayout.LayoutParams.WRAP_CONTENT,
+                                LinearLayout.LayoutParams.WRAP_CONTENT
+                        );
+                        notificationParams.setMarginStart(marginStart);
+                        notificationParams.setMargins(0, (int) (5 * pixelDensity), 0, 0);
+                        notification.setLayoutParams(notificationParams);
+                        notification.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_notification_dot));
+                        ImageViewCompat.setImageTintList(notification, ColorStateList.valueOf(getColor(R.color.colorRedTransparent)));
+                        notification.setScaleX(0);
+                        notification.setScaleY(0);
+
+                        container.addView(notification);
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                attendance.addView(container);
+                                notification.animate().scaleX(1).scaleY(1);
+                            }
+                        });
+                    } else {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                attendance.addView(block);
+                            }
+                        });
+                    }
 
                     c.moveToNext();
                 }
