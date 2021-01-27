@@ -89,6 +89,16 @@ public class MarksActivity extends AppCompatActivity {
                 c.moveToFirst();
 
                 for (int i = 0; i < c.getCount(); ++i, c.moveToNext()) {
+                    if (i == 0) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                findViewById(R.id.noData).setVisibility(View.GONE);
+                                findViewById(R.id.loading).setVisibility(View.VISIBLE);
+                            }
+                        });
+                    }
+
                     String course = c.getString(courseIndex);
 
                     /*
@@ -345,7 +355,6 @@ public class MarksActivity extends AppCompatActivity {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                findViewById(R.id.noData).setVisibility(View.GONE);
                                 markButtons.addView(container);
                                 notification.animate().scaleX(1).scaleY(1);
                             }
@@ -356,7 +365,7 @@ public class MarksActivity extends AppCompatActivity {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                findViewById(R.id.noData).setVisibility(View.GONE);
+                                findViewById(R.id.loading).setVisibility(View.GONE);
                                 marks.addView(markView);
                             }
                         });
@@ -396,6 +405,16 @@ public class MarksActivity extends AppCompatActivity {
                 c.moveToFirst();
 
                 for (int i = 0; i < c.getCount(); ++i, c.moveToNext()) {
+                    if (i == 0) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                findViewById(R.id.noData).setVisibility(View.GONE);
+                                findViewById(R.id.loading).setVisibility(View.VISIBLE);
+                            }
+                        });
+                    }
+
                     String markTitle = c.getString(titleIndex);
 
                     /*
@@ -652,7 +671,6 @@ public class MarksActivity extends AppCompatActivity {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                findViewById(R.id.noData).setVisibility(View.GONE);
                                 markButtons.addView(container);
                                 notification.animate().scaleX(1).scaleY(1);
                             }
