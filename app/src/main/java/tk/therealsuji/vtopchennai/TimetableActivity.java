@@ -33,18 +33,17 @@ public class TimetableActivity extends AppCompatActivity {
     Context context;
     float pixelDensity;
     boolean[] hasClasses = new boolean[7];
-    int day;
+    int halfWidth, day;
 
     public void setTimetable(View view) {
-        timetable.scrollTo(0, 0);
-        timetable.removeAllViews();
-
         if (view != null) {
+            timetable.scrollTo(0, 0);
+            timetable.removeAllViews();
             day = Integer.parseInt(view.getTag().toString());
         }
 
         if (hasClasses[day]) {
-            findViewById(R.id.noData).setVisibility(View.INVISIBLE);
+            findViewById(R.id.noData).setVisibility(View.GONE);
             timetable.addView(dayViews[day]);
         } else {
             findViewById(R.id.noData).setVisibility(View.VISIBLE);
@@ -55,14 +54,9 @@ public class TimetableActivity extends AppCompatActivity {
                 buttons[i].setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary));
             }
         }
-
         buttons[day].setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary_selected));
 
-        DisplayMetrics displayMetrics = new DisplayMetrics();
-        this.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-        int halfWidth = displayMetrics.widthPixels / 2;
         float location = (50 + 70 * day) * pixelDensity;
-
         ((HorizontalScrollView) findViewById(R.id.daysContainer)).smoothScrollTo((int) location - halfWidth, 0);
     }
 
@@ -75,6 +69,10 @@ public class TimetableActivity extends AppCompatActivity {
         context = this;
         timetable = findViewById(R.id.timetable);
         pixelDensity = context.getResources().getDisplayMetrics().density;
+
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        this.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        halfWidth = displayMetrics.widthPixels / 2;
 
         days = findViewById(R.id.days);
 
@@ -279,7 +277,7 @@ public class TimetableActivity extends AppCompatActivity {
                                     runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {
-                                            findViewById(R.id.noData).setVisibility(View.INVISIBLE);
+                                            findViewById(R.id.noData).setVisibility(View.GONE);
                                         }
                                     });
                                 }
@@ -410,7 +408,7 @@ public class TimetableActivity extends AppCompatActivity {
                                     runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {
-                                            findViewById(R.id.noData).setVisibility(View.INVISIBLE);
+                                            findViewById(R.id.noData).setVisibility(View.GONE);
                                         }
                                     });
                                 }
