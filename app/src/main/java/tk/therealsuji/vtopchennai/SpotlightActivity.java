@@ -185,6 +185,8 @@ public class SpotlightActivity extends AppCompatActivity {
                         block.setStateListAnimator(AnimatorInflater.loadStateListAnimator(context, R.animator.item_elevation));
                         block.setGravity(Gravity.CENTER_VERTICAL);
                         block.setOrientation(LinearLayout.VERTICAL);
+                        block.setAlpha(0);
+                        block.animate().alpha(1);
 
                         /*
                             Setting the onClickListener
