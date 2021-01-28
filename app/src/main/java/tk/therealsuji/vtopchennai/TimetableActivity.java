@@ -197,6 +197,8 @@ public class TimetableActivity extends AppCompatActivity {
                             block.setLayoutParams(blockParams);
                             block.setBackground(ContextCompat.getDrawable(context, R.drawable.plain_card));
                             block.setOrientation(LinearLayout.VERTICAL);
+                            block.setAlpha(0);
+                            block.animate().alpha(1);
 
                             LinearLayout innerBlock = new LinearLayout(context);
                             LinearLayout.LayoutParams innerBlockParams = new LinearLayout.LayoutParams(
@@ -322,6 +324,8 @@ public class TimetableActivity extends AppCompatActivity {
                             block.setLayoutParams(blockParams);
                             block.setBackground(ContextCompat.getDrawable(context, R.drawable.plain_card));
                             block.setOrientation(LinearLayout.VERTICAL);
+                            block.setAlpha(0);
+                            block.animate().alpha(1);
 
                             LinearLayout innerBlock = new LinearLayout(context);
                             LinearLayout.LayoutParams innerBlockParams = new LinearLayout.LayoutParams(
