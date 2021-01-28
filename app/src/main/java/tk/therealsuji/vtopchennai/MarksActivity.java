@@ -39,11 +39,18 @@ public class MarksActivity extends AppCompatActivity {
     LinearLayout markButtons;
     Context context;
     float pixelDensity;
-    int screenWidth;
+    int screenWidth, index;
     SharedPreferences sharedPreferences;
     JSONObject newMarks;
 
     public void setMarks(View view) {
+        int selectedIndex = Integer.parseInt(view.getTag().toString());
+        if (index == selectedIndex) {
+            return;
+        } else {
+            index = selectedIndex;
+        }
+
         marks.scrollTo(0, 0);
         marks.removeAllViews();
         marks.setAlpha(0);
@@ -53,7 +60,6 @@ public class MarksActivity extends AppCompatActivity {
             buttons.get(i).setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary));
         }
 
-        int index = Integer.parseInt(view.getTag().toString());
         buttons.get(index).setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary_selected));
         marks.addView(markViews.get(index));
 
@@ -285,6 +291,7 @@ public class MarksActivity extends AppCompatActivity {
                     markButton.setPadding((int) (20 * pixelDensity), 0, (int) (20 * pixelDensity), 0);
                     if (i == 0) {
                         markButton.setBackground(ContextCompat.getDrawable(context, R.drawable.button_secondary_selected));
+                        index = 0;
 
                         for (int j = 0; j < readMarks.size(); ++j) {
                             String id = readMarks.get(j);
@@ -603,6 +610,7 @@ public class MarksActivity extends AppCompatActivity {
                     markButton.setPadding((int) (20 * pixelDensity), 0, (int) (20 * pixelDensity), 0);
                     if (i == 0) {
                         markButton.setBackground(ContextCompat.getDrawable(context, R.drawable.button_secondary_selected));
+                        index = 0;
 
                         for (int j = 0; j < readMarks.size(); ++j) {
                             String id = readMarks.get(j);

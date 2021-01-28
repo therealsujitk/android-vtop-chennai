@@ -33,8 +33,16 @@ public class SpotlightActivity extends AppCompatActivity {
     ArrayList<TextView> categories = new ArrayList<>();
     ArrayList<LinearLayout> announcementViews = new ArrayList<>();
     float pixelDensity;
+    int index, halfWidth;
 
     public void setAnnouncements(View view) {
+        int selectedIndex = Integer.parseInt(view.getTag().toString());
+        if (selectedIndex == index) {
+            return;
+        } else {
+            index = selectedIndex;
+        }
+
         announcements.scrollTo(0, 0);
         announcements.removeAllViews();
         announcements.setAlpha(0);
@@ -44,13 +52,9 @@ public class SpotlightActivity extends AppCompatActivity {
             categories.get(i).setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary));
         }
 
-        int index = Integer.parseInt(view.getTag().toString());
         categories.get(index).setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary_selected));
         announcements.addView(announcementViews.get(index));
 
-        DisplayMetrics displayMetrics = new DisplayMetrics();
-        this.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-        int halfWidth = displayMetrics.widthPixels / 2;
         float location = 0;
         for (int i = 0; i < index; ++i) {
             location += 10 * pixelDensity + (float) categories.get(i).getWidth();
@@ -85,6 +89,10 @@ public class SpotlightActivity extends AppCompatActivity {
         final LinearLayout categoryButtons = findViewById(R.id.categories);
         announcements = findViewById(R.id.announcements);
         pixelDensity = context.getResources().getDisplayMetrics().density;
+
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        this.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        halfWidth = displayMetrics.widthPixels / 2;
 
         new Thread(new Runnable() {
             @Override
@@ -129,7 +137,8 @@ public class SpotlightActivity extends AppCompatActivity {
                     category.setPadding((int) (20 * pixelDensity), 0, (int) (20 * pixelDensity), 0);
                     if (i == 0) {
                         category.setBackground(ContextCompat.getDrawable(context, R.drawable.button_secondary_selected));
-                        findViewById(R.id.noData).setVisibility(View.INVISIBLE);
+                        index = 0;
+                        findViewById(R.id.noData).setVisibility(View.GONE);
                     } else {
                         category.setBackground(ContextCompat.getDrawable(context, R.drawable.button_secondary));
                     }

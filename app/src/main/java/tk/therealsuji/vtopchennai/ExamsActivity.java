@@ -29,9 +29,16 @@ public class ExamsActivity extends AppCompatActivity {
     LinearLayout examButtons;
     Context context;
     float pixelDensity;
-    int screenWidth;
+    int index, halfWidth;
 
     public void setExams(View view) {
+        int selectedIndex = Integer.parseInt(view.getTag().toString());
+        if (index == selectedIndex) {
+            return;
+        } else {
+            index = selectedIndex;
+        }
+
         exams.scrollTo(0, 0);
         exams.removeAllViews();
         exams.setAlpha(0);
@@ -41,11 +48,9 @@ public class ExamsActivity extends AppCompatActivity {
             buttons.get(i).setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary));
         }
 
-        int index = Integer.parseInt(view.getTag().toString());
         buttons.get(index).setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary_selected));
         exams.addView(examViews.get(index));
 
-        int halfWidth = screenWidth / 2;
         float location = 0;
         for (int i = 0; i < index; ++i) {
             location += 10 * pixelDensity + (float) buttons.get(i).getWidth();
@@ -67,7 +72,7 @@ public class ExamsActivity extends AppCompatActivity {
 
         DisplayMetrics displayMetrics = new DisplayMetrics();
         this.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-        screenWidth = displayMetrics.widthPixels;
+        halfWidth = displayMetrics.widthPixels / 2;
 
         new Thread(new Runnable() {
             @Override
@@ -112,6 +117,7 @@ public class ExamsActivity extends AppCompatActivity {
                     examButton.setLayoutParams(buttonParams);
                     examButton.setPadding((int) (20 * pixelDensity), 0, (int) (20 * pixelDensity), 0);
                     if (i == 0) {
+                        index = 0;
                         examButton.setBackground(ContextCompat.getDrawable(context, R.drawable.button_secondary_selected));
                     } else {
                         examButton.setBackground(ContextCompat.getDrawable(context, R.drawable.button_secondary));

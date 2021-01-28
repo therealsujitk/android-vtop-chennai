@@ -37,11 +37,18 @@ public class TimetableActivity extends AppCompatActivity {
 
     public void setTimetable(View view) {
         if (view != null) {
+            int selectedDay = Integer.parseInt(view.getTag().toString());
+
+            if (selectedDay == day) {
+                return;
+            } else {
+                day = selectedDay;
+            }
+
             timetable.scrollTo(0, 0);
             timetable.removeAllViews();
             timetable.setAlpha(0);
             timetable.animate().alpha(1);
-            day = Integer.parseInt(view.getTag().toString());
         }
 
         if (hasClasses[day]) {

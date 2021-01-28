@@ -25,14 +25,20 @@ public class StaffActivity extends AppCompatActivity {
     LinearLayout[] staffViews = new LinearLayout[3];
     boolean[] hasStaff = new boolean[3];
     float pixelDensity;
+    int staffID, halfWidth;
 
     public void setStaff(View view) {
+        int selectedStaffID = Integer.parseInt(view.getTag().toString());
+        if (selectedStaffID == staffID) {
+            return;
+        } else {
+            staffID = selectedStaffID;
+        }
+
         staff.scrollTo(0, 0);
         staff.removeAllViews();
         staff.setAlpha(0);
         staff.animate().alpha(1);
-
-        int staffID = Integer.parseInt(view.getTag().toString());
 
         if (hasStaff[staffID]) {
             findViewById(R.id.noData).setVisibility(View.INVISIBLE);
@@ -47,9 +53,6 @@ public class StaffActivity extends AppCompatActivity {
 
         staffButtons[staffID].setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary_selected));
 
-        DisplayMetrics displayMetrics = new DisplayMetrics();
-        this.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-        int halfWidth = displayMetrics.widthPixels / 2;
         float location = 0;
         for (int i = 0; i < staffID; ++i) {
             location += 10 * pixelDensity + (float) staffButtons[i].getWidth();
@@ -68,6 +71,10 @@ public class StaffActivity extends AppCompatActivity {
         final Context context = this;
         pixelDensity = context.getResources().getDisplayMetrics().density;
         staff = findViewById(R.id.staff);
+
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        this.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        halfWidth = displayMetrics.widthPixels / 2;
 
         for (int i = 0; i < 3; ++i) {
             staffViews[i] = new LinearLayout(context);
@@ -88,6 +95,8 @@ public class StaffActivity extends AppCompatActivity {
         for (int i = 0; i < 3; ++i) {
             hasStaff[i] = false;
         }
+
+        staffID = 0;
 
         new Thread(new Runnable() {
             @Override
