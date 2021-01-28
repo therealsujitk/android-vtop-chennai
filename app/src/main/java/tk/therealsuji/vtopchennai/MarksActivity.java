@@ -148,6 +148,8 @@ public class MarksActivity extends AppCompatActivity {
                         block.setLayoutParams(blockParams);
                         block.setBackground(ContextCompat.getDrawable(context, R.drawable.plain_card));
                         block.setOrientation(LinearLayout.VERTICAL);
+                        block.setAlpha(0);
+                        block.animate().alpha(1);
 
                         /*
                             The mark title TextView
@@ -464,6 +466,8 @@ public class MarksActivity extends AppCompatActivity {
                         block.setLayoutParams(blockParams);
                         block.setBackground(ContextCompat.getDrawable(context, R.drawable.plain_card));
                         block.setOrientation(LinearLayout.VERTICAL);
+                        block.setAlpha(0);
+                        block.animate().alpha(1);
 
                         /*
                             The course TextView
@@ -681,7 +685,7 @@ public class MarksActivity extends AppCompatActivity {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                findViewById(R.id.noData).setVisibility(View.GONE);
+                                findViewById(R.id.loading).setVisibility(View.GONE);
                                 marks.addView(markView);
                             }
                         });
