@@ -37,6 +37,8 @@ public class SpotlightActivity extends AppCompatActivity {
     public void setAnnouncements(View view) {
         announcements.scrollTo(0, 0);
         announcements.removeAllViews();
+        announcements.setAlpha(0);
+        announcements.animate().alpha(1);
 
         for (int i = 0; i < categories.size(); ++i) {
             categories.get(i).setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary));

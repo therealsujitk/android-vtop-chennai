@@ -46,6 +46,8 @@ public class MarksActivity extends AppCompatActivity {
     public void setMarks(View view) {
         marks.scrollTo(0, 0);
         marks.removeAllViews();
+        marks.setAlpha(0);
+        marks.animate().alpha(1);
 
         for (int i = 0; i < buttons.size(); ++i) {
             buttons.get(i).setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary));

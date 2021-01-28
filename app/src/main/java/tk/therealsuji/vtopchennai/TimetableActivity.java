@@ -39,6 +39,8 @@ public class TimetableActivity extends AppCompatActivity {
         if (view != null) {
             timetable.scrollTo(0, 0);
             timetable.removeAllViews();
+            timetable.setAlpha(0);
+            timetable.animate().alpha(1);
             day = Integer.parseInt(view.getTag().toString());
         }
 

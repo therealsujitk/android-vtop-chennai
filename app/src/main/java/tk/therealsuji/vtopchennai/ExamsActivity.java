@@ -34,6 +34,8 @@ public class ExamsActivity extends AppCompatActivity {
     public void setExams(View view) {
         exams.scrollTo(0, 0);
         exams.removeAllViews();
+        exams.setAlpha(0);
+        exams.animate().alpha(1);
 
         for (int i = 0; i < buttons.size(); ++i) {
             buttons.get(i).setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary));

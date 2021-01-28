@@ -29,6 +29,8 @@ public class StaffActivity extends AppCompatActivity {
     public void setStaff(View view) {
         staff.scrollTo(0, 0);
         staff.removeAllViews();
+        staff.setAlpha(0);
+        staff.animate().alpha(1);
 
         int staffID = Integer.parseInt(view.getTag().toString());
 
