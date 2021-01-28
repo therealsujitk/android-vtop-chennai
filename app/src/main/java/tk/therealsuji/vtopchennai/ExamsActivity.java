@@ -170,6 +170,8 @@ public class ExamsActivity extends AppCompatActivity {
                         block.setLayoutParams(blockParams);
                         block.setBackground(ContextCompat.getDrawable(context, R.drawable.plain_card));
                         block.setOrientation(LinearLayout.VERTICAL);
+                        block.setAlpha(0);
+                        block.animate().alpha(1);
 
                         /*
                             The course TextView
