@@ -62,6 +62,8 @@ public class FacultyActivity extends AppCompatActivity {
                     block.setBackground(ContextCompat.getDrawable(context, R.drawable.plain_card));
                     block.setGravity(Gravity.CENTER_VERTICAL);
                     block.setOrientation(LinearLayout.VERTICAL);
+                    block.setAlpha(0);
+                    block.animate().alpha(1);
 
                     /*
                         Extracting the name of the faculty
