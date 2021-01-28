@@ -75,6 +75,8 @@ public class ReceiptsActivity extends AppCompatActivity {
                     block.setBackground(ContextCompat.getDrawable(context, R.drawable.plain_card));
                     block.setGravity(Gravity.CENTER_VERTICAL);
                     block.setOrientation(LinearLayout.VERTICAL);
+                    block.setAlpha(0);
+                    block.animate().alpha(1);
 
                     /*
                         The amount TextView
