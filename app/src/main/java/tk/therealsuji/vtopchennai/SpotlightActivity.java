@@ -30,6 +30,7 @@ import java.util.Objects;
 
 public class SpotlightActivity extends AppCompatActivity {
     ScrollView announcements;
+    HorizontalScrollView categoriesContainer;
     ArrayList<TextView> categories = new ArrayList<>();
     ArrayList<LinearLayout> announcementViews = new ArrayList<>();
     float pixelDensity;
@@ -60,7 +61,7 @@ public class SpotlightActivity extends AppCompatActivity {
             location += 10 * pixelDensity + (float) categories.get(i).getWidth();
         }
         location += 20 * pixelDensity + (float) categories.get(index).getWidth() / 2;
-        ((HorizontalScrollView) findViewById(R.id.categoriesContainer)).smoothScrollTo((int) location - halfWidth, 0);
+        categoriesContainer.smoothScrollTo((int) location - halfWidth, 0);
     }
 
     public void openLink(String link) {
@@ -93,6 +94,8 @@ public class SpotlightActivity extends AppCompatActivity {
         DisplayMetrics displayMetrics = new DisplayMetrics();
         this.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         halfWidth = displayMetrics.widthPixels / 2;
+
+        categoriesContainer = findViewById(R.id.categoriesContainer);
 
         new Thread(new Runnable() {
             @Override
@@ -154,6 +157,8 @@ public class SpotlightActivity extends AppCompatActivity {
                             setAnnouncements(category);
                         }
                     });
+                    category.setAlpha(0);
+                    category.animate().alpha(1);
 
                     categories.add(category);    //Storing the button
 

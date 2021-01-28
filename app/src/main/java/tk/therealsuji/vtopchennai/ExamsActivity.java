@@ -24,6 +24,7 @@ import java.util.Objects;
 
 public class ExamsActivity extends AppCompatActivity {
     ScrollView exams;
+    HorizontalScrollView examTitlesContainer;
     ArrayList<TextView> buttons = new ArrayList<>();
     ArrayList<LinearLayout> examViews = new ArrayList<>();
     LinearLayout examButtons;
@@ -56,7 +57,7 @@ public class ExamsActivity extends AppCompatActivity {
             location += 10 * pixelDensity + (float) buttons.get(i).getWidth();
         }
         location += 20 * pixelDensity + (float) buttons.get(index).getWidth() / 2;
-        ((HorizontalScrollView) findViewById(R.id.examTitlesContainer)).smoothScrollTo((int) location - halfWidth, 0);
+        examTitlesContainer.smoothScrollTo((int) location - halfWidth, 0);
     }
 
     @Override
@@ -73,6 +74,8 @@ public class ExamsActivity extends AppCompatActivity {
         DisplayMetrics displayMetrics = new DisplayMetrics();
         this.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         halfWidth = displayMetrics.widthPixels / 2;
+
+        examTitlesContainer = findViewById(R.id.examTitlesContainer);
 
         new Thread(new Runnable() {
             @Override
@@ -134,6 +137,8 @@ public class ExamsActivity extends AppCompatActivity {
                             setExams(examButton);
                         }
                     });
+                    examButton.setAlpha(0);
+                    examButton.animate().alpha(1);
 
                     buttons.add(examButton);    //Storing the button
 

@@ -21,6 +21,7 @@ import java.util.Objects;
 
 public class StaffActivity extends AppCompatActivity {
     ScrollView staff;
+    HorizontalScrollView staffContainer;
     TextView[] staffButtons = new TextView[3];
     LinearLayout[] staffViews = new LinearLayout[3];
     boolean[] hasStaff = new boolean[3];
@@ -59,7 +60,7 @@ public class StaffActivity extends AppCompatActivity {
         }
         location += 20 * pixelDensity + (float) staffButtons[staffID].getWidth() / 2;
 
-        ((HorizontalScrollView) findViewById(R.id.staffContainer)).smoothScrollTo((int) location - halfWidth, 0);
+        staffContainer.smoothScrollTo((int) location - halfWidth, 0);
     }
 
     @Override
@@ -75,6 +76,10 @@ public class StaffActivity extends AppCompatActivity {
         DisplayMetrics displayMetrics = new DisplayMetrics();
         this.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         halfWidth = displayMetrics.widthPixels / 2;
+
+        staffContainer = findViewById(R.id.staffContainer);
+
+        staffContainer.animate().alpha(1);
 
         for (int i = 0; i < 3; ++i) {
             staffViews[i] = new LinearLayout(context);

@@ -27,7 +27,7 @@ import java.util.Objects;
 
 public class TimetableActivity extends AppCompatActivity {
     ScrollView timetable;
-    LinearLayout days;
+    HorizontalScrollView daysContainer;
     LinearLayout[] dayViews = new LinearLayout[7];
     TextView[] buttons = new TextView[7];
     Context context;
@@ -66,7 +66,7 @@ public class TimetableActivity extends AppCompatActivity {
         buttons[day].setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary_selected));
 
         float location = (50 + 70 * day) * pixelDensity;
-        ((HorizontalScrollView) findViewById(R.id.daysContainer)).smoothScrollTo((int) location - halfWidth, 0);
+        daysContainer.smoothScrollTo((int) location - halfWidth, 0);
     }
 
     @Override
@@ -83,7 +83,7 @@ public class TimetableActivity extends AppCompatActivity {
         this.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         halfWidth = displayMetrics.widthPixels / 2;
 
-        days = findViewById(R.id.days);
+        daysContainer = findViewById(R.id.daysContainer);
 
         for (int i = 0; i < 7; ++i) {
             dayViews[i] = new LinearLayout(context);
@@ -106,7 +106,9 @@ public class TimetableActivity extends AppCompatActivity {
         Calendar c = Calendar.getInstance();
         day = c.get(Calendar.DAY_OF_WEEK) - 1;
 
-        days.post(new Runnable() {
+        daysContainer.animate().alpha(1);
+
+        daysContainer.post(new Runnable() {
             @Override
             public void run() {
                 setTimetable(null);

@@ -34,6 +34,7 @@ import java.util.Objects;
 
 public class MarksActivity extends AppCompatActivity {
     ScrollView marks;
+    HorizontalScrollView markTitlesContainer;
     ArrayList<TextView> buttons = new ArrayList<>();
     ArrayList<LinearLayout> markViews = new ArrayList<>();
     LinearLayout markButtons;
@@ -69,7 +70,7 @@ public class MarksActivity extends AppCompatActivity {
             location += 10 * pixelDensity + (float) buttons.get(i).getWidth();
         }
         location += 20 * pixelDensity + (float) buttons.get(index).getWidth() / 2;
-        ((HorizontalScrollView) findViewById(R.id.markTitlesContainer)).smoothScrollTo((int) location - halfWidth, 0);
+        markTitlesContainer.smoothScrollTo((int) location - halfWidth, 0);
     }
 
     public void filterByCourse(MenuItem menuItem) {
@@ -325,6 +326,8 @@ public class MarksActivity extends AppCompatActivity {
                             sharedPreferences.edit().putString("newMarks", newMarks.toString()).apply();
                         }
                     });
+                    markButton.setAlpha(0);
+                    markButton.animate().alpha(1);
 
                     buttons.add(markButton);    //Storing the button
 
@@ -644,6 +647,8 @@ public class MarksActivity extends AppCompatActivity {
                             sharedPreferences.edit().putString("newMarks", newMarks.toString()).apply();
                         }
                     });
+                    markButton.setAlpha(0);
+                    markButton.animate().alpha(1);
 
                     buttons.add(markButton);    //Storing the button
 
@@ -738,6 +743,8 @@ public class MarksActivity extends AppCompatActivity {
         } else {
             filterByTitle(null);
         }
+
+        markTitlesContainer = findViewById(R.id.markTitlesContainer);
     }
 
     @Override

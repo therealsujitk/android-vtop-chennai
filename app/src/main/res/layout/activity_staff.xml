@@ -44,6 +44,7 @@
             android:id="@+id/staffContainer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:alpha="0"
             android:overScrollMode="never"
             android:scrollbars="none"
             tools:ignore="UselessParent">
