@@ -1,18 +1,25 @@
 package tk.therealsuji.vtopchennai;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlarmManager;
+import android.app.Dialog;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.ColorMatrixColorFilter;
 import android.util.Base64;
 import android.view.View;
+import android.view.animation.AccelerateInterpolator;
 import android.webkit.CookieManager;
 import android.webkit.ValueCallback;
 import android.webkit.WebView;
@@ -21,6 +28,8 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -40,35 +49,42 @@ import static android.content.Context.ALARM_SERVICE;
 public class VTOP {
     Context context;
 
+    private static final float[] DARK = {
+            -0.853f, 0, 0, 0, 255, // R
+            0, -0.853f, 0, 0, 255, // G
+            0, 0, -0.853f, 0, 255, // B
+            0, 0, 0, 1, 0  // A
+    };
     WebView webView;
+    Dialog downloadDialog;
     ImageView captcha;
     EditText captchaView;
-    LinearLayout captchaLayout, loadingLayout, semesterLayout;
+    ProgressBar loading, progressBar;
     Spinner selectSemester;
-    TextView loading;
+    LinearLayout captchaLayout, downloadingLayout, semesterLayout;
 
     Boolean isOpened, isLoggedIn;
     SharedPreferences sharedPreferences;
-    int counter;
+    TextView downloading, progressText;
 
     SQLiteDatabase myDatabase;
+    int counter, lastDownload;
 
     @SuppressLint("SetJavaScriptEnabled")
-    public VTOP(final Context context) {
-        /*
-            Uncomment line 62 and Comment line 63 for debugging
-         */
-
+    public VTOP(final Context context, Dialog downloadDialog) {
         this.context = context;
-//        webView = ((Activity) context).findViewById(R.id.vtopPortal);
+        this.downloadDialog = downloadDialog;
         webView = new WebView(context);
-        captcha = ((Activity) context).findViewById(R.id.captchaCode);
-        captchaLayout = ((Activity) context).findViewById(R.id.captchaLayout);
-        captchaView = ((Activity) context).findViewById(R.id.captcha);
-        loadingLayout = ((Activity) context).findViewById(R.id.loadingLayout);
-        semesterLayout = ((Activity) context).findViewById(R.id.semesterLayout);
-        loading = ((Activity) context).findViewById(R.id.loading);
-        selectSemester = ((Activity) context).findViewById(R.id.selectSemester);
+        loading = downloadDialog.findViewById(R.id.loading);
+        captcha = downloadDialog.findViewById(R.id.captchaCode);
+        captchaLayout = downloadDialog.findViewById(R.id.captchaLayout);
+        captchaView = downloadDialog.findViewById(R.id.captcha);
+        downloadingLayout = downloadDialog.findViewById(R.id.downloadingLayout);
+        semesterLayout = downloadDialog.findViewById(R.id.semesterLayout);
+        downloading = downloadDialog.findViewById(R.id.downloading);
+        progressBar = downloadDialog.findViewById(R.id.progressBar);
+        progressText = downloadDialog.findViewById(R.id.progressText);
+        selectSemester = downloadDialog.findViewById(R.id.selectSemester);
         sharedPreferences = context.getSharedPreferences("tk.therealsuji.vtopchennai", Context.MODE_PRIVATE);
         myDatabase = context.openOrCreateDatabase("vtop", Context.MODE_PRIVATE, null);
 
@@ -93,24 +109,40 @@ public class VTOP {
         isOpened = false;
         isLoggedIn = false;
         counter = 0;
+        lastDownload = 0;
 
         reloadPage();
     }
 
-    /*
-        Function to reload the page using javascript in case of an error
-     */
-    public void reloadPage() {
-        loading.setText(context.getString(R.string.loading));
-        if (loadingLayout.getVisibility() == View.INVISIBLE) {
-            hideLayouts();
-            loadingLayout.setVisibility(View.VISIBLE);
-        }
+    public static void expand(final View view) {
+        view.measure(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        final int targetHeight = view.getMeasuredHeight();
 
-        webView.clearCache(true);
-        webView.clearHistory();
-        CookieManager.getInstance().removeAllCookies(null);
-        webView.loadUrl("http://vtopcc.vit.ac.in/vtop");
+        view.getLayoutParams().height = 0;
+        view.setVisibility(View.INVISIBLE);
+        view.setAlpha(0);
+
+        ValueAnimator anim = ValueAnimator.ofInt(0, targetHeight);
+        anim.setInterpolator(new AccelerateInterpolator());
+        anim.setDuration(500);
+        anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) view.getLayoutParams();
+                layoutParams.height = (int) (targetHeight * animation.getAnimatedFraction());
+                view.setLayoutParams(layoutParams);
+            }
+        });
+        anim.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) view.getLayoutParams();
+                layoutParams.height = RelativeLayout.LayoutParams.WRAP_CONTENT;
+                view.setVisibility(View.VISIBLE);
+                view.animate().alpha(1);
+            }
+        });
+        anim.start();
     }
 
     /*
@@ -145,6 +177,55 @@ public class VTOP {
         });
     }
 
+    public static void compress(final View view) {
+        if (view.getVisibility() == View.GONE) {
+            return;
+        }
+
+        view.animate().alpha(0);
+
+        final int viewHeight = view.getMeasuredHeight();
+        ValueAnimator anim = ValueAnimator.ofInt(viewHeight, 0);
+        anim.setInterpolator(new AccelerateInterpolator());
+        anim.setDuration(500);
+        anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) view.getLayoutParams();
+                layoutParams.height = (int) (viewHeight * (1 - animation.getAnimatedFraction()));
+                view.setLayoutParams(layoutParams);
+            }
+        });
+        anim.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                view.setVisibility(View.GONE);
+            }
+        });
+        anim.start();
+    }
+
+    public void setProgress() {
+        progressBar.setProgress(++lastDownload, true);
+        String progress = lastDownload + " / 12";
+        progressText.setText(progress);
+    }
+
+    /*
+        Function to reload the page using javascript in case of an error
+     */
+    public void reloadPage() {
+        if (loading.getAlpha() == 0) {
+            hideLayouts();
+            loading.animate().alpha(1);
+        }
+
+        webView.clearCache(true);
+        webView.clearHistory();
+        CookieManager.getInstance().removeAllCookies(null);
+        webView.loadUrl("http://vtopcc.vit.ac.in/vtop");
+    }
+
     /*
         Function to get the captcha from the portal's sign in page and load it into the ImageView
      */
@@ -173,11 +254,17 @@ public class VTOP {
                     src = src.substring(1, src.length() - 1).split(" ")[1];
                     byte[] decodedString = Base64.decode(src, Base64.DEFAULT);
                     Bitmap decodedImage = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+
+                    String appearance = sharedPreferences.getString("appearance", "system");
                     captcha.setImageBitmap(decodedImage);
+
+                    if (appearance.equals("dark") || (appearance.equals("system") && (context.getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES)) {
+                        captcha.setColorFilter(new ColorMatrixColorFilter(DARK));
+                    }
 
                     hideLayouts();
                     captchaView.setText("");
-                    captchaLayout.setVisibility(View.VISIBLE);
+                    expand(captchaLayout);
                 } catch (Exception e) {
                     e.printStackTrace();
                     error();
@@ -219,7 +306,7 @@ public class VTOP {
             public void onReceiveValue(String value) {
                 if (value.equals("true")) {
                     isLoggedIn = true;
-                    downloadProfile();
+                    openTimetable();
                 } else {
                     if (!value.equals("false") && !value.equals("null")) {
                         value = value.substring(1, value.length() - 1);
@@ -241,11 +328,74 @@ public class VTOP {
     }
 
     /*
+        Even thought this function is called openTimetable, it is actually for getting
+        a list of the semesters. These semesters are obtained from the Timetable page
+     */
+    public void openTimetable() {
+        webView.evaluateJavascript("(function() {" +
+                "var data = 'verifyMenu=true&winImage=' + $('#winImage').val() + '&authorizedID=' + $('#authorizedIDX').val() + '&nocache=@(new Date().getTime())';" +
+                "var obj = false;" +
+                "$.ajax({" +
+                "   type: 'POST'," +
+                "   url : 'academics/common/StudentTimeTable'," +
+                "   data : data," +
+                "   async: false," +
+                "   success: function(response) {" +
+                "       if(response.toLowerCase().includes('time table')) {" +
+                "           $('#page-wrapper').html(response);" +
+                "           var options = document.getElementById('semesterSubId').getElementsByTagName('option');" +
+                "           obj = {};" +
+                "           for(var i = 0, j = 0; i < options.length; ++i, ++j) {" +
+                "               if(options[i].innerText.toLowerCase().includes('choose') || options[i].innerText.toLowerCase().includes('select')) {" +
+                "                   --j;" +
+                "                   continue;" +
+                "               }" +
+                "               obj[j] = options[i].innerText;" +
+                "           }" +
+                "       }" +
+                "   }" +
+                "});" +
+                "return obj;" +
+                "})();", new ValueCallback<String>() {
+            @Override
+            public void onReceiveValue(String obj) {
+                /*
+                    obj is in the form of a JSON string like {"0": "Option 1", "1": "Option 2", "2": "Option 3",...}
+                 */
+                if (obj.equals("false") || obj.equals("null")) {
+                    error();
+                } else {
+                    try {
+                        JSONObject myObj = new JSONObject(obj);
+                        List<String> options = new ArrayList<>();
+                        for (int i = 0; i < myObj.length(); ++i) {
+                            options.add(myObj.getString(Integer.toString(i)));
+                        }
+                        ArrayAdapter<String> adapter = new ArrayAdapter<>(context, R.layout.style_spinner_selected, options);
+                        adapter.setDropDownViewResource(R.layout.style_spinner);
+
+                        selectSemester.setAdapter(adapter);
+                        hideLayouts();
+                        expand(semesterLayout);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        error();
+                    }
+                }
+            }
+        });
+    }
+
+    /*
         Function to save the name of the user and his/her ID (register number) in SharedPreferences
         TBD: Saving the users profile picture
      */
     public void downloadProfile() {
-        loading.setText(context.getString(R.string.downloading_profile));
+        downloading.setText(context.getString(R.string.downloading_profile));
+        if (downloadingLayout.getVisibility() == View.GONE) {
+            hideLayouts();
+            expand(downloadingLayout);
+        }
 
         webView.evaluateJavascript("(function() {" +
                 "var data = 'verifyMenu=true&winImage=' + $('#winImage').val() + '&authorizedID=' + $('#authorizedIDX').val() + '&nocache=@(new Date().getTime())';" +
@@ -294,7 +444,11 @@ public class VTOP {
                         JSONObject myObj = new JSONObject(obj);
                         sharedPreferences.edit().putString("name", myObj.getString("name")).apply();
                         sharedPreferences.edit().putString("id", myObj.getString("id")).apply();
-                        openTimetable();
+
+                        lastDownload = 0;
+                        setProgress();
+
+                        downloadTimetable();
                     } catch (Exception e) {
                         e.printStackTrace();
                         error();
@@ -305,74 +459,19 @@ public class VTOP {
     }
 
     /*
-        Function to get the list of semesters in order to download the timetable. The same value will be used to download the attendance
+        Function to save the timetable in an SQLite database, and the credit score in SharedPreferences
      */
-    public void openTimetable() {
-        loading.setText(context.getString(R.string.loading));
-
-        webView.evaluateJavascript("(function() {" +
-                "var data = 'verifyMenu=true&winImage=' + $('#winImage').val() + '&authorizedID=' + $('#authorizedIDX').val() + '&nocache=@(new Date().getTime())';" +
-                "var obj = false;" +
-                "$.ajax({" +
-                "   type: 'POST'," +
-                "   url : 'academics/common/StudentTimeTable'," +
-                "   data : data," +
-                "   async: false," +
-                "   success: function(response) {" +
-                "       if(response.toLowerCase().includes('time table')) {" +
-                "           $('#page-wrapper').html(response);" +
-                "           var options = document.getElementById('semesterSubId').getElementsByTagName('option');" +
-                "           obj = {};" +
-                "           for(var i = 0, j = 0; i < options.length; ++i, ++j) {" +
-                "               if(options[i].innerText.toLowerCase().includes('choose') || options[i].innerText.toLowerCase().includes('select')) {" +
-                "                   --j;" +
-                "                   continue;" +
-                "               }" +
-                "               obj[j] = options[i].innerText;" +
-                "           }" +
-                "       }" +
-                "   }" +
-                "});" +
-                "return obj;" +
-                "})();", new ValueCallback<String>() {
-            @Override
-            public void onReceiveValue(String obj) {
-                /*
-                    obj is in the form of a JSON string like {"0": "Option 1", "1": "Option 2", "2": "Option 3",...}
-                 */
-                if (obj.equals("false") || obj.equals("null")) {
-                    error();
-                } else {
-                    try {
-                        JSONObject myObj = new JSONObject(obj);
-                        List<String> options = new ArrayList<>();
-                        for (int i = 0; i < myObj.length(); ++i) {
-                            options.add(myObj.getString(Integer.toString(i)));
-                        }
-                        ArrayAdapter<String> adapter = new ArrayAdapter<>(context, R.layout.style_spinner_selected, options);
-                        adapter.setDropDownViewResource(R.layout.style_spinner);
-                        selectSemester.setAdapter(adapter);
-                        hideLayouts();
-                        semesterLayout.setVisibility(View.VISIBLE);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        error();
-                    }
-                }
-            }
-        });
-    }
-
-    /*
-        Function to select the timetable to download
-     */
-    public void selectTimetable() {
-        hideLayouts();
-        loadingLayout.setVisibility(View.VISIBLE);
+    public void downloadTimetable() {
+        downloading.setText(context.getString(R.string.downloading_timetable));
+        if (downloadingLayout.getVisibility() == View.GONE) {
+            hideLayouts();
+            expand(downloadingLayout);
+        }
 
         String semester = sharedPreferences.getString("semester", "null");
 
         webView.evaluateJavascript("(function() {" +
+                "var obj = {};" +
                 "var semID = '';" +
                 "var options = document.getElementById('semesterSubId').getElementsByTagName('option');" +
                 "for(var i = 0; i < options.length; ++i) {" +
@@ -388,120 +487,98 @@ public class VTOP {
                 "   data : data," +
                 "   async: false," +
                 "   success : function(response) {" +
-                "       $('#main-section').html(response);" +
-                "       successFlag = true;" +
+                "       var doc = new DOMParser().parseFromString(response, 'text/html');" +
+                "       var spans = doc.getElementById('getStudentDetails').getElementsByTagName('span');" +
+                "       var credits = '0';" +
+                "       if(spans[0].innerText.toLowerCase().includes('no record(s) found')) {" +
+                "          return 'unreleased';" +
+                "       }" +
+                "       for(var i = spans.length-1; i > 0; --i) {" +
+                "          if(spans[i].innerText.toLowerCase().includes('credits')) {" +
+                "              credits = spans[i+1].innerText;" +
+                "              break;" +
+                "          }" +
+                "       }" +
+                "       obj['credits'] = credits;" +
+                "       var cells = doc.getElementById('timeTableStyle').getElementsByTagName('td');" +
+                "       var category = '';" +
+                "       var timings = '';" +
+                "       var theory = {}, lab = {}, mon = {}, tue = {}, wed = {}, thu = {}, fri = {}, sat = {}, sun = {};" +
+                "       var i = 0;" +
+                "       for(var j = 0; j < cells.length; ++j) {" +
+                "          if(cells[j].innerText.toLowerCase() == 'mon' || cells[j].innerText.toLowerCase() == 'tue' || cells[j].innerText.toLowerCase() == 'wed' || cells[j].innerText.toLowerCase() == 'thu' || cells[j].innerText.toLowerCase() == 'fri' || cells[j].innerText.toLowerCase() == 'sat' || cells[j].innerText.toLowerCase() == 'sun') {" +
+                "              category = cells[j].innerText.toLowerCase();" +
+                "              continue;" +
+                "          }" +
+                "          if(cells[j].innerText.toLowerCase() == 'theory' || cells[j].innerText.toLowerCase() == 'lab') {" +
+                "              if(category == '' || category == 'theory' || category == 'lab') {" +
+                "                  category = cells[j].innerText.toLowerCase();" +
+                "              } else {" +
+                "                  postfix = cells[j].innerText.toLowerCase();" +
+                "              }" +
+                "              i = 0;" +
+                "              continue;" +
+                "          }" +
+                "          if(cells[j].innerText.toLowerCase() == 'start' || cells[j].innerText.toLowerCase() == 'end') {" +
+                "              postfix = cells[j].innerText.toLowerCase();" +
+                "              i = 0;" +
+                "              continue;" +
+                "          }" +
+                "          subcat = i + postfix;" +
+                "          if(category == 'theory') {" +
+                "             theory[subcat] = cells[j].innerText.trim();" +
+                "          } else if(category == 'lab') {" +
+                "             lab[subcat] = cells[j].innerText.trim();" +
+                "          } else if(category == 'mon') {" +
+                "             if(cells[j].bgColor == '#CCFF33') {" +
+                "                 mon[subcat] = cells[j].innerText.trim();" +
+                "             }" +
+                "          } else if(category == 'tue') {" +
+                "             if(cells[j].bgColor == '#CCFF33') {" +
+                "                 tue[subcat] = cells[j].innerText.trim();" +
+                "             }" +
+                "          } else if(category == 'wed') {" +
+                "             if(cells[j].bgColor == '#CCFF33') {" +
+                "                 wed[subcat] = cells[j].innerText.trim();" +
+                "             }" +
+                "          } else if(category == 'thu') {" +
+                "             if(cells[j].bgColor == '#CCFF33') {" +
+                "                 thu[subcat] = cells[j].innerText.trim();" +
+                "             }" +
+                "          } else if(category == 'fri') {" +
+                "             if(cells[j].bgColor == '#CCFF33') {" +
+                "                 fri[subcat] = cells[j].innerText.trim();" +
+                "             }" +
+                "          } else if(category == 'sat') {" +
+                "            if(cells[j].bgColor == '#CCFF33') {" +
+                "                sat[subcat] = cells[j].innerText.trim();" +
+                "             }" +
+                "          } else if(category == 'sun') {" +
+                "             if(cells[j].bgColor == '#CCFF33') {" +
+                "                sun[subcat] = cells[j].innerText.trim();" +
+                "            }" +
+                "         }" +
+                "          ++i;" +
+                "       }" +
+                "       obj.theory = theory;" +
+                "       obj.lab = lab;" +
+                "       obj.mon = mon;" +
+                "       obj.tue = tue;" +
+                "       obj.wed = wed;" +
+                "       obj.thu = thu;" +
+                "       obj.fri = fri;" +
+                "       obj.sat = sat;" +
+                "       obj.sun = sun;" +
                 "   }" +
                 "});" +
-                "return successFlag;" +
-                "})();", new ValueCallback<String>() {
-            @Override
-            public void onReceiveValue(String value) {
-                if (value.equals("true")) {
-                    downloadTimetable();
-                } else {
-                    error();
-                }
-            }
-        });
-    }
-
-    /*
-        Function to save the timetable in an SQLite database, and the credit score in SharedPreferences
-     */
-    public void downloadTimetable() {
-        loading.setText(context.getString(R.string.downloading_timetable));
-
-        webView.evaluateJavascript("(function() {" +
-                "var obj = {};" +
-                "var spans = document.getElementById('getStudentDetails').getElementsByTagName('span');" +
-                "var credits = '0';" +
-                "if(spans[0].innerText.toLowerCase().includes('no record(s) found')) {" +
-                "   return 'unreleased';" +
-                "}" +
-                "for(var i = spans.length-1; i > 0; --i) {" +
-                "   if(spans[i].innerText.toLowerCase().includes('credits')) {" +
-                "       credits = spans[i+1].innerText;" +
-                "       break;" +
-                "   }" +
-                "}" +
-                "obj['credits'] = credits;" +
-                "var cells = document.getElementById('timeTableStyle').getElementsByTagName('td');" +
-                "var category = '';" +
-                "var timings = '';" +
-                "var theory = {}, lab = {}, mon = {}, tue = {}, wed = {}, thu = {}, fri = {}, sat = {}, sun = {};" +
-                "var i = 0;" +
-                "for(var j = 0; j < cells.length; ++j) {" +
-                "   if(cells[j].innerText.toLowerCase() == 'mon' || cells[j].innerText.toLowerCase() == 'tue' || cells[j].innerText.toLowerCase() == 'wed' || cells[j].innerText.toLowerCase() == 'thu' || cells[j].innerText.toLowerCase() == 'fri' || cells[j].innerText.toLowerCase() == 'sat' || cells[j].innerText.toLowerCase() == 'sun') {" +
-                "       category = cells[j].innerText.toLowerCase();" +
-                "       continue;" +
-                "   }" +
-                "   if(cells[j].innerText.toLowerCase() == 'theory' || cells[j].innerText.toLowerCase() == 'lab') {" +
-                "       if(category == '' || category == 'theory' || category == 'lab') {" +
-                "           category = cells[j].innerText.toLowerCase();" +
-                "       } else {" +
-                "           postfix = cells[j].innerText.toLowerCase();" +
-                "       }" +
-                "       i = 0;" +
-                "       continue;" +
-                "   }" +
-                "   if(cells[j].innerText.toLowerCase() == 'start' || cells[j].innerText.toLowerCase() == 'end') {" +
-                "       postfix = cells[j].innerText.toLowerCase();" +
-                "       i = 0;" +
-                "       continue;" +
-                "   }" +
-                "   subcat = i + postfix;" +
-                "   if(category == 'theory') {" +
-                "      theory[subcat] = cells[j].innerText.trim();" +
-                "   } else if(category == 'lab') {" +
-                "      lab[subcat] = cells[j].innerText.trim();" +
-                "   } else if(category == 'mon') {" +
-                "      if(cells[j].bgColor == '#CCFF33') {" +
-                "          mon[subcat] = cells[j].innerText.trim();" +
-                "      }" +
-                "   } else if(category == 'tue') {" +
-                "      if(cells[j].bgColor == '#CCFF33') {" +
-                "          tue[subcat] = cells[j].innerText.trim();" +
-                "      }" +
-                "   } else if(category == 'wed') {" +
-                "      if(cells[j].bgColor == '#CCFF33') {" +
-                "          wed[subcat] = cells[j].innerText.trim();" +
-                "      }" +
-                "   } else if(category == 'thu') {" +
-                "      if(cells[j].bgColor == '#CCFF33') {" +
-                "          thu[subcat] = cells[j].innerText.trim();" +
-                "      }" +
-                "   } else if(category == 'fri') {" +
-                "      if(cells[j].bgColor == '#CCFF33') {" +
-                "          fri[subcat] = cells[j].innerText.trim();" +
-                "      }" +
-                "   } else if(category == 'sat') {" +
-                "      if(cells[j].bgColor == '#CCFF33') {" +
-                "          sat[subcat] = cells[j].innerText.trim();" +
-                "      }" +
-                "   } else if(category == 'sun') {" +
-                "      if(cells[j].bgColor == '#CCFF33') {" +
-                "          sun[subcat] = cells[j].innerText.trim();" +
-                "      }" +
-                "   }" +
-                "   ++i;" +
-                "}" +
-                "obj.theory = theory;" +
-                "obj.lab = lab;" +
-                "obj.mon = mon;" +
-                "obj.tue = tue;" +
-                "obj.wed = wed;" +
-                "obj.thu = thu;" +
-                "obj.fri = fri;" +
-                "obj.sat = sat;" +
-                "obj.sun = sun;" +
                 "return obj;" +
                 "})();", new ValueCallback<String>() {
             @Override
             public void onReceiveValue(final String obj) {
                 String temp = obj.substring(1, obj.length() - 1);
-                if (obj.equals("null")) {
+                if (obj.equals("null") || temp.equals("")) {
                     error();
-                } else if (temp.equals("unreleased") || temp.equals("")) {
+                } else if (temp.equals("unreleased")) {
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
@@ -528,6 +605,7 @@ public class VTOP {
                             ((Activity) context).runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
+                                    setProgress();
                                     downloadProctor();
                                 }
                             });
@@ -678,6 +756,7 @@ public class VTOP {
                                 ((Activity) context).runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
+                                        setProgress();
                                         downloadFaculty();
                                     }
                                 });
@@ -696,37 +775,61 @@ public class VTOP {
         Function to download faculty info
      */
     public void downloadFaculty() {
-        loading.setText(context.getString(R.string.downloading_faculty));
+        if (downloadingLayout.getVisibility() == View.GONE) {
+            hideLayouts();
+            expand(downloadingLayout);
+        }
+        downloading.setText(context.getString(R.string.downloading_faculty));
+
+        String semester = sharedPreferences.getString("semester", "null");
 
         webView.evaluateJavascript("(function() {" +
-                "var division = document.getElementById('studentDetailsList'); " +  //Possible error: If timetable is available but faculty info isn't
-                "var heads = division.getElementsByTagName('th');" +
-                "var courseIndex, facultyIndex, flag = 0;" +
-                "var columns = heads.length;" +
-                "for(var i = 0; i < columns; ++i) {" +
-                "   var heading = heads[i].innerText.toLowerCase();" +
-                "   if(heading == 'course') {" +
-                "       courseIndex = i + 1;" + // +1 is a correction due to an extra 'td' element at the top
-                "       ++flag;" +
-                "   }" +
-                "   if(heading.includes('faculty') && heading.includes('details')) {" +
-                "       facultyIndex = i + 1;" + // +1 is a correction due to an extra 'td' element at the top
-                "       ++flag;" +
-                "   }" +
-                "   if(flag >= 2) {" +
-                "       break;" +
-                "   }" +
-                "}" +
                 "var obj = {};" +
-                "var cells = division.getElementsByTagName('td');" +
-                "for(var i = 0; courseIndex < cells.length && facultyIndex < cells.length; ++i) {" +
-                "   var temp = {};" +
-                "   temp['course'] = cells[courseIndex].innerText.trim();" +
-                "   temp['faculty'] = cells[facultyIndex].innerText.trim();" +
-                "   obj[i] = temp;" +
-                "   courseIndex += columns;" +
-                "   facultyIndex += columns;" +
+                "var semID = '';" +
+                "var options = document.getElementById('semesterSubId').getElementsByTagName('option');" +
+                "for(var i = 0; i < options.length; ++i) {" +
+                "   if(options[i].innerText.toLowerCase().includes('" + semester + "')) {" +
+                "       semID = options[i].value;" +
+                "   }" +
                 "}" +
+                "var data = 'semesterSubId=' + semID + '&authorizedID=' + $('#authorizedIDX').val();" +
+                "var successFlag = false;" +
+                "$.ajax({" +
+                "   type : 'POST'," +
+                "   url : 'processViewTimeTable'," +
+                "   data : data," +
+                "   async: false," +
+                "   success : function(response) {" +
+                "       var doc = new DOMParser().parseFromString(response, 'text/html');" +
+                "       var division = doc.getElementById('studentDetailsList'); " +  //Possible error: If timetable is available but faculty info isn't
+                "       var heads = division.getElementsByTagName('th');" +
+                "       var courseIndex, facultyIndex, flag = 0;" +
+                "       var columns = heads.length;" +
+                "       for(var i = 0; i < columns; ++i) {" +
+                "          var heading = heads[i].innerText.toLowerCase();" +
+                "          if(heading == 'course') {" +
+                "              courseIndex = i + 1;" + // +1 is a correction due to an extra 'td' element at the top
+                "              ++flag;" +
+                "          }" +
+                "          if(heading.includes('faculty') && heading.includes('details')) {" +
+                "              facultyIndex = i + 1;" + // +1 is a correction due to an extra 'td' element at the top
+                "              ++flag;" +
+                "          }" +
+                "          if(flag >= 2) {" +
+                "              break;" +
+                "          }" +
+                "       }" +
+                "       var cells = division.getElementsByTagName('td');" +
+                "       for(var i = 0; courseIndex < cells.length && facultyIndex < cells.length; ++i) {" +
+                "           var temp = {};" +
+                "           temp['course'] = cells[courseIndex].innerText.trim();" +
+                "           temp['faculty'] = cells[facultyIndex].innerText.trim();" +
+                "           obj[i] = temp;" +
+                "           courseIndex += columns;" +
+                "           facultyIndex += columns;" +
+                "       }" +
+                "   }" +
+                "});" +
                 "return obj;" +
                 "})();", new ValueCallback<String>() {
             @Override
@@ -745,6 +848,7 @@ public class VTOP {
                                 ((Activity) context).runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
+                                        setProgress();
                                         downloadProctor();
                                     }
                                 });
@@ -777,6 +881,7 @@ public class VTOP {
                                 ((Activity) context).runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
+                                        setProgress();
                                         downloadProctor();
                                     }
                                 });
@@ -795,7 +900,11 @@ public class VTOP {
         Function to download proctor info (Staff info)
      */
     public void downloadProctor() {
-        loading.setText(context.getString(R.string.downloading_staff));
+        downloading.setText(context.getString(R.string.downloading_staff));
+        if (downloadingLayout.getVisibility() == View.GONE) {
+            hideLayouts();
+            expand(downloadingLayout);
+        }
 
         webView.evaluateJavascript("(function() {" +
                 "var data = 'verifyMenu=true&winImage=' + $('#winImage').val() + '&authorizedID=' + $('#authorizedIDX').val() + '&nocache=@(new Date().getTime())';" +
@@ -840,6 +949,7 @@ public class VTOP {
                                 ((Activity) context).runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
+                                        setProgress();
                                         downloadDeanHOD();
                                     }
                                 });
@@ -871,6 +981,7 @@ public class VTOP {
                                 ((Activity) context).runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
+                                        setProgress();
                                         downloadDeanHOD();
                                     }
                                 });
@@ -889,6 +1000,11 @@ public class VTOP {
         Function to download HOD & Dean info (Staff info)
      */
     public void downloadDeanHOD() {
+        downloading.setText(context.getString(R.string.downloading_staff));
+        if (downloadingLayout.getVisibility() == View.GONE) {
+            hideLayouts();
+            expand(downloadingLayout);
+        }
         webView.evaluateJavascript("(function() {" +
                 "var data = 'verifyMenu=true&winImage=' + $('#winImage').val() + '&authorizedID=' + $('#authorizedIDX').val() + '&nocache=@(new Date().getTime())';" +
                 "var obj = {};" +
@@ -970,7 +1086,8 @@ public class VTOP {
                                 ((Activity) context).runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        openAttendance();
+                                        setProgress();
+                                        downloadAttendance();
                                     }
                                 });
                             } catch (Exception e) {
@@ -1015,7 +1132,8 @@ public class VTOP {
                                 ((Activity) context).runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        openAttendance();
+                                        setProgress();
+                                        downloadAttendance();
                                     }
                                 });
                             } catch (Exception e) {
@@ -1030,45 +1148,14 @@ public class VTOP {
     }
 
     /*
-        Function to open the attendance page
-     */
-    public void openAttendance() {
-        loading.setText(context.getString(R.string.loading));
-
-        webView.evaluateJavascript("(function() {" +
-                "var data = 'verifyMenu=true&winImage=' + $('#winImage').val() + '&authorizedID=' + $('#authorizedIDX').val() + '&nocache=@(new Date().getTime())';" +
-                "var successFlag = false;" +
-                "$.ajax({" +
-                "   type: 'POST'," +
-                "   url : 'academics/common/StudentAttendance'," +
-                "   data : data," +
-                "   async: false," +
-                "   success: function(response) {" +
-                "       if(response.toLowerCase().includes('attendance')) {" +
-                "           $('#page-wrapper').html(response);" +
-                "           successFlag = true;" +
-                "       }" +
-                "   }" +
-                "});" +
-                "return successFlag;" +
-                "})();", new ValueCallback<String>() {
-            @Override
-            public void onReceiveValue(String value) {
-                if (value.equals("true")) {
-                    downloadAttendance();
-                } else {
-                    error();
-                }
-            }
-        });
-    }
-
-    /*
         Function to select the attendance to download
      */
     public void downloadAttendance() {
-        loading.setText(context.getString(R.string.downloading_attendance));
-
+        downloading.setText(context.getString(R.string.downloading_attendance));
+        if (downloadingLayout.getVisibility() == View.GONE) {
+            hideLayouts();
+            expand(downloadingLayout);
+        }
         String semester = sharedPreferences.getString("semester", "null");
 
         webView.evaluateJavascript("(function() {" +
@@ -1157,6 +1244,7 @@ public class VTOP {
                                 ((Activity) context).runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
+                                        setProgress();
                                         downloadExams();
                                     }
                                 });
@@ -1197,6 +1285,7 @@ public class VTOP {
                                 ((Activity) context).runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
+                                        setProgress();
                                         downloadExams();
                                     }
                                 });
@@ -1215,7 +1304,11 @@ public class VTOP {
         Function to store the exam schedule in the SQLite database.
      */
     public void downloadExams() {
-        loading.setText(context.getString(R.string.downloading_exams));
+        downloading.setText(context.getString(R.string.downloading_exams));
+        if (downloadingLayout.getVisibility() == View.GONE) {
+            hideLayouts();
+            expand(downloadingLayout);
+        }
 
         String semester = sharedPreferences.getString("semester", "null");
 
@@ -1343,6 +1436,7 @@ public class VTOP {
                                 ((Activity) context).runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
+                                        setProgress();
                                         downloadMarks();
                                     }
                                 });
@@ -1396,6 +1490,7 @@ public class VTOP {
                                 ((Activity) context).runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
+                                        setProgress();
                                         downloadMarks();
                                     }
                                 });
@@ -1414,7 +1509,11 @@ public class VTOP {
         Function to download marks
      */
     public void downloadMarks() {
-        loading.setText(R.string.downloading_marks);
+        downloading.setText(R.string.downloading_marks);
+        if (downloadingLayout.getVisibility() == View.GONE) {
+            hideLayouts();
+            expand(downloadingLayout);
+        }
 
         String semester = sharedPreferences.getString("semester", "null");
 
@@ -1533,7 +1632,8 @@ public class VTOP {
                                 ((Activity) context).runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        downloadReceipts();
+                                        setProgress();
+                                        downloadGrades();
                                     }
                                 });
                             } catch (Exception e) {
@@ -1626,7 +1726,8 @@ public class VTOP {
                                 ((Activity) context).runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        downloadReceipts();
+                                        setProgress();
+                                        downloadGrades();
                                     }
                                 });
                             } catch (Exception e) {
@@ -1641,131 +1742,21 @@ public class VTOP {
     }
 
     /*
-        Function to store payment receipts
+        Function to download grades
      */
-    public void downloadReceipts() {
-        loading.setText(context.getString(R.string.downloading_receipts));
-
-        webView.evaluateJavascript("(function() {" +
-                "var data = 'verifyMenu=true&winImage=' + $('#winImage').val() + '&authorizedID=' + $('#authorizedIDX').val() + '&nocache=@(new Date().getTime())';" +
-                "var obj = {};" +
-                "$.ajax({" +
-                "   type: 'POST'," +
-                "   url : 'p2p/getReceiptsApplno'," +
-                "   data : data," +
-                "   async: false," +
-                "   success: function(response) {" +
-                "       var doc = new DOMParser().parseFromString(response, 'text/html');" +
-                "       var receiptIndex, dateIndex, amountIndex, flag = 0;" +
-                "       var columns = doc.getElementsByTagName('tr')[0].getElementsByTagName('td').length;" +
-                "       var cells = doc.getElementsByTagName('td');" +
-                "       for(var i = 0; i < columns; ++i) {" +
-                "           var heading = cells[i].innerText.toLowerCase();" +
-                "           if(heading.includes('receipt')) {" +
-                "               receiptIndex = i + columns;" +
-                "               ++flag;" +
-                "           }" +
-                "           if(heading.includes('date')) {" +
-                "               dateIndex = i + columns;" +
-                "               ++flag;" +
-                "           }" +
-                "           if(heading.includes('amount')) {" +
-                "               amountIndex = i + columns;" +
-                "               ++flag;" +
-                "           }" +
-                "           if(flag >= 3) {" +
-                "               break;" +
-                "           }" +
-                "       }" +
-                "       for(var i = 0; receiptIndex < cells.length && dateIndex < cells.length && amountIndex < cells.length; ++i) {" +
-                "           var temp = {};" +
-                "           temp['receipt'] = cells[receiptIndex].innerText.trim();" +
-                "           temp['date'] = cells[dateIndex].innerText.trim();" +
-                "           temp['amount'] = cells[amountIndex].innerText.trim();" +
-                "           obj[i] = temp;" +
-                "           receiptIndex += columns;" +
-                "           dateIndex += columns;" +
-                "           amountIndex += columns;" +
-                "       }" +
-                "   }" +
-                "});" +
-                "return obj;" +
-                "})();", new ValueCallback<String>() {
-            @Override
-            public void onReceiveValue(final String obj) {
-                String temp = obj.substring(1, obj.length() - 1);
-                if (obj.equals("null")) {
-                    error();
-                } else if (temp.equals("")) {
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                myDatabase.execSQL("DROP TABLE IF EXISTS receipts");
-                                myDatabase.execSQL("CREATE TABLE IF NOT EXISTS receipts (id INTEGER PRIMARY KEY, receipt VARCHAR, date VARCHAR, amount VARCHAR)");
-
-                                ((Activity) context).runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        downloadMessages();
-                                    }
-                                });
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                                error();
-                            }
-
-                            sharedPreferences.edit().remove("newReceipts").apply();
-                            sharedPreferences.edit().remove("receiptsCount").apply();
-                        }
-                    }).start();
-                } else {
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                JSONObject myObj = new JSONObject(obj);
-
-                                myDatabase.execSQL("DROP TABLE IF EXISTS receipts");
-                                myDatabase.execSQL("CREATE TABLE IF NOT EXISTS receipts (id INTEGER PRIMARY KEY, receipt VARCHAR, date VARCHAR, amount VARCHAR)");
-
-                                int i;
-                                for (i = 0; i < myObj.length(); ++i) {
-                                    JSONObject tempObj = new JSONObject(myObj.getString(Integer.toString(i)));
-                                    String receipt = tempObj.getString("receipt");
-                                    String date = tempObj.getString("date").toUpperCase();
-                                    String amount = tempObj.getString("amount");
-
-                                    myDatabase.execSQL("INSERT INTO receipts (receipt, date, amount) VALUES('" + receipt + "', '" + date + "', '" + amount + "')");
-                                }
-
-                                if (i != sharedPreferences.getInt("receiptsCount", 0)) {
-                                    sharedPreferences.edit().putBoolean("newReceipts", true).apply();
-                                    sharedPreferences.edit().putInt("receiptsCount", i).apply();
-                                }
-
-                                ((Activity) context).runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        downloadMessages();
-                                    }
-                                });
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                                error();
-                            }
-                        }
-                    }).start();
-                }
-            }
-        });
+    public void downloadGrades() {
+        downloadMessages();
     }
 
     /*
         Function to store the class messages in the SQLite database.
      */
     public void downloadMessages() {
-        loading.setText(context.getString(R.string.downloading_messages));
+        downloading.setText(context.getString(R.string.downloading_messages));
+        if (downloadingLayout.getVisibility() == View.GONE) {
+            hideLayouts();
+            expand(downloadingLayout);
+        }
 
         webView.evaluateJavascript("(function() {" +
                 "var data = 'verifyMenu=true&winImage=' + $('#winImage').val() + '&authorizedID=' + $('#authorizedIDX').val() + '&nocache=@(new Date().getTime())';" +
@@ -1802,6 +1793,7 @@ public class VTOP {
                                 ((Activity) context).runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
+                                        setProgress();
                                         downloadSpotlight();
                                     }
                                 });
@@ -1831,6 +1823,7 @@ public class VTOP {
                                 ((Activity) context).runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
+                                        setProgress();
                                         downloadProctorMessages();
                                     }
                                 });
@@ -1853,6 +1846,11 @@ public class VTOP {
         Function to store the proctor messages in the SQLite database.
      */
     public void downloadProctorMessages() {
+        downloading.setText(context.getString(R.string.downloading_messages));
+        if (downloadingLayout.getVisibility() == View.GONE) {
+            hideLayouts();
+            expand(downloadingLayout);
+        }
         webView.evaluateJavascript("(function() {" +
                 "var data = 'verifyMenu=true&winImage=' + $('#winImage').val() + '&authorizedID=' + $('#authorizedIDX').val() + '&nocache=@(new Date().getTime())';" +
                 "var successFlag = false;" +
@@ -1888,6 +1886,7 @@ public class VTOP {
                                 ((Activity) context).runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
+                                        setProgress();
                                         downloadSpotlight();
                                     }
                                 });
@@ -1917,6 +1916,7 @@ public class VTOP {
                                 ((Activity) context).runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
+                                        setProgress();
                                         downloadSpotlight();
                                     }
                                 });
@@ -1939,7 +1939,11 @@ public class VTOP {
         Function to store spotlight in the SQLite database.
      */
     public void downloadSpotlight() {
-        loading.setText(context.getString(R.string.downloading_spotlight));
+        downloading.setText(context.getString(R.string.downloading_spotlight));
+        if (downloadingLayout.getVisibility() == View.GONE) {
+            hideLayouts();
+            expand(downloadingLayout);
+        }
 
         webView.evaluateJavascript("(function() {" +
                 "var data = 'verifyMenu=true&winImage=' + $('#winImage').val() + '&authorizedID=' + $('#authorizedIDX').val() + '&nocache=@(new Date().getTime())';" +
@@ -2005,7 +2009,8 @@ public class VTOP {
                                 ((Activity) context).runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        finishUp();
+                                        setProgress();
+                                        downloadReceipts();
                                     }
                                 });
                             } catch (Exception e) {
@@ -2058,6 +2063,134 @@ public class VTOP {
                                 ((Activity) context).runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
+                                        setProgress();
+                                        downloadReceipts();
+                                    }
+                                });
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                error();
+                            }
+                        }
+                    }).start();
+                }
+            }
+        });
+    }
+
+    /*
+        Function to store payment receipts
+    */
+    public void downloadReceipts() {
+        downloading.setText(context.getString(R.string.downloading_receipts));
+        if (downloadingLayout.getVisibility() == View.GONE) {
+            hideLayouts();
+            expand(downloadingLayout);
+        }
+
+        webView.evaluateJavascript("(function() {" +
+                "var data = 'verifyMenu=true&winImage=' + $('#winImage').val() + '&authorizedID=' + $('#authorizedIDX').val() + '&nocache=@(new Date().getTime())';" +
+                "var obj = {};" +
+                "$.ajax({" +
+                "   type: 'POST'," +
+                "   url : 'p2p/getReceiptsApplno'," +
+                "   data : data," +
+                "   async: false," +
+                "   success: function(response) {" +
+                "       var doc = new DOMParser().parseFromString(response, 'text/html');" +
+                "       var receiptIndex, dateIndex, amountIndex, flag = 0;" +
+                "       var columns = doc.getElementsByTagName('tr')[0].getElementsByTagName('td').length;" +
+                "       var cells = doc.getElementsByTagName('td');" +
+                "       for(var i = 0; i < columns; ++i) {" +
+                "           var heading = cells[i].innerText.toLowerCase();" +
+                "           if(heading.includes('receipt')) {" +
+                "               receiptIndex = i + columns;" +
+                "               ++flag;" +
+                "           }" +
+                "           if(heading.includes('date')) {" +
+                "               dateIndex = i + columns;" +
+                "               ++flag;" +
+                "           }" +
+                "           if(heading.includes('amount')) {" +
+                "               amountIndex = i + columns;" +
+                "               ++flag;" +
+                "           }" +
+                "           if(flag >= 3) {" +
+                "               break;" +
+                "           }" +
+                "       }" +
+                "       for(var i = 0; receiptIndex < cells.length && dateIndex < cells.length && amountIndex < cells.length; ++i) {" +
+                "           var temp = {};" +
+                "           temp['receipt'] = cells[receiptIndex].innerText.trim();" +
+                "           temp['date'] = cells[dateIndex].innerText.trim();" +
+                "           temp['amount'] = cells[amountIndex].innerText.trim();" +
+                "           obj[i] = temp;" +
+                "           receiptIndex += columns;" +
+                "           dateIndex += columns;" +
+                "           amountIndex += columns;" +
+                "       }" +
+                "   }" +
+                "});" +
+                "return obj;" +
+                "})();", new ValueCallback<String>() {
+            @Override
+            public void onReceiveValue(final String obj) {
+                String temp = obj.substring(1, obj.length() - 1);
+                if (obj.equals("null")) {
+                    error();
+                } else if (temp.equals("")) {
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                myDatabase.execSQL("DROP TABLE IF EXISTS receipts");
+                                myDatabase.execSQL("CREATE TABLE IF NOT EXISTS receipts (id INTEGER PRIMARY KEY, receipt VARCHAR, date VARCHAR, amount VARCHAR)");
+
+                                ((Activity) context).runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        setProgress();
+                                        finishUp();
+                                    }
+                                });
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                error();
+                            }
+
+                            sharedPreferences.edit().remove("newReceipts").apply();
+                            sharedPreferences.edit().remove("receiptsCount").apply();
+                        }
+                    }).start();
+                } else {
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                JSONObject myObj = new JSONObject(obj);
+
+                                myDatabase.execSQL("DROP TABLE IF EXISTS receipts");
+                                myDatabase.execSQL("CREATE TABLE IF NOT EXISTS receipts (id INTEGER PRIMARY KEY, receipt VARCHAR, date VARCHAR, amount VARCHAR)");
+
+                                int i;
+                                for (i = 0; i < myObj.length(); ++i) {
+                                    JSONObject tempObj = new JSONObject(myObj.getString(Integer.toString(i)));
+                                    String receipt = tempObj.getString("receipt");
+                                    String date = tempObj.getString("date").toUpperCase();
+                                    String amount = tempObj.getString("amount");
+
+                                    myDatabase.execSQL("INSERT INTO receipts (receipt, date, amount) VALUES('" + receipt + "', '" + date + "', '" + amount + "')");
+                                }
+
+                                if (i != sharedPreferences.getInt("receiptsCount", 0)) {
+                                    sharedPreferences.edit().putBoolean("newReceipts", true).apply();
+                                    sharedPreferences.edit().putInt("receiptsCount", i).apply();
+                                }
+
+                                ((Activity) context).runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        setProgress();
                                         finishUp();
                                     }
                                 });
@@ -2073,11 +2206,13 @@ public class VTOP {
     }
 
     public void finishUp() {
-        loading.setText(context.getString(R.string.loading));
+        hideLayouts();
+        loading.setVisibility(View.VISIBLE);
         sharedPreferences.edit().putBoolean("isSignedIn", true).apply();
         myDatabase.close();
         Intent intent = new Intent(context, HomeActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        downloadDialog.dismiss();
         context.startActivity(intent);
         ((Activity) context).finish();
 
@@ -2100,9 +2235,23 @@ public class VTOP {
         Function to hide all layouts
      */
     public void hideLayouts() {
-        loadingLayout.setVisibility(View.INVISIBLE);
-        captchaLayout.setVisibility(View.INVISIBLE);
-        semesterLayout.setVisibility(View.INVISIBLE);
+        loading.animate().alpha(0);
+
+        if (downloadingLayout.getVisibility() == View.VISIBLE) {
+            downloadingLayout.animate().alpha(0);
+        }
+
+        if (semesterLayout.getVisibility() == View.VISIBLE) {
+            semesterLayout.animate().alpha(0);
+        }
+
+        if (captchaLayout.getVisibility() == View.VISIBLE) {
+            captchaLayout.animate().alpha(0);
+        }
+
+        compress(downloadingLayout);
+        compress(semesterLayout);
+        compress(captchaLayout);
     }
 
     public void error() {
@@ -2114,5 +2263,9 @@ public class VTOP {
                 reloadPage();
             }
         });
+    }
+
+    public int getLastDownload() {
+        return lastDownload;
     }
 }

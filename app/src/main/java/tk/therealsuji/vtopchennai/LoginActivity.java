@@ -14,6 +14,9 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.Spinner;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.security.crypto.EncryptedSharedPreferences;
@@ -21,8 +24,14 @@ import androidx.security.crypto.MasterKey;
 
 public class LoginActivity extends AppCompatActivity {
     SharedPreferences sharedPreferences, encryptedSharedPreferences;
+    Dialog download;
+    VTOP vtop;
 
     public void signIn(View view) {
+        if (download != null) {
+            return;
+        }
+
         EditText usernameView = findViewById(R.id.username);
         EditText passwordView = findViewById(R.id.password);
 
@@ -32,13 +41,127 @@ public class LoginActivity extends AppCompatActivity {
         encryptedSharedPreferences.edit().putString("username", username).apply();
         encryptedSharedPreferences.edit().putString("password", password).apply();
 
-        startActivity(new Intent(LoginActivity.this, DownloadActivity.class));
+        download = new Dialog(this);
+        download.setContentView(R.layout.dialog_download);
+        download.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        download.setCancelable(false);
+        download.setCanceledOnTouchOutside(false);
+
+        download.show();
+
+        vtop = new VTOP(this, download);
+
+        vtop = new VTOP(this, download);
 
         /*
             Remove any non-encrypted credentials
          */
         sharedPreferences.edit().remove("username").apply();
         sharedPreferences.edit().remove("password").apply();
+    }
+
+    public void submitCaptcha(View view) {
+        LinearLayout captchaLayout = download.findViewById(R.id.captchaLayout);
+        ProgressBar loading = download.findViewById(R.id.loading);
+        VTOP.compress(captchaLayout);
+        loading.animate().alpha(1);
+
+        String username = encryptedSharedPreferences.getString("username", null);
+        String password = encryptedSharedPreferences.getString("password", null);
+
+        /*
+            If the credentials aren't encrypted
+         */
+        if (username == null) {
+            /*
+                Get the non-encrypted credentials
+             */
+            username = sharedPreferences.getString("username", null);
+            password = sharedPreferences.getString("password", null);
+
+            /*
+                Encrypt them
+             */
+            encryptedSharedPreferences.edit().putString("username", username).apply();
+            encryptedSharedPreferences.edit().putString("password", password).apply();
+
+            /*
+                Remove the non-encrypted credentials
+             */
+            sharedPreferences.edit().remove("username").apply();
+            sharedPreferences.edit().remove("password").apply();
+        }
+
+        EditText captchaView = download.findViewById(R.id.captcha);
+        String captcha = captchaView.getText().toString();
+        vtop.signIn(username, password, captcha);
+    }
+
+    public void selectSemester(View view) {
+        LinearLayout semesterLayout = download.findViewById(R.id.semesterLayout);
+        ProgressBar loading = download.findViewById(R.id.loading);
+        VTOP.compress(semesterLayout);
+        loading.animate().alpha(1);
+
+        Spinner selectSemester = download.findViewById(R.id.selectSemester);
+        String semester = selectSemester.getSelectedItem().toString();
+
+        if (!sharedPreferences.getString("semester", "null").equals(semester.toLowerCase())) {
+            sharedPreferences.edit().putBoolean("newTimetable", true).apply();
+            sharedPreferences.edit().putBoolean("newFaculty", true).apply();
+            sharedPreferences.edit().remove("newExams").apply();
+            sharedPreferences.edit().remove("newMarks").apply();
+            sharedPreferences.edit().remove("newGrades").apply();
+        }
+
+        sharedPreferences.edit().putString("semester", semester.toLowerCase()).apply();
+
+        int lastDownload = vtop.getLastDownload();
+        switch (lastDownload) {
+            case 1:
+                vtop.downloadTimetable();
+                break;
+            case 2:
+                vtop.downloadFaculty();
+                break;
+            case 3:
+                vtop.downloadProctor();
+                break;
+            case 4:
+                vtop.downloadDeanHOD();
+                break;
+            case 5:
+                vtop.downloadAttendance();
+                break;
+            case 6:
+                vtop.downloadExams();
+                break;
+            case 7:
+                vtop.downloadMarks();
+                break;
+            case 8:
+                vtop.downloadGrades();
+                break;
+            case 9:
+                vtop.downloadMessages();
+                break;
+            case 10:
+                vtop.downloadProctorMessages();
+                break;
+            case 11:
+                vtop.downloadSpotlight();
+                break;
+            case 12:
+                vtop.downloadReceipts();
+                break;
+            default:
+                vtop.downloadProfile();
+
+        }
+    }
+
+    public void cancelDownload(View view) {
+        download.dismiss();
     }
 
     public void openPrivacy(View view) {

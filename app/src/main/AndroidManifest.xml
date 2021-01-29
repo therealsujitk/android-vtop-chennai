@@ -43,16 +43,6 @@
                 android:value=".PrivacyActivity" />
         </activity>
         <activity
-            android:name=".DownloadActivity"
-            android:configChanges="orientation|keyboardHidden"
-            android:label="Download Data"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustPan">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".DownloadActivity" />
-        </activity>
-        <activity
             android:name=".HomeActivity"
             android:configChanges="orientation|keyboardHidden"
             android:label="Home"
