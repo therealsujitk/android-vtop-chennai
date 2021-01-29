@@ -491,7 +491,8 @@ public class VTOP {
                 "       var spans = doc.getElementById('getStudentDetails').getElementsByTagName('span');" +
                 "       var credits = '0';" +
                 "       if(spans[0].innerText.toLowerCase().includes('no record(s) found')) {" +
-                "          return 'unreleased';" +
+                "          obj = 'unreleased';" +
+                "          return;" +
                 "       }" +
                 "       for(var i = spans.length-1; i > 0; --i) {" +
                 "          if(spans[i].innerText.toLowerCase().includes('credits')) {" +
@@ -588,8 +589,7 @@ public class VTOP {
                             myDatabase.execSQL("DROP TABLE IF EXISTS timetable_theory");
                             myDatabase.execSQL("CREATE TABLE IF NOT EXISTS timetable_theory (id INTEGER PRIMARY KEY, start_time VARCHAR, end_time VARCHAR, sun VARCHAR, mon VARCHAR, tue VARCHAR, wed VARCHAR, thu VARCHAR, fri VARCHAR, sat VARCHAR)");
 
-                            myDatabase.execSQL("DROP TABLE IF EXISTS faculty");
-                            myDatabase.execSQL("CREATE TABLE IF NOT EXISTS faculty (id INTEGER PRIMARY KEY, course VARCHAR, faculty VARCHAR)");
+                            sharedPreferences.edit().remove("credits").apply();
 
                             AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
                             Intent notificationIntent = new Intent(context, NotificationReceiver.class);
@@ -801,7 +801,11 @@ public class VTOP {
                 "   async: false," +
                 "   success : function(response) {" +
                 "       var doc = new DOMParser().parseFromString(response, 'text/html');" +
-                "       var division = doc.getElementById('studentDetailsList'); " +  //Possible error: If timetable is available but faculty info isn't
+                "       if (!doc.getElementById('studentDetailsList')) {" +
+                "           obj = 'nothing';" +
+                "           return;" +
+                "       }" +
+                "       var division = doc.getElementById('studentDetailsList'); " +
                 "       var heads = division.getElementsByTagName('th');" +
                 "       var courseIndex, facultyIndex, flag = 0;" +
                 "       var columns = heads.length;" +
@@ -835,9 +839,9 @@ public class VTOP {
             @Override
             public void onReceiveValue(final String obj) {
                 String temp = obj.substring(1, obj.length() - 1);
-                if (obj.equals("null")) {
+                if (obj.equals("null") || temp.equals("")) {
                     error();
-                } else if (temp.equals("")) {
+                } else if (temp.equals("nothing")) {
                     new Thread(new Runnable() {
                         @Override
                         public void run() {

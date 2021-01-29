@@ -51,8 +51,6 @@ public class LoginActivity extends AppCompatActivity {
 
         vtop = new VTOP(this, download);
 
-        vtop = new VTOP(this, download);
-
         /*
             Remove any non-encrypted credentials
          */
@@ -112,9 +110,11 @@ public class LoginActivity extends AppCompatActivity {
             sharedPreferences.edit().remove("newExams").apply();
             sharedPreferences.edit().remove("newMarks").apply();
             sharedPreferences.edit().remove("newGrades").apply();
-        }
 
-        sharedPreferences.edit().putString("semester", semester.toLowerCase()).apply();
+            sharedPreferences.edit().putString("semester", semester.toLowerCase()).apply();
+            vtop.downloadProfile();
+            return;
+        }
 
         int lastDownload = vtop.getLastDownload();
         switch (lastDownload) {
@@ -162,6 +162,7 @@ public class LoginActivity extends AppCompatActivity {
 
     public void cancelDownload(View view) {
         download.dismiss();
+        download = null;
     }
 
     public void openPrivacy(View view) {

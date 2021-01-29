@@ -121,7 +121,7 @@ public class HomeActivity extends AppCompatActivity {
         startActivity(new Intent(HomeActivity.this, SpotlightActivity.class));
         findViewById(R.id.spotlight_notification).animate().scaleX(0).scaleY(0);
 
-        if (!sharedPreferences.getBoolean("newExams", false) && sharedPreferences.getString("newMarks", "{}}").equals("{}") && !sharedPreferences.getBoolean("newGrades", false)) {
+        if (!sharedPreferences.getBoolean("newExams", false) && sharedPreferences.getString("newMarks", "{}").equals("{}") && !sharedPreferences.getBoolean("newGrades", false)) {
             findViewById(R.id.academics_notification).animate().scaleX(0).scaleY(0);
         }
     }
@@ -239,9 +239,11 @@ public class HomeActivity extends AppCompatActivity {
             sharedPreferences.edit().remove("newExams").apply();
             sharedPreferences.edit().remove("newMarks").apply();
             sharedPreferences.edit().remove("newGrades").apply();
-        }
 
-        sharedPreferences.edit().putString("semester", semester.toLowerCase()).apply();
+            sharedPreferences.edit().putString("semester", semester.toLowerCase()).apply();
+            vtop.downloadProfile();
+            return;
+        }
 
         int lastDownload = vtop.getLastDownload();
         switch (lastDownload) {
@@ -1210,7 +1212,7 @@ public class HomeActivity extends AppCompatActivity {
                     });
                 }
 
-                if (!sharedPreferences.getString("newMarks", "{}}").equals("{}")) {
+                if (!sharedPreferences.getString("newMarks", "{}").equals("{}")) {
                     academicsFlag = true;
                     runOnUiThread(new Runnable() {
                         @Override
