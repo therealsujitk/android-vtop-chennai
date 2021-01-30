@@ -207,6 +207,7 @@ public class StaffActivity extends AppCompatActivity {
                                     (int) (50 * pixelDensity)
                             );
                             linkParams.setMarginEnd((int) (20 * pixelDensity));
+                            linkParams.setMargins(0, (int) (20 * pixelDensity), 0, (int) (20 * pixelDensity));
                             linkButton.setLayoutParams(linkParams);
                             linkButton.setClickable(true);
                             linkButton.setFocusable(true);
@@ -237,6 +238,7 @@ public class StaffActivity extends AppCompatActivity {
                                     (int) (50 * pixelDensity)
                             );
                             linkParams.setMarginEnd((int) (20 * pixelDensity));
+                            linkParams.setMargins(0, (int) (20 * pixelDensity), 0, (int) (20 * pixelDensity));
                             linkButton.setLayoutParams(linkParams);
                             linkButton.setClickable(true);
                             linkButton.setFocusable(true);
@@ -367,6 +369,7 @@ public class StaffActivity extends AppCompatActivity {
                                     (int) (50 * pixelDensity)
                             );
                             linkParams.setMarginEnd((int) (20 * pixelDensity));
+                            linkParams.setMargins(0, (int) (20 * pixelDensity), 0, (int) (20 * pixelDensity));
                             linkButton.setLayoutParams(linkParams);
                             linkButton.setClickable(true);
                             linkButton.setFocusable(true);
@@ -397,6 +400,7 @@ public class StaffActivity extends AppCompatActivity {
                                     (int) (50 * pixelDensity)
                             );
                             linkParams.setMarginEnd((int) (20 * pixelDensity));
+                            linkParams.setMargins(0, (int) (20 * pixelDensity), 0, (int) (20 * pixelDensity));
                             linkButton.setLayoutParams(linkParams);
                             linkButton.setClickable(true);
                             linkButton.setFocusable(true);
@@ -526,6 +530,7 @@ public class StaffActivity extends AppCompatActivity {
                                     (int) (50 * pixelDensity)
                             );
                             linkParams.setMarginEnd((int) (20 * pixelDensity));
+                            linkParams.setMargins(0, (int) (20 * pixelDensity), 0, (int) (20 * pixelDensity));
                             linkButton.setLayoutParams(linkParams);
                             linkButton.setClickable(true);
                             linkButton.setFocusable(true);
@@ -556,6 +561,7 @@ public class StaffActivity extends AppCompatActivity {
                                     (int) (50 * pixelDensity)
                             );
                             linkParams.setMarginEnd((int) (20 * pixelDensity));
+                            linkParams.setMargins(0, (int) (20 * pixelDensity), 0, (int) (20 * pixelDensity));
                             linkButton.setLayoutParams(linkParams);
                             linkButton.setClickable(true);
                             linkButton.setFocusable(true);
