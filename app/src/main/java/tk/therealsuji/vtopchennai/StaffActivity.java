@@ -1,13 +1,19 @@
 package tk.therealsuji.vtopchennai;
 
+import android.animation.AnimatorInflater;
+import android.animation.StateListAnimator;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.HorizontalScrollView;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TableRow;
@@ -123,25 +129,36 @@ public class StaffActivity extends AppCompatActivity {
 
                     for (int i = 0; i < c.getCount(); ++i, c.moveToNext()) {
                         String key = c.getString(column1Index);
-                        String value = c.getString(column2Index);
+                        final String value = c.getString(column2Index);
 
                         if (key.equals("") || value.equals("")) {
                             continue;
                         }
 
-                        final LinearLayout block = new LinearLayout(context);
-                        LinearLayout.LayoutParams blockParams = new LinearLayout.LayoutParams(
+                        final LinearLayout outerBlock = new LinearLayout(context);
+                        LinearLayout.LayoutParams outerBlockParams = new LinearLayout.LayoutParams(
                                 LinearLayout.LayoutParams.MATCH_PARENT,
                                 LinearLayout.LayoutParams.WRAP_CONTENT
                         );
+                        outerBlockParams.setMarginStart((int) (20 * pixelDensity));
+                        outerBlockParams.setMarginEnd((int) (20 * pixelDensity));
+                        outerBlockParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (5 * pixelDensity));
+                        outerBlock.setLayoutParams(outerBlockParams);
+                        outerBlock.setBackground(ContextCompat.getDrawable(context, R.drawable.plain_card));
+                        outerBlock.setOrientation(LinearLayout.HORIZONTAL);
+                        outerBlock.setGravity(Gravity.CENTER_VERTICAL);
+                        outerBlock.setAlpha(0);
+
+                        LinearLayout block = new LinearLayout(context);
+                        LinearLayout.LayoutParams blockParams = new LinearLayout.LayoutParams(
+                                LinearLayout.LayoutParams.WRAP_CONTENT,
+                                LinearLayout.LayoutParams.WRAP_CONTENT,
+                                1
+                        );
                         blockParams.setMarginStart((int) (20 * pixelDensity));
                         blockParams.setMarginEnd((int) (20 * pixelDensity));
-                        blockParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (5 * pixelDensity));
                         block.setLayoutParams(blockParams);
-                        block.setBackground(ContextCompat.getDrawable(context, R.drawable.plain_card));
                         block.setOrientation(LinearLayout.VERTICAL);
-                        block.setAlpha(0);
-                        block.animate().alpha(1);
 
                         /*
                             The value TextView
@@ -151,8 +168,6 @@ public class StaffActivity extends AppCompatActivity {
                                 TableRow.LayoutParams.WRAP_CONTENT,
                                 TableRow.LayoutParams.WRAP_CONTENT
                         );
-                        valueViewParams.setMarginStart((int) (20 * pixelDensity));
-                        valueViewParams.setMarginEnd((int) (20 * pixelDensity));
                         valueViewParams.setMargins(0, (int) (20 * pixelDensity), 0, (int) (5 * pixelDensity));
                         valueView.setLayoutParams(valueViewParams);
                         valueView.setText(value);
@@ -170,8 +185,6 @@ public class StaffActivity extends AppCompatActivity {
                                 TableRow.LayoutParams.WRAP_CONTENT,
                                 TableRow.LayoutParams.WRAP_CONTENT
                         );
-                        keyViewParams.setMarginStart((int) (20 * pixelDensity));
-                        keyViewParams.setMarginEnd((int) (20 * pixelDensity));
                         keyViewParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (20 * pixelDensity));
                         keyView.setLayoutParams(keyViewParams);
                         keyView.setText(key);
@@ -181,15 +194,81 @@ public class StaffActivity extends AppCompatActivity {
 
                         block.addView(keyView);   //Adding key to block
 
+                        outerBlock.addView(block);
+
                         /*
                             Finally adding the block to the view
                          */
+                        String lowerKey = key.toLowerCase();
+                        if (lowerKey.contains("mobile") || lowerKey.contains("phone")) {
+                            LinearLayout linkButton = new LinearLayout(context);
+                            LinearLayout.LayoutParams linkParams = new LinearLayout.LayoutParams(
+                                    (int) (50 * pixelDensity),
+                                    (int) (50 * pixelDensity)
+                            );
+                            linkParams.setMarginEnd((int) (20 * pixelDensity));
+                            linkButton.setLayoutParams(linkParams);
+                            linkButton.setClickable(true);
+                            linkButton.setFocusable(true);
+                            linkButton.setGravity(Gravity.CENTER);
+                            linkButton.setBackground(ContextCompat.getDrawable(context, R.drawable.button_link));
+
+                            StateListAnimator elevation = AnimatorInflater.loadStateListAnimator(context, R.animator.item_elevation);
+                            linkButton.setStateListAnimator(elevation);
+
+                            linkButton.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    Intent intent = new Intent(Intent.ACTION_DIAL);
+                                    intent.setData(Uri.parse("tel:" + value));
+                                    startActivity(intent);
+                                }
+                            });
+
+                            ImageView imageView = new ImageView(context);
+                            imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_phone));
+
+                            linkButton.addView(imageView);
+                            outerBlock.addView(linkButton);
+                        } else if (lowerKey.contains("email")) {
+                            LinearLayout linkButton = new LinearLayout(context);
+                            LinearLayout.LayoutParams linkParams = new LinearLayout.LayoutParams(
+                                    (int) (50 * pixelDensity),
+                                    (int) (50 * pixelDensity)
+                            );
+                            linkParams.setMarginEnd((int) (20 * pixelDensity));
+                            linkButton.setLayoutParams(linkParams);
+                            linkButton.setClickable(true);
+                            linkButton.setFocusable(true);
+                            linkButton.setGravity(Gravity.CENTER);
+                            linkButton.setBackground(ContextCompat.getDrawable(context, R.drawable.button_link));
+
+                            StateListAnimator elevation = AnimatorInflater.loadStateListAnimator(context, R.animator.item_elevation);
+                            linkButton.setStateListAnimator(elevation);
+
+                            linkButton.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    Intent intent = new Intent(Intent.ACTION_SENDTO);
+                                    intent.setData(Uri.parse("mailto:" + value));
+                                    startActivity(intent);
+                                }
+                            });
+
+                            ImageView imageView = new ImageView(context);
+                            imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_email));
+
+                            linkButton.addView(imageView);
+                            outerBlock.addView(linkButton);
+                        }
+
                         final LinearLayout proctorView = staffViews[0];
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
                                 findViewById(R.id.noData).setVisibility(View.INVISIBLE);
-                                proctorView.addView(block);
+                                proctorView.addView(outerBlock);
+                                outerBlock.animate().alpha(1);
                             }
                         });
                     }
@@ -210,25 +289,36 @@ public class StaffActivity extends AppCompatActivity {
 
                     for (int i = 0; i < c.getCount(); ++i, c.moveToNext()) {
                         String key = c.getString(column1Index);
-                        String value = c.getString(column2Index);
+                        final String value = c.getString(column2Index);
 
                         if (key.equals("") || value.equals("")) {
                             continue;
                         }
 
-                        final LinearLayout block = new LinearLayout(context);
-                        LinearLayout.LayoutParams blockParams = new LinearLayout.LayoutParams(
+                        final LinearLayout outerBlock = new LinearLayout(context);
+                        LinearLayout.LayoutParams outerBlockParams = new LinearLayout.LayoutParams(
                                 LinearLayout.LayoutParams.MATCH_PARENT,
                                 LinearLayout.LayoutParams.WRAP_CONTENT
                         );
+                        outerBlockParams.setMarginStart((int) (20 * pixelDensity));
+                        outerBlockParams.setMarginEnd((int) (20 * pixelDensity));
+                        outerBlockParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (5 * pixelDensity));
+                        outerBlock.setLayoutParams(outerBlockParams);
+                        outerBlock.setBackground(ContextCompat.getDrawable(context, R.drawable.plain_card));
+                        outerBlock.setOrientation(LinearLayout.HORIZONTAL);
+                        outerBlock.setGravity(Gravity.CENTER_VERTICAL);
+                        outerBlock.setAlpha(0);
+
+                        LinearLayout block = new LinearLayout(context);
+                        LinearLayout.LayoutParams blockParams = new LinearLayout.LayoutParams(
+                                LinearLayout.LayoutParams.WRAP_CONTENT,
+                                LinearLayout.LayoutParams.WRAP_CONTENT,
+                                1
+                        );
                         blockParams.setMarginStart((int) (20 * pixelDensity));
                         blockParams.setMarginEnd((int) (20 * pixelDensity));
-                        blockParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (5 * pixelDensity));
                         block.setLayoutParams(blockParams);
-                        block.setBackground(ContextCompat.getDrawable(context, R.drawable.plain_card));
                         block.setOrientation(LinearLayout.VERTICAL);
-                        block.setAlpha(0);
-                        block.animate().alpha(1);
 
                         /*
                             The value TextView
@@ -238,8 +328,6 @@ public class StaffActivity extends AppCompatActivity {
                                 TableRow.LayoutParams.WRAP_CONTENT,
                                 TableRow.LayoutParams.WRAP_CONTENT
                         );
-                        valueViewParams.setMarginStart((int) (20 * pixelDensity));
-                        valueViewParams.setMarginEnd((int) (20 * pixelDensity));
                         valueViewParams.setMargins(0, (int) (20 * pixelDensity), 0, (int) (5 * pixelDensity));
                         valueView.setLayoutParams(valueViewParams);
                         valueView.setText(value);
@@ -257,8 +345,6 @@ public class StaffActivity extends AppCompatActivity {
                                 TableRow.LayoutParams.WRAP_CONTENT,
                                 TableRow.LayoutParams.WRAP_CONTENT
                         );
-                        keyViewParams.setMarginStart((int) (20 * pixelDensity));
-                        keyViewParams.setMarginEnd((int) (20 * pixelDensity));
                         keyViewParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (20 * pixelDensity));
                         keyView.setLayoutParams(keyViewParams);
                         keyView.setText(key);
@@ -268,14 +354,80 @@ public class StaffActivity extends AppCompatActivity {
 
                         block.addView(keyView);   //Adding key to block
 
+                        outerBlock.addView(block);
+
                         /*
                             Finally adding the block to the view
                          */
-                        final LinearLayout deanView = staffViews[1];
+                        String lowerKey = key.toLowerCase();
+                        if (lowerKey.contains("mobile") || lowerKey.contains("phone")) {
+                            LinearLayout linkButton = new LinearLayout(context);
+                            LinearLayout.LayoutParams linkParams = new LinearLayout.LayoutParams(
+                                    (int) (50 * pixelDensity),
+                                    (int) (50 * pixelDensity)
+                            );
+                            linkParams.setMarginEnd((int) (20 * pixelDensity));
+                            linkButton.setLayoutParams(linkParams);
+                            linkButton.setClickable(true);
+                            linkButton.setFocusable(true);
+                            linkButton.setGravity(Gravity.CENTER);
+                            linkButton.setBackground(ContextCompat.getDrawable(context, R.drawable.button_link));
+
+                            StateListAnimator elevation = AnimatorInflater.loadStateListAnimator(context, R.animator.item_elevation);
+                            linkButton.setStateListAnimator(elevation);
+
+                            linkButton.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    Intent intent = new Intent(Intent.ACTION_DIAL);
+                                    intent.setData(Uri.parse("tel:" + value));
+                                    startActivity(intent);
+                                }
+                            });
+
+                            ImageView imageView = new ImageView(context);
+                            imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_phone));
+
+                            linkButton.addView(imageView);
+                            outerBlock.addView(linkButton);
+                        } else if (lowerKey.contains("email")) {
+                            LinearLayout linkButton = new LinearLayout(context);
+                            LinearLayout.LayoutParams linkParams = new LinearLayout.LayoutParams(
+                                    (int) (50 * pixelDensity),
+                                    (int) (50 * pixelDensity)
+                            );
+                            linkParams.setMarginEnd((int) (20 * pixelDensity));
+                            linkButton.setLayoutParams(linkParams);
+                            linkButton.setClickable(true);
+                            linkButton.setFocusable(true);
+                            linkButton.setGravity(Gravity.CENTER);
+                            linkButton.setBackground(ContextCompat.getDrawable(context, R.drawable.button_link));
+
+                            StateListAnimator elevation = AnimatorInflater.loadStateListAnimator(context, R.animator.item_elevation);
+                            linkButton.setStateListAnimator(elevation);
+
+                            linkButton.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    Intent intent = new Intent(Intent.ACTION_SENDTO);
+                                    intent.setData(Uri.parse("mailto:" + value));
+                                    startActivity(intent);
+                                }
+                            });
+
+                            ImageView imageView = new ImageView(context);
+                            imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_email));
+
+                            linkButton.addView(imageView);
+                            outerBlock.addView(linkButton);
+                        }
+
+                        final LinearLayout proctorView = staffViews[1];
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                deanView.addView(block);
+                                proctorView.addView(outerBlock);
+                                outerBlock.animate().alpha(1);
                             }
                         });
                     }
@@ -296,25 +448,36 @@ public class StaffActivity extends AppCompatActivity {
 
                     for (int i = 0; i < c.getCount(); ++i, c.moveToNext()) {
                         String key = c.getString(column1Index);
-                        String value = c.getString(column2Index);
+                        final String value = c.getString(column2Index);
 
                         if (key.equals("") || value.equals("")) {
                             continue;
                         }
 
-                        final LinearLayout block = new LinearLayout(context);
-                        LinearLayout.LayoutParams blockParams = new LinearLayout.LayoutParams(
+                        final LinearLayout outerBlock = new LinearLayout(context);
+                        LinearLayout.LayoutParams outerBlockParams = new LinearLayout.LayoutParams(
                                 LinearLayout.LayoutParams.MATCH_PARENT,
                                 LinearLayout.LayoutParams.WRAP_CONTENT
                         );
+                        outerBlockParams.setMarginStart((int) (20 * pixelDensity));
+                        outerBlockParams.setMarginEnd((int) (20 * pixelDensity));
+                        outerBlockParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (5 * pixelDensity));
+                        outerBlock.setLayoutParams(outerBlockParams);
+                        outerBlock.setBackground(ContextCompat.getDrawable(context, R.drawable.plain_card));
+                        outerBlock.setOrientation(LinearLayout.HORIZONTAL);
+                        outerBlock.setGravity(Gravity.CENTER_VERTICAL);
+                        outerBlock.setAlpha(0);
+
+                        LinearLayout block = new LinearLayout(context);
+                        LinearLayout.LayoutParams blockParams = new LinearLayout.LayoutParams(
+                                LinearLayout.LayoutParams.WRAP_CONTENT,
+                                LinearLayout.LayoutParams.WRAP_CONTENT,
+                                1
+                        );
                         blockParams.setMarginStart((int) (20 * pixelDensity));
                         blockParams.setMarginEnd((int) (20 * pixelDensity));
-                        blockParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (5 * pixelDensity));
                         block.setLayoutParams(blockParams);
-                        block.setBackground(ContextCompat.getDrawable(context, R.drawable.plain_card));
                         block.setOrientation(LinearLayout.VERTICAL);
-                        block.setAlpha(0);
-                        block.animate().alpha(1);
 
                         /*
                             The value TextView
@@ -324,8 +487,6 @@ public class StaffActivity extends AppCompatActivity {
                                 TableRow.LayoutParams.WRAP_CONTENT,
                                 TableRow.LayoutParams.WRAP_CONTENT
                         );
-                        valueViewParams.setMarginStart((int) (20 * pixelDensity));
-                        valueViewParams.setMarginEnd((int) (20 * pixelDensity));
                         valueViewParams.setMargins(0, (int) (20 * pixelDensity), 0, (int) (5 * pixelDensity));
                         valueView.setLayoutParams(valueViewParams);
                         valueView.setText(value);
@@ -343,8 +504,6 @@ public class StaffActivity extends AppCompatActivity {
                                 TableRow.LayoutParams.WRAP_CONTENT,
                                 TableRow.LayoutParams.WRAP_CONTENT
                         );
-                        keyViewParams.setMarginStart((int) (20 * pixelDensity));
-                        keyViewParams.setMarginEnd((int) (20 * pixelDensity));
                         keyViewParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (20 * pixelDensity));
                         keyView.setLayoutParams(keyViewParams);
                         keyView.setText(key);
@@ -354,14 +513,80 @@ public class StaffActivity extends AppCompatActivity {
 
                         block.addView(keyView);   //Adding key to block
 
+                        outerBlock.addView(block);
+
                         /*
                             Finally adding the block to the view
                          */
-                        final LinearLayout hodView = staffViews[2];
+                        String lowerKey = key.toLowerCase();
+                        if (lowerKey.contains("mobile") || lowerKey.contains("phone")) {
+                            LinearLayout linkButton = new LinearLayout(context);
+                            LinearLayout.LayoutParams linkParams = new LinearLayout.LayoutParams(
+                                    (int) (50 * pixelDensity),
+                                    (int) (50 * pixelDensity)
+                            );
+                            linkParams.setMarginEnd((int) (20 * pixelDensity));
+                            linkButton.setLayoutParams(linkParams);
+                            linkButton.setClickable(true);
+                            linkButton.setFocusable(true);
+                            linkButton.setGravity(Gravity.CENTER);
+                            linkButton.setBackground(ContextCompat.getDrawable(context, R.drawable.button_link));
+
+                            StateListAnimator elevation = AnimatorInflater.loadStateListAnimator(context, R.animator.item_elevation);
+                            linkButton.setStateListAnimator(elevation);
+
+                            linkButton.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    Intent intent = new Intent(Intent.ACTION_DIAL);
+                                    intent.setData(Uri.parse("tel:" + value));
+                                    startActivity(intent);
+                                }
+                            });
+
+                            ImageView imageView = new ImageView(context);
+                            imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_phone));
+
+                            linkButton.addView(imageView);
+                            outerBlock.addView(linkButton);
+                        } else if (lowerKey.contains("email")) {
+                            LinearLayout linkButton = new LinearLayout(context);
+                            LinearLayout.LayoutParams linkParams = new LinearLayout.LayoutParams(
+                                    (int) (50 * pixelDensity),
+                                    (int) (50 * pixelDensity)
+                            );
+                            linkParams.setMarginEnd((int) (20 * pixelDensity));
+                            linkButton.setLayoutParams(linkParams);
+                            linkButton.setClickable(true);
+                            linkButton.setFocusable(true);
+                            linkButton.setGravity(Gravity.CENTER);
+                            linkButton.setBackground(ContextCompat.getDrawable(context, R.drawable.button_link));
+
+                            StateListAnimator elevation = AnimatorInflater.loadStateListAnimator(context, R.animator.item_elevation);
+                            linkButton.setStateListAnimator(elevation);
+
+                            linkButton.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    Intent intent = new Intent(Intent.ACTION_SENDTO);
+                                    intent.setData(Uri.parse("mailto:" + value));
+                                    startActivity(intent);
+                                }
+                            });
+
+                            ImageView imageView = new ImageView(context);
+                            imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_email));
+
+                            linkButton.addView(imageView);
+                            outerBlock.addView(linkButton);
+                        }
+
+                        final LinearLayout proctorView = staffViews[2];
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                hodView.addView(block);
+                                proctorView.addView(outerBlock);
+                                outerBlock.animate().alpha(1);
                             }
                         });
                     }
