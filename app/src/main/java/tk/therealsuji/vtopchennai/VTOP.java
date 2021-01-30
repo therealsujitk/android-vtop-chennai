@@ -49,12 +49,6 @@ import static android.content.Context.ALARM_SERVICE;
 public class VTOP {
     Context context;
 
-    private static final float[] DARK = {
-            -0.853f, 0, 0, 0, 255, // R
-            0, -0.853f, 0, 0, 255, // G
-            0, 0, -0.853f, 0, 255, // B
-            0, 0, 0, 1, 0  // A
-    };
     WebView webView;
     Dialog downloadDialog;
     ImageView captcha;
@@ -62,13 +56,18 @@ public class VTOP {
     ProgressBar loading, progressBar;
     Spinner selectSemester;
     LinearLayout captchaLayout, downloadingLayout, semesterLayout;
+    private static final float[] DARK = {
+            -0.853f, 0, 0, 0, 255, // R
+            0, -0.853f, 0, 0, 255, // G
+            0, 0, -0.853f, 0, 255, // B
+            0, 0, 0, 1, 0  // A
+    };
 
-    Boolean isOpened, isLoggedIn;
     SharedPreferences sharedPreferences;
-    TextView downloading, progressText;
-
     SQLiteDatabase myDatabase;
+    TextView downloading, progressText;
     int counter, lastDownload;
+    Boolean isOpened, isLoggedIn;
 
     @SuppressLint("SetJavaScriptEnabled")
     public VTOP(final Context context, final Dialog downloadDialog) {
@@ -599,14 +598,13 @@ public class VTOP {
                             }
 
                             sharedPreferences.edit().remove("newTimetable").apply();
-                            sharedPreferences.edit().remove("newFaculty").apply();
                             sharedPreferences.edit().remove("alarmCount").apply();
 
                             ((Activity) context).runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
                                     setProgress();
-                                    downloadProctor();
+                                    downloadFaculty();
                                 }
                             });
                         }
@@ -775,11 +773,11 @@ public class VTOP {
         Function to download faculty info
      */
     public void downloadFaculty() {
+        downloading.setText(context.getString(R.string.downloading_faculty));
         if (downloadingLayout.getVisibility() == View.GONE) {
             hideLayouts();
             expand(downloadingLayout);
         }
-        downloading.setText(context.getString(R.string.downloading_faculty));
 
         String semester = sharedPreferences.getString("semester", "null");
 
@@ -1160,6 +1158,7 @@ public class VTOP {
             hideLayouts();
             expand(downloadingLayout);
         }
+
         String semester = sharedPreferences.getString("semester", "null");
 
         webView.evaluateJavascript("(function() {" +
@@ -1798,7 +1797,7 @@ public class VTOP {
                                     @Override
                                     public void run() {
                                         setProgress();
-                                        downloadSpotlight();
+                                        downloadProctorMessages();
                                     }
                                 });
                             } catch (Exception e) {
