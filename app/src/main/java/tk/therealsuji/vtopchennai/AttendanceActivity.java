@@ -53,6 +53,15 @@ public class AttendanceActivity extends AppCompatActivity {
                 c.moveToFirst();
 
                 for (int i = 0; i < c.getCount(); ++i) {
+                    if (i == 0) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                findViewById(R.id.noData).setVisibility(View.GONE);
+                                findViewById(R.id.loading).setVisibility(View.VISIBLE);
+                            }
+                        });
+                    }
                     /*
                         The outer block
                      */
@@ -63,9 +72,6 @@ public class AttendanceActivity extends AppCompatActivity {
                     );
                     blockParams.setMarginStart((int) (20 * pixelDensity));
                     blockParams.setMarginEnd((int) (20 * pixelDensity));
-                    if (i == 0) {
-                        findViewById(R.id.noData).setVisibility(View.GONE);
-                    }
                     blockParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (5 * pixelDensity));
                     block.setLayoutParams(blockParams);
                     block.setBackground(ContextCompat.getDrawable(context, R.drawable.plain_card));
@@ -202,20 +208,41 @@ public class AttendanceActivity extends AppCompatActivity {
 
                         container.addView(notification);
 
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                attendance.addView(container);
-                                notification.animate().scaleX(1).scaleY(1);
-                            }
-                        });
+                        if (i == 0) {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    findViewById(R.id.loading).animate().alpha(0);
+                                    attendance.addView(container);
+                                    notification.animate().scaleX(1).scaleY(1);
+                                }
+                            });
+                        } else {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    attendance.addView(container);
+                                    notification.animate().scaleX(1).scaleY(1);
+                                }
+                            });
+                        }
                     } else {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                attendance.addView(block);
-                            }
-                        });
+                        if (i == 0) {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    findViewById(R.id.loading).animate().alpha(0);
+                                    attendance.addView(block);
+                                }
+                            });
+                        } else {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    attendance.addView(block);
+                                }
+                            });
+                        }
                     }
 
                     c.moveToNext();

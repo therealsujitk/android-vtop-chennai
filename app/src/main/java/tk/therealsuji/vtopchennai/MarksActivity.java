@@ -379,7 +379,7 @@ public class MarksActivity extends AppCompatActivity {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                findViewById(R.id.loading).setVisibility(View.GONE);
+                                findViewById(R.id.loading).animate().alpha(0);
                                 marks.addView(markView);
                             }
                         });
@@ -700,7 +700,7 @@ public class MarksActivity extends AppCompatActivity {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                findViewById(R.id.loading).setVisibility(View.GONE);
+                                findViewById(R.id.loading).animate().alpha(0);
                                 marks.addView(markView);
                             }
                         });

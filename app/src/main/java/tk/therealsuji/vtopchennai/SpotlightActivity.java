@@ -63,6 +63,17 @@ public class SpotlightActivity extends AppCompatActivity {
         categoriesContainer.smoothScrollTo((int) location - halfWidth, 0);
     }
 
+    public void openLink(String link) {
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(link));
+        startActivity(browserIntent);
+    }
+
+    public void downloadDocument(String link) {
+        String downloadLink = "http://vtopcc.vit.ac.in/vtop/" + link + "?&x=";
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(downloadLink));
+        startActivity(browserIntent);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,6 +103,16 @@ public class SpotlightActivity extends AppCompatActivity {
                 c.moveToFirst();
 
                 for (int i = 0; i < c.getCount(); ++i, c.moveToNext()) {
+                    if (i == 0) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                findViewById(R.id.noData).setVisibility(View.GONE);
+                                findViewById(R.id.loading).setVisibility(View.VISIBLE);
+                            }
+                        });
+                    }
+
                     String categoryTitle = c.getString(categoryIndex);
 
                     /*
@@ -171,11 +192,7 @@ public class SpotlightActivity extends AppCompatActivity {
                         );
                         blockParams.setMarginStart((int) (20 * pixelDensity));
                         blockParams.setMarginEnd((int) (20 * pixelDensity));
-                        if (j == s.getCount() - 1) {
-                            blockParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (20 * pixelDensity));
-                        } else {
-                            blockParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (5 * pixelDensity));
-                        }
+                        blockParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (5 * pixelDensity));
                         block.setLayoutParams(blockParams);
                         block.setBackground(ContextCompat.getDrawable(context, R.drawable.plain_card));
                         block.setGravity(Gravity.CENTER_VERTICAL);
@@ -227,8 +244,7 @@ public class SpotlightActivity extends AppCompatActivity {
                             linkButton.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-                                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(link));
-                                    startActivity(browserIntent);
+                                    openLink(link);
                                 }
                             });
 
@@ -257,9 +273,7 @@ public class SpotlightActivity extends AppCompatActivity {
                             linkButton.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-                                    String downloadLink = "http://vtopcc.vit.ac.in/vtop/" + link + "?&x=";
-                                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(downloadLink));
-                                    startActivity(browserIntent);
+                                    downloadDocument(link);
                                 }
                             });
 
@@ -280,7 +294,7 @@ public class SpotlightActivity extends AppCompatActivity {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                findViewById(R.id.noData).setVisibility(View.GONE);
+                                findViewById(R.id.loading).animate().alpha(0);
                                 announcements.addView(announcementsView);
                             }
                         });

@@ -121,6 +121,16 @@ public class StaffActivity extends AppCompatActivity {
                 Cursor c = myDatabase.rawQuery("SELECT * FROM proctor", null);
 
                 if (c.getCount() > 0) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            findViewById(R.id.noData).setVisibility(View.GONE);
+                            findViewById(R.id.loading).setVisibility(View.VISIBLE);
+                        }
+                    });
+
+                    boolean visibleLoading = true;
+
                     hasStaff[0] = true;
 
                     int column1Index = c.getColumnIndex("column1");
@@ -265,14 +275,26 @@ public class StaffActivity extends AppCompatActivity {
                         }
 
                         final LinearLayout proctorView = staffViews[0];
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                findViewById(R.id.noData).setVisibility(View.INVISIBLE);
-                                proctorView.addView(outerBlock);
-                                outerBlock.animate().alpha(1);
-                            }
-                        });
+
+                        if (visibleLoading) {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    findViewById(R.id.loading).animate().alpha(0);
+                                    proctorView.addView(outerBlock);
+                                    outerBlock.animate().alpha(1);
+                                }
+                            });
+                            visibleLoading = false;
+                        } else {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    proctorView.addView(outerBlock);
+                                    outerBlock.animate().alpha(1);
+                                }
+                            });
+                        }
                     }
                 }
 

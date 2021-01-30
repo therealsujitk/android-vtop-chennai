@@ -103,17 +103,17 @@ public class LoginActivity extends AppCompatActivity {
         loading.animate().alpha(1);
 
         Spinner selectSemester = download.findViewById(R.id.selectSemester);
-        String semester = selectSemester.getSelectedItem().toString();
+        String semester = selectSemester.getSelectedItem().toString().toLowerCase();
 
-        if (!sharedPreferences.getString("semester", "null").equals(semester.toLowerCase())) {
+        if (!sharedPreferences.getString("semester", "null").equals(semester)) {
             sharedPreferences.edit().putBoolean("newTimetable", true).apply();
             sharedPreferences.edit().putBoolean("newFaculty", true).apply();
             sharedPreferences.edit().remove("newExams").apply();
             sharedPreferences.edit().remove("newMarks").apply();
             sharedPreferences.edit().remove("newGrades").apply();
 
-            sharedPreferences.edit().putString("semester", semester.toLowerCase()).apply();
-            vtop.downloadProfile();
+            sharedPreferences.edit().putString("semester", semester).apply();
+            vtop.getSemesterID(semester);
             return;
         }
 
@@ -156,7 +156,7 @@ public class LoginActivity extends AppCompatActivity {
                 vtop.downloadReceipts();
                 break;
             default:
-                vtop.downloadProfile();
+                vtop.getSemesterID(semester);
 
         }
     }

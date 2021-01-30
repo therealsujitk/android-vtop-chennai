@@ -69,6 +69,8 @@ public class VTOP {
     int counter, lastDownload;
     Boolean isOpened, isLoggedIn;
 
+    String semesterID;
+
     @SuppressLint("SetJavaScriptEnabled")
     public VTOP(final Context context, final Dialog downloadDialog) {
         this.context = context;
@@ -144,38 +146,6 @@ public class VTOP {
         anim.start();
     }
 
-    /*
-        Function to open the sign in page
-     */
-    private void openSignIn() {
-        webView.evaluateJavascript("(function() {" +
-                "var successFlag = false;" +
-                "$.ajax({" +
-                "   type: 'POST'," +
-                "   url: 'vtopLogin'," +
-                "   data: null," +
-                "   async: false," +
-                "   success: function(response) {" +
-                "       if(response.search('___INTERNAL___RESPONSE___') == -1 && response.includes('VTOP Login')) {" +
-                "           $('#page_outline').html(response);" +
-                "           successFlag = true;" +
-                "       }" +
-                "   }" +
-                "});" +
-                "return successFlag;" +
-                "})();", new ValueCallback<String>() {
-            @Override
-            public void onReceiveValue(String value) {
-                if (value.equals("true")) {
-                    getCaptcha();
-                } else {
-                    isOpened = false;
-                    reloadPage();
-                }
-            }
-        });
-    }
-
     public static void compress(final View view) {
         if (view.getVisibility() == View.GONE) {
             return;
@@ -223,6 +193,38 @@ public class VTOP {
         webView.clearHistory();
         CookieManager.getInstance().removeAllCookies(null);
         webView.loadUrl("http://vtopcc.vit.ac.in/vtop");
+    }
+
+    /*
+        Function to open the sign in page
+     */
+    private void openSignIn() {
+        webView.evaluateJavascript("(function() {" +
+                "var successFlag = false;" +
+                "$.ajax({" +
+                "   type: 'POST'," +
+                "   url: 'vtopLogin'," +
+                "   data: null," +
+                "   async: false," +
+                "   success: function(response) {" +
+                "       if(response.search('___INTERNAL___RESPONSE___') == -1 && response.includes('VTOP Login')) {" +
+                "           $('#page_outline').html(response);" +
+                "           successFlag = true;" +
+                "       }" +
+                "   }" +
+                "});" +
+                "return successFlag;" +
+                "})();", new ValueCallback<String>() {
+            @Override
+            public void onReceiveValue(String value) {
+                if (value.equals("true")) {
+                    getCaptcha();
+                } else {
+                    isOpened = false;
+                    reloadPage();
+                }
+            }
+        });
     }
 
     /*
@@ -305,7 +307,7 @@ public class VTOP {
             public void onReceiveValue(String value) {
                 if (value.equals("true")) {
                     isLoggedIn = true;
-                    openTimetable();
+                    getSemesters();
                 } else {
                     if (!value.equals("false") && !value.equals("null")) {
                         value = value.substring(1, value.length() - 1);
@@ -327,10 +329,9 @@ public class VTOP {
     }
 
     /*
-        Even thought this function is called openTimetable, it is actually for getting
-        a list of the semesters. These semesters are obtained from the Timetable page
+        Function to get a list of the semesters. These semesters are obtained from the Timetable page
      */
-    public void openTimetable() {
+    public void getSemesters() {
         webView.evaluateJavascript("(function() {" +
                 "var data = 'verifyMenu=true&winImage=' + $('#winImage').val() + '&authorizedID=' + $('#authorizedIDX').val() + '&nocache=@(new Date().getTime())';" +
                 "var obj = false;" +
@@ -341,8 +342,8 @@ public class VTOP {
                 "   async: false," +
                 "   success: function(response) {" +
                 "       if(response.toLowerCase().includes('time table')) {" +
-                "           $('#page-wrapper').html(response);" +
-                "           var options = document.getElementById('semesterSubId').getElementsByTagName('option');" +
+                "           var doc = new DOMParser().parseFromString(response, 'text/html');" +
+                "           var options = doc.getElementById('semesterSubId').getElementsByTagName('option');" +
                 "           obj = {};" +
                 "           for(var i = 0, j = 0; i < options.length; ++i, ++j) {" +
                 "               if(options[i].innerText.toLowerCase().includes('choose') || options[i].innerText.toLowerCase().includes('select')) {" +
@@ -380,6 +381,44 @@ public class VTOP {
                         e.printStackTrace();
                         error();
                     }
+                }
+            }
+        });
+    }
+
+    /*
+        Function to get the semester ID from the Timetable page
+     */
+    public void getSemesterID(String semester) {
+        webView.evaluateJavascript("(function() {" +
+                "var data = 'verifyMenu=true&winImage=' + $('#winImage').val() + '&authorizedID=' + $('#authorizedIDX').val() + '&nocache=@(new Date().getTime())';" +
+                "var semID = '';" +
+                "$.ajax({" +
+                "   type: 'POST'," +
+                "   url : 'academics/common/StudentTimeTable'," +
+                "   data : data," +
+                "   async: false," +
+                "   success: function(response) {" +
+                "       if(response.toLowerCase().includes('time table')) {" +
+                "           var doc = new DOMParser().parseFromString(response, 'text/html');" +
+                "           var options = doc.getElementById('semesterSubId').getElementsByTagName('option');" +
+                "           for(var i = 0; i < options.length; ++i) {" +
+                "               if(options[i].innerText.toLowerCase().includes('" + semester + "')) {" +
+                "                   semID = options[i].value;" +
+                "               }" +
+                "           }" +
+                "       }" +
+                "   }" +
+                "});" +
+                "return semID;" +
+                "})();", new ValueCallback<String>() {
+            @Override
+            public void onReceiveValue(String semID) {
+                if (semID.equals("null")) {
+                    error();
+                } else {
+                    semesterID = semID.substring(1, semID.length() - 1);
+                    downloadProfile();
                 }
             }
         });
@@ -467,18 +506,9 @@ public class VTOP {
             expand(downloadingLayout);
         }
 
-        String semester = sharedPreferences.getString("semester", "null");
-
         webView.evaluateJavascript("(function() {" +
+                "var data = 'semesterSubId=' + '" + semesterID + "' + '&authorizedID=' + $('#authorizedIDX').val();" +
                 "var obj = {};" +
-                "var semID = '';" +
-                "var options = document.getElementById('semesterSubId').getElementsByTagName('option');" +
-                "for(var i = 0; i < options.length; ++i) {" +
-                "   if(options[i].innerText.toLowerCase().includes('" + semester + "')) {" +
-                "       semID = options[i].value;" +
-                "   }" +
-                "}" +
-                "var data = 'semesterSubId=' + semID + '&authorizedID=' + $('#authorizedIDX').val();" +
                 "var successFlag = false;" +
                 "$.ajax({" +
                 "   type : 'POST'," +
@@ -779,18 +809,9 @@ public class VTOP {
             expand(downloadingLayout);
         }
 
-        String semester = sharedPreferences.getString("semester", "null");
-
         webView.evaluateJavascript("(function() {" +
+                "var data = 'semesterSubId=' + '" + semesterID + "' + '&authorizedID=' + $('#authorizedIDX').val();" +
                 "var obj = {};" +
-                "var semID = '';" +
-                "var options = document.getElementById('semesterSubId').getElementsByTagName('option');" +
-                "for(var i = 0; i < options.length; ++i) {" +
-                "   if(options[i].innerText.toLowerCase().includes('" + semester + "')) {" +
-                "       semID = options[i].value;" +
-                "   }" +
-                "}" +
-                "var data = 'semesterSubId=' + semID + '&authorizedID=' + $('#authorizedIDX').val();" +
                 "var successFlag = false;" +
                 "$.ajax({" +
                 "   type : 'POST'," +
@@ -1159,17 +1180,8 @@ public class VTOP {
             expand(downloadingLayout);
         }
 
-        String semester = sharedPreferences.getString("semester", "null");
-
         webView.evaluateJavascript("(function() {" +
-                "var semID = '';" +
-                "var options = document.getElementById('semesterSubId').getElementsByTagName('option');" +
-                "for(var i = 0; i < options.length; ++i) {" +
-                "   if(options[i].innerText.toLowerCase().includes('" + semester + "')) {" +
-                "       semID = options[i].value;" +
-                "   }" +
-                "}" +
-                "var data = 'semesterSubId=' + semID + '&authorizedID=' + $('#authorizedIDX').val();" +
+                "var data = 'semesterSubId=' + '" + semesterID + "' + '&authorizedID=' + $('#authorizedIDX').val();" +
                 "var obj = {};" +
                 "$.ajax({" +
                 "   type : 'POST'," +
@@ -1313,17 +1325,8 @@ public class VTOP {
             expand(downloadingLayout);
         }
 
-        String semester = sharedPreferences.getString("semester", "null");
-
         webView.evaluateJavascript("(function() {" +
-                "var semID = '';" +
-                "var options = document.getElementById('semesterSubId').getElementsByTagName('option');" +
-                "for(var i = 0; i < options.length; ++i) {" +
-                "   if(options[i].innerText.toLowerCase().includes('" + semester + "')) {" +
-                "       semID = options[i].value;" +
-                "   }" +
-                "}" +
-                "var data = 'semesterSubId=' + semID + '&authorizedID=' + $('#authorizedIDX').val();" +
+                "var data = 'semesterSubId=' + '" + semesterID + "' + '&authorizedID=' + $('#authorizedIDX').val();" +
                 "var obj = {};" +
                 "$.ajax({" +
                 "   type: 'POST'," +
@@ -1518,17 +1521,8 @@ public class VTOP {
             expand(downloadingLayout);
         }
 
-        String semester = sharedPreferences.getString("semester", "null");
-
         webView.evaluateJavascript("(function() {" +
-                "var semID = '';" +
-                "var options = document.getElementById('semesterSubId').getElementsByTagName('option');" +
-                "for(var i = 0; i < options.length; ++i) {" +
-                "   if(options[i].innerText.toLowerCase().includes('" + semester + "')) {" +
-                "       semID = options[i].value;" +
-                "   }" +
-                "}" +
-                "var data = 'semesterSubId=' + semID + '&authorizedID=' + $('#authorizedIDX').val();" +
+                "var data = 'semesterSubId=' + '" + semesterID + "' + '&authorizedID=' + $('#authorizedIDX').val();" +
                 "var obj = {};" +
                 "$.ajax({" +
                 "   type: 'POST'," +

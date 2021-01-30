@@ -56,6 +56,16 @@ public class ReceiptsActivity extends AppCompatActivity {
                 c.moveToFirst();
 
                 for (int i = 0; i < c.getCount(); ++i) {
+                    if (i == 0) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                findViewById(R.id.noData).setVisibility(View.GONE);
+                                findViewById(R.id.loading).setVisibility(View.VISIBLE);
+                            }
+                        });
+                    }
+
                     /*
                         The outer block
                      */
@@ -66,10 +76,6 @@ public class ReceiptsActivity extends AppCompatActivity {
                     );
                     blockParams.setMarginStart((int) (20 * pixelDensity));
                     blockParams.setMarginEnd((int) (20 * pixelDensity));
-                    if (i == 0) {
-                        findViewById(R.id.noData).setVisibility(View.INVISIBLE);
-                        blockParams.setMargins(0, (int) (20 * pixelDensity), 0, (int) (5 * pixelDensity));
-                    }
                     blockParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (5 * pixelDensity));
                     block.setLayoutParams(blockParams);
                     block.setBackground(ContextCompat.getDrawable(context, R.drawable.plain_card));
@@ -151,12 +157,22 @@ public class ReceiptsActivity extends AppCompatActivity {
                     /*
                         Finally adding the block to the activity
                      */
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            receipts.addView(block);
-                        }
-                    });
+                    if (i == 0) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                findViewById(R.id.loading).animate().alpha(0);
+                                receipts.addView(block);
+                            }
+                        });
+                    } else {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                receipts.addView(block);
+                            }
+                        });
+                    }
 
                     c.moveToNext();
                 }
