@@ -29,7 +29,8 @@ public class LoginActivity extends AppCompatActivity {
 
     public void signIn(View view) {
         if (download != null) {
-            return;
+            download.dismiss();
+            download = null;
         }
 
         EditText usernameView = findViewById(R.id.username);
@@ -162,7 +163,6 @@ public class LoginActivity extends AppCompatActivity {
 
     public void cancelDownload(View view) {
         download.dismiss();
-        download = null;
     }
 
     public void openPrivacy(View view) {

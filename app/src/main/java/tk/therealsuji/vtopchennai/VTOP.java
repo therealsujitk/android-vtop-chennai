@@ -71,7 +71,7 @@ public class VTOP {
     int counter, lastDownload;
 
     @SuppressLint("SetJavaScriptEnabled")
-    public VTOP(final Context context, Dialog downloadDialog) {
+    public VTOP(final Context context, final Dialog downloadDialog) {
         this.context = context;
         this.downloadDialog = downloadDialog;
         webView = new WebView(context);
@@ -96,7 +96,7 @@ public class VTOP {
                     if (counter >= 60) {
                         Toast.makeText(context, "Sorry, we had some trouble connecting to the server. Please try again later.", Toast.LENGTH_LONG).show();
                         myDatabase.close();
-                        ((Activity) context).finish();
+                        downloadDialog.dismiss();
                         return;
                     }
                     isOpened = true;
