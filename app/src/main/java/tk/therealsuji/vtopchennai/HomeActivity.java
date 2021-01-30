@@ -124,9 +124,9 @@ public class HomeActivity extends AppCompatActivity {
 
         findViewById(examsNotification).animate().scaleX(0).scaleY(0);
 
-//        if (sharedPreferences.getString("newMarks", "{}").equals("{}") && !sharedPreferences.getBoolean("newGrades", false) && !sharedPreferences.getBoolean("newSpotlight", false)) {
-//            findViewById(academicsNotification).animate().scaleX(0).scaleY(0);
-//        }
+        if (sharedPreferences.getString("newMarks", "{}").equals("{}") && !sharedPreferences.getBoolean("newGrades", false) && !sharedPreferences.getBoolean("newSpotlight", false)) {
+            findViewById(academicsNotification).animate().scaleX(0).scaleY(0);
+        }
     }
 
     public void openMarks(View view) {
