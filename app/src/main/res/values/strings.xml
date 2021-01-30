@@ -14,9 +14,9 @@
     <string name="privacy_ownership">Ownership</string>
     <string name="privacy_ownership_content">This application is a third-party service, meaning this application is owned and maintained by an individual and NOT by VIT Chennai.</string>
     <string name="privacy_data">Information Collection and Use</string>
-    <string name="privacy_data_content">All necessary data such as your VTOP username, password and the data collected from the VTOP Chennai portal is ONLY stored locally on your device. I DO NOT collect or disclose any information entered by you or downloaded from the VTOP Chennai Portal.</string>
+    <string name="privacy_data_content">All necessary data such as your VTOP username, password (both in their encrypted forms) and the data collected from the VTOP Chennai portal is ONLY stored locally on your device. I DO NOT collect or disclose any information entered by you or downloaded from the VTOP Chennai Portal. Data is NOT synced automatically with the portal, you will have to manually refresh data to get the latest updates.</string>
     <string name="privacy_contact">Contact Me</string>
-    <string name="privacy_contact_content">If you have any questions or suggestions, my contact information is available at <a href="https://therealsuji.tk">https://therealsuji.tk</a>.</string>
+    <string name="privacy_contact_content">If you have any queries, suggestions or face any issues, my contact information is available at <a href="http://therealsuji.tk">http://therealsuji.tk</a>.</string>
 
 
     <string name="loading">Loading</string>
