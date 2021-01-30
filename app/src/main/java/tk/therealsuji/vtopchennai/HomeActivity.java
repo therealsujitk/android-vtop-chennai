@@ -1,7 +1,9 @@
 package tk.therealsuji.vtopchennai;
 
 import android.animation.Animator;
+import android.animation.AnimatorInflater;
 import android.animation.AnimatorListenerAdapter;
+import android.animation.StateListAnimator;
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.app.AlarmManager;
@@ -10,6 +12,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
@@ -26,6 +29,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
+import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TableRow;
@@ -35,7 +39,10 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
+import androidx.core.widget.ImageViewCompat;
 import androidx.security.crypto.EncryptedSharedPreferences;
 import androidx.security.crypto.MasterKey;
 
@@ -46,6 +53,9 @@ import java.util.Date;
 import java.util.Locale;
 
 public class HomeActivity extends AppCompatActivity {
+    int classesNotification, timetableNotification, messagesNotification, facultyNotification;
+    int academicsNotification, examsNotification, marksNotification, gradesNotification, spotlightNotification;
+    int campusNotification, proctorMessageNotification, receiptsNotification;
     SharedPreferences sharedPreferences, encryptedSharedPreferences;
     Dialog download, appearance, signOut;
     Context context;
@@ -57,10 +67,15 @@ public class HomeActivity extends AppCompatActivity {
 
     public void openTimetable(View view) {
         startActivity(new Intent(HomeActivity.this, TimetableActivity.class));
-        findViewById(R.id.timetable_notification).animate().scaleX(0).scaleY(0);
+
+        if (timetableNotification == -1) {
+            return;
+        }
+
+        findViewById(timetableNotification).animate().scaleX(0).scaleY(0);
 
         if (!sharedPreferences.getBoolean("newMessages", false) && !sharedPreferences.getBoolean("newFaculty", false)) {
-            findViewById(R.id.classes_notification).animate().scaleX(0).scaleY(0);
+            findViewById(classesNotification).animate().scaleX(0).scaleY(0);
         }
     }
 
@@ -70,19 +85,29 @@ public class HomeActivity extends AppCompatActivity {
 
     public void openMessages(View view) {
         startActivity(new Intent(HomeActivity.this, MessagesActivity.class));
-        findViewById(R.id.messages_notification).animate().scaleX(0).scaleY(0);
+
+        if (messagesNotification == -1) {
+            return;
+        }
+
+        findViewById(messagesNotification).animate().scaleX(0).scaleY(0);
 
         if (!sharedPreferences.getBoolean("newTimetable", false) && !sharedPreferences.getBoolean("newFaculty", false)) {
-            findViewById(R.id.classes_notification).animate().scaleX(0).scaleY(0);
+            findViewById(classesNotification).animate().scaleX(0).scaleY(0);
         }
     }
 
     public void openFaculty(View view) {
         startActivity(new Intent(HomeActivity.this, FacultyActivity.class));
-        findViewById(R.id.faculty_notification).animate().scaleX(0).scaleY(0);
+
+        if (facultyNotification == -1) {
+            return;
+        }
+
+        findViewById(facultyNotification).animate().scaleX(0).scaleY(0);
 
         if (!sharedPreferences.getBoolean("newTimetable", false) && !sharedPreferences.getBoolean("newMessages", false)) {
-            findViewById(R.id.classes_notification).animate().scaleX(0).scaleY(0);
+            findViewById(classesNotification).animate().scaleX(0).scaleY(0);
         }
     }
 
@@ -92,37 +117,57 @@ public class HomeActivity extends AppCompatActivity {
 
     public void openExams(View view) {
         startActivity(new Intent(HomeActivity.this, ExamsActivity.class));
-        findViewById(R.id.exams_notification).animate().scaleX(0).scaleY(0);
 
-        if (sharedPreferences.getString("newMarks", "{}").equals("{}") && !sharedPreferences.getBoolean("newGrades", false) && !sharedPreferences.getBoolean("newSpotlight", false)) {
-            findViewById(R.id.academics_notification).animate().scaleX(0).scaleY(0);
+        if (examsNotification == -1) {
+            return;
         }
+
+        findViewById(examsNotification).animate().scaleX(0).scaleY(0);
+
+//        if (sharedPreferences.getString("newMarks", "{}").equals("{}") && !sharedPreferences.getBoolean("newGrades", false) && !sharedPreferences.getBoolean("newSpotlight", false)) {
+//            findViewById(academicsNotification).animate().scaleX(0).scaleY(0);
+//        }
     }
 
     public void openMarks(View view) {
         startActivity(new Intent(HomeActivity.this, MarksActivity.class));
-        findViewById(R.id.marks_notification).animate().scaleX(0).scaleY(0);
+
+        if (marksNotification == -1) {
+            return;
+        }
+
+        findViewById(marksNotification).animate().scaleX(0).scaleY(0);
 
         if (!sharedPreferences.getBoolean("newExams", false) && !sharedPreferences.getBoolean("newGrades", false) && !sharedPreferences.getBoolean("newSpotlight", false)) {
-            findViewById(R.id.academics_notification).animate().scaleX(0).scaleY(0);
+            findViewById(academicsNotification).animate().scaleX(0).scaleY(0);
         }
     }
 
     public void openGrades(View view) {
         startActivity(new Intent(HomeActivity.this, GradesActivity.class));
-        findViewById(R.id.grades_notification).animate().scaleX(0).scaleY(0);
+
+        if (gradesNotification == -1) {
+            return;
+        }
+
+        findViewById(gradesNotification).animate().scaleX(0).scaleY(0);
 
         if (!sharedPreferences.getBoolean("newExams", false) && sharedPreferences.getString("newMarks", "{}").equals("{}") && !sharedPreferences.getBoolean("newSpotlight", false)) {
-            findViewById(R.id.academics_notification).animate().scaleX(0).scaleY(0);
+            findViewById(academicsNotification).animate().scaleX(0).scaleY(0);
         }
     }
 
     public void openSpotlight(View view) {
         startActivity(new Intent(HomeActivity.this, SpotlightActivity.class));
-        findViewById(R.id.spotlight_notification).animate().scaleX(0).scaleY(0);
+
+        if (spotlightNotification == -1) {
+            return;
+        }
+
+        findViewById(spotlightNotification).animate().scaleX(0).scaleY(0);
 
         if (!sharedPreferences.getBoolean("newExams", false) && sharedPreferences.getString("newMarks", "{}").equals("{}") && !sharedPreferences.getBoolean("newGrades", false)) {
-            findViewById(R.id.academics_notification).animate().scaleX(0).scaleY(0);
+            findViewById(academicsNotification).animate().scaleX(0).scaleY(0);
         }
     }
 
@@ -140,19 +185,29 @@ public class HomeActivity extends AppCompatActivity {
 
     public void openProctorMessages(View view) {
         startActivity(new Intent(HomeActivity.this, ProctorActivity.class));
-        findViewById(R.id.proctor_messages_notification).animate().scaleX(0).scaleY(0);
+
+        if (proctorMessageNotification == -1) {
+            return;
+        }
+
+        findViewById(proctorMessageNotification).animate().scaleX(0).scaleY(0);
 
         if (!sharedPreferences.getBoolean("newReceipts", false)) {
-            findViewById(R.id.campus_notification).animate().scaleX(0).scaleY(0);
+            findViewById(campusNotification).animate().scaleX(0).scaleY(0);
         }
     }
 
     public void openReceipts(View view) {
         startActivity(new Intent(HomeActivity.this, ReceiptsActivity.class));
-        findViewById(R.id.receipts_notification).animate().scaleX(0).scaleY(0);
+
+        if (receiptsNotification == -1) {
+            return;
+        }
+
+        findViewById(receiptsNotification).animate().scaleX(0).scaleY(0);
 
         if (!sharedPreferences.getBoolean("newProctorMessages", false)) {
-            findViewById(R.id.campus_notification).animate().scaleX(0).scaleY(0);
+            findViewById(campusNotification).animate().scaleX(0).scaleY(0);
         }
     }
 
@@ -503,13 +558,28 @@ public class HomeActivity extends AppCompatActivity {
         idView.setText(id);
         creditsView.setText(credits);
 
+        classesNotification = -1;
+        timetableNotification = -1;
+        messagesNotification = -1;
+        facultyNotification = -1;
+
+        academicsNotification = -1;
+        examsNotification = -1;
+        marksNotification = -1;
+        gradesNotification = -1;
+        spotlightNotification = -1;
+
+        campusNotification = -1;
+        proctorMessageNotification = -1;
+        receiptsNotification = -1;
+
         final float pixelDensity = this.getResources().getDisplayMetrics().density;
         final SimpleDateFormat hour24 = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
         final SimpleDateFormat hour12 = new SimpleDateFormat("h:mm a", Locale.ENGLISH);
 
         context = this;
         final LinearLayout upcoming = findViewById(R.id.upcoming);
-        final LinearLayout noUpcoming = findViewById(R.id.no_upcoming);
+        final TextView noUpcoming = findViewById(R.id.no_upcoming);
 
         new Thread(new Runnable() {
             @Override
@@ -1153,48 +1223,135 @@ public class HomeActivity extends AppCompatActivity {
 
                 if (sharedPreferences.getBoolean("newTimetable", false)) {
                     classesFlag = true;
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            findViewById(R.id.timetable_notification).animate().scaleX(1).scaleY(1);
-                        }
-                    });
-                }
+                    final ImageView notification = new ImageView(context);
+                    timetableNotification = View.generateViewId();
+                    notification.setId(timetableNotification);
+                    LinearLayout.LayoutParams notificationParams = new LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.WRAP_CONTENT,
+                            LinearLayout.LayoutParams.WRAP_CONTENT
+                    );
+                    notificationParams.setMarginStart((int) (135 * pixelDensity));
+                    notificationParams.setMargins(0, (int) (10 * pixelDensity), 0, 0);
+                    notification.setLayoutParams(notificationParams);
+                    notification.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_notification_dot));
+                    StateListAnimator elevation = AnimatorInflater.loadStateListAnimator(context, R.animator.item_elevation);
+                    notification.setStateListAnimator(elevation);
+                    ImageViewCompat.setImageTintList(notification, ColorStateList.valueOf(getColor(R.color.colorPrimaryTransparent)));
+                    notification.setScaleX(0);
+                    notification.setScaleY(0);
 
-                if (sharedPreferences.getBoolean("failedAttendance", false)) {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            findViewById(R.id.attendance_notification).animate().scaleX(1).scaleY(1);
+                            ((RelativeLayout) findViewById(R.id.classesLayout)).addView(notification);
+                            notification.animate().scaleX(1).scaleY(1);
                         }
                     });
                 }
 
                 if (sharedPreferences.getBoolean("newMessages", false)) {
                     classesFlag = true;
+                    final ImageView notification = new ImageView(context);
+                    messagesNotification = View.generateViewId();
+                    notification.setId(messagesNotification);
+                    LinearLayout.LayoutParams notificationParams = new LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.WRAP_CONTENT,
+                            LinearLayout.LayoutParams.WRAP_CONTENT
+                    );
+                    notificationParams.setMarginStart((int) (425 * pixelDensity));
+                    notificationParams.setMargins(0, (int) (10 * pixelDensity), 0, 0);
+                    notification.setLayoutParams(notificationParams);
+                    notification.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_notification_dot));
+                    StateListAnimator elevation = AnimatorInflater.loadStateListAnimator(context, R.animator.item_elevation);
+                    notification.setStateListAnimator(elevation);
+                    ImageViewCompat.setImageTintList(notification, ColorStateList.valueOf(getColor(R.color.colorPrimaryTransparent)));
+                    notification.setScaleX(0);
+                    notification.setScaleY(0);
+
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            findViewById(R.id.messages_notification).animate().scaleX(1).scaleY(1);
+                            ((RelativeLayout) findViewById(R.id.classesLayout)).addView(notification);
+                            notification.animate().scaleX(1).scaleY(1);
                         }
                     });
                 }
 
                 if (sharedPreferences.getBoolean("newFaculty", false)) {
                     classesFlag = true;
+                    final ImageView notification = new ImageView(context);
+                    facultyNotification = View.generateViewId();
+                    notification.setId(facultyNotification);
+                    LinearLayout.LayoutParams notificationParams = new LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.WRAP_CONTENT,
+                            LinearLayout.LayoutParams.WRAP_CONTENT
+                    );
+                    notificationParams.setMarginStart((int) (570 * pixelDensity));
+                    notificationParams.setMargins(0, (int) (10 * pixelDensity), 0, 0);
+                    notification.setLayoutParams(notificationParams);
+                    notification.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_notification_dot));
+                    StateListAnimator elevation = AnimatorInflater.loadStateListAnimator(context, R.animator.item_elevation);
+                    notification.setStateListAnimator(elevation);
+                    ImageViewCompat.setImageTintList(notification, ColorStateList.valueOf(getColor(R.color.colorPrimaryTransparent)));
+                    notification.setScaleX(0);
+                    notification.setScaleY(0);
+
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            findViewById(R.id.faculty_notification).animate().scaleX(1).scaleY(1);
+                            ((RelativeLayout) findViewById(R.id.classesLayout)).addView(notification);
+                            notification.animate().scaleX(1).scaleY(1);
+                        }
+                    });
+                }
+
+                if (sharedPreferences.getBoolean("failedAttendance", false)) {
+                    classesFlag = false;
+                    final ImageView notification = new ImageView(context);
+                    LinearLayout.LayoutParams notificationParams = new LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.WRAP_CONTENT,
+                            LinearLayout.LayoutParams.WRAP_CONTENT
+                    );
+                    notificationParams.setMarginStart((int) (280 * pixelDensity));
+                    notificationParams.setMargins(0, (int) (10 * pixelDensity), 0, 0);
+                    notification.setLayoutParams(notificationParams);
+                    notification.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_notification_dot));
+                    StateListAnimator elevation = AnimatorInflater.loadStateListAnimator(context, R.animator.item_elevation);
+                    notification.setStateListAnimator(elevation);
+                    ImageViewCompat.setImageTintList(notification, ColorStateList.valueOf(getColor(R.color.colorRedTransparent)));
+                    notification.setScaleX(0);
+                    notification.setScaleY(0);
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            ((RelativeLayout) findViewById(R.id.classesLayout)).addView(notification);
+                            notification.animate().scaleX(1).scaleY(1);
                         }
                     });
                 }
 
                 if (classesFlag) {
+                    final ImageView notification = new ImageView(context);
+                    classesNotification = View.generateViewId();
+                    notification.setId(classesNotification);
+                    notification.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_notification_dot));
+                    ImageViewCompat.setImageTintList(notification, ColorStateList.valueOf(getColor(R.color.colorPrimaryTransparent)));
+                    notification.setScaleX(0);
+                    notification.setScaleY(0);
+
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            findViewById(R.id.classes_notification).animate().scaleX(1).scaleY(1);
+                            ((ConstraintLayout) findViewById(R.id.home_constraint)).addView(notification);
+                            ConstraintLayout.LayoutParams notificationParams = (ConstraintLayout.LayoutParams) notification.getLayoutParams();
+                            notificationParams.leftToRight = R.id.classesHeading;
+                            notificationParams.topToBottom = R.id.upcoming;
+                            notificationParams.bottomToTop = R.id.classes;
+                            notificationParams.setMarginStart((int) (10 * pixelDensity));
+                            notificationParams.setMargins(0, (int) (20 * pixelDensity), 0, 0);
+                            notification.setLayoutParams(notificationParams);
+                            notification.animate().scaleX(1).scaleY(1);
                         }
                     });
                 }
@@ -1204,39 +1361,109 @@ public class HomeActivity extends AppCompatActivity {
 
                 if (sharedPreferences.getBoolean("newExams", false)) {
                     academicsFlag = true;
+                    final ImageView notification = new ImageView(context);
+                    examsNotification = View.generateViewId();
+                    notification.setId(examsNotification);
+                    LinearLayout.LayoutParams notificationParams = new LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.WRAP_CONTENT,
+                            LinearLayout.LayoutParams.WRAP_CONTENT
+                    );
+                    notificationParams.setMarginStart((int) (135 * pixelDensity));
+                    notificationParams.setMargins(0, (int) (10 * pixelDensity), 0, 0);
+                    notification.setLayoutParams(notificationParams);
+                    notification.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_notification_dot));
+                    StateListAnimator elevation = AnimatorInflater.loadStateListAnimator(context, R.animator.item_elevation);
+                    notification.setStateListAnimator(elevation);
+                    ImageViewCompat.setImageTintList(notification, ColorStateList.valueOf(getColor(R.color.colorPrimaryTransparent)));
+                    notification.setScaleX(0);
+                    notification.setScaleY(0);
+
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            findViewById(R.id.exams_notification).animate().scaleX(1).scaleY(1);
+                            ((RelativeLayout) findViewById(R.id.academicsLayout)).addView(notification);
+                            notification.animate().scaleX(1).scaleY(1);
                         }
                     });
                 }
 
                 if (!sharedPreferences.getString("newMarks", "{}").equals("{}")) {
                     academicsFlag = true;
+                    final ImageView notification = new ImageView(context);
+                    marksNotification = View.generateViewId();
+                    notification.setId(marksNotification);
+                    LinearLayout.LayoutParams notificationParams = new LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.WRAP_CONTENT,
+                            LinearLayout.LayoutParams.WRAP_CONTENT
+                    );
+                    notificationParams.setMarginStart((int) (280 * pixelDensity));
+                    notificationParams.setMargins(0, (int) (10 * pixelDensity), 0, 0);
+                    notification.setLayoutParams(notificationParams);
+                    notification.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_notification_dot));
+                    StateListAnimator elevation = AnimatorInflater.loadStateListAnimator(context, R.animator.item_elevation);
+                    notification.setStateListAnimator(elevation);
+                    ImageViewCompat.setImageTintList(notification, ColorStateList.valueOf(getColor(R.color.colorPrimaryTransparent)));
+                    notification.setScaleX(0);
+                    notification.setScaleY(0);
+
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            findViewById(R.id.marks_notification).animate().scaleX(1).scaleY(1);
+                            ((RelativeLayout) findViewById(R.id.academicsLayout)).addView(notification);
+                            notification.animate().scaleX(1).scaleY(1);
                         }
                     });
                 }
 
                 if (sharedPreferences.getBoolean("newSpotlight", false)) {
                     academicsFlag = true;
+                    final ImageView notification = new ImageView(context);
+                    spotlightNotification = View.generateViewId();
+                    notification.setId(spotlightNotification);
+                    LinearLayout.LayoutParams notificationParams = new LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.WRAP_CONTENT,
+                            LinearLayout.LayoutParams.WRAP_CONTENT
+                    );
+                    notificationParams.setMarginStart((int) (570 * pixelDensity));
+                    notificationParams.setMargins(0, (int) (10 * pixelDensity), 0, 0);
+                    notification.setLayoutParams(notificationParams);
+                    notification.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_notification_dot));
+                    StateListAnimator elevation = AnimatorInflater.loadStateListAnimator(context, R.animator.item_elevation);
+                    notification.setStateListAnimator(elevation);
+                    ImageViewCompat.setImageTintList(notification, ColorStateList.valueOf(getColor(R.color.colorPrimaryTransparent)));
+                    notification.setScaleX(0);
+                    notification.setScaleY(0);
+
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            findViewById(R.id.spotlight_notification).animate().scaleX(1).scaleY(1);
+                            ((RelativeLayout) findViewById(R.id.academicsLayout)).addView(notification);
+                            notification.animate().scaleX(1).scaleY(1);
                         }
                     });
                 }
 
                 if (academicsFlag) {
+                    final ImageView notification = new ImageView(context);
+                    academicsNotification = View.generateViewId();
+                    notification.setId(academicsNotification);
+                    notification.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_notification_dot));
+                    ImageViewCompat.setImageTintList(notification, ColorStateList.valueOf(getColor(R.color.colorPrimaryTransparent)));
+                    notification.setScaleX(0);
+                    notification.setScaleY(0);
+
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            findViewById(R.id.academics_notification).animate().scaleX(1).scaleY(1);
+                            ((ConstraintLayout) findViewById(R.id.home_constraint)).addView(notification);
+                            ConstraintLayout.LayoutParams notificationParams = (ConstraintLayout.LayoutParams) notification.getLayoutParams();
+                            notificationParams.leftToRight = R.id.academicsHeading;
+                            notificationParams.topToBottom = R.id.classes;
+                            notificationParams.bottomToTop = R.id.academics;
+                            notificationParams.setMarginStart((int) (10 * pixelDensity));
+                            notificationParams.setMargins(0, (int) (10 * pixelDensity), 0, 0);
+                            notification.setLayoutParams(notificationParams);
+                            notification.animate().scaleX(1).scaleY(1);
                         }
                     });
                 }
@@ -1246,29 +1473,81 @@ public class HomeActivity extends AppCompatActivity {
 
                 if (sharedPreferences.getBoolean("newProctorMessages", false)) {
                     campusFlag = true;
+                    final ImageView notification = new ImageView(context);
+                    proctorMessageNotification = View.generateViewId();
+                    notification.setId(proctorMessageNotification);
+                    LinearLayout.LayoutParams notificationParams = new LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.WRAP_CONTENT,
+                            LinearLayout.LayoutParams.WRAP_CONTENT
+                    );
+                    notificationParams.setMarginStart((int) (425 * pixelDensity));
+                    notificationParams.setMargins(0, (int) (10 * pixelDensity), 0, 0);
+                    notification.setLayoutParams(notificationParams);
+                    notification.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_notification_dot));
+                    StateListAnimator elevation = AnimatorInflater.loadStateListAnimator(context, R.animator.item_elevation);
+                    notification.setStateListAnimator(elevation);
+                    ImageViewCompat.setImageTintList(notification, ColorStateList.valueOf(getColor(R.color.colorPrimaryTransparent)));
+                    notification.setScaleX(0);
+                    notification.setScaleY(0);
+
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            findViewById(R.id.proctor_messages_notification).animate().scaleX(1).scaleY(1);
+                            ((RelativeLayout) findViewById(R.id.campusLayout)).addView(notification);
+                            notification.animate().scaleX(1).scaleY(1);
                         }
                     });
                 }
 
                 if (sharedPreferences.getBoolean("newReceipts", false)) {
                     campusFlag = true;
+                    final ImageView notification = new ImageView(context);
+                    receiptsNotification = View.generateViewId();
+                    notification.setId(receiptsNotification);
+                    LinearLayout.LayoutParams notificationParams = new LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.WRAP_CONTENT,
+                            LinearLayout.LayoutParams.WRAP_CONTENT
+                    );
+                    notificationParams.setMarginStart((int) (570 * pixelDensity));
+                    notificationParams.setMargins(0, (int) (10 * pixelDensity), 0, 0);
+                    notification.setLayoutParams(notificationParams);
+                    notification.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_notification_dot));
+                    StateListAnimator elevation = AnimatorInflater.loadStateListAnimator(context, R.animator.item_elevation);
+                    notification.setStateListAnimator(elevation);
+                    ImageViewCompat.setImageTintList(notification, ColorStateList.valueOf(getColor(R.color.colorPrimaryTransparent)));
+                    notification.setScaleX(0);
+                    notification.setScaleY(0);
+
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            findViewById(R.id.receipts_notification).animate().scaleX(1).scaleY(1);
+                            ((RelativeLayout) findViewById(R.id.campusLayout)).addView(notification);
+                            notification.animate().scaleX(1).scaleY(1);
                         }
                     });
                 }
 
                 if (campusFlag) {
+                    final ImageView notification = new ImageView(context);
+                    campusNotification = View.generateViewId();
+                    notification.setId(campusNotification);
+                    notification.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_notification_dot));
+                    ImageViewCompat.setImageTintList(notification, ColorStateList.valueOf(getColor(R.color.colorPrimaryTransparent)));
+                    notification.setScaleX(0);
+                    notification.setScaleY(0);
+
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            findViewById(R.id.campus_notification).animate().scaleX(1).scaleY(1);
+                            ((ConstraintLayout) findViewById(R.id.home_constraint)).addView(notification);
+                            ConstraintLayout.LayoutParams notificationParams = (ConstraintLayout.LayoutParams) notification.getLayoutParams();
+                            notificationParams.leftToRight = R.id.campusHeading;
+                            notificationParams.topToBottom = R.id.academics;
+                            notificationParams.bottomToTop = R.id.campus;
+                            notificationParams.setMarginStart((int) (10 * pixelDensity));
+                            notificationParams.setMargins(0, (int) (10 * pixelDensity), 0, 0);
+                            notification.setLayoutParams(notificationParams);
+                            notification.animate().scaleX(1).scaleY(1);
                         }
                     });
                 }
@@ -1335,12 +1614,16 @@ public class HomeActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        if (!sharedPreferences.getString("newMarks", "{}").equals("{}")) {
-            findViewById(R.id.marks_notification).animate().scaleX(1).scaleY(1);
+        if (marksNotification == -1 || academicsNotification == -1) {
+            return;
+        }
 
-            ImageView academicsNotification = findViewById(R.id.academics_notification);
-            if (academicsNotification.getScaleX() == 0) {
-                academicsNotification.animate().scaleX(1).scaleY(1);
+        if (!sharedPreferences.getString("newMarks", "{}").equals("{}")) {
+            findViewById(marksNotification).animate().scaleX(1).scaleY(1);
+
+            ImageView academicsNotificationView = findViewById(academicsNotification);
+            if (academicsNotificationView.getScaleX() == 0) {
+                academicsNotificationView.animate().scaleX(1).scaleY(1);
             }
         }
     }

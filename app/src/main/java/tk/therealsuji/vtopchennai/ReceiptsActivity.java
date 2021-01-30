@@ -165,7 +165,7 @@ public class ReceiptsActivity extends AppCompatActivity {
                 myDatabase.close();
 
                 SharedPreferences sharedPreferences = context.getSharedPreferences("tk.therealsuji.vtopchennai", Context.MODE_PRIVATE);
-                sharedPreferences.edit().putBoolean("newReceipts", false).apply();
+                sharedPreferences.edit().remove("newReceipts").apply();
             }
         }).start();
     }

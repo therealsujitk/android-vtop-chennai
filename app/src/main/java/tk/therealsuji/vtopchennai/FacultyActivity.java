@@ -162,7 +162,7 @@ public class FacultyActivity extends AppCompatActivity {
                 myDatabase.close();
 
                 SharedPreferences sharedPreferences = context.getSharedPreferences("tk.therealsuji.vtopchennai", Context.MODE_PRIVATE);
-                sharedPreferences.edit().putBoolean("newFaculty", false).apply();
+                sharedPreferences.edit().remove("newFaculty").apply();
             }
         }).start();
     }

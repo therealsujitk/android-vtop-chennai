@@ -9,6 +9,7 @@
     android:scrollbars="none">
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/home_constraint"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingBottom="10dp"
@@ -86,49 +87,28 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/container"
+            android:id="@+id/upcoming"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
+            android:layout_margin="20dp"
+            android:background="@drawable/plain_card"
             android:orientation="vertical"
+            android:paddingTop="20dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/profileFooter">
 
-            <LinearLayout
-                android:id="@+id/upcoming"
+            <TextView
+                android:id="@+id/no_upcoming"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
-                android:layout_marginTop="20dp"
                 android:layout_marginEnd="20dp"
-                android:layout_marginBottom="10dp"
-                android:background="@drawable/plain_card"
-                android:orientation="vertical"
-                android:paddingTop="20dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/profileFooter"
-                tools:ignore="UselessParent">
-
-                <LinearLayout
-                    android:id="@+id/no_upcoming"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="20dp"
-                        android:layout_marginEnd="20dp"
-                        android:layout_marginBottom="20dp"
-                        android:text="@string/no_upcoming"
-                        android:textAlignment="center"
-                        android:textColor="@color/colorPrimary"
-                        android:textSize="18sp" />
-
-                </LinearLayout>
-            </LinearLayout>
+                android:layout_marginBottom="20dp"
+                android:text="@string/no_upcoming"
+                android:textAlignment="center"
+                android:textColor="@color/colorPrimary"
+                android:textSize="18sp" />
         </LinearLayout>
 
         <TextView
@@ -136,29 +116,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="20dp"
             android:text="@string/classes"
             android:textColor="@color/colorPrimary"
             android:textSize="18sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/container" />
-
-        <ImageView
-            android:id="@+id/classes_notification"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="10dp"
-            android:contentDescription="@string/notification_description"
-            android:scaleX="0"
-            android:scaleY="0"
-            android:src="@drawable/ic_notification_dot"
-            android:stateListAnimator="@animator/item_elevation"
-            app:layout_constraintBottom_toTopOf="@+id/classes"
-            app:layout_constraintStart_toEndOf="@+id/classesHeading"
-            app:layout_constraintTop_toBottomOf="@+id/container"
-            app:tint="@color/colorPrimaryTransparent" />
+            app:layout_constraintTop_toBottomOf="@+id/upcoming" />
 
         <HorizontalScrollView
             android:id="@+id/classes"
@@ -171,221 +135,150 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/classesHeading">
 
-            <LinearLayout
+            <RelativeLayout
+                android:id="@+id/classesLayout"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:orientation="horizontal">
 
-                <RelativeLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
-
-                    <LinearLayout
-                        android:id="@+id/timetable"
-                        android:layout_width="125dp"
-                        android:layout_height="125dp"
-                        android:layout_marginStart="20dp"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginEnd="10dp"
-                        android:layout_marginBottom="10dp"
-                        android:background="@drawable/button_card"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:gravity="center_vertical"
-                        android:onClick="openTimetable"
-                        android:orientation="vertical"
-                        android:stateListAnimator="@animator/item_elevation">
-
-                        <ImageView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:clickable="false"
-                            android:contentDescription="@string/timetable_description"
-                            app:srcCompat="@drawable/ic_timetable"
-                            app:tint="@color/colorPrimary" />
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp"
-                            android:clickable="false"
-                            android:text="@string/timetable"
-                            android:textAlignment="center"
-                            android:textColor="@color/colorPrimary"
-                            android:textStyle="bold" />
-                    </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/timetable"
+                    android:layout_width="125dp"
+                    android:layout_height="125dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:background="@drawable/button_card"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center_vertical"
+                    android:onClick="openTimetable"
+                    android:orientation="vertical"
+                    android:stateListAnimator="@animator/item_elevation">
 
                     <ImageView
-                        android:id="@+id/timetable_notification"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="135dp"
-                        android:layout_marginTop="10dp"
-                        android:contentDescription="@string/notification_description"
-                        android:scaleX="0"
-                        android:scaleY="0"
-                        android:src="@drawable/ic_notification_dot"
-                        android:stateListAnimator="@animator/item_elevation"
-                        app:tint="@color/colorPrimaryTransparent" />
-                </RelativeLayout>
+                        android:clickable="false"
+                        android:contentDescription="@string/timetable_description"
+                        app:srcCompat="@drawable/ic_timetable"
+                        app:tint="@color/colorPrimary" />
 
-                <RelativeLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:clickable="false"
+                        android:text="@string/timetable"
+                        android:textAlignment="center"
+                        android:textColor="@color/colorPrimary"
+                        android:textStyle="bold" />
+                </LinearLayout>
 
-                    <LinearLayout
-                        android:id="@+id/attendance"
-                        android:layout_width="125dp"
-                        android:layout_height="125dp"
-                        android:layout_marginStart="10dp"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginEnd="10dp"
-                        android:layout_marginBottom="10dp"
-                        android:background="@drawable/button_card"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:gravity="center_vertical"
-                        android:onClick="openAttendance"
-                        android:orientation="vertical"
-                        android:stateListAnimator="@animator/item_elevation">
-
-                        <ImageView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:clickable="false"
-                            android:contentDescription="@string/attendance_description"
-                            app:srcCompat="@drawable/ic_attendance"
-                            app:tint="@color/colorPrimary" />
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp"
-                            android:clickable="false"
-                            android:text="@string/attendance"
-                            android:textAlignment="center"
-                            android:textColor="@color/colorPrimary"
-                            android:textStyle="bold" />
-                    </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/attendance"
+                    android:layout_width="125dp"
+                    android:layout_height="125dp"
+                    android:layout_marginStart="165dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:background="@drawable/button_card"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center_vertical"
+                    android:onClick="openAttendance"
+                    android:orientation="vertical"
+                    android:stateListAnimator="@animator/item_elevation">
 
                     <ImageView
-                        android:id="@+id/attendance_notification"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="125dp"
-                        android:layout_marginTop="10dp"
-                        android:contentDescription="@string/notification_description"
-                        android:scaleX="0"
-                        android:scaleY="0"
-                        android:src="@drawable/ic_notification_dot"
-                        android:stateListAnimator="@animator/item_elevation"
-                        app:tint="@color/colorRedTransparent" />
-                </RelativeLayout>
+                        android:clickable="false"
+                        android:contentDescription="@string/attendance_description"
+                        app:srcCompat="@drawable/ic_attendance"
+                        app:tint="@color/colorPrimary" />
 
-                <RelativeLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:clickable="false"
+                        android:text="@string/attendance"
+                        android:textAlignment="center"
+                        android:textColor="@color/colorPrimary"
+                        android:textStyle="bold" />
+                </LinearLayout>
 
-                    <LinearLayout
-                        android:layout_width="125dp"
-                        android:layout_height="125dp"
-                        android:layout_marginStart="10dp"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginEnd="10dp"
-                        android:layout_marginBottom="10dp"
-                        android:background="@drawable/button_card"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:gravity="center_vertical"
-                        android:onClick="openMessages"
-                        android:orientation="vertical"
-                        android:stateListAnimator="@animator/item_elevation">
-
-                        <ImageView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:clickable="false"
-                            android:contentDescription="@string/messages_description"
-                            app:srcCompat="@drawable/ic_messages"
-                            app:tint="@color/colorPrimary" />
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp"
-                            android:clickable="false"
-                            android:text="@string/messages"
-                            android:textAlignment="center"
-                            android:textColor="@color/colorPrimary"
-                            android:textStyle="bold" />
-                    </LinearLayout>
+                <LinearLayout
+                    android:layout_width="125dp"
+                    android:layout_height="125dp"
+                    android:layout_marginStart="310dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:background="@drawable/button_card"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center_vertical"
+                    android:onClick="openMessages"
+                    android:orientation="vertical"
+                    android:stateListAnimator="@animator/item_elevation">
 
                     <ImageView
-                        android:id="@+id/messages_notification"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="125dp"
-                        android:layout_marginTop="10dp"
-                        android:contentDescription="@string/notification_description"
-                        android:scaleX="0"
-                        android:scaleY="0"
-                        android:src="@drawable/ic_notification_dot"
-                        android:stateListAnimator="@animator/item_elevation"
-                        app:tint="@color/colorPrimaryTransparent" />
-                </RelativeLayout>
+                        android:clickable="false"
+                        android:contentDescription="@string/messages_description"
+                        app:srcCompat="@drawable/ic_messages"
+                        app:tint="@color/colorPrimary" />
 
-                <RelativeLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:clickable="false"
+                        android:text="@string/messages"
+                        android:textAlignment="center"
+                        android:textColor="@color/colorPrimary"
+                        android:textStyle="bold" />
+                </LinearLayout>
 
-                    <LinearLayout
-                        android:layout_width="125dp"
-                        android:layout_height="125dp"
-                        android:layout_marginStart="10dp"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginEnd="20dp"
-                        android:layout_marginBottom="10dp"
-                        android:background="@drawable/button_card"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:gravity="center_vertical"
-                        android:onClick="openFaculty"
-                        android:orientation="vertical"
-                        android:stateListAnimator="@animator/item_elevation">
-
-                        <ImageView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:clickable="false"
-                            android:contentDescription="@string/faculty_description"
-                            app:srcCompat="@drawable/ic_faculty"
-                            app:tint="@color/colorPrimary" />
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp"
-                            android:clickable="false"
-                            android:text="@string/faculty"
-                            android:textAlignment="center"
-                            android:textColor="@color/colorPrimary"
-                            android:textStyle="bold" />
-                    </LinearLayout>
+                <LinearLayout
+                    android:layout_width="125dp"
+                    android:layout_height="125dp"
+                    android:layout_marginStart="455dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="20dp"
+                    android:layout_marginBottom="10dp"
+                    android:background="@drawable/button_card"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center_vertical"
+                    android:onClick="openFaculty"
+                    android:orientation="vertical"
+                    android:stateListAnimator="@animator/item_elevation">
 
                     <ImageView
-                        android:id="@+id/faculty_notification"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="125dp"
-                        android:layout_marginTop="10dp"
-                        android:contentDescription="@string/notification_description"
-                        android:scaleX="0"
-                        android:scaleY="0"
-                        android:src="@drawable/ic_notification_dot"
-                        android:stateListAnimator="@animator/item_elevation"
-                        app:tint="@color/colorPrimaryTransparent" />
-                </RelativeLayout>
-            </LinearLayout>
+                        android:clickable="false"
+                        android:contentDescription="@string/faculty_description"
+                        app:srcCompat="@drawable/ic_faculty"
+                        app:tint="@color/colorPrimary" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:clickable="false"
+                        android:text="@string/faculty"
+                        android:textAlignment="center"
+                        android:textColor="@color/colorPrimary"
+                        android:textStyle="bold" />
+                </LinearLayout>
+            </RelativeLayout>
         </HorizontalScrollView>
 
         <TextView
@@ -401,22 +294,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/classes" />
 
-        <ImageView
-            android:id="@+id/academics_notification"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="10dp"
-            android:contentDescription="@string/notification_description"
-            android:scaleX="0"
-            android:scaleY="0"
-            android:src="@drawable/ic_notification_dot"
-            android:stateListAnimator="@animator/item_elevation"
-            app:layout_constraintBottom_toTopOf="@+id/academics"
-            app:layout_constraintStart_toEndOf="@+id/academicsHeading"
-            app:layout_constraintTop_toBottomOf="@+id/classes"
-            app:tint="@color/colorPrimaryTransparent" />
-
         <HorizontalScrollView
             android:id="@+id/academics"
             android:layout_width="match_parent"
@@ -428,221 +305,150 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/academicsHeading">
 
-            <LinearLayout
+            <RelativeLayout
+                android:id="@+id/academicsLayout"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:orientation="horizontal">
 
-                <RelativeLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
-
-                    <LinearLayout
-                        android:layout_width="125dp"
-                        android:layout_height="125dp"
-                        android:layout_marginStart="20dp"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginEnd="10dp"
-                        android:layout_marginBottom="10dp"
-                        android:background="@drawable/button_card"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:gravity="center_vertical"
-                        android:onClick="openExams"
-                        android:orientation="vertical"
-                        android:stateListAnimator="@animator/item_elevation">
-
-                        <ImageView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:clickable="false"
-                            android:contentDescription="@string/exams_description"
-                            app:srcCompat="@drawable/ic_exams"
-                            app:tint="@color/colorPrimary" />
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp"
-                            android:clickable="false"
-                            android:text="@string/exams"
-                            android:textAlignment="center"
-                            android:textColor="@color/colorPrimary"
-                            android:textStyle="bold" />
-                    </LinearLayout>
+                <LinearLayout
+                    android:layout_width="125dp"
+                    android:layout_height="125dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:background="@drawable/button_card"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center_vertical"
+                    android:onClick="openExams"
+                    android:orientation="vertical"
+                    android:stateListAnimator="@animator/item_elevation">
 
                     <ImageView
-                        android:id="@+id/exams_notification"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="135dp"
-                        android:layout_marginTop="10dp"
-                        android:contentDescription="@string/notification_description"
-                        android:scaleX="0"
-                        android:scaleY="0"
-                        android:src="@drawable/ic_notification_dot"
-                        android:stateListAnimator="@animator/item_elevation"
-                        app:tint="@color/colorPrimaryTransparent" />
-                </RelativeLayout>
+                        android:clickable="false"
+                        android:contentDescription="@string/exams_description"
+                        app:srcCompat="@drawable/ic_exams"
+                        app:tint="@color/colorPrimary" />
 
-                <RelativeLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:clickable="false"
+                        android:text="@string/exams"
+                        android:textAlignment="center"
+                        android:textColor="@color/colorPrimary"
+                        android:textStyle="bold" />
+                </LinearLayout>
 
-                    <LinearLayout
-                        android:id="@+id/marks"
-                        android:layout_width="125dp"
-                        android:layout_height="125dp"
-                        android:layout_marginStart="10dp"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginEnd="10dp"
-                        android:layout_marginBottom="10dp"
-                        android:background="@drawable/button_card"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:gravity="center_vertical"
-                        android:onClick="openMarks"
-                        android:orientation="vertical"
-                        android:stateListAnimator="@animator/item_elevation">
-
-                        <ImageView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:clickable="false"
-                            android:contentDescription="@string/marks_description"
-                            app:srcCompat="@drawable/ic_marks"
-                            app:tint="@color/colorPrimary" />
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp"
-                            android:clickable="false"
-                            android:text="@string/marks"
-                            android:textAlignment="center"
-                            android:textColor="@color/colorPrimary"
-                            android:textStyle="bold" />
-                    </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/marks"
+                    android:layout_width="125dp"
+                    android:layout_height="125dp"
+                    android:layout_marginStart="165dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:background="@drawable/button_card"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center_vertical"
+                    android:onClick="openMarks"
+                    android:orientation="vertical"
+                    android:stateListAnimator="@animator/item_elevation">
 
                     <ImageView
-                        android:id="@+id/marks_notification"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="125dp"
-                        android:layout_marginTop="10dp"
-                        android:contentDescription="@string/notification_description"
-                        android:scaleX="0"
-                        android:scaleY="0"
-                        android:src="@drawable/ic_notification_dot"
-                        android:stateListAnimator="@animator/item_elevation"
-                        app:tint="@color/colorPrimaryTransparent" />
-                </RelativeLayout>
+                        android:clickable="false"
+                        android:contentDescription="@string/marks_description"
+                        app:srcCompat="@drawable/ic_marks"
+                        app:tint="@color/colorPrimary" />
 
-                <RelativeLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:clickable="false"
+                        android:text="@string/marks"
+                        android:textAlignment="center"
+                        android:textColor="@color/colorPrimary"
+                        android:textStyle="bold" />
+                </LinearLayout>
 
-                    <LinearLayout
-                        android:id="@+id/grades"
-                        android:layout_width="125dp"
-                        android:layout_height="125dp"
-                        android:layout_marginStart="10dp"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginEnd="10dp"
-                        android:layout_marginBottom="10dp"
-                        android:background="@drawable/button_card"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:gravity="center_vertical"
-                        android:onClick="openGrades"
-                        android:orientation="vertical"
-                        android:stateListAnimator="@animator/item_elevation">
-
-                        <ImageView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:clickable="false"
-                            android:contentDescription="@string/grades_description"
-                            app:srcCompat="@drawable/ic_grades"
-                            app:tint="@color/colorPrimary" />
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp"
-                            android:clickable="false"
-                            android:text="@string/grades"
-                            android:textAlignment="center"
-                            android:textColor="@color/colorPrimary"
-                            android:textStyle="bold" />
-                    </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/grades"
+                    android:layout_width="125dp"
+                    android:layout_height="125dp"
+                    android:layout_marginStart="310dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:background="@drawable/button_card"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center_vertical"
+                    android:onClick="openGrades"
+                    android:orientation="vertical"
+                    android:stateListAnimator="@animator/item_elevation">
 
                     <ImageView
-                        android:id="@+id/grades_notification"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="125dp"
-                        android:layout_marginTop="10dp"
-                        android:contentDescription="@string/notification_description"
-                        android:scaleX="0"
-                        android:scaleY="0"
-                        android:src="@drawable/ic_notification_dot"
-                        android:stateListAnimator="@animator/item_elevation"
-                        app:tint="@color/colorPrimaryTransparent" />
-                </RelativeLayout>
+                        android:clickable="false"
+                        android:contentDescription="@string/grades_description"
+                        app:srcCompat="@drawable/ic_grades"
+                        app:tint="@color/colorPrimary" />
 
-                <RelativeLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:clickable="false"
+                        android:text="@string/grades"
+                        android:textAlignment="center"
+                        android:textColor="@color/colorPrimary"
+                        android:textStyle="bold" />
+                </LinearLayout>
 
-                    <LinearLayout
-                        android:layout_width="125dp"
-                        android:layout_height="125dp"
-                        android:layout_marginStart="10dp"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginEnd="20dp"
-                        android:layout_marginBottom="10dp"
-                        android:background="@drawable/button_card"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:gravity="center_vertical"
-                        android:onClick="openSpotlight"
-                        android:orientation="vertical"
-                        android:stateListAnimator="@animator/item_elevation">
-
-                        <ImageView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:clickable="false"
-                            android:contentDescription="@string/spotlight_description"
-                            app:srcCompat="@drawable/ic_spotlight"
-                            app:tint="@color/colorPrimary" />
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp"
-                            android:clickable="false"
-                            android:text="@string/spotlight"
-                            android:textAlignment="center"
-                            android:textColor="@color/colorPrimary"
-                            android:textStyle="bold" />
-                    </LinearLayout>
+                <LinearLayout
+                    android:layout_width="125dp"
+                    android:layout_height="125dp"
+                    android:layout_marginStart="455dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="20dp"
+                    android:layout_marginBottom="10dp"
+                    android:background="@drawable/button_card"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center_vertical"
+                    android:onClick="openSpotlight"
+                    android:orientation="vertical"
+                    android:stateListAnimator="@animator/item_elevation">
 
                     <ImageView
-                        android:id="@+id/spotlight_notification"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="125dp"
-                        android:layout_marginTop="10dp"
-                        android:contentDescription="@string/notification_description"
-                        android:scaleX="0"
-                        android:scaleY="0"
-                        android:src="@drawable/ic_notification_dot"
-                        android:stateListAnimator="@animator/item_elevation"
-                        app:tint="@color/colorPrimaryTransparent" />
-                </RelativeLayout>
-            </LinearLayout>
+                        android:clickable="false"
+                        android:contentDescription="@string/spotlight_description"
+                        app:srcCompat="@drawable/ic_spotlight"
+                        app:tint="@color/colorPrimary" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:clickable="false"
+                        android:text="@string/spotlight"
+                        android:textAlignment="center"
+                        android:textColor="@color/colorPrimary"
+                        android:textStyle="bold" />
+                </LinearLayout>
+            </RelativeLayout>
         </HorizontalScrollView>
 
         <TextView
@@ -658,22 +464,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/academics" />
 
-        <ImageView
-            android:id="@+id/campus_notification"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="10dp"
-            android:contentDescription="@string/notification_description"
-            android:scaleX="0"
-            android:scaleY="0"
-            android:src="@drawable/ic_notification_dot"
-            android:stateListAnimator="@animator/item_elevation"
-            app:layout_constraintBottom_toTopOf="@+id/campus"
-            app:layout_constraintStart_toEndOf="@+id/campusHeading"
-            app:layout_constraintTop_toBottomOf="@+id/academics"
-            app:tint="@color/colorPrimaryTransparent" />
-
         <HorizontalScrollView
             android:id="@+id/campus"
             android:layout_width="match_parent"
@@ -685,7 +475,8 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/campusHeading">
 
-            <LinearLayout
+            <RelativeLayout
+                android:id="@+id/campusLayout"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:orientation="horizontal">
@@ -727,7 +518,7 @@
                 <LinearLayout
                     android:layout_width="125dp"
                     android:layout_height="125dp"
-                    android:layout_marginStart="10dp"
+                    android:layout_marginStart="165dp"
                     android:layout_marginTop="10dp"
                     android:layout_marginEnd="10dp"
                     android:layout_marginBottom="10dp"
@@ -758,110 +549,74 @@
                         android:textStyle="bold" />
                 </LinearLayout>
 
-                <RelativeLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
-
-                    <LinearLayout
-                        android:layout_width="125dp"
-                        android:layout_height="125dp"
-                        android:layout_marginStart="10dp"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginEnd="10dp"
-                        android:layout_marginBottom="10dp"
-                        android:background="@drawable/button_card"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:gravity="center_vertical"
-                        android:onClick="openProctorMessages"
-                        android:orientation="vertical"
-                        android:stateListAnimator="@animator/item_elevation">
-
-                        <ImageView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:clickable="false"
-                            android:contentDescription="@string/messages_description"
-                            app:srcCompat="@drawable/ic_messages"
-                            app:tint="@color/colorPrimary" />
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp"
-                            android:clickable="false"
-                            android:text="@string/messages"
-                            android:textAlignment="center"
-                            android:textColor="@color/colorPrimary"
-                            android:textStyle="bold" />
-                    </LinearLayout>
+                <LinearLayout
+                    android:layout_width="125dp"
+                    android:layout_height="125dp"
+                    android:layout_marginStart="310dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:background="@drawable/button_card"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center_vertical"
+                    android:onClick="openProctorMessages"
+                    android:orientation="vertical"
+                    android:stateListAnimator="@animator/item_elevation">
 
                     <ImageView
-                        android:id="@+id/proctor_messages_notification"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="125dp"
-                        android:layout_marginTop="10dp"
-                        android:contentDescription="@string/notification_description"
-                        android:scaleX="0"
-                        android:scaleY="0"
-                        android:src="@drawable/ic_notification_dot"
-                        android:stateListAnimator="@animator/item_elevation"
-                        app:tint="@color/colorPrimaryTransparent" />
-                </RelativeLayout>
+                        android:clickable="false"
+                        android:contentDescription="@string/messages_description"
+                        app:srcCompat="@drawable/ic_messages"
+                        app:tint="@color/colorPrimary" />
 
-                <RelativeLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:clickable="false"
+                        android:text="@string/messages"
+                        android:textAlignment="center"
+                        android:textColor="@color/colorPrimary"
+                        android:textStyle="bold" />
+                </LinearLayout>
 
-                    <LinearLayout
-                        android:layout_width="125dp"
-                        android:layout_height="125dp"
-                        android:layout_marginStart="10dp"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginEnd="20dp"
-                        android:layout_marginBottom="10dp"
-                        android:background="@drawable/button_card"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:gravity="center_vertical"
-                        android:onClick="openReceipts"
-                        android:orientation="vertical"
-                        android:stateListAnimator="@animator/item_elevation">
-
-                        <ImageView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:clickable="false"
-                            android:contentDescription="@string/receipts_description"
-                            app:srcCompat="@drawable/ic_receipts"
-                            app:tint="@color/colorPrimary" />
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp"
-                            android:clickable="false"
-                            android:text="@string/receipts"
-                            android:textAlignment="center"
-                            android:textColor="@color/colorPrimary"
-                            android:textStyle="bold" />
-                    </LinearLayout>
+                <LinearLayout
+                    android:layout_width="125dp"
+                    android:layout_height="125dp"
+                    android:layout_marginStart="455dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="20dp"
+                    android:layout_marginBottom="10dp"
+                    android:background="@drawable/button_card"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center_vertical"
+                    android:onClick="openReceipts"
+                    android:orientation="vertical"
+                    android:stateListAnimator="@animator/item_elevation">
 
                     <ImageView
-                        android:id="@+id/receipts_notification"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="125dp"
-                        android:layout_marginTop="10dp"
-                        android:contentDescription="@string/notification_description"
-                        android:scaleX="0"
-                        android:scaleY="0"
-                        android:src="@drawable/ic_notification_dot"
-                        android:stateListAnimator="@animator/item_elevation"
-                        app:tint="@color/colorPrimaryTransparent" />
-                </RelativeLayout>
-            </LinearLayout>
+                        android:clickable="false"
+                        android:contentDescription="@string/receipts_description"
+                        app:srcCompat="@drawable/ic_receipts"
+                        app:tint="@color/colorPrimary" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:clickable="false"
+                        android:text="@string/receipts"
+                        android:textAlignment="center"
+                        android:textColor="@color/colorPrimary"
+                        android:textStyle="bold" />
+                </LinearLayout>
+            </RelativeLayout>
         </HorizontalScrollView>
 
         <TextView

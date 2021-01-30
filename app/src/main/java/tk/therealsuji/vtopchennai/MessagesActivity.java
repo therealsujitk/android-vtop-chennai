@@ -54,11 +54,11 @@ public class MessagesActivity extends AppCompatActivity {
                 myDatabase.close();
 
                 SharedPreferences sharedPreferences = context.getSharedPreferences("tk.therealsuji.vtopchennai", Context.MODE_PRIVATE);
-                sharedPreferences.edit().putBoolean("newMessages", false).apply();
+                sharedPreferences.edit().remove("newMessages").apply();
             }
         }).start();
 
-        TextView myLink = (TextView) findViewById(R.id.newData);
+        TextView myLink = findViewById(R.id.newData);
         myLink.setMovementMethod(LinkMovementMethod.getInstance());
     }
 }

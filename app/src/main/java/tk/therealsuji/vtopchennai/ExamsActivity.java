@@ -288,7 +288,7 @@ public class ExamsActivity extends AppCompatActivity {
                 c.close();
 
                 SharedPreferences sharedPreferences = context.getSharedPreferences("tk.therealsuji.vtopchennai", Context.MODE_PRIVATE);
-                sharedPreferences.edit().putBoolean("newExams", false).apply();
+                sharedPreferences.edit().remove("newExams").apply();
             }
         }).start();
     }

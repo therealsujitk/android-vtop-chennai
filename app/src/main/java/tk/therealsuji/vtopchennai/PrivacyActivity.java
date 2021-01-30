@@ -16,7 +16,7 @@ public class PrivacyActivity extends AppCompatActivity {
         setContentView(R.layout.activity_privacy);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
-        TextView myLink = (TextView) findViewById(R.id.privacyContactContent);
+        TextView myLink = findViewById(R.id.privacyContactContent);
         myLink.setMovementMethod(LinkMovementMethod.getInstance());
     }
 }
