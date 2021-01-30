@@ -74,6 +74,10 @@ public class HomeActivity extends AppCompatActivity {
 
         findViewById(timetableNotification).animate().scaleX(0).scaleY(0);
 
+        if (sharedPreferences.getBoolean("failedAttendance", false)) {
+            return;
+        }
+
         if (!sharedPreferences.getBoolean("newMessages", false) && !sharedPreferences.getBoolean("newFaculty", false)) {
             findViewById(classesNotification).animate().scaleX(0).scaleY(0);
         }
@@ -92,6 +96,10 @@ public class HomeActivity extends AppCompatActivity {
 
         findViewById(messagesNotification).animate().scaleX(0).scaleY(0);
 
+        if (sharedPreferences.getBoolean("failedAttendance", false)) {
+            return;
+        }
+
         if (!sharedPreferences.getBoolean("newTimetable", false) && !sharedPreferences.getBoolean("newFaculty", false)) {
             findViewById(classesNotification).animate().scaleX(0).scaleY(0);
         }
@@ -105,6 +113,10 @@ public class HomeActivity extends AppCompatActivity {
         }
 
         findViewById(facultyNotification).animate().scaleX(0).scaleY(0);
+
+        if (sharedPreferences.getBoolean("failedAttendance", false)) {
+            return;
+        }
 
         if (!sharedPreferences.getBoolean("newTimetable", false) && !sharedPreferences.getBoolean("newMessages", false)) {
             findViewById(classesNotification).animate().scaleX(0).scaleY(0);
@@ -235,8 +247,14 @@ public class HomeActivity extends AppCompatActivity {
         download = new Dialog(this);
         download.setContentView(R.layout.dialog_download);
         download.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        download.setCancelable(false);
         download.setCanceledOnTouchOutside(false);
+
+//        This part was commented because in some rare cases, the algorithm gets stuck
+//        at loading and the only way to come out of it would be to close the application.
+//        The statement below disables the back button when dialog_dialog is opened to
+//        prevent it from closing during a download.
+
+//        download.setCancelable(false);
 
         download.show();
 
@@ -1329,8 +1347,37 @@ public class HomeActivity extends AppCompatActivity {
                             notification.animate().scaleX(1).scaleY(1);
                         }
                     });
+
+                    /*
+                        The classes category notification in red
+                     */
+                    final ImageView notificationClasses = new ImageView(context);
+                    classesNotification = View.generateViewId();
+                    notificationClasses.setId(classesNotification);
+                    notificationClasses.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_notification_dot));
+                    ImageViewCompat.setImageTintList(notificationClasses, ColorStateList.valueOf(getColor(R.color.colorRedTransparent)));
+                    notificationClasses.setScaleX(0);
+                    notificationClasses.setScaleY(0);
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            ((ConstraintLayout) findViewById(R.id.home_constraint)).addView(notificationClasses);
+                            ConstraintLayout.LayoutParams notificationParams = (ConstraintLayout.LayoutParams) notificationClasses.getLayoutParams();
+                            notificationParams.leftToRight = R.id.classesHeading;
+                            notificationParams.topToBottom = R.id.upcoming;
+                            notificationParams.bottomToTop = R.id.classes;
+                            notificationParams.setMarginStart((int) (10 * pixelDensity));
+                            notificationParams.setMargins(0, (int) (20 * pixelDensity), 0, 0);
+                            notificationClasses.setLayoutParams(notificationParams);
+                            notificationClasses.animate().scaleX(1).scaleY(1);
+                        }
+                    });
                 }
 
+                /*
+                    The classes category notification (except if there's failed attendance)
+                 */
                 if (classesFlag) {
                     final ImageView notification = new ImageView(context);
                     classesNotification = View.generateViewId();
@@ -1415,6 +1462,34 @@ public class HomeActivity extends AppCompatActivity {
                     });
                 }
 
+                if (sharedPreferences.getBoolean("newGrades", false)) {
+                    academicsFlag = true;
+                    final ImageView notification = new ImageView(context);
+                    gradesNotification = View.generateViewId();
+                    notification.setId(gradesNotification);
+                    LinearLayout.LayoutParams notificationParams = new LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.WRAP_CONTENT,
+                            LinearLayout.LayoutParams.WRAP_CONTENT
+                    );
+                    notificationParams.setMarginStart((int) (425 * pixelDensity));
+                    notificationParams.setMargins(0, (int) (10 * pixelDensity), 0, 0);
+                    notification.setLayoutParams(notificationParams);
+                    notification.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_notification_dot));
+                    StateListAnimator elevation = AnimatorInflater.loadStateListAnimator(context, R.animator.item_elevation);
+                    notification.setStateListAnimator(elevation);
+                    ImageViewCompat.setImageTintList(notification, ColorStateList.valueOf(getColor(R.color.colorPrimaryTransparent)));
+                    notification.setScaleX(0);
+                    notification.setScaleY(0);
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            ((RelativeLayout) findViewById(R.id.academicsLayout)).addView(notification);
+                            notification.animate().scaleX(1).scaleY(1);
+                        }
+                    });
+                }
+
                 if (sharedPreferences.getBoolean("newSpotlight", false)) {
                     academicsFlag = true;
                     final ImageView notification = new ImageView(context);
@@ -1443,6 +1518,9 @@ public class HomeActivity extends AppCompatActivity {
                     });
                 }
 
+                /*
+                    The academics category notification
+                 */
                 if (academicsFlag) {
                     final ImageView notification = new ImageView(context);
                     academicsNotification = View.generateViewId();
@@ -1527,6 +1605,9 @@ public class HomeActivity extends AppCompatActivity {
                     });
                 }
 
+                /*
+                    The campus category notification
+                 */
                 if (campusFlag) {
                     final ImageView notification = new ImageView(context);
                     campusNotification = View.generateViewId();
