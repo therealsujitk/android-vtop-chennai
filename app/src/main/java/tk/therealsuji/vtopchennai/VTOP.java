@@ -2218,8 +2218,7 @@ public class VTOP {
                                 ((Activity) context).runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        setProgress();
-                                        finishUp();
+                                        checkDues();
                                     }
                                 });
                             } catch (Exception e) {
@@ -2233,16 +2232,50 @@ public class VTOP {
         });
     }
 
+    /*
+        Check for payment dues
+     */
+    public void checkDues() {
+        webView.evaluateJavascript("(function() {" +
+                "var data = 'verifyMenu=true&winImage=' + $('#winImage').val() + '&authorizedID=' + $('#authorizedIDX').val() + '&nocache=@(new Date().getTime())';" +
+                "var duePayments;" +
+                "$.ajax({" +
+                "   type: 'POST'," +
+                "   url : 'p2p/Payments'," +
+                "   data : data," +
+                "   async: false," +
+                "   success: function(response) {" +
+                "       var doc = new DOMParser().parseFromString(response, 'text/html');" +
+                "       if (doc.getElementsByTagName('font')[0]) {" +
+                "           var text = doc.getElementsByTagName('font')[0].innerText.toLowerCase();" +
+                "           if (text.includes('no') && text.includes('payment') && text.includes('dues')) {" +
+                "               duePayments = false;" +
+                "           } else {" +
+                "               duePayments = true;" +
+                "           }" +
+                "       }" +
+                "   }" +
+                "});" +
+                "return duePayments;" +
+                "})();", new ValueCallback<String>() {
+            @Override
+            public void onReceiveValue(final String duePayments) {
+                if (duePayments.equals("true")) {
+                    sharedPreferences.edit().putBoolean("duePayments", true).apply();
+                } else {
+                    sharedPreferences.edit().remove("duePayments").apply();
+                }
+
+                finishUp();
+            }
+        });
+    }
+
     public void finishUp() {
         hideLayouts();
-        loading.setVisibility(View.VISIBLE);
+        loading.animate().alpha(1);
         sharedPreferences.edit().putBoolean("isSignedIn", true).apply();
         myDatabase.close();
-        Intent intent = new Intent(context, HomeActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        downloadDialog.dismiss();
-        context.startActivity(intent);
-        ((Activity) context).finish();
 
         webView.clearCache(true);
         webView.clearHistory();
@@ -2257,6 +2290,12 @@ public class VTOP {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        Intent intent = new Intent(context, HomeActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        downloadDialog.dismiss();
+        context.startActivity(intent);
+        ((Activity) context).finish();
     }
 
     public void error() {

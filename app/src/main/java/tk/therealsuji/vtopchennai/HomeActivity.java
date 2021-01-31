@@ -204,6 +204,10 @@ public class HomeActivity extends AppCompatActivity {
 
         findViewById(proctorMessageNotification).animate().scaleX(0).scaleY(0);
 
+        if (sharedPreferences.getBoolean("duePayments", false)) {
+            return;
+        }
+
         if (!sharedPreferences.getBoolean("newReceipts", false)) {
             findViewById(campusNotification).animate().scaleX(0).scaleY(0);
         }
@@ -217,6 +221,10 @@ public class HomeActivity extends AppCompatActivity {
         }
 
         findViewById(receiptsNotification).animate().scaleX(0).scaleY(0);
+
+        if (sharedPreferences.getBoolean("duePayments", false)) {
+            return;
+        }
 
         if (!sharedPreferences.getBoolean("newProctorMessages", false)) {
             findViewById(campusNotification).animate().scaleX(0).scaleY(0);
@@ -1577,7 +1585,59 @@ public class HomeActivity extends AppCompatActivity {
                     });
                 }
 
-                if (sharedPreferences.getBoolean("newReceipts", false)) {
+                if (sharedPreferences.getBoolean("duePayments", false)) {
+                    campusFlag = false;
+                    final ImageView notification = new ImageView(context);
+                    receiptsNotification = View.generateViewId();
+                    notification.setId(receiptsNotification);
+                    LinearLayout.LayoutParams notificationParams = new LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.WRAP_CONTENT,
+                            LinearLayout.LayoutParams.WRAP_CONTENT
+                    );
+                    notificationParams.setMarginStart((int) (570 * pixelDensity));
+                    notificationParams.setMargins(0, (int) (10 * pixelDensity), 0, 0);
+                    notification.setLayoutParams(notificationParams);
+                    notification.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_notification_dot));
+                    StateListAnimator elevation = AnimatorInflater.loadStateListAnimator(context, R.animator.item_elevation);
+                    notification.setStateListAnimator(elevation);
+                    ImageViewCompat.setImageTintList(notification, ColorStateList.valueOf(getColor(R.color.colorRedTransparent)));
+                    notification.setScaleX(0);
+                    notification.setScaleY(0);
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            ((RelativeLayout) findViewById(R.id.campusLayout)).addView(notification);
+                            notification.animate().scaleX(1).scaleY(1);
+                        }
+                    });
+
+                    /*
+                        The campus category notification in red
+                     */
+                    final ImageView notificationCampus = new ImageView(context);
+                    campusNotification = View.generateViewId();
+                    notificationCampus.setId(campusNotification);
+                    notificationCampus.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_notification_dot));
+                    ImageViewCompat.setImageTintList(notificationCampus, ColorStateList.valueOf(getColor(R.color.colorRedTransparent)));
+                    notificationCampus.setScaleX(0);
+                    notificationCampus.setScaleY(0);
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            ((ConstraintLayout) findViewById(R.id.home_constraint)).addView(notificationCampus);
+                            ConstraintLayout.LayoutParams notificationParams = (ConstraintLayout.LayoutParams) notificationCampus.getLayoutParams();
+                            notificationParams.leftToRight = R.id.campusHeading;
+                            notificationParams.topToBottom = R.id.academics;
+                            notificationParams.bottomToTop = R.id.campus;
+                            notificationParams.setMarginStart((int) (10 * pixelDensity));
+                            notificationParams.setMargins(0, (int) (10 * pixelDensity), 0, 0);
+                            notificationCampus.setLayoutParams(notificationParams);
+                            notificationCampus.animate().scaleX(1).scaleY(1);
+                        }
+                    });
+                } else if (sharedPreferences.getBoolean("newReceipts", false)) {
                     campusFlag = true;
                     final ImageView notification = new ImageView(context);
                     receiptsNotification = View.generateViewId();
