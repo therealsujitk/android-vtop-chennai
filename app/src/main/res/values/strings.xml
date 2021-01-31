@@ -10,6 +10,7 @@
     <string name="sign_in">Sign In</string>
     <string name="privacy">Privacy Policy</string>
 
+
     <string name="privacy_intro">This VTOP Chennai application is completely free and does not contain any ads. The VTOP Chennai Portal service is provided by VIT Chennai.</string>
     <string name="privacy_ownership">Ownership</string>
     <string name="privacy_ownership_content">This application is a third-party service, meaning this application is owned and maintained by an individual and NOT by VIT Chennai.</string>
@@ -30,11 +31,9 @@
     <string name="downloading_spotlight">Downloading Spotlight</string>
     <string name="downloading_staff">Downloading Staff Info</string>
     <string name="downloading_faculty">Downloading Faculty Info</string>
-
     <string name="captcha">Enter Captcha</string>
     <string name="captcha_description">Image that shows the captcha code.</string>
     <string name="submit">Submit</string>
-
     <string name="select">Select</string>
 
 
@@ -97,9 +96,9 @@
     <string name="notifications_description">Icon for the notification settings button.</string>
     <string name="privacy_description">Icon for the privacy button.</string>
     <string name="sign_out">Sign Out</string>
-    <string name="sign_out_text">Are you sure you want to sign out?</string>
     <string name="sign_out_description">Icon for the sign out button.</string>
 
+    <string name="sign_out_text">Are you sure you want to sign out?</string>
     <string name="cancel">Cancel</string>
 
     <string name="notification_description">Activity has new data.</string>
@@ -141,6 +140,7 @@
     <string name="weightage">Weightage Score</string>
     <string name="status">Status</string>
     <string name="average">Class Average</string>
+
     <string name="filter_by_course">Filter By Course</string>
     <string name="filter_by_title">Filter By Title</string>
 
@@ -177,6 +177,10 @@
     <string name="proctor">Proctor</string>
     <string name="dean">Dean</string>
     <string name="hod">HOD</string>
+
+
+    <string name="due_payments">Due Payments</string>
+    <string name="due_payments_text">You have one or more payments due. Please visit the VTOP portal for more information.</string>
 
 
     <string name="light">Light</string>

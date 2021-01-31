@@ -1,10 +1,13 @@
 package tk.therealsuji.vtopchennai;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.graphics.Typeface;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
@@ -184,5 +187,16 @@ public class ReceiptsActivity extends AppCompatActivity {
                 sharedPreferences.edit().remove("newReceipts").apply();
             }
         }).start();
+
+        /*
+            Show the due payments dialog if there are any
+         */
+        SharedPreferences sharedPreferences = this.getSharedPreferences("tk.therealsuji.vtopchennai", Context.MODE_PRIVATE);
+        if (sharedPreferences.getBoolean("duePayments", false)) {
+            Dialog duePayments = new Dialog(this);
+            duePayments.setContentView(R.layout.dialog_due_payments);
+            duePayments.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            duePayments.show();
+        }
     }
 }
