@@ -6,6 +6,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".DirectionsActivity">
 
+    <ProgressBar
+        android:id="@+id/loading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <ScrollView
         android:id="@+id/locations"
         android:layout_width="match_parent"
@@ -26,111 +35,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:paddingTop="65dp">
+                android:paddingTop="65dp"
+                android:paddingBottom="15dp">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginEnd="20dp"
-                    android:layout_marginBottom="5dp"
-                    android:background="@drawable/button_card"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:onClick="openLocation"
-                    android:orientation="vertical"
-                    android:padding="20dp"
-                    android:stateListAnimator="@animator/item_elevation"
-                    android:tag="12°50'36.1#N+80°09'13.9#E/@12.8432025,80.1533012,18z/data=!4m5!3m4!1s0x0:0x0!8m2!3d12.8433854!4d80.1538136">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/academic_block_1"
-                        android:textColor="@color/colorPrimary"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginEnd="20dp"
-                    android:layout_marginBottom="5dp"
-                    android:background="@drawable/button_card"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:onClick="openLocation"
-                    android:orientation="vertical"
-                    android:padding="20dp"
-                    android:stateListAnimator="@animator/item_elevation"
-                    android:tag="12°50'33.2#N+80°09'22.6#E/@12.8428148,80.156078,194m/data=!3m1!1e3!4m5!3m4!1s0x0:0x0!8m2!3d12.8428763!4d80.1565082">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/academic_block_2"
-                        android:textColor="@color/colorPrimary"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginEnd="20dp"
-                    android:layout_marginBottom="5dp"
-                    android:background="@drawable/button_card"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:onClick="openLocation"
-                    android:orientation="vertical"
-                    android:padding="20dp"
-                    android:stateListAnimator="@animator/item_elevation"
-                    android:tag="VIT+University+Administrative+%2F+MBA+Block/@12.840751,80.153387,194m/data=!3m1!1e3!4m5!3m4!1s0x0:0x97644f6646055611!8m2!3d12.840751!4d80.1539342">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/admin_block"
-                        android:textColor="@color/colorPrimary"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginEnd="20dp"
-                    android:layout_marginBottom="20dp"
-                    android:background="@drawable/button_card"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:onClick="openLocation"
-                    android:orientation="vertical"
-                    android:padding="20dp"
-                    android:stateListAnimator="@animator/item_elevation"
-                    android:tag="VIT+University+Library/@12.840751,80.153387,194m/data=!3m1!1e3!4m12!1m6!3m5!1s0x0:0x97644f6646055611!2sVIT+University+Administrative+%2F+MBA+Block!8m2!3d12.840751!4d80.1539342!3m4!1s0x3a5259af87091093:0x15d22ab6579d53cc!8m2!3d12.8410892!4d80.1539963">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/library"
-                        android:textColor="@color/colorPrimary"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
-
-                </LinearLayout>
             </LinearLayout>
 
             <LinearLayout
@@ -139,111 +46,9 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:paddingTop="65dp"
+                android:paddingBottom="15dp"
                 android:visibility="gone">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginEnd="20dp"
-                    android:layout_marginBottom="5dp"
-                    android:background="@drawable/button_card"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:onClick="openLocation"
-                    android:orientation="vertical"
-                    android:padding="20dp"
-                    android:stateListAnimator="@animator/item_elevation"
-                    android:tag="''A'+Block+VIT+Men's+Hostel'/@12.8445602,80.152219,194m/data=!3m1!1e3!4m12!1m6!3m5!1s0x0:0x97644f6646055611!2sVIT+University+Administrative+%2F+MBA+Block!8m2!3d12.840751!4d80.1539342!3m4!1s0x3a5259a8ca7a99e3:0xe533a251356c5b24!8m2!3d12.8443345!4d80.1524607">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/boys_hostel_a"
-                        android:textColor="@color/colorPrimary"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginEnd="20dp"
-                    android:layout_marginBottom="5dp"
-                    android:background="@drawable/button_card"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:onClick="openLocation"
-                    android:orientation="vertical"
-                    android:padding="20dp"
-                    android:stateListAnimator="@animator/item_elevation"
-                    android:tag="12°50'30.4#N+80°09'25.3#E/@12.8428269,80.1555223,18z/data=!4m5!3m4!1s0x0:0x0!8m2!3d12.8420966!4d80.1570314">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/boys_hostel_b"
-                        android:textColor="@color/colorPrimary"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginEnd="20dp"
-                    android:layout_marginBottom="5dp"
-                    android:background="@drawable/button_card"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:onClick="openLocation"
-                    android:orientation="vertical"
-                    android:padding="20dp"
-                    android:stateListAnimator="@animator/item_elevation"
-                    android:tag="VIT+-+Boy's+Hostel+-+C+Block/@12.8431773,80.156386,18z/data=!4m12!1m6!3m5!1s0x3a5259a448e713c7:0x3525ce37ecb5c2b4!2sB+Block+Girls+Hostel!8m2!3d12.8419803!4d80.1569973!3m4!1s0x3a5259a4484200af:0x2edb13d73359cecd!8m2!3d12.8430204!4d80.1574235">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/boys_hostel_c"
-                        android:textColor="@color/colorPrimary"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginEnd="20dp"
-                    android:layout_marginBottom="20dp"
-                    android:background="@drawable/button_card"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:onClick="openLocation"
-                    android:orientation="vertical"
-                    android:padding="20dp"
-                    android:stateListAnimator="@animator/item_elevation"
-                    android:tag="B+Block+Girls+Hostel/@12.8420059,80.1567621,194m/data=!3m1!1e3!4m5!3m4!1s0x3a5259a448e713c7:0x3525ce37ecb5c2b4!8m2!3d12.8419803!4d80.1569973">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/girls_hostel"
-                        android:textColor="@color/colorPrimary"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
-
-                </LinearLayout>
             </LinearLayout>
 
             <LinearLayout
@@ -252,189 +57,9 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:paddingTop="65dp"
+                android:paddingBottom="15dp"
                 android:visibility="gone">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginEnd="20dp"
-                    android:layout_marginBottom="5dp"
-                    android:background="@drawable/button_card"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:onClick="openLocation"
-                    android:orientation="vertical"
-                    android:padding="20dp"
-                    android:stateListAnimator="@animator/item_elevation"
-                    android:tag="Aavin+Milk+parlour/@12.8419458,80.1557509,194m/data=!3m1!1e3!4m5!3m4!1s0x3a5259352eff463d:0x6c8d02e629999236!8m2!3d12.8418077!4d80.1560576">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/aavin"
-                        android:textColor="@color/colorPrimary"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginEnd="20dp"
-                    android:layout_marginBottom="5dp"
-                    android:background="@drawable/button_card"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:onClick="openLocation"
-                    android:orientation="vertical"
-                    android:padding="20dp"
-                    android:stateListAnimator="@animator/item_elevation"
-                    android:tag="VIT+GYMNASIUM/@12.8438962,80.1521149,19z/data=!4m5!3m4!1s0x3a525975c25b776d:0xb38438f2065c755b!8m2!3d12.8436762!4d80.1525908">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/chai"
-                        android:textColor="@color/colorPrimary"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginEnd="20dp"
-                    android:layout_marginBottom="5dp"
-                    android:background="@drawable/button_card"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:onClick="openLocation"
-                    android:orientation="vertical"
-                    android:padding="20dp"
-                    android:stateListAnimator="@animator/item_elevation"
-                    android:tag="VIT+GYMNASIUM/@12.8438962,80.1521149,19z/data=!4m5!3m4!1s0x3a525975c25b776d:0xb38438f2065c755b!8m2!3d12.8436762!4d80.1525908">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/dominos"
-                        android:textColor="@color/colorPrimary"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginEnd="20dp"
-                    android:layout_marginBottom="5dp"
-                    android:background="@drawable/button_card"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:onClick="openLocation"
-                    android:orientation="vertical"
-                    android:padding="20dp"
-                    android:stateListAnimator="@animator/item_elevation"
-                    android:tag="Gazebo/@12.8418162,80.1538786,194m/data=!3m1!1e3!4m5!3m4!1s0x3a5259a5b8ad34a1:0xeae6bca2ad4e417e!8m2!3d12.8417495!4d80.154353">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/gazebo"
-                        android:textColor="@color/colorPrimary"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginEnd="20dp"
-                    android:layout_marginBottom="5dp"
-                    android:background="@drawable/button_card"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:onClick="openLocation"
-                    android:orientation="vertical"
-                    android:padding="20dp"
-                    android:stateListAnimator="@animator/item_elevation"
-                    android:tag="VIT+GYMNASIUM/@12.8438962,80.1521149,19z/data=!4m5!3m4!1s0x3a525975c25b776d:0xb38438f2065c755b!8m2!3d12.8436762!4d80.1525908">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/gym_khaana"
-                        android:textColor="@color/colorPrimary"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginEnd="20dp"
-                    android:layout_marginBottom="5dp"
-                    android:background="@drawable/button_card"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:onClick="openLocation"
-                    android:orientation="vertical"
-                    android:padding="20dp"
-                    android:stateListAnimator="@animator/item_elevation"
-                    android:tag="LASSI+HOUSE/@12.8415992,80.1546404,194m/data=!3m1!1e3!4m5!3m4!1s0x3a5259397c7f1bcd:0xc2ab1a5c1b305274!8m2!3d12.8415403!4d80.1551315">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/lassi"
-                        android:textColor="@color/colorPrimary"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginEnd="20dp"
-                    android:layout_marginBottom="20dp"
-                    android:background="@drawable/button_card"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:onClick="openLocation"
-                    android:orientation="vertical"
-                    android:padding="20dp"
-                    android:stateListAnimator="@animator/item_elevation"
-                    android:tag="Quality+And+Taste/@12.8415547,80.154289,194m/data=!3m1!1e3!4m5!3m4!1s0x3a52595bc5124eab:0xb4497ce2bb903488!8m2!3d12.8414658!4d80.1547694">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/quality_taste"
-                        android:textColor="@color/colorPrimary"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
-
-                </LinearLayout>
             </LinearLayout>
 
             <LinearLayout
@@ -443,59 +68,9 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:paddingTop="65dp"
+                android:paddingBottom="15dp"
                 android:visibility="gone">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginEnd="20dp"
-                    android:layout_marginBottom="5dp"
-                    android:background="@drawable/button_card"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:onClick="openLocation"
-                    android:orientation="vertical"
-                    android:padding="20dp"
-                    android:stateListAnimator="@animator/item_elevation"
-                    android:tag="KVB+Bank+ATM/@12.8414932,80.1553079,194m/data=!3m1!1e3!4m5!3m4!1s0x3a5259a500f0aa5f:0xa213b8ddc41736e1!8m2!3d12.8415488!4d80.1566168">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/kvb_bank"
-                        android:textColor="@color/colorPrimary"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginEnd="20dp"
-                    android:layout_marginBottom="20dp"
-                    android:background="@drawable/button_card"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:onClick="openLocation"
-                    android:orientation="vertical"
-                    android:padding="20dp"
-                    android:stateListAnimator="@animator/item_elevation"
-                    android:tag="V-Mart/@12.8443304,80.1535431,194m/data=!3m1!1e3!4m5!3m4!1s0x3a5259a607304d65:0x383b00f24005d657!8m2!3d12.8446379!4d80.1538273">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/india_bank"
-                        android:textColor="@color/colorPrimary"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
-
-                </LinearLayout>
             </LinearLayout>
 
             <LinearLayout
@@ -504,163 +79,9 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:paddingTop="65dp"
+                android:paddingBottom="15dp"
                 android:visibility="gone">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginEnd="20dp"
-                    android:layout_marginBottom="5dp"
-                    android:background="@drawable/button_card"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:onClick="openLocation"
-                    android:orientation="vertical"
-                    android:padding="20dp"
-                    android:stateListAnimator="@animator/item_elevation"
-                    android:tag="New+clock+Tower/@12.841522,80.1531748,194m/data=!3m1!1e3!4m5!3m4!1s0x3a52592d3c497c0d:0x8bb6c9d56d21dbfa!8m2!3d12.841522!4d80.153722">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/clock_tower"
-                        android:textColor="@color/colorPrimary"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginEnd="20dp"
-                    android:layout_marginBottom="5dp"
-                    android:background="@drawable/button_card"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:onClick="openLocation"
-                    android:orientation="vertical"
-                    android:padding="20dp"
-                    android:stateListAnimator="@animator/item_elevation"
-                    android:tag="North+Square/@12.8435387,80.1536813,194m/data=!3m1!1e3!4m5!3m4!1s0x3a52596b6ed79a5f:0xa72e3bf6efa01ca1!8m2!3d12.8439959!4d80.1539433">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/north_square"
-                        android:textColor="@color/colorPrimary"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginEnd="20dp"
-                    android:layout_marginBottom="5dp"
-                    android:background="@drawable/button_card"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:onClick="openLocation"
-                    android:orientation="vertical"
-                    android:padding="20dp"
-                    android:stateListAnimator="@animator/item_elevation"
-                    android:tag="VIT+Fun+Park/@12.8408754,80.1523507,194m/data=!3m1!1e3!4m5!3m4!1s0x3a5259f9059c5235:0x91d1aba082bd8444!8m2!3d12.8408754!4d80.1528979">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/vit_fun"
-                        android:textColor="@color/colorPrimary"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginEnd="20dp"
-                    android:layout_marginBottom="5dp"
-                    android:background="@drawable/button_card"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:onClick="openLocation"
-                    android:orientation="vertical"
-                    android:padding="20dp"
-                    android:stateListAnimator="@animator/item_elevation"
-                    android:tag="VIT+Garden/@12.8433022,80.1524419,194m/data=!3m1!1e3!4m5!3m4!1s0x3a5259b113ade31d:0xce3313d9acea5e0d!8m2!3d12.8438494!4d80.152519">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/vit_garden"
-                        android:textColor="@color/colorPrimary"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginEnd="20dp"
-                    android:layout_marginBottom="5dp"
-                    android:background="@drawable/button_card"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:onClick="openLocation"
-                    android:orientation="vertical"
-                    android:padding="20dp"
-                    android:stateListAnimator="@animator/item_elevation"
-                    android:tag="VIT+Pond/@12.8404258,80.1542757,194m/data=!3m1!1e3!4m5!3m4!1s0x3a5259aff3a76d07:0x3293ad2f56cd151!8m2!3d12.8401124!4d80.1537321">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/vit_pond"
-                        android:textColor="@color/colorPrimary"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginEnd="20dp"
-                    android:layout_marginBottom="20dp"
-                    android:background="@drawable/button_card"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:onClick="openLocation"
-                    android:orientation="vertical"
-                    android:padding="20dp"
-                    android:stateListAnimator="@animator/item_elevation"
-                    android:tag="V-Mart/@12.8443304,80.1535431,194m/data=!3m1!1e3!4m5!3m4!1s0x3a5259a607304d65:0x383b00f24005d657!8m2!3d12.8446379!4d80.1538273">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/vmart"
-                        android:textColor="@color/colorPrimary"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
-
-                </LinearLayout>
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
