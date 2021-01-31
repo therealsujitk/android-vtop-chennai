@@ -56,6 +56,10 @@ public class VTOP {
     ProgressBar loading, progressBar;
     Spinner selectSemester;
     LinearLayout captchaLayout, downloadingLayout, semesterLayout;
+
+    /*
+        DARK is used to change the colours of the captcha image when in dark mode
+     */
     private static final float[] DARK = {
             -0.853f, 0, 0, 0, 255, // R
             0, -0.853f, 0, 0, 255, // G
@@ -115,6 +119,9 @@ public class VTOP {
         reloadPage();
     }
 
+    /*
+        Function to perform a smooth animation of expanding the layouts in the dialog
+     */
     public static void expand(final View view) {
         view.measure(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         final int targetHeight = view.getMeasuredHeight();
@@ -146,6 +153,9 @@ public class VTOP {
         anim.start();
     }
 
+    /*
+        Function to perform a smooth animation of compressing the layouts in the dialog
+     */
     public static void compress(final View view) {
         if (view.getVisibility() == View.GONE) {
             return;
@@ -175,7 +185,7 @@ public class VTOP {
     }
 
     /*
-        Function to hide all layouts
+        Function to hide all layouts at once because i'm too lazy to keep typing these
      */
     public void hideLayouts() {
         loading.animate().alpha(0);
@@ -185,6 +195,10 @@ public class VTOP {
         compress(captchaLayout);
     }
 
+    /*
+        Function to update the progress of the download. If more data needs to be downloaded,
+        the max value can simply be updated here (SHOULD ALSO BE UPDATED IN dialog_download.xml)
+     */
     public void setProgress() {
         progressBar.setProgress(++lastDownload, true);
         String progress = lastDownload + " / 12";
@@ -192,7 +206,8 @@ public class VTOP {
     }
 
     /*
-        Function to reload the page using javascript in case of an error
+        Function to reload the page using javascript in case of an error.
+        If something goes wrong, it'll log out and ask for the captcha again.
      */
     public void reloadPage() {
         if (loading.getAlpha() == 0) {
@@ -259,27 +274,26 @@ public class VTOP {
                     Toast.makeText(context, "Sorry, something went wrong while trying to fetch the captcha code. Please try again.", Toast.LENGTH_LONG).show();
                     isOpened = false;
                     reloadPage();
-                    return;
-                }
+                } else {
+                    try {
+                        src = src.substring(1, src.length() - 1).split(",")[1].trim();
+                        byte[] decodedString = Base64.decode(src, Base64.DEFAULT);
+                        Bitmap decodedImage = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
 
-                try {
-                    src = src.substring(1, src.length() - 1).split(" ")[1];
-                    byte[] decodedString = Base64.decode(src, Base64.DEFAULT);
-                    Bitmap decodedImage = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                        String appearance = sharedPreferences.getString("appearance", "system");
+                        captcha.setImageBitmap(decodedImage);
 
-                    String appearance = sharedPreferences.getString("appearance", "system");
-                    captcha.setImageBitmap(decodedImage);
+                        if (appearance.equals("dark") || (appearance.equals("system") && (context.getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES)) {
+                            captcha.setColorFilter(new ColorMatrixColorFilter(DARK));
+                        }
 
-                    if (appearance.equals("dark") || (appearance.equals("system") && (context.getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES)) {
-                        captcha.setColorFilter(new ColorMatrixColorFilter(DARK));
+                        hideLayouts();
+                        captchaView.setText("");
+                        expand(captchaLayout);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        error();
                     }
-
-                    hideLayouts();
-                    captchaView.setText("");
-                    expand(captchaLayout);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    error();
                 }
             }
         });
@@ -371,7 +385,7 @@ public class VTOP {
             @Override
             public void onReceiveValue(String obj) {
                 /*
-                    obj is in the form of a JSON string like {"0": "Option 1", "1": "Option 2", "2": "Option 3",...}
+                    obj is in the form of a JSON string like {"0": "Semester 1", "1": "Semester 2", "2": "Semester 3",...}
                  */
                 if (obj.equals("false") || obj.equals("null")) {
                     error();
@@ -398,7 +412,8 @@ public class VTOP {
     }
 
     /*
-        Function to get the semester ID from the Timetable page
+        Function to get the semester ID from the Timetable page and store it locally for future use
+        This is required to download the timetable, faculty, attendance, exam schedule, marks & grades
      */
     public void getSemesterID(String semester) {
         webView.evaluateJavascript("(function() {" +
@@ -448,10 +463,7 @@ public class VTOP {
 
         webView.evaluateJavascript("(function() {" +
                 "var data = 'verifyMenu=true&winImage=' + $('#winImage').val() + '&authorizedID=' + $('#authorizedIDX').val() + '&nocache=@(new Date().getTime())';" +
-                "var obj = false;" +
-                "var name = '';" +
-                "var id = '';" +
-                "var j = 0;" +
+                "var obj = {};" +
                 "$.ajax({" +
                 "   type: 'POST'," +
                 "   url : 'studentsRecord/StudentProfileAllView'," +
@@ -461,6 +473,7 @@ public class VTOP {
                 "       if(response.toLowerCase().includes('personal information')) {" +
                 "           var doc = new DOMParser().parseFromString(response, 'text/html');" +
                 "           var cells = doc.getElementsByTagName('td');" +
+                "           var name = '', id = '', j = 0;" +
                 "           for(var i = 0; i < cells.length && j < 2; ++i) {" +
                 "               if(cells[i].innerText.toLowerCase().includes('name')) {" +
                 "                   name = cells[++i].innerHTML;" +
@@ -471,7 +484,8 @@ public class VTOP {
                 "                   ++j;" +
                 "               }" +
                 "           }" +
-                "           obj = {'name': name, 'id': id};" +
+                "           obj['name'] = name;" +
+                "           obj['id'] = id;" +
                 "       }" +
                 "   }" +
                 "});" +
@@ -480,14 +494,11 @@ public class VTOP {
             @Override
             public void onReceiveValue(String obj) {
                 /*
-                    obj is in the form of a JSON string like {"name":"JOHN DOE","register":"20XYZ1987"}
+                    obj is in the form of a JSON string like {"name": "JOHN DOE", "register": "20XYZ1987"}
                  */
                 String temp = obj.substring(1, obj.length() - 1);
-                if (obj.equals("false") || obj.equals("null")) {
+                if (obj.equals("null") || temp.equals("")) {
                     error();
-                } else if (temp.equals("")) {
-                    Toast.makeText(context, "Sorry, we had some trouble downloading your profile.", Toast.LENGTH_LONG).show();
-                    ((Activity) context).finish();
                 } else {
                     try {
                         JSONObject myObj = new JSONObject(obj);
@@ -508,7 +519,7 @@ public class VTOP {
     }
 
     /*
-        Function to save the timetable in an SQLite database, and the credit score in SharedPreferences
+        Function to save the timetable in the SQLite database, and the credit score in SharedPreferences
      */
     public void downloadTimetable() {
         downloading.setText(context.getString(R.string.downloading_timetable));
@@ -616,6 +627,9 @@ public class VTOP {
                 "})();", new ValueCallback<String>() {
             @Override
             public void onReceiveValue(final String obj) {
+                /*
+                    obj is in the form of a JSON string like {"credits": "19", "lab": {"0start": "08:00", "0end": "08:50",...}, "mon": {"0theory": "MAT1001",...}, ...}
+                 */
                 String temp = obj.substring(1, obj.length() - 1);
                 if (obj.equals("null") || temp.equals("")) {
                     error();
@@ -811,7 +825,7 @@ public class VTOP {
     }
 
     /*
-        Function to download faculty info
+        Function to store the faculty info from the timetable page in the SQLite database.
      */
     public void downloadFaculty() {
         downloading.setText(context.getString(R.string.downloading_faculty));
@@ -868,6 +882,9 @@ public class VTOP {
                 "})();", new ValueCallback<String>() {
             @Override
             public void onReceiveValue(final String obj) {
+                /*
+                    obj is in the form of a JSON string like {"0": {"course": "MAT1001", "faculty": "JAMES VERTIGO"},...}
+                 */
                 String temp = obj.substring(1, obj.length() - 1);
                 if (obj.equals("null") || temp.equals("")) {
                     error();
@@ -931,7 +948,7 @@ public class VTOP {
     }
 
     /*
-        Function to download proctor info (Staff info)
+        Function to store the proctor info (1 / 2 - Staff info) in the SQLite database.
      */
     public void downloadProctor() {
         downloading.setText(context.getString(R.string.downloading_staff));
@@ -969,10 +986,13 @@ public class VTOP {
                 "})();", new ValueCallback<String>() {
             @Override
             public void onReceiveValue(final String obj) {
+                /*
+                    obj is in the form of a JSON string like {"Faculty Name": "Jack Ryan", "Email ID": "jack@cia.gov.us",...}
+                 */
                 String temp = obj.substring(1, obj.length() - 1);
-                if (obj.equals("null")) {
+                if (obj.equals("null") || temp.equals("")) {
                     error();
-                } else if (temp.equals("unavailable") || temp.equals("")) {
+                } else if (temp.equals("unavailable")) {
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
@@ -1031,7 +1051,7 @@ public class VTOP {
     }
 
     /*
-        Function to download HOD & Dean info (Staff info)
+        Function to store the HOD & Dean info (2 / 2 - Staff info) in the SQLite database.
      */
     public void downloadDeanHOD() {
         downloading.setText(context.getString(R.string.downloading_staff));
@@ -1103,10 +1123,13 @@ public class VTOP {
                 "})();", new ValueCallback<String>() {
             @Override
             public void onReceiveValue(final String obj) {
+                /*
+                    obj is in the form of a JSON string like {"dean": {"Faculty Name": "Jack Ryan", "Email ID": "jack@cia.gov.us",...}, "hod: {"Jimmy Fallon": "Jack Ryan", "Email ID": "jimmy@tonight.us",...}"}
+                 */
                 String temp = obj.substring(1, obj.length() - 1);
-                if (obj.equals("null")) {
+                if (obj.equals("null") || temp.equals("")) {
                     error();
-                } else if (temp.equals("unavailable") || temp.equals("")) {
+                } else if (temp.equals("unavailable")) {
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
@@ -1182,7 +1205,7 @@ public class VTOP {
     }
 
     /*
-        Function to select the attendance to download
+        Function to store the attendance in the SQLite database.
      */
     public void downloadAttendance() {
         downloading.setText(context.getString(R.string.downloading_attendance));
@@ -1256,10 +1279,13 @@ public class VTOP {
                 "})();", new ValueCallback<String>() {
             @Override
             public void onReceiveValue(final String obj) {
+                /*
+                    obj is in the form of a JSON string like {"0": {"course": "MAT1001", "type": "Embedded Theory",...},...}
+                 */
                 String temp = obj.substring(1, obj.length() - 1);
-                if (obj.equals("null")) {
+                if (obj.equals("null") || temp.equals("")) {
                     error();
-                } else if (temp.equals("unavailable") || temp.equals("")) {
+                } else if (temp.equals("unavailable")) {
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
@@ -1439,10 +1465,13 @@ public class VTOP {
                 "})();", new ValueCallback<String>() {
             @Override
             public void onReceiveValue(final String obj) {
+                /*
+                    obj is in the form of a JSON string like {"Mid Term": {"course": "MAT1001", "date": "04-Jan-1976",...},...}
+                 */
                 String temp = obj.substring(1, obj.length() - 1);
-                if (obj.equals("null")) {
+                if (obj.equals("null") || temp.equals("")) {
                     error();
-                } else if (temp.equals("nothing") || temp.equals("")) {
+                } else if (temp.equals("nothing")) {
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
@@ -1626,10 +1655,13 @@ public class VTOP {
                 "})();", new ValueCallback<String>() {
             @Override
             public void onReceiveValue(final String obj) {
+                /*
+                    obj is in the form of a JSON string like {"0": {"course": "MAT1001", "score": "48",...},...}
+                 */
                 String temp = obj.substring(1, obj.length() - 1);
-                if (obj.equals("null")) {
+                if (obj.equals("null") || temp.equals("")) {
                     error();
-                } else if (temp.equals("nothing") || temp.equals("")) {
+                } else if (temp.equals("nothing")) {
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
@@ -1786,6 +1818,9 @@ public class VTOP {
                 "})();", new ValueCallback<String>() {
             @Override
             public void onReceiveValue(String value) {
+                /*
+                    obj is in the form of a JSON string that is yet to be created
+                 */
                 String temp = value.substring(1, value.length() - 1);
                 if (value.equals("true")) {
                     /*
@@ -1879,6 +1914,9 @@ public class VTOP {
                 "})();", new ValueCallback<String>() {
             @Override
             public void onReceiveValue(String value) {
+                /*
+                    obj is in the form of a JSON string that is yet to be created
+                 */
                 String temp = value.substring(1, value.length() - 1);
                 if (value.equals("true")) {
                     /*
@@ -2000,10 +2038,13 @@ public class VTOP {
                 "})();", new ValueCallback<String>() {
             @Override
             public void onReceiveValue(final String obj) {
+                /*
+                    obj is in the form of a JSON string like {"Academics": {"announcement": "In lieu of COVID-19, campus will remain shut for eternity.", "link": "null"},...}
+                 */
                 String temp = obj.substring(1, obj.length() - 1);
-                if (obj.equals("null")) {
+                if (obj.equals("null") || temp.equals("")) {
                     error();
-                } else if (temp.equals("nothing") || temp.equals("")) {
+                } else if (temp.equals("nothing")) {
                     /*
                         Dropping and recreating an empty table
                      */
@@ -2143,33 +2184,12 @@ public class VTOP {
                 "})();", new ValueCallback<String>() {
             @Override
             public void onReceiveValue(final String obj) {
+                /*
+                    obj is in the form of a JSON string like {"0": {"amount": "1000000", "date": "04-JAN-1976", "receipt": "17085"},...}
+                 */
                 String temp = obj.substring(1, obj.length() - 1);
-                if (obj.equals("null")) {
+                if (obj.equals("null") || temp.equals("")) {
                     error();
-                } else if (temp.equals("")) {
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                myDatabase.execSQL("DROP TABLE IF EXISTS receipts");
-                                myDatabase.execSQL("CREATE TABLE IF NOT EXISTS receipts (id INTEGER PRIMARY KEY, receipt VARCHAR, date VARCHAR, amount VARCHAR)");
-
-                                ((Activity) context).runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        setProgress();
-                                        finishUp();
-                                    }
-                                });
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                                error();
-                            }
-
-                            sharedPreferences.edit().remove("newReceipts").apply();
-                            sharedPreferences.edit().remove("receiptsCount").apply();
-                        }
-                    }).start();
                 } else {
                     new Thread(new Runnable() {
                         @Override
