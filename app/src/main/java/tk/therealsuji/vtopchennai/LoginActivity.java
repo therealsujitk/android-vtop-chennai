@@ -45,8 +45,14 @@ public class LoginActivity extends AppCompatActivity {
         download = new Dialog(this);
         download.setContentView(R.layout.dialog_download);
         download.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        download.setCancelable(false);
         download.setCanceledOnTouchOutside(false);
+
+//        This part was commented because in some rare cases, the algorithm gets stuck
+//        at loading and the only way to come out of it would be to close the application.
+//        The statement below disables the back button when dialog_dialog is opened to
+//        prevent it from closing during a download.
+
+//        download.setCancelable(false);
 
         download.show();
 

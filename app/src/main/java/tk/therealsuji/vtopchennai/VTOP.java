@@ -174,6 +174,17 @@ public class VTOP {
         anim.start();
     }
 
+    /*
+        Function to hide all layouts
+     */
+    public void hideLayouts() {
+        loading.animate().alpha(0);
+
+        compress(downloadingLayout);
+        compress(semesterLayout);
+        compress(captchaLayout);
+    }
+
     public void setProgress() {
         progressBar.setProgress(++lastDownload, true);
         String progress = lastDownload + " / 12";
@@ -2226,29 +2237,6 @@ public class VTOP {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    /*
-        Function to hide all layouts
-     */
-    public void hideLayouts() {
-        loading.animate().alpha(0);
-
-        if (downloadingLayout.getVisibility() == View.VISIBLE) {
-            downloadingLayout.animate().alpha(0);
-        }
-
-        if (semesterLayout.getVisibility() == View.VISIBLE) {
-            semesterLayout.animate().alpha(0);
-        }
-
-        if (captchaLayout.getVisibility() == View.VISIBLE) {
-            captchaLayout.animate().alpha(0);
-        }
-
-        compress(downloadingLayout);
-        compress(semesterLayout);
-        compress(captchaLayout);
     }
 
     public void error() {

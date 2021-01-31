@@ -196,7 +196,7 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     public void openProctorMessages(View view) {
-        startActivity(new Intent(HomeActivity.this, ProctorActivity.class));
+        startActivity(new Intent(HomeActivity.this, ProctorMessagesActivity.class));
 
         if (proctorMessageNotification == -1) {
             return;

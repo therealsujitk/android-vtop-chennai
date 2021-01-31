@@ -280,7 +280,7 @@ public class StaffActivity extends AppCompatActivity {
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    findViewById(R.id.loading).animate().alpha(0);
+                                    findViewById(R.id.loading).setVisibility(View.GONE);
                                     proctorView.addView(outerBlock);
                                     outerBlock.animate().alpha(1);
                                 }

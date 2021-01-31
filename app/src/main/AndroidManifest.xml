@@ -146,13 +146,13 @@
                 android:value=".StaffActivity" />
         </activity>
         <activity
-            android:name=".ProctorActivity"
+            android:name=".ProctorMessagesActivity"
             android:configChanges="orientation|keyboardHidden"
             android:label="Proctor Messages"
             android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ProctorActivity" />
+                android:value=".ProctorMessagesActivity" />
         </activity>
         <activity
             android:name=".ReceiptsActivity"

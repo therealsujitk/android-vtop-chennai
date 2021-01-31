@@ -90,6 +90,16 @@ public class ExamsActivity extends AppCompatActivity {
                 c.moveToFirst();
 
                 for (int i = 0; i < c.getCount(); ++i, c.moveToNext()) {
+                    if (i == 0) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                findViewById(R.id.noData).setVisibility(View.GONE);
+                                findViewById(R.id.loading).setVisibility(View.VISIBLE);
+                            }
+                        });
+                    }
+
                     String exam = c.getString(examIndex);
 
                     /*
@@ -276,7 +286,7 @@ public class ExamsActivity extends AppCompatActivity {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                findViewById(R.id.noData).setVisibility(View.GONE);
+                                findViewById(R.id.loading).setVisibility(View.GONE);
                                 exams.addView(examView);
                             }
                         });

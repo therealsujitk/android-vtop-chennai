@@ -158,7 +158,7 @@ public class FacultyActivity extends AppCompatActivity {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                findViewById(R.id.loading).animate().alpha(0);
+                                findViewById(R.id.loading).setVisibility(View.GONE);
                                 facultyInfo.addView(block);
                             }
                         });
