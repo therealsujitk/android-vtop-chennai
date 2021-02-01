@@ -67,8 +67,7 @@ public class DirectionsActivity extends AppCompatActivity {
 
     public void openLocation(View view) {
         String query = view.getTag().toString();
-        query = query.replaceAll("#", "\"");
-        String url = "https://www.google.com/maps/place/" + query;
+        String url = "https://goo.gl/maps/" + query;
 
         Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(url));
         startActivity(intent);
@@ -103,53 +102,57 @@ public class DirectionsActivity extends AppCompatActivity {
             public void run() {
                 JSONObject academics = new JSONObject();
                 try {
-                    academics.put("Academic Block 1", "{\"description\": \"\", \"tag\": \"\"}");
-                    academics.put("Academic Block 2", "{\"description\": \"\", \"tag\": \"\"}");
-                    academics.put("Administrative Block", "{\"description\": \"\", \"tag\": \"\"}");
-                    academics.put("Central Library", "{\"description\": \"\", \"tag\": \"\"}");
+                    academics.put("Academic Block 1", "{\"description\": \"\", \"tag\": \"wWaWFDiuUnrSkv7Q8\"}");
+                    academics.put("Academic Block 2", "{\"description\": \"\", \"tag\": \"2DcLPUj6JBU2SD698\"}");
+                    academics.put("Administrative Block", "{\"description\": \"\", \"tag\": \"GNYq3VdZytBk42Jp7\"}");
+                    academics.put("Central Library", "{\"description\": \"\", \"tag\": \"B61HccC3wuTcepRE6\"}");
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
 
                 JSONObject hostels = new JSONObject();
                 try {
-                    hostels.put("Boys Hostel A Block", "{\"description\": \"\", \"tag\": \"\"}");
-                    hostels.put("Boys Hostel B Block", "{\"description\": \"\", \"tag\": \"\"}");
-                    hostels.put("Boys Hostel C Block", "{\"description\": \"\", \"tag\": \"\"}");
-                    hostels.put("Girls Hostel", "{\"description\": \"\", \"tag\": \"\"}");
+                    hostels.put("Hostel A Block", "{\"description\": \"\", \"tag\": \"sp6v7XomBw5sZ3cy8\"}");
+                    hostels.put("Hostel B Block", "{\"description\": \"Hostel for Senior Boys\", \"tag\": \"CjyN7xFaFrXHtejYA\"}");
+                    hostels.put("Hostel C Block", "{\"description\": \"Hostel for Girls & Freshmen Boys\", \"tag\": \"Mwk7WG6uRBZ6CNne7\"}");
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
 
                 JSONObject food = new JSONObject();
                 try {
-                    food.put("Aavin Milk Parlor", "{\"description\": \"\", \"tag\": \"\"}");
-                    food.put("Chai Galli", "{\"description\": \"\", \"tag\": \"\"}");
-                    food.put("Domino's Pizza", "{\"description\": \"\", \"tag\": \"\"}");
-                    food.put("Gazebo", "{\"description\": \"\", \"tag\": \"\"}");
-                    food.put("Gym Khaana", "{\"description\": \"\", \"tag\": \"\"}");
-                    food.put("Lassi House", "{\"description\": \"\", \"tag\": \"\"}");
-                    food.put("Quality and Taste", "{\"description\": \"\", \"tag\": \"\"}");
+                    /*
+                        Chai Galli & Gym Khana redirect to the VIT Gymnasium. It has to be updated.
+                     */
+                    food.put("Aavin Milk Parlor", "{\"description\": \"Dairy Store\", \"tag\": \"pWLcc1fBTfnBJDQk6\"}");
+                    food.put("Chai Galli", "{\"description\": \"Café\", \"tag\": \"3FXWWyxseB3rvEe29\"}");
+                    food.put("Domino's Pizza", "{\"description\": \"Pizza Restaurant\", \"tag\": \"i8WRzayorFQkoDWMA\"}");
+                    food.put("Gazebo", "{\"description\": \"Food Stall\", \"tag\": \"ARvc3dyCW6CoBaEr8\"}");
+                    food.put("Gym Khaana", "{\"description\": \"Food Court\", \"tag\": \"3FXWWyxseB3rvEe29\"}");
+                    food.put("Lassi House", "{\"description\": \"Beverage Stall\", \"tag\": \"qBZqiFaKddKnxgAW6\"}");
+                    food.put("Quality and Taste", "{\"description\": \"Fast Food Stall\", \"tag\": \"1gditDKn9CaCTma17\"}");
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
 
                 JSONObject atms = new JSONObject();
                 try {
-                    atms.put("KVB Bank ATM", "{\"description\": \"\", \"tag\": \"\"}");
-                    atms.put("India Bank & ATM", "{\"description\": \"\", \"tag\": \"\"}");
+                    /*
+                        India bank is redirected to an anonymous location. It has to be updated.
+                     */
+                    atms.put("India Bank", "{\"description\": \"Bank & ATM\", \"tag\": \"JbFEbDmR69yxQyn47\"}");
+                    atms.put("Karur Vysya Bank", "{\"description\": \"ATM\", \"tag\": \"zt1XxVx5mizdkEub8\"}");
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
 
                 JSONObject amenities = new JSONObject();
                 try {
-                    amenities.put("Clock Tower", "{\"description\": \"\", \"tag\": \"\"}");
-                    amenities.put("North Square", "{\"description\": \"\", \"tag\": \"\"}");
-                    amenities.put("VIT Fun Park", "{\"description\": \"\", \"tag\": \"\"}");
-                    amenities.put("VIT Garden", "{\"description\": \"\", \"tag\": \"\"}");
-                    amenities.put("VIT Pond", "{\"description\": \"\", \"tag\": \"\"}");
-                    amenities.put("V-Mart", "{\"description\": \"\", \"tag\": \"\"}");
+                    amenities.put("Clock Tower", "{\"description\": \"\", \"tag\": \"5Hij99iPGzP3TXrL8\"}");
+                    amenities.put("North Square", "{\"description\": \"\", \"tag\": \"Dfohs4pj3Qg781oH6\"}");
+                    amenities.put("VIT Fun Park", "{\"description\": \"\", \"tag\": \"EaauYydSgWsx9Sfg6\"}");
+                    amenities.put("VIT Pond", "{\"description\": \"\", \"tag\": \"Q52wGN3tFStmSEae8\"}");
+                    amenities.put("V-Mart", "{\"description\": \"Shopping Store\", \"tag\": \"jwru6FH6mmFGTiCq7\"}");
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -219,19 +222,23 @@ public class DirectionsActivity extends AppCompatActivity {
                             /*
                                 The description TextView
                              */
-                            TextView descriptionView = new TextView(context);
-                            TableRow.LayoutParams descriptionViewParams = new TableRow.LayoutParams(
-                                    TableRow.LayoutParams.WRAP_CONTENT,
-                                    TableRow.LayoutParams.WRAP_CONTENT
-                            );
-                            descriptionViewParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (20 * pixelDensity));
-                            descriptionView.setLayoutParams(descriptionViewParams);
-                            descriptionView.setText(description);
-                            descriptionView.setTextColor(getColor(R.color.colorPrimary));
-                            descriptionView.setTextSize(16);
-                            descriptionView.setTypeface(ResourcesCompat.getFont(context, R.font.rubik));
+                            if (description.equals("")) {
+                                titleViewParams.setMargins(0, (int) (20 * pixelDensity), 0, (int) (20 * pixelDensity));
+                            } else {
+                                TextView descriptionView = new TextView(context);
+                                TableRow.LayoutParams descriptionViewParams = new TableRow.LayoutParams(
+                                        TableRow.LayoutParams.WRAP_CONTENT,
+                                        TableRow.LayoutParams.WRAP_CONTENT
+                                );
+                                descriptionViewParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (20 * pixelDensity));
+                                descriptionView.setLayoutParams(descriptionViewParams);
+                                descriptionView.setText(description);
+                                descriptionView.setTextColor(getColor(R.color.colorPrimary));
+                                descriptionView.setTextSize(16);
+                                descriptionView.setTypeface(ResourcesCompat.getFont(context, R.font.rubik));
 
-                            innerBlock.addView(descriptionView);   //Adding description to the inner block
+                                innerBlock.addView(descriptionView);   //Adding description to the inner block
+                            }
 
                             block.addView(innerBlock);
 
