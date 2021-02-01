@@ -83,6 +83,17 @@
                 android:visibility="gone">
 
             </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/sports_locations"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingTop="65dp"
+                android:paddingBottom="15dp"
+                android:visibility="gone">
+
+            </LinearLayout>
         </LinearLayout>
     </ScrollView>
 
@@ -211,6 +222,27 @@
                     android:paddingEnd="20dp"
                     android:tag="4"
                     android:text="@string/amenities"
+                    android:textAllCaps="true"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/sports"
+                    android:layout_width="wrap_content"
+                    android:layout_height="25dp"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginEnd="5dp"
+                    android:layout_marginBottom="20dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/button_secondary"
+                    android:gravity="center"
+                    android:onClick="setCategory"
+                    android:paddingStart="20dp"
+                    android:paddingEnd="20dp"
+                    android:tag="5"
+                    android:text="@string/sports"
                     android:textAllCaps="true"
                     android:textColor="@color/colorPrimary"
                     android:textSize="12sp"

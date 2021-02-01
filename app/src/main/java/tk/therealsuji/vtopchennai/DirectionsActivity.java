@@ -28,8 +28,8 @@ import java.util.Objects;
 
 public class DirectionsActivity extends AppCompatActivity {
     ScrollView locations;
-    TextView[] locationCategories = new TextView[5];
-    LinearLayout[] locationViews = new LinearLayout[5];
+    TextView[] locationCategories = new TextView[6];
+    LinearLayout[] locationViews = new LinearLayout[6];
     HorizontalScrollView locationCategoriesContainer;
     float pixelDensity;
     int locationCategory;
@@ -43,7 +43,7 @@ public class DirectionsActivity extends AppCompatActivity {
         locationCategory = index;
 
         locations.scrollTo(0, 0);
-        for (int i = 0; i < 5; ++i) {
+        for (int i = 0; i < 6; ++i) {
             locationViews[i].setVisibility(View.GONE);
             locationCategories[i].setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary));
         }
@@ -90,21 +90,27 @@ public class DirectionsActivity extends AppCompatActivity {
         locationCategories[2] = findViewById(R.id.food);
         locationCategories[3] = findViewById(R.id.atms);
         locationCategories[4] = findViewById(R.id.amenities);
+        locationCategories[5] = findViewById(R.id.sports);
 
         locationViews[0] = findViewById(R.id.academic_locations);
         locationViews[1] = findViewById(R.id.hostel_locations);
         locationViews[2] = findViewById(R.id.food_locations);
         locationViews[3] = findViewById(R.id.atm_locations);
         locationViews[4] = findViewById(R.id.amenity_locations);
+        locationViews[5] = findViewById(R.id.sports_locations);
 
         new Thread(new Runnable() {
             @Override
             public void run() {
                 JSONObject academics = new JSONObject();
                 try {
+                    /*
+                        Alpha block is redirected to an anonymous location. It has to be updated.
+                     */
                     academics.put("Academic Block 1", "{\"description\": \"\", \"tag\": \"wWaWFDiuUnrSkv7Q8\"}");
                     academics.put("Academic Block 2", "{\"description\": \"\", \"tag\": \"2DcLPUj6JBU2SD698\"}");
                     academics.put("Administrative Block", "{\"description\": \"\", \"tag\": \"GNYq3VdZytBk42Jp7\"}");
+                    academics.put("Alpha Block", "{\"description\": \"Health Centre\", \"tag\": \"iNka81a7m5pTADPz9\"}");
                     academics.put("Central Library", "{\"description\": \"\", \"tag\": \"B61HccC3wuTcepRE6\"}");
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -149,7 +155,7 @@ public class DirectionsActivity extends AppCompatActivity {
                 JSONObject amenities = new JSONObject();
                 try {
                     amenities.put("Clock Tower", "{\"description\": \"\", \"tag\": \"5Hij99iPGzP3TXrL8\"}");
-                    amenities.put("North Square", "{\"description\": \"\", \"tag\": \"Dfohs4pj3Qg781oH6\"}");
+                    amenities.put("North Square", "{\"description\": \"Garden\", \"tag\": \"Dfohs4pj3Qg781oH6\"}");
                     amenities.put("VIT Fun Park", "{\"description\": \"\", \"tag\": \"EaauYydSgWsx9Sfg6\"}");
                     amenities.put("VIT Pond", "{\"description\": \"\", \"tag\": \"Q52wGN3tFStmSEae8\"}");
                     amenities.put("V-Mart", "{\"description\": \"Shopping Store\", \"tag\": \"jwru6FH6mmFGTiCq7\"}");
@@ -157,7 +163,25 @@ public class DirectionsActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
 
-                JSONObject[] locationData = {academics, hostels, food, atms, amenities};
+                JSONObject sports = new JSONObject();
+                try {
+                    sports.put("Athletic Track", "{\"description\": \"\", \"tag\": \"86cMXvAFLMfWAxAJA\"}");
+                    sports.put("Basketball Court - 1", "{\"description\": \"\", \"tag\": \"dPVbXctTszwfUYFR9\"}");
+                    sports.put("Basketball Court - 2", "{\"description\": \"\", \"tag\": \"bbamrz4k7xbN4UbD9\"}");
+                    sports.put("Cricket Ground 1", "{\"description\": \"\", \"tag\": \"2N7FzmGQrXwJfcnp8\"}");
+                    sports.put("Cricket Ground 2", "{\"description\": \"\", \"tag\": \"AuH3J7eGcAQ6XmAd7\"}");
+                    sports.put("Cricket Net Practice", "{\"description\": \"\", \"tag\": \"3aWrVX9poiugg7QD9\"}");
+                    sports.put("Football Pitch", "{\"description\": \"\", \"tag\": \"KDjvALnJMNRvEzrk9\"}");
+                    sports.put("Hockey Pitch", "{\"description\": \"\", \"tag\": \"oCuqAmMdxUPHAuf87\"}");
+                    sports.put("Swimming Pool", "{\"description\": \"\", \"tag\": \"agZgCfRwJwjFpS7X6\"}");
+                    sports.put("Tennis Courts", "{\"description\": \"\", \"tag\": \"vFdD9p7rEBGEUBG97\"}");
+                    sports.put("Throw Ball Court", "{\"description\": \"\", \"tag\": \"mGddU7pvrBUJdsSd8\"}");
+                    sports.put("Volley Ball Courts", "{\"description\": \"\", \"tag\": \"yZjhmPEqAx7BnJmeA\"}");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                JSONObject[] locationData = {academics, hostels, food, atms, amenities, sports};
 
                 try {
                     boolean loadingVisible = true;
