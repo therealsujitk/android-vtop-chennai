@@ -30,6 +30,7 @@ public class DirectionsActivity extends AppCompatActivity {
     ScrollView locations;
     TextView[] locationCategories = new TextView[5];
     LinearLayout[] locationViews = new LinearLayout[5];
+    HorizontalScrollView locationCategoriesContainer;
     float pixelDensity;
     int locationCategory;
 
@@ -61,7 +62,7 @@ public class DirectionsActivity extends AppCompatActivity {
         }
         location += 20 * pixelDensity + (float) locationCategories[locationCategory].getWidth() / 2;
 
-        ((HorizontalScrollView) findViewById(R.id.location_categories)).smoothScrollTo((int) location - halfWidth, 0);
+        locationCategoriesContainer.smoothScrollTo((int) location - halfWidth, 0);
     }
 
     public void openLocation(View view) {
@@ -82,6 +83,8 @@ public class DirectionsActivity extends AppCompatActivity {
         final Context context = this;
         pixelDensity = context.getResources().getDisplayMetrics().density;
         locations = findViewById(R.id.locations);
+
+        locationCategoriesContainer = findViewById(R.id.location_categories);
 
         locationCategories[0] = findViewById(R.id.academics);
         locationCategories[1] = findViewById(R.id.hostels);
@@ -271,6 +274,7 @@ public class DirectionsActivity extends AppCompatActivity {
                                     @Override
                                     public void run() {
                                         findViewById(R.id.loading).setVisibility(View.GONE);
+                                        locationCategoriesContainer.animate().alpha(1);
                                         locationViews[index].addView(block);
                                         block.animate().alpha(1);
                                     }

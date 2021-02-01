@@ -101,6 +101,7 @@
             android:layout_height="wrap_content"
             android:overScrollMode="never"
             android:scrollbars="none"
+            android:alpha="0"
             tools:ignore="UselessParent">
 
             <LinearLayout
