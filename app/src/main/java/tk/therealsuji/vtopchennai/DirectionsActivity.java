@@ -9,6 +9,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
@@ -16,6 +19,7 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -71,6 +75,10 @@ public class DirectionsActivity extends AppCompatActivity {
 
         Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(url));
         startActivity(intent);
+    }
+
+    public void openMap(MenuItem item) {
+        Toast.makeText(this, "Under Construction", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -327,5 +335,13 @@ public class DirectionsActivity extends AppCompatActivity {
                 }
             }
         }).start();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.directions_menu, menu);
+
+        return true;
     }
 }
