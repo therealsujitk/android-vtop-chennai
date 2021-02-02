@@ -174,8 +174,8 @@ public class DirectionsActivity extends AppCompatActivity {
                 JSONObject sports = new JSONObject();
                 try {
                     sports.put("Athletic Track", "{\"description\": \"\", \"tag\": \"86cMXvAFLMfWAxAJA\"}");
-                    sports.put("Basketball Court - 1", "{\"description\": \"\", \"tag\": \"dPVbXctTszwfUYFR9\"}");
-                    sports.put("Basketball Court - 2", "{\"description\": \"\", \"tag\": \"bbamrz4k7xbN4UbD9\"}");
+                    sports.put("Basketball Court 1", "{\"description\": \"\", \"tag\": \"dPVbXctTszwfUYFR9\"}");
+                    sports.put("Basketball Court 2", "{\"description\": \"\", \"tag\": \"bbamrz4k7xbN4UbD9\"}");
                     sports.put("Cricket Ground 1", "{\"description\": \"\", \"tag\": \"2N7FzmGQrXwJfcnp8\"}");
                     sports.put("Cricket Ground 2", "{\"description\": \"\", \"tag\": \"AuH3J7eGcAQ6XmAd7\"}");
                     sports.put("Cricket Net Practice", "{\"description\": \"\", \"tag\": \"3aWrVX9poiugg7QD9\"}");
