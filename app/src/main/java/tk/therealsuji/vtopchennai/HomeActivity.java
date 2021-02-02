@@ -249,7 +249,6 @@ public class HomeActivity extends AppCompatActivity {
     public void openDownload(View view) {
         if (download != null) {
             download.dismiss();
-            download = null;
         }
 
         download = new Dialog(this);
@@ -373,6 +372,7 @@ public class HomeActivity extends AppCompatActivity {
 
     public void cancelDownload(View view) {
         download.dismiss();
+        download = null;
     }
 
     public void openAppearance(View view) {
@@ -431,7 +431,7 @@ public class HomeActivity extends AppCompatActivity {
 
     public void openSignOut(View view) {
         if (signOut != null) {
-            return;
+            signOut.dismiss();
         }
 
         signOut = new Dialog(this);
