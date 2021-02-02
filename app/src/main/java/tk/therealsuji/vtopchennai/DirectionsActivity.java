@@ -126,7 +126,7 @@ public class DirectionsActivity extends AppCompatActivity {
 
                 JSONObject hostels = new JSONObject();
                 try {
-                    hostels.put("Hostel A Block", "{\"description\": \"\", \"tag\": \"sp6v7XomBw5sZ3cy8\"}");
+                    hostels.put("Hostel A Block", "{\"description\": \"Hostel for Sophomore & Junior Boys\", \"tag\": \"sp6v7XomBw5sZ3cy8\"}");
                     hostels.put("Hostel B Block", "{\"description\": \"Hostel for Senior Boys\", \"tag\": \"CjyN7xFaFrXHtejYA\"}");
                     hostels.put("Hostel C Block", "{\"description\": \"Hostel for Girls & Freshmen Boys\", \"tag\": \"Mwk7WG6uRBZ6CNne7\"}");
                 } catch (Exception e) {
@@ -135,14 +135,13 @@ public class DirectionsActivity extends AppCompatActivity {
 
                 JSONObject food = new JSONObject();
                 try {
-                    /*
-                        Chai Galli & Gym Khana redirect to the VIT Gymnasium. It has to be updated.
-                     */
                     food.put("Aavin Milk Parlor", "{\"description\": \"Dairy Store\", \"tag\": \"pWLcc1fBTfnBJDQk6\"}");
-                    food.put("Chai Galli", "{\"description\": \"Café\", \"tag\": \"3FXWWyxseB3rvEe29\"}");
+                    food.put("Chai Galli", "{\"description\": \"Café\", \"tag\": \"B3h9nQVADTti6jFZ7\"}");
                     food.put("Domino's Pizza", "{\"description\": \"Pizza Restaurant\", \"tag\": \"i8WRzayorFQkoDWMA\"}");
+                    food.put("Food Park", "{\"description\": \"Cafeteria\", \"tag\": \"kyietg8dh5nuqeBB6\"}");
                     food.put("Gazebo", "{\"description\": \"Food Stall\", \"tag\": \"ARvc3dyCW6CoBaEr8\"}");
-                    food.put("Gym Khaana", "{\"description\": \"Food Court\", \"tag\": \"3FXWWyxseB3rvEe29\"}");
+                    food.put("Georgia Coffee", "{\"description\": \"Food Stall\", \"tag\": \"MPhfv4hp3mHUXoAN9\"}");
+                    food.put("Gym Khaana", "{\"description\": \"Food Court\", \"tag\": \"V6UpCxxr8cgiuwiR6\"}");
                     food.put("Lassi House", "{\"description\": \"Beverage Stall\", \"tag\": \"qBZqiFaKddKnxgAW6\"}");
                     food.put("Quality and Taste", "{\"description\": \"Fast Food Stall\", \"tag\": \"1gditDKn9CaCTma17\"}");
                 } catch (Exception e) {
@@ -162,6 +161,7 @@ public class DirectionsActivity extends AppCompatActivity {
 
                 JSONObject amenities = new JSONObject();
                 try {
+                    amenities.put("Amphitheatre", "{\"description\": \"\", \"tag\": \"7uWQdMrS5MmFn8Pq8\"}");
                     amenities.put("Clock Tower", "{\"description\": \"\", \"tag\": \"5Hij99iPGzP3TXrL8\"}");
                     amenities.put("North Square", "{\"description\": \"Garden\", \"tag\": \"Dfohs4pj3Qg781oH6\"}");
                     amenities.put("VIT Fun Park", "{\"description\": \"\", \"tag\": \"EaauYydSgWsx9Sfg6\"}");
@@ -174,6 +174,7 @@ public class DirectionsActivity extends AppCompatActivity {
                 JSONObject sports = new JSONObject();
                 try {
                     sports.put("Athletic Track", "{\"description\": \"\", \"tag\": \"86cMXvAFLMfWAxAJA\"}");
+                    sports.put("Ball Badminton Court", "{\"description\": \"\", \"tag\": \"mGddU7pvrBUJdsSd8\"}");
                     sports.put("Basketball Court 1", "{\"description\": \"\", \"tag\": \"dPVbXctTszwfUYFR9\"}");
                     sports.put("Basketball Court 2", "{\"description\": \"\", \"tag\": \"bbamrz4k7xbN4UbD9\"}");
                     sports.put("Cricket Ground 1", "{\"description\": \"\", \"tag\": \"2N7FzmGQrXwJfcnp8\"}");
@@ -183,7 +184,6 @@ public class DirectionsActivity extends AppCompatActivity {
                     sports.put("Hockey Pitch", "{\"description\": \"\", \"tag\": \"oCuqAmMdxUPHAuf87\"}");
                     sports.put("Swimming Pool", "{\"description\": \"\", \"tag\": \"agZgCfRwJwjFpS7X6\"}");
                     sports.put("Tennis Courts", "{\"description\": \"\", \"tag\": \"vFdD9p7rEBGEUBG97\"}");
-                    sports.put("Throw Ball Court", "{\"description\": \"\", \"tag\": \"mGddU7pvrBUJdsSd8\"}");
                     sports.put("Volley Ball Courts", "{\"description\": \"\", \"tag\": \"yZjhmPEqAx7BnJmeA\"}");
                 } catch (Exception e) {
                     e.printStackTrace();
