@@ -31,7 +31,7 @@
             android:orientation="vertical">
 
             <LinearLayout
-                android:id="@+id/academic_locations"
+                android:id="@+id/main_locations"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
@@ -123,7 +123,7 @@
                 android:paddingEnd="15dp">
 
                 <TextView
-                    android:id="@+id/academics"
+                    android:id="@+id/main_blocks"
                     android:layout_width="wrap_content"
                     android:layout_height="25dp"
                     android:layout_marginStart="5dp"
@@ -137,7 +137,7 @@
                     android:paddingStart="20dp"
                     android:paddingEnd="20dp"
                     android:tag="0"
-                    android:text="@string/academics"
+                    android:text="@string/main_blocks"
                     android:textAllCaps="true"
                     android:textColor="@color/colorPrimary"
                     android:textSize="12sp"

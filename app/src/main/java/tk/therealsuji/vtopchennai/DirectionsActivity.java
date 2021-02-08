@@ -93,14 +93,14 @@ public class DirectionsActivity extends AppCompatActivity {
 
         locationCategoriesContainer = findViewById(R.id.location_categories);
 
-        locationCategories[0] = findViewById(R.id.academics);
+        locationCategories[0] = findViewById(R.id.main_blocks);
         locationCategories[1] = findViewById(R.id.hostels);
         locationCategories[2] = findViewById(R.id.food);
         locationCategories[3] = findViewById(R.id.atms);
         locationCategories[4] = findViewById(R.id.amenities);
         locationCategories[5] = findViewById(R.id.sports);
 
-        locationViews[0] = findViewById(R.id.academic_locations);
+        locationViews[0] = findViewById(R.id.main_locations);
         locationViews[1] = findViewById(R.id.hostel_locations);
         locationViews[2] = findViewById(R.id.food_locations);
         locationViews[3] = findViewById(R.id.atm_locations);
@@ -110,16 +110,16 @@ public class DirectionsActivity extends AppCompatActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                JSONObject academics = new JSONObject();
+                JSONObject main = new JSONObject();
                 try {
                     /*
                         Alpha block is redirected to an anonymous location. It has to be updated.
                      */
-                    academics.put("Academic Block 1", "{\"description\": \"\", \"tag\": \"wWaWFDiuUnrSkv7Q8\"}");
-                    academics.put("Academic Block 2", "{\"description\": \"\", \"tag\": \"2DcLPUj6JBU2SD698\"}");
-                    academics.put("Administrative Block", "{\"description\": \"\", \"tag\": \"GNYq3VdZytBk42Jp7\"}");
-                    academics.put("Alpha Block", "{\"description\": \"Health Centre\", \"tag\": \"iNka81a7m5pTADPz9\"}");
-                    academics.put("Central Library", "{\"description\": \"\", \"tag\": \"B61HccC3wuTcepRE6\"}");
+                    main.put("Academic Block 1", "{\"description\": \"\", \"tag\": \"wWaWFDiuUnrSkv7Q8\"}");
+                    main.put("Academic Block 2", "{\"description\": \"\", \"tag\": \"2DcLPUj6JBU2SD698\"}");
+                    main.put("Administrative Block", "{\"description\": \"\", \"tag\": \"GNYq3VdZytBk42Jp7\"}");
+                    main.put("Alpha Block", "{\"description\": \"Health Centre\", \"tag\": \"c4eDWs1L2RJLpcoH8\"}");
+                    main.put("Central Library", "{\"description\": \"\", \"tag\": \"B61HccC3wuTcepRE6\"}");
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -127,7 +127,7 @@ public class DirectionsActivity extends AppCompatActivity {
                 JSONObject hostels = new JSONObject();
                 try {
                     hostels.put("Hostel A Block", "{\"description\": \"Hostel for Sophomore & Junior Boys\", \"tag\": \"sp6v7XomBw5sZ3cy8\"}");
-                    hostels.put("Hostel B Block", "{\"description\": \"Hostel for Senior Boys\", \"tag\": \"CjyN7xFaFrXHtejYA\"}");
+                    hostels.put("Hostel B Block", "{\"description\": \"Hostel for Senior Boys\", \"tag\": \"cJvcHPEBYoDymvP88\"}");
                     hostels.put("Hostel C Block", "{\"description\": \"Hostel for Girls & Freshmen Boys\", \"tag\": \"Mwk7WG6uRBZ6CNne7\"}");
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -173,7 +173,7 @@ public class DirectionsActivity extends AppCompatActivity {
 
                 JSONObject sports = new JSONObject();
                 try {
-                    sports.put("Athletic Track", "{\"description\": \"\", \"tag\": \"86cMXvAFLMfWAxAJA\"}");
+                    sports.put("Athletic Track", "{\"description\": \"\", \"tag\": \"i85c3dzewqrdNkox6\"}");
                     sports.put("Ball Badminton Court", "{\"description\": \"\", \"tag\": \"mGddU7pvrBUJdsSd8\"}");
                     sports.put("Basketball Court 1", "{\"description\": \"\", \"tag\": \"dPVbXctTszwfUYFR9\"}");
                     sports.put("Basketball Court 2", "{\"description\": \"\", \"tag\": \"bbamrz4k7xbN4UbD9\"}");
@@ -189,7 +189,7 @@ public class DirectionsActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
 
-                JSONObject[] locationData = {academics, hostels, food, atms, amenities, sports};
+                JSONObject[] locationData = {main, hostels, food, atms, amenities, sports};
 
                 try {
                     boolean loadingVisible = true;
