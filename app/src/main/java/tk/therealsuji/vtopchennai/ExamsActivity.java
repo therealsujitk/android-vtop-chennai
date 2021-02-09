@@ -217,7 +217,7 @@ public class ExamsActivity extends AppCompatActivity {
 
                         for (int k = 0; k < 8; ++k) {
                             String valueString = s.getString(indexes[k]);
-                            if (k == 4) {
+                            if (k == 4 && !valueString.equals("")) {
                                 valueString += " - " + s.getString(endIndex);
                             }
 

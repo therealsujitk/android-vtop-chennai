@@ -1376,7 +1376,7 @@ public class VTOP {
                 "       } else {" +
                 "           var doc = new DOMParser().parseFromString(response, 'text/html');" +
                 "           var courseIndex, titleIndex, slotIndex, dateIndex, reportingIndex, timingIndex, venueIndex, locationIndex, seatIndex, flag = 0;" +
-                "           var columns = document.getElementsByTagName('tr')[0].getElementsByTagName('td');" +
+                "           var columns = doc.getElementsByTagName('tr')[0].getElementsByTagName('td');" +
                 "           for (var i = 0; i < columns.length; ++i) {" +
                 "               var heading = columns[i].innerText.toLowerCase();" +
                 "               if (heading.includes('code')) {" +
@@ -1411,7 +1411,7 @@ public class VTOP {
                 "                   break;" +
                 "               }" +
                 "           }" +
-                "           var exam = '', cells = document.getElementsByTagName('td'), remainder = 0, record = -1;" +
+                "           var exam = '', cells = doc.getElementsByTagName('td'), remainder = 0, record = -1;" +
                 "           for (var i = columns.length; i < cells.length; ++i) {" +
                 "               if (flag >= 9) {" +
                 "                   flag = 0;" +
@@ -1444,8 +1444,13 @@ public class VTOP {
                 "                   ++flag;" +
                 "               } else if (index == timingIndex) {" +
                 "                   var timings = cells[i].innerText.split('-');" +
-                "                   obj[exam]['start' + record] = timings[0].trim();" +
-                "                   obj[exam]['end' + record] = timings[1].trim();" +
+                "                   if (timings.length == 1) {" +
+                "                       obj[exam]['start' + record] = '';" +
+                "                       obj[exam]['end' + record] = '';" +
+                "                   } else {" +
+                "                       obj[exam]['start' + record] = timings[0].trim();" +
+                "                       obj[exam]['end' + record] = timings[1].trim();" +
+                "                   }" +
                 "                   ++flag;" +
                 "               } else if (index == venueIndex) {" +
                 "                   obj[exam]['venue' + record] = cells[i].innerText.trim();" +
