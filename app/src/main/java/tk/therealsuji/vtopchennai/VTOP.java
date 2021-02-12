@@ -703,14 +703,39 @@ public class VTOP {
 
                                 int alarmCount = 0;
 
+                                /*
+                                    This 12 hour check is because the genius developers at VIT decided it
+                                    would be a great idea to use both 12 hour and 24 hour formats together
+                                    because, who even cares...
+                                 */
+                                final SimpleDateFormat hour24 = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
+                                final SimpleDateFormat hour12 = new SimpleDateFormat("h:mm a", Locale.ENGLISH);
+                                boolean checkHour12 = false, isHour12 = false;
+
                                 for (int i = 0; i < lab.length() / 2 && i < theory.length() / 2; ++i) {
                                     String start_time_lab = lab.getString(i + "start");
                                     if (start_time_lab.toLowerCase().equals("lunch")) {
+                                        checkHour12 = true;
                                         continue;
                                     }
                                     String end_time_lab = lab.getString(i + "end");
                                     String start_time_theory = theory.getString(i + "start");
                                     String end_time_theory = theory.getString(i + "end");
+
+                                    if (checkHour12) {
+                                        try {
+                                            Date startTime = hour24.parse(start_time_lab);
+                                            Date hourNoon = hour24.parse("12:00");
+
+                                            if (startTime != null && startTime.before(hourNoon)) {
+                                                isHour12 = true;
+                                            }
+
+                                            checkHour12 = false;
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
 
                                     String[] labPeriods = {"null", "null", "null", "null", "null", "null", "null"};
                                     String[] theoryPeriods = {"null", "null", "null", "null", "null", "null", "null"};
@@ -792,6 +817,24 @@ public class VTOP {
                                             c.add(Calendar.MINUTE, -30);
                                             pendingIntent = PendingIntent.getBroadcast(context, alarmCount++, notificationIntent, 0);
                                             alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
+                                        }
+                                    }
+
+                                    if (isHour12) {
+                                        try {
+                                            Date startTimeLab = hour12.parse(start_time_lab + " PM");
+                                            Date endTimeLab = hour12.parse(end_time_lab + " PM");
+                                            Date startTimeTheory = hour12.parse(start_time_theory + " PM");
+                                            Date endTimeTheory = hour12.parse(end_time_theory + " PM");
+
+                                            if (startTimeLab != null && endTimeLab != null && startTimeTheory != null && endTimeTheory != null) {
+                                                start_time_lab = hour24.format(startTimeLab);
+                                                end_time_lab = hour24.format(endTimeLab);
+                                                start_time_theory = hour24.format(startTimeTheory);
+                                                end_time_theory = hour24.format(endTimeTheory);
+                                            }
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
                                         }
                                     }
 
