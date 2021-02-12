@@ -224,7 +224,13 @@ public class ExamsActivity extends AppCompatActivity {
 
                         for (int k = 0; k < 8; ++k) {
                             String valueString = s.getString(indexes[k]);
-                            if (k == 3 && !DateFormat.is24HourFormat(context)) {
+                            if (k == 0) {
+                                /*
+                                    For the time being i'm removing the course title.
+                                    I might add this back later if I think of a better design
+                                 */
+                                continue;
+                            } else if (k == 3 && !DateFormat.is24HourFormat(context)) {
                                 try {
                                     Date reportingTime = hour24.parse(valueString);
                                     if (reportingTime != null) {
