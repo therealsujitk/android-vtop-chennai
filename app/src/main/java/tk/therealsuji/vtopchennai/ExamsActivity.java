@@ -102,7 +102,6 @@ public class ExamsActivity extends AppCompatActivity {
                             @Override
                             public void run() {
                                 findViewById(R.id.noData).setVisibility(View.GONE);
-                                findViewById(R.id.loading).setVisibility(View.VISIBLE);
                             }
                         });
                     }
@@ -324,7 +323,6 @@ public class ExamsActivity extends AppCompatActivity {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                findViewById(R.id.loading).setVisibility(View.GONE);
                                 exams.addView(examView);
                             }
                         });
@@ -332,6 +330,13 @@ public class ExamsActivity extends AppCompatActivity {
 
                     s.close();
                 }
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        findViewById(R.id.loading).animate().alpha(0);
+                    }
+                });
 
                 c.close();
 

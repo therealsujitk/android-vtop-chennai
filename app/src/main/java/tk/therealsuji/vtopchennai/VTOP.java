@@ -708,8 +708,8 @@ public class VTOP {
                                     would be a great idea to use both 12 hour and 24 hour formats together
                                     because, who even cares...
                                  */
-                                final SimpleDateFormat hour24 = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
-                                final SimpleDateFormat hour12 = new SimpleDateFormat("h:mm a", Locale.ENGLISH);
+                                SimpleDateFormat hour24 = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
+                                SimpleDateFormat hour12 = new SimpleDateFormat("h:mm a", Locale.ENGLISH);
                                 boolean checkHour12 = false, isHour12 = false;
 
                                 for (int i = 0; i < lab.length() / 2 && i < theory.length() / 2; ++i) {

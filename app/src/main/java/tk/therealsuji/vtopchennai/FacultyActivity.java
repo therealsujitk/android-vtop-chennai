@@ -48,7 +48,6 @@ public class FacultyActivity extends AppCompatActivity {
                             @Override
                             public void run() {
                                 findViewById(R.id.noData).setVisibility(View.GONE);
-                                findViewById(R.id.loading).setVisibility(View.VISIBLE);
                             }
                         });
                     }
@@ -154,25 +153,23 @@ public class FacultyActivity extends AppCompatActivity {
                     /*
                         Finally adding the block to the activity
                      */
-                    if (i == 0) {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                findViewById(R.id.loading).setVisibility(View.GONE);
-                                facultyInfo.addView(block);
-                            }
-                        });
-                    } else {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                facultyInfo.addView(block);
-                            }
-                        });
-                    }
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            facultyInfo.addView(block);
+                        }
+                    });
 
                     c.moveToNext();
                 }
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        findViewById(R.id.loading).animate().alpha(0);
+                    }
+                });
 
                 c.close();
                 myDatabase.close();

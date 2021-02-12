@@ -13,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -78,6 +79,14 @@ public class MarksActivity extends AppCompatActivity {
             return;
         }
 
+        /*
+            The immediate change in visibility may seem useless, but it is done to reset the progress bar
+         */
+        FrameLayout loading = findViewById(R.id.loading);
+        loading.setVisibility(View.INVISIBLE);
+        loading.setAlpha(1);
+        loading.setVisibility(View.VISIBLE);
+
         sharedPreferences.edit().remove("filterByCourse").apply();
 
         markButtons.removeAllViews();
@@ -103,7 +112,6 @@ public class MarksActivity extends AppCompatActivity {
                             @Override
                             public void run() {
                                 findViewById(R.id.noData).setVisibility(View.GONE);
-                                findViewById(R.id.loading).setVisibility(View.VISIBLE);
                             }
                         });
                     }
@@ -379,7 +387,6 @@ public class MarksActivity extends AppCompatActivity {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                findViewById(R.id.loading).setVisibility(View.GONE);
                                 marks.addView(markView);
                             }
                         });
@@ -387,6 +394,13 @@ public class MarksActivity extends AppCompatActivity {
 
                     s.close();
                 }
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        findViewById(R.id.loading).animate().alpha(0);
+                    }
+                });
 
                 c.close();
                 myDatabase.close();
@@ -398,6 +412,14 @@ public class MarksActivity extends AppCompatActivity {
         if (menuItem != null && !sharedPreferences.getBoolean("filterByCourse", true)) {
             return;
         }
+
+        /*
+            The immediate change in visibility may seem useless, but it is done to reset the progress bar
+         */
+        FrameLayout loading = findViewById(R.id.loading);
+        loading.setVisibility(View.INVISIBLE);
+        loading.setAlpha(1);
+        loading.setVisibility(View.VISIBLE);
 
         sharedPreferences.edit().putBoolean("filterByCourse", false).apply();
 
@@ -424,7 +446,6 @@ public class MarksActivity extends AppCompatActivity {
                             @Override
                             public void run() {
                                 findViewById(R.id.noData).setVisibility(View.GONE);
-                                findViewById(R.id.loading).setVisibility(View.VISIBLE);
                             }
                         });
                     }
@@ -700,7 +721,6 @@ public class MarksActivity extends AppCompatActivity {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                findViewById(R.id.loading).setVisibility(View.GONE);
                                 marks.addView(markView);
                             }
                         });
@@ -708,6 +728,13 @@ public class MarksActivity extends AppCompatActivity {
 
                     s.close();
                 }
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        findViewById(R.id.loading).animate().alpha(0);
+                    }
+                });
 
                 c.close();
                 myDatabase.close();

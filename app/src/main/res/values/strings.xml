@@ -20,7 +20,6 @@
     <string name="privacy_contact_content">If you have any queries, suggestions or face any issues, my contact information is available at <a href="http://therealsuji.tk">http://therealsuji.tk</a>.</string>
 
 
-    <string name="loading">Loading</string>
     <string name="downloading_profile">Downloading Profile</string>
     <string name="downloading_timetable">Downloading Timetable</string>
     <string name="downloading_attendance">Downloading Attendance</string>
@@ -101,8 +100,6 @@
     <string name="sign_out_text">Are you sure you want to sign out?</string>
     <string name="cancel">Cancel</string>
 
-    <string name="notification_description">Activity has new data.</string>
-
     <string name="refreshed">Last Refreshed</string>
     <string name="refreshed_unavailable">Last Refreshed: Unavailable</string>
     <string name="about">Built by <a href="https://therealsuji.tk">@therealsujitk</a></string>
@@ -120,8 +117,6 @@
     <string name="no_data">No Data Available</string>
     <string name="no_messages">No Messages</string>
     <string name="no_announcements">No Announcements</string>
-    <string name="no_link">Link Unavailable</string>
-    <string name="no_link_text">Sorry, there is no link attached to this announcement.</string>
     <string name="new_message">Looks like you do have some new messages, however <a href="https://therealsuji.tk">@therealsujitk</a> was a bit too lazy to add this feature, why don\'t you contact him and give him a piece of your mind.</string>
 
 
@@ -151,29 +146,6 @@
     <string name="food">Food</string>
     <string name="atm">Banks &amp; ATM\'s</string>
     <string name="amenities">Amenities</string>
-    <string name="admin_block">Administrative Building</string>
-    <string name="academic_block_1">Academic Block 1</string>
-    <string name="academic_block_2">Academic Block 2</string>
-    <string name="library">Central Library</string>
-    <string name="boys_hostel_a">Boys Hostel A Block</string>
-    <string name="boys_hostel_b">Boys Hostel B Block</string>
-    <string name="boys_hostel_c">Boys Hostel C Block</string>
-    <string name="girls_hostel">Girls Hostel</string>
-    <string name="aavin">Aavin Milk Parlour</string>
-    <string name="chai">Chai Galli</string>
-    <string name="dominos">Domino\'s Pizza</string>
-    <string name="gazebo">Gazebo</string>
-    <string name="gym_khaana">Gym Khaana</string>
-    <string name="lassi">Lassi House</string>
-    <string name="quality_taste">Quality And Taste</string>
-    <string name="kvb_bank">KVB Bank ATM</string>
-    <string name="india_bank">India Bank &amp; ATM</string>
-    <string name="clock_tower">Clock Tower</string>
-    <string name="north_square">North Square</string>
-    <string name="vit_fun">VIT Fun Park</string>
-    <string name="vit_garden">VIT Garden</string>
-    <string name="vit_pond">VIT Pond</string>
-    <string name="vmart">V-Mart</string>
     <string name="sports">Sports</string>
 
 

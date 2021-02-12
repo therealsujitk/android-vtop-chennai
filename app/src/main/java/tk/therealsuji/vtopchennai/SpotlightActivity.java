@@ -108,7 +108,6 @@ public class SpotlightActivity extends AppCompatActivity {
                             @Override
                             public void run() {
                                 findViewById(R.id.noData).setVisibility(View.GONE);
-                                findViewById(R.id.loading).setVisibility(View.VISIBLE);
                             }
                         });
                     }
@@ -294,7 +293,6 @@ public class SpotlightActivity extends AppCompatActivity {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                findViewById(R.id.loading).setVisibility(View.GONE);
                                 announcements.addView(announcementsView);
                             }
                         });
@@ -302,6 +300,13 @@ public class SpotlightActivity extends AppCompatActivity {
 
                     s.close();
                 }
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        findViewById(R.id.loading).animate().alpha(0);
+                    }
+                });
 
                 c.close();
                 myDatabase.close();

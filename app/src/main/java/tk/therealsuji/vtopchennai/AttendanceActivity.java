@@ -207,46 +207,31 @@ public class AttendanceActivity extends AppCompatActivity {
                         notification.setScaleY(0);
 
                         container.addView(notification);
-
-                        if (i == 0) {
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    findViewById(R.id.loading).animate().alpha(0);
-                                    attendance.addView(container);
-                                    notification.animate().scaleX(1).scaleY(1);
-                                }
-                            });
-                        } else {
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    attendance.addView(container);
-                                    notification.animate().scaleX(1).scaleY(1);
-                                }
-                            });
-                        }
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                attendance.addView(container);
+                                notification.animate().scaleX(1).scaleY(1);
+                            }
+                        });
                     } else {
-                        if (i == 0) {
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    findViewById(R.id.loading).setVisibility(View.GONE);
-                                    attendance.addView(block);
-                                }
-                            });
-                        } else {
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    attendance.addView(block);
-                                }
-                            });
-                        }
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                attendance.addView(block);
+                            }
+                        });
                     }
 
                     c.moveToNext();
                 }
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        findViewById(R.id.loading).animate().alpha(0);
+                    }
+                });
 
                 c.close();
                 myDatabase.close();

@@ -49,20 +49,19 @@ public class TimetableActivity extends AppCompatActivity {
             timetable.removeAllViews();
             timetable.setAlpha(0);
             timetable.animate().alpha(1);
-        }
 
-        if (hasClasses[day]) {
-            findViewById(R.id.noData).setVisibility(View.GONE);
-            timetable.addView(dayViews[day]);
-        } else {
-            findViewById(R.id.noData).setVisibility(View.VISIBLE);
-        }
+            if (hasClasses[day]) {
+                findViewById(R.id.noData).setVisibility(View.GONE);
+                timetable.addView(dayViews[day]);
+            } else {
+                findViewById(R.id.noData).setVisibility(View.VISIBLE);
+            }
 
-        if (view != null) {
             for (int i = 0; i < 7; ++i) {
                 buttons[i].setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary));
             }
         }
+
         buttons[day].setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary_selected));
 
         float location = (50 + 70 * day) * pixelDensity;
@@ -291,6 +290,7 @@ public class TimetableActivity extends AppCompatActivity {
                                         @Override
                                         public void run() {
                                             findViewById(R.id.noData).setVisibility(View.GONE);
+                                            timetable.addView(dayViews[day]);
                                         }
                                     });
                                 }
@@ -405,6 +405,20 @@ public class TimetableActivity extends AppCompatActivity {
                             block.addView(period);
                             block.addView(innerBlock);
 
+                            if (!hasClasses[j]) {
+                                hasClasses[j] = true;   //Telling everyone that there is something on this day
+
+                                if (day == j) {
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            findViewById(R.id.noData).setVisibility(View.GONE);
+                                            timetable.addView(dayViews[day]);
+                                        }
+                                    });
+                                }
+                            }
+
                             /*
                                 Finally adding block to the main sections
                              */
@@ -415,22 +429,16 @@ public class TimetableActivity extends AppCompatActivity {
                                     dayBlock.addView(block);
                                 }
                             });
-
-                            if (!hasClasses[j]) {
-                                hasClasses[j] = true;   //Telling everyone that there is something on this day
-
-                                if (day == j) {
-                                    runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            findViewById(R.id.noData).setVisibility(View.GONE);
-                                        }
-                                    });
-                                }
-                            }
                         }
                     }
                 }
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        findViewById(R.id.loading).animate().alpha(0);
+                    }
+                });
 
                 theory.close();
                 lab.close();

@@ -125,11 +125,8 @@ public class StaffActivity extends AppCompatActivity {
                         @Override
                         public void run() {
                             findViewById(R.id.noData).setVisibility(View.GONE);
-                            findViewById(R.id.loading).setVisibility(View.VISIBLE);
                         }
                     });
-
-                    boolean visibleLoading = true;
 
                     hasStaff[0] = true;
 
@@ -276,25 +273,13 @@ public class StaffActivity extends AppCompatActivity {
 
                         final LinearLayout proctorView = staffViews[0];
 
-                        if (visibleLoading) {
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    findViewById(R.id.loading).setVisibility(View.GONE);
-                                    proctorView.addView(outerBlock);
-                                    outerBlock.animate().alpha(1);
-                                }
-                            });
-                            visibleLoading = false;
-                        } else {
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    proctorView.addView(outerBlock);
-                                    outerBlock.animate().alpha(1);
-                                }
-                            });
-                        }
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                proctorView.addView(outerBlock);
+                                outerBlock.animate().alpha(1);
+                            }
+                        });
                     }
                 }
 
@@ -619,6 +604,13 @@ public class StaffActivity extends AppCompatActivity {
                         });
                     }
                 }
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        findViewById(R.id.loading).animate().alpha(0);
+                    }
+                });
 
                 c.close();
                 myDatabase.close();

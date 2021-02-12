@@ -192,7 +192,6 @@ public class DirectionsActivity extends AppCompatActivity {
                 JSONObject[] locationData = {main, hostels, food, atms, amenities, sports};
 
                 try {
-                    boolean loadingVisible = true;
                     for (int i = 0; i < locationViews.length; ++i) {
                         Iterator<?> keys = locationData[i].keys();
 
@@ -308,17 +307,15 @@ public class DirectionsActivity extends AppCompatActivity {
                             block.addView(linkButton);
 
                             final int index = i;
-                            if (loadingVisible) {
+                            if (i == 0) {
                                 runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        findViewById(R.id.loading).setVisibility(View.GONE);
                                         locationCategoriesContainer.animate().alpha(1);
                                         locationViews[index].addView(block);
                                         block.animate().alpha(1);
                                     }
                                 });
-                                loadingVisible = false;
                             } else {
                                 runOnUiThread(new Runnable() {
                                     @Override
@@ -333,6 +330,13 @@ public class DirectionsActivity extends AppCompatActivity {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        findViewById(R.id.loading).animate().alpha(0);
+                    }
+                });
             }
         }).start();
     }
