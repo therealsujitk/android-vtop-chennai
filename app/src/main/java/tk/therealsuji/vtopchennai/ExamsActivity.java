@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.text.format.DateFormat;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.View;
@@ -19,7 +20,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 import java.util.Objects;
 
 public class ExamsActivity extends AppCompatActivity {
@@ -76,6 +80,9 @@ public class ExamsActivity extends AppCompatActivity {
         halfWidth = displayMetrics.widthPixels / 2;
 
         examTitlesContainer = findViewById(R.id.examTitlesContainer);
+
+        final SimpleDateFormat hour24 = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
+        final SimpleDateFormat hour12 = new SimpleDateFormat("h:mm a", Locale.ENGLISH);
 
         new Thread(new Runnable() {
             @Override
@@ -217,8 +224,33 @@ public class ExamsActivity extends AppCompatActivity {
 
                         for (int k = 0; k < 8; ++k) {
                             String valueString = s.getString(indexes[k]);
-                            if (k == 4 && !valueString.equals("")) {
-                                valueString += " - " + s.getString(endIndex);
+                            if (k == 3 && !DateFormat.is24HourFormat(context)) {
+                                try {
+                                    Date reportingTime = hour24.parse(valueString);
+                                    if (reportingTime != null) {
+                                        valueString = hour12.format(reportingTime);
+                                    }
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            } else if (k == 4 && !valueString.equals("")) {
+                                String endTime = s.getString(endIndex);
+                                if (!DateFormat.is24HourFormat(context)) {
+                                    try {
+                                        Date startTimeDate = hour24.parse(valueString);
+                                        Date endTimeDate = hour24.parse(endTime);
+                                        if (startTimeDate != null) {
+                                            valueString = hour12.format(startTimeDate);
+                                        }
+                                        if (endTimeDate != null) {
+                                            endTime = hour12.format(endTimeDate);
+                                        }
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+
+                                valueString = valueString + " - " + endTime;
                             }
 
                             if (!valueString.equals("") && !valueString.equals("-")) {

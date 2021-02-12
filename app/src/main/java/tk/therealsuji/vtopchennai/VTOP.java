@@ -1510,6 +1510,9 @@ public class VTOP {
                                 myDatabase.execSQL("DROP TABLE IF EXISTS exams");
                                 myDatabase.execSQL("CREATE TABLE IF NOT EXISTS exams (id INTEGER PRIMARY KEY, exam VARCHAR, course VARCHAR, title VARCHAR, slot VARCHAR, date VARCHAR, reporting VARCHAR, start_time VARCHAR, end_time VARCHAR, venue VARCHAR, location VARCHAR, seat VARCHAR)");
 
+                                SimpleDateFormat hour24 = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
+                                SimpleDateFormat hour12 = new SimpleDateFormat("h:mm a", Locale.ENGLISH);
+
                                 Iterator<?> keys = myObj.keys();
 
                                 while (keys.hasNext()) {
@@ -1522,13 +1525,36 @@ public class VTOP {
                                         String slot = schedule.getString("slot" + i);
                                         String date = schedule.getString("date" + i);
                                         String reporting = schedule.getString("reporting" + i);
-                                        String start_time = schedule.getString("start" + i);
-                                        String end_time = schedule.getString("end" + i);
+                                        String startTime = schedule.getString("start" + i);
+                                        String endTime = schedule.getString("end" + i);
                                         String venue = schedule.getString("venue" + i);
                                         String location = schedule.getString("location" + i);
                                         String seat = schedule.getString("seat" + i);
 
-                                        myDatabase.execSQL("INSERT INTO exams (exam, course, title, slot, date, reporting, start_time, end_time, venue, location, seat) VALUES ('" + exam.toUpperCase() + "', '" + course + "', '" + title + "', '" + slot + "', '" + date + "', '" + reporting + "', '" + start_time + "', '" + end_time + "', '" + venue + "', '" + location + "', '" + seat + "')");
+                                        /*
+                                            Converting to 24 hour format if necessary
+                                         */
+                                        try {
+                                            Date reportingTime = hour12.parse(reporting);
+                                            Date startTimeDate = hour12.parse(startTime);
+                                            Date endTimeDate = hour12.parse(endTime);
+
+                                            if (reportingTime != null) {
+                                                reporting = hour24.format(reportingTime);
+                                            }
+
+                                            if (startTimeDate != null) {
+                                                startTime = hour24.format(startTimeDate);
+                                            }
+
+                                            if (endTimeDate != null) {
+                                                endTime = hour24.format(endTimeDate);
+                                            }
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+
+                                        myDatabase.execSQL("INSERT INTO exams (exam, course, title, slot, date, reporting, start_time, end_time, venue, location, seat) VALUES ('" + exam.toUpperCase() + "', '" + course + "', '" + title + "', '" + slot + "', '" + date + "', '" + reporting + "', '" + startTime + "', '" + endTime + "', '" + venue + "', '" + location + "', '" + seat + "')");
                                     }
                                 }
 
