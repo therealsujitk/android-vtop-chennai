@@ -50,6 +50,13 @@ public class MessagesActivity extends AppCompatActivity {
                     }
                 }
 
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        findViewById(R.id.loading).animate().alpha(0);
+                    }
+                });
+
                 c.close();
                 myDatabase.close();
 
