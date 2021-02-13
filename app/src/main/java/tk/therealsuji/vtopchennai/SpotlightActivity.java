@@ -1,26 +1,37 @@
 package tk.therealsuji.vtopchennai;
 
+import android.Manifest;
 import android.animation.AnimatorInflater;
 import android.animation.StateListAnimator;
+import android.app.DownloadManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.View;
+import android.webkit.CookieManager;
+import android.webkit.DownloadListener;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 
@@ -32,8 +43,10 @@ public class SpotlightActivity extends AppCompatActivity {
     HorizontalScrollView categoriesContainer;
     ArrayList<TextView> categories = new ArrayList<>();
     ArrayList<LinearLayout> announcementViews = new ArrayList<>();
+    String savedLink;
     float pixelDensity;
     int index, halfWidth;
+    int STORAGE_PERMISSION_CODE = 1;
 
     public void setAnnouncements(View view) {
         int selectedIndex = Integer.parseInt(view.getTag().toString());
@@ -69,9 +82,58 @@ public class SpotlightActivity extends AppCompatActivity {
     }
 
     public void downloadDocument(String link) {
-        String downloadLink = "http://vtopcc.vit.ac.in/vtop/" + link + "?&x=";
-        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(downloadLink));
-        startActivity(browserIntent);
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, STORAGE_PERMISSION_CODE);
+            savedLink = link;
+            return;
+        }
+
+        final String downloadLink = "http://vtopcc.vit.ac.in/vtop/" + link + "?&x=";
+        final boolean[] isOpened = {false};
+
+        final WebView download = new WebView(this);
+        download.getSettings().setUserAgentString("Mozilla/5.0 (Linux; Android 10) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.99 Mobile Safari/537.36");
+        download.setWebViewClient(new WebViewClient() {
+            public void onPageFinished(WebView view, String url) {
+                if (isOpened[0]) {
+                    return;
+                }
+
+                isOpened[0] = true;
+                download.loadUrl(downloadLink);
+            }
+        });
+        download.setDownloadListener(new DownloadListener() {
+            @Override
+            public void onDownloadStart(String url, String userAgent, String contentDisposition, String mimetype, long contentLength) {
+                Toast.makeText(SpotlightActivity.this, "Downloading document", Toast.LENGTH_SHORT).show();
+
+                DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
+                request.allowScanningByMediaScanner();
+                request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+                String fileName = contentDisposition.split("filename=")[1];
+                request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "VTOP Spotlight/" + fileName);
+                request.setMimeType(mimetype);
+                request.addRequestHeader("cookie", CookieManager.getInstance().getCookie(url));
+                DownloadManager downloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
+                downloadManager.enqueue(request);
+            }
+        });
+
+        download.loadUrl("http://vtopcc.vit.ac.in/vtop");
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == STORAGE_PERMISSION_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                downloadDocument(savedLink);
+            } else {
+                Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     @Override
