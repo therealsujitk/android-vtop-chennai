@@ -150,20 +150,21 @@ public class LoginActivity extends AppCompatActivity {
                 vtop.downloadGrades();
                 break;
             case 9:
+                vtop.downloadGradeHistory();
+            case 10:
                 vtop.downloadMessages();
                 break;
-            case 10:
+            case 11:
                 vtop.downloadProctorMessages();
                 break;
-            case 11:
+            case 12:
                 vtop.downloadSpotlight();
                 break;
-            case 12:
+            case 13:
                 vtop.downloadReceipts();
                 break;
             default:
                 vtop.getSemesterID(semester);
-
         }
     }
 

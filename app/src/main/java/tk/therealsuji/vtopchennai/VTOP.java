@@ -201,7 +201,7 @@ public class VTOP {
      */
     public void setProgress() {
         progressBar.setProgress(++lastDownload, true);
-        String progress = lastDownload + " / 12";
+        String progress = lastDownload + " / 13";
         progressText.setText(progress);
     }
 
@@ -1859,7 +1859,217 @@ public class VTOP {
         Function to download grades
      */
     public void downloadGrades() {
-        downloadMessages();
+        downloadGradeHistory();
+    }
+
+    /*
+        Function to download grade history
+     */
+    public void downloadGradeHistory() {
+        downloading.setText(context.getString(R.string.downloading_grade_history));
+        if (downloadingLayout.getVisibility() == View.GONE) {
+            hideLayouts();
+            expand(downloadingLayout);
+        }
+
+        webView.evaluateJavascript("(function() {" +
+                "var data = 'verifyMenu=true&winImage=' + $('#winImage').val() + '&authorizedID=' + $('#authorizedIDX').val() + '&nocache=@(new Date().getTime())';" +
+                "var obj = {};" +
+                "$.ajax({" +
+                "   type: 'POST'," +
+                "   url : 'examinations/examGradeView/StudentGradeHistory'," +
+                "   data : data," +
+                "   async: false," +
+                "   success: function(response) {" +
+                "       var doc = new DOMParser().parseFromString(response, 'text/html');" +
+                "       var tables = doc.getElementsByTagName('table');" +
+                "       for (var i = 0; i < tables.length; ++i) {" +
+                "           var category = tables[i].getElementsByTagName('td')[0].innerText.trim().toLowerCase();" +
+                "           if (category.includes('reg') && !category.includes('credits')) {" +
+                "               continue;" +
+                "           } else if (category.includes('effective')) {" +
+                "               category = 'effective';" +
+                "               var courseIndex, titleIndex, creditsIndex, gradeIndex, flag = 0;" +
+                "               var columns = tables[i].getElementsByTagName('tr')[1].getElementsByTagName('td');" +
+                "               for (var j = 0; j < columns.length; ++j) {" +
+                "                   var heading = columns[j].innerText.trim().toLowerCase();" +
+                "                   if (heading.includes('course') && heading.includes('codes')) {" +
+                "                       courseIndex = j + columns.length + 1;" +
+                "                       ++flag;" +
+                "                   } else if (heading.includes('title')) {" +
+                "                       titleIndex = j + columns.length + 1;" +
+                "                       ++flag;" +
+                "                   } else if (heading.includes('credits')) {" +
+                "                       creditsIndex = j + columns.length + 1;" +
+                "                       ++flag;" +
+                "                   } else if (heading.includes('grades')) {" +
+                "                       gradeIndex = j + columns.length + 1;" +
+                "                       ++flag;" +
+                "                   }" +
+                "                   if (flag >= 4) {" +
+                "                       break;" +
+                "                   }" +
+                "               }" +
+                "               var temp = {};" +
+                "               var cells = tables[i].getElementsByTagName('td');" +
+                "               for (var j = 0; courseIndex < cells.length && titleIndex < cells.length && creditsIndex < cells.length && gradeIndex < cells.length; ++j) {" +
+                "                   temp['course' + j] = cells[courseIndex].innerText.trim();" +
+                "                   temp['title' + j] = cells[titleIndex].innerText.trim();" +
+                "                   temp['credits' + j] = cells[creditsIndex].innerText.trim();" +
+                "                   temp['grade' + j] = cells[gradeIndex].innerText.trim();" +
+                "                   courseIndex += columns.length;" +
+                "                   titleIndex += columns.length;" +
+                "                   creditsIndex += columns.length;" +
+                "                   gradeIndex += columns.length;" +
+                "               }" +
+                "               obj[category] = temp;" +
+                "           } else if (category.includes('curriculum')) {" +
+                "               category = 'curriculum';" +
+                "               var typeIndex, requiredIndex, earnedIndex;" +
+                "               var columns = tables[i].getElementsByTagName('tr')[1].getElementsByTagName('td');" +
+                "               for (var j = 0; j < columns.length; ++j) {" +
+                "                   var heading = columns[j].innerText.trim().toLowerCase();" +
+                "                   if (heading.includes('type')) {" +
+                "                       typeIndex = j + columns.length + 1;" +
+                "                   } else if (heading.includes('required')) {" +
+                "                       requiredIndex = j + columns.length + 1;" +
+                "                   } else if (heading.includes('earned')) {" +
+                "                       earnedIndex = j + columns.length + 1;" +
+                "                   }" +
+                "               }" +
+                "               var temp = {};" +
+                "               var cells = tables[i].getElementsByTagName('td');" +
+                "               for (var j = 0; typeIndex < cells.length && requiredIndex < cells.length && earnedIndex < cells.length; ++j) {" +
+                "                   temp['type' + j] = cells[typeIndex].innerText.trim();" +
+                "                   temp['required' + j] = cells[requiredIndex].innerText.trim();" +
+                "                   temp['earned' + j] = cells[earnedIndex].innerText.trim();" +
+                "                   typeIndex += columns.length;" +
+                "                   requiredIndex += columns.length;" +
+                "                   earnedIndex += columns.length;" +
+                "               }" +
+                "               obj[category] = temp;" +
+                "           } else if (category.includes('basket')) {" +
+                "               category = 'basket';" +
+                "               var titleIndex, requiredIndex, earnedIndex;" +
+                "               var columns = tables[i].getElementsByTagName('tr')[1].getElementsByTagName('td');" +
+                "               for (var j = 0; j < columns.length; ++j) {" +
+                "                   var heading = columns[j].innerText.trim().toLowerCase();" +
+                "                   if (heading.includes('title')) {" +
+                "                       titleIndex = j + columns.length + 1;" +
+                "                   } else if (heading.includes('required')) {" +
+                "                       requiredIndex = j + columns.length + 1;" +
+                "                   } else if (heading.includes('earned')) {" +
+                "                       earnedIndex = j + columns.length + 1;" +
+                "                   }" +
+                "               }" +
+                "               var temp = {};" +
+                "               var cells = tables[i].getElementsByTagName('td');" +
+                "               for (var j = 0; titleIndex < cells.length && requiredIndex < cells.length && earnedIndex < cells.length; ++j) {" +
+                "                   temp['title' + j] = cells[titleIndex].innerText.trim();" +
+                "                   temp['required' + j] = cells[requiredIndex].innerText.trim();" +
+                "                   temp['earned' + j] = cells[earnedIndex].innerText.trim();" +
+                "                   titleIndex += columns.length;" +
+                "                   requiredIndex += columns.length;" +
+                "                   earnedIndex += columns.length;" +
+                "               }" +
+                "               obj[category] = temp;" +
+                "           } else {" +
+                "               category = 'summary';" +
+                "               var columns = tables[i].getElementsByTagName('tr')[0].getElementsByTagName('td');" +
+                "               var cells = tables[i].getElementsByTagName('td');" +
+                "               var temp = {};" +
+                "               for (var j = 0; j < columns.length; ++j) {" +
+                "                   var heading = columns[j].innerText.trim();" +
+                "                   temp[heading] = cells[j + columns.length].innerText.trim();" +
+                "               }" +
+                "               obj[category] = temp;" +
+                "           }" +
+                "       }" +
+                "   }" +
+                "});" +
+                "return obj;" +
+                "})();", new ValueCallback<String>() {
+            @Override
+            public void onReceiveValue(final String obj) {
+                /*
+                    obj is in the form of a JSON string
+                 */
+                String temp = obj.substring(1, obj.length() - 1);
+                if (obj.equals("null") || temp.equals("")) {
+                    error();
+                } else {
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                JSONObject myObj = new JSONObject(obj);
+
+                                myDatabase.execSQL("DROP TABLE IF EXISTS grades_effective");
+                                myDatabase.execSQL("CREATE TABLE IF NOT EXISTS grades_effective (id INTEGER PRIMARY KEY, course VARCHAR, title VARCHAR, credits VARCHAR, grade VARCHAR)");
+
+                                JSONObject effective = new JSONObject(myObj.getString("effective"));
+
+                                for (int i = 0; i < effective.length() / 4; ++i) {
+                                    String course = effective.getString("course" + i);
+                                    String title = effective.getString("title" + i);
+                                    String credits = effective.getString("credits" + i);
+                                    String grade = effective.getString("grade" + i);
+
+                                    myDatabase.execSQL("INSERT INTO grades_effective (course, title, credits, grade) VALUES('" + course + "', '" + title + "', '" + credits + "', '" + grade + "')");
+                                }
+
+                                myDatabase.execSQL("DROP TABLE IF EXISTS grades_curriculum");
+                                myDatabase.execSQL("CREATE TABLE IF NOT EXISTS grades_curriculum (id INTEGER PRIMARY KEY, type VARCHAR, required VARCHAR, earned VARCHAR)");
+
+                                JSONObject curriculum = new JSONObject(myObj.getString("curriculum"));
+
+                                for (int i = 0; i < curriculum.length() / 3; ++i) {
+                                    String type = curriculum.getString("type" + i);
+                                    String required = curriculum.getString("required" + i);
+                                    String earned = curriculum.getString("earned" + i);
+
+                                    if (required.equals("-")) {
+                                        required = "0";
+                                    }
+
+                                    if (earned.equals("")) {
+                                        earned = "0";
+                                    }
+
+                                    myDatabase.execSQL("INSERT INTO grades_curriculum (type, required, earned) VALUES('" + type + "', '" + required + "', '" + earned + "')");
+                                }
+
+                                myDatabase.execSQL("DROP TABLE IF EXISTS grades_basket");
+                                myDatabase.execSQL("CREATE TABLE IF NOT EXISTS grades_basket (id INTEGER PRIMARY KEY, title VARCHAR, required VARCHAR, earned VARCHAR)");
+
+                                JSONObject basket = new JSONObject(myObj.getString("basket"));
+
+                                for (int i = 0; i < basket.length() / 3; ++i) {
+                                    String title = basket.getString("title" + i);
+                                    String required = basket.getString("required" + i);
+                                    String earned = basket.getString("earned" + i);
+
+                                    myDatabase.execSQL("INSERT INTO grades_basket (title, required, earned) VALUES('" + title + "', '" + required + "', '" + earned + "')");
+                                }
+
+                                String summary = myObj.getString("summary");
+                                sharedPreferences.edit().putString("grade_summary", summary).apply();
+
+                                ((Activity) context).runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        setProgress();
+                                        downloadMessages();
+                                    }
+                                });
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }).start();
+                }
+            }
+        });
     }
 
     /*

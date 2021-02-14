@@ -20,20 +20,21 @@
     <string name="privacy_contact_content">If you have any queries, suggestions or face any issues, my contact information is available at <a href="http://therealsuji.tk">http://therealsuji.tk</a>.</string>
 
 
-    <string name="downloading_profile">Downloading Profile</string>
-    <string name="downloading_timetable">Downloading Timetable</string>
-    <string name="downloading_attendance">Downloading Attendance</string>
-    <string name="downloading_exams">Downloading Exam Schedule</string>
-    <string name="downloading_marks">Downloading Marks</string>
-    <string name="downloading_receipts">Downloading Receipts</string>
-    <string name="downloading_messages">Downloading Messages</string>
-    <string name="downloading_spotlight">Downloading Spotlight</string>
-    <string name="downloading_staff">Downloading Staff Info</string>
-    <string name="downloading_faculty">Downloading Faculty Info</string>
     <string name="captcha">Enter Captcha</string>
     <string name="captcha_description">Image that shows the captcha code.</string>
     <string name="submit">Submit</string>
     <string name="select">Select</string>
+    <string name="downloading_profile">Downloading Profile</string>
+    <string name="downloading_timetable">Downloading Timetable</string>
+    <string name="downloading_faculty">Downloading Faculty Info</string>
+    <string name="downloading_staff">Downloading Staff Info</string>
+    <string name="downloading_attendance">Downloading Attendance</string>
+    <string name="downloading_exams">Downloading Exam Schedule</string>
+    <string name="downloading_marks">Downloading Marks</string>
+    <string name="downloading_grade_history">Downloading Grade History</string>
+    <string name="downloading_messages">Downloading Messages</string>
+    <string name="downloading_spotlight">Downloading Spotlight</string>
+    <string name="downloading_receipts">Downloading Receipts</string>
 
 
     <string name="avatar_description">Image that shows a users profile picture.</string>
