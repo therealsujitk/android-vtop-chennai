@@ -226,9 +226,9 @@ public class TimetableActivity extends AppCompatActivity {
                                 try {
                                     Date startTime = hour24.parse(startTimeTheory);
                                     Date endTime = hour24.parse(endTimeTheory);
-                                    assert startTime != null;
-                                    assert endTime != null;
-                                    timings = hour12.format(startTime) + " - " + hour12.format(endTime);
+                                    if (startTime != null && endTime != null) {
+                                        timings = hour12.format(startTime) + " - " + hour12.format(endTime);
+                                    }
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
@@ -354,9 +354,9 @@ public class TimetableActivity extends AppCompatActivity {
                                 try {
                                     Date startTime = hour24.parse(startTimeLab);
                                     Date endTime = hour24.parse(endTimeLab);
-                                    assert startTime != null;
-                                    assert endTime != null;
-                                    timings = hour12.format(startTime) + " - " + hour12.format(endTime);
+                                    if (startTime != null && endTime != null) {
+                                        timings = hour12.format(startTime) + " - " + hour12.format(endTime);
+                                    }
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }

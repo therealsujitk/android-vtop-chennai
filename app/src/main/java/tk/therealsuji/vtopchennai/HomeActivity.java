@@ -761,9 +761,9 @@ public class HomeActivity extends AppCompatActivity {
                                 try {
                                     Date startTime = hour24.parse(startTimeTheory);
                                     Date endTime = hour24.parse(endTimeTheory);
-                                    assert startTime != null;
-                                    assert endTime != null;
-                                    timings = hour12.format(startTime) + " - " + hour12.format(endTime);
+                                    if (startTime != null && endTime != null) {
+                                        timings = hour12.format(startTime) + " - " + hour12.format(endTime);
+                                    }
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
@@ -896,9 +896,9 @@ public class HomeActivity extends AppCompatActivity {
                                 try {
                                     Date startTime = hour24.parse(startTimeLab);
                                     Date endTime = hour24.parse(endTimeLab);
-                                    assert startTime != null;
-                                    assert endTime != null;
-                                    timings = hour12.format(startTime) + " - " + hour12.format(endTime);
+                                    if (startTime != null && endTime != null) {
+                                        timings = hour12.format(startTime) + " - " + hour12.format(endTime);
+                                    }
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
@@ -1034,9 +1034,9 @@ public class HomeActivity extends AppCompatActivity {
                                 try {
                                     Date startTime = hour24.parse(startTimeTheory);
                                     Date endTime = hour24.parse(endTimeTheory);
-                                    assert startTime != null;
-                                    assert endTime != null;
-                                    timings = hour12.format(startTime) + " - " + hour12.format(endTime);
+                                    if (startTime != null && endTime != null) {
+                                        timings = hour12.format(startTime) + " - " + hour12.format(endTime);
+                                    }
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
@@ -1171,9 +1171,9 @@ public class HomeActivity extends AppCompatActivity {
                                 try {
                                     Date startTime = hour24.parse(startTimeLab);
                                     Date endTime = hour24.parse(endTimeLab);
-                                    assert startTime != null;
-                                    assert endTime != null;
-                                    timings = hour12.format(startTime) + " - " + hour12.format(endTime);
+                                    if (startTime != null && endTime != null) {
+                                        timings = hour12.format(startTime) + " - " + hour12.format(endTime);
+                                    }
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
@@ -1705,8 +1705,9 @@ public class HomeActivity extends AppCompatActivity {
             if (!DateFormat.is24HourFormat(this)) {
                 try {
                     Date time = hour24.parse(refreshedTime);
-                    assert time != null;
-                    refreshedTime = hour12.format(time);
+                    if (time != null) {
+                        refreshedTime = hour12.format(time);
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

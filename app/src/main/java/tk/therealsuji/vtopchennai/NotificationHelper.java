@@ -18,9 +18,6 @@ public class NotificationHelper extends ContextWrapper {
     public static final String CHANNEL_ID_ONGOING = "ongoing";
     public static final String CHANNEL_NAME_ONGOING = "Ongoing Classes";
 
-    public static final String CHANNEL_ID_APPLICATION = "application";
-    public static final String CHANNEL_NAME_APPLICATION = "Application";
-
     private NotificationManager manager;
 
     public NotificationHelper(Context base) {
@@ -38,12 +35,6 @@ public class NotificationHelper extends ContextWrapper {
             ongoing.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
 
             getManager().createNotificationChannel(ongoing);
-
-            NotificationChannel application = new NotificationChannel(CHANNEL_ID_APPLICATION, CHANNEL_NAME_APPLICATION, NotificationManager.IMPORTANCE_DEFAULT);
-            application.enableVibration(true);
-            application.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
-
-            getManager().createNotificationChannel(application);
         }
     }
 
@@ -56,7 +47,7 @@ public class NotificationHelper extends ContextWrapper {
     }
 
     public NotificationCompat.Builder notifyUpcoming(Context context, String title, String message) {
-        PendingIntent contentIntent = PendingIntent.getActivity(context, 0, new Intent(context, TimetableActivity.class), 0);
+        PendingIntent contentIntent = PendingIntent.getActivity(context, 0, new Intent("tk.therealsuji.vtopchennai.LAUNCH_TIMETABLE"), 0);
 
         return new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID_UPCOMING)
                 .setContentTitle(title)
@@ -68,25 +59,13 @@ public class NotificationHelper extends ContextWrapper {
     }
 
     public NotificationCompat.Builder notifyOngoing(Context context, String title, String message) {
-        PendingIntent contentIntent = PendingIntent.getActivity(context, 0, new Intent(context, TimetableActivity.class), 0);
+        PendingIntent contentIntent = PendingIntent.getActivity(context, 0, new Intent("tk.therealsuji.vtopchennai.LAUNCH_TIMETABLE"), 0);
 
         return new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID_ONGOING)
                 .setContentTitle(title)
                 .setContentText(message)
                 .setContentIntent(contentIntent)
                 .setSmallIcon(R.drawable.ic_timetable)
-                .setColor(getColor(R.color.colorPrimary))
-                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
-    }
-
-    public NotificationCompat.Builder notifyApplication(Context context, String title, String message) {
-        PendingIntent contentIntent = PendingIntent.getActivity(context, 0, new Intent(context, HomeActivity.class), 0);
-
-        return new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID_APPLICATION)
-                .setContentTitle(title)
-                .setContentText(message)
-                .setContentIntent(contentIntent)
-                .setSmallIcon(R.drawable.ic_logo_square)
                 .setColor(getColor(R.color.colorPrimary))
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
     }

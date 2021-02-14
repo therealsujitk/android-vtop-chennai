@@ -81,12 +81,14 @@ public class NotificationReceiver extends BroadcastReceiver {
                 if (!theory.getString(dayTheory).equals("null") && (futureTime.after(hour24.parse(startTimeTheory)) || futureTime.equals(hour24.parse(startTimeTheory))) && currentTime.before(hour24.parse(startTimeTheory))) {
                     title = "Upcoming: ";
                     if (DateFormat.is24HourFormat(context)) {
-                        title += startTimeTheory + " - " + endTimeTheory;
+                        title = title + startTimeTheory + " - " + endTimeTheory;
                     } else {
                         try {
                             Date startTime = hour24.parse(startTimeTheory);
                             Date endTime = hour24.parse(endTimeTheory);
-                            title += hour12.format(startTime) + " - " + hour12.format(endTime);
+                            if (startTime != null && endTime != null) {
+                                title = title + hour12.format(startTime) + " - " + hour12.format(endTime);
+                            }
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -99,12 +101,14 @@ public class NotificationReceiver extends BroadcastReceiver {
                 if (!lab.getString(dayLab).equals("null") && (futureTime.after(hour24.parse(startTimeLab)) || futureTime.equals(hour24.parse(startTimeLab))) && currentTime.before(hour24.parse(startTimeLab))) {
                     title = "Upcoming: ";
                     if (DateFormat.is24HourFormat(context)) {
-                        title += startTimeLab + " - " + endTimeLab;
+                        title = title + startTimeLab + " - " + endTimeLab;
                     } else {
                         try {
                             Date startTime = hour24.parse(startTimeLab);
                             Date endTime = hour24.parse(endTimeLab);
-                            title += hour12.format(startTime) + " - " + hour12.format(endTime);
+                            if (startTime != null && endTime != null) {
+                                title = title + hour12.format(startTime) + " - " + hour12.format(endTime);
+                            }
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -121,12 +125,14 @@ public class NotificationReceiver extends BroadcastReceiver {
                 if (!theory.getString(dayTheory).equals("null") && (currentTime.after(hour24.parse(startTimeTheory)) || currentTime.equals(hour24.parse(startTimeTheory))) && (currentTime.before(hour24.parse(endTimeTheory)) || currentTime.equals(hour24.parse(endTimeTheory)))) {
                     title = "Ongoing: ";
                     if (DateFormat.is24HourFormat(context)) {
-                        title += startTimeTheory + " - " + endTimeTheory;
+                        title = title + startTimeTheory + " - " + endTimeTheory;
                     } else {
                         try {
                             Date startTime = hour24.parse(startTimeTheory);
                             Date endTime = hour24.parse(endTimeTheory);
-                            title += hour12.format(startTime) + " - " + hour12.format(endTime);
+                            if (startTime != null && endTime != null) {
+                                title = title + hour12.format(startTime) + " - " + hour12.format(endTime);
+                            }
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -139,12 +145,14 @@ public class NotificationReceiver extends BroadcastReceiver {
                 if (!lab.getString(dayLab).equals("null") && (currentTime.after(hour24.parse(startTimeLab)) || currentTime.equals(hour24.parse(startTimeLab))) && (currentTime.before(hour24.parse(endTimeLab)) || currentTime.equals(hour24.parse(endTimeLab)))) {
                     title = "Ongoing: ";
                     if (DateFormat.is24HourFormat(context)) {
-                        title += startTimeLab + " - " + endTimeLab;
+                        title = title + startTimeLab + " - " + endTimeLab;
                     } else {
                         try {
                             Date startTime = hour24.parse(startTimeLab);
                             Date endTime = hour24.parse(endTimeLab);
-                            title += hour12.format(startTime) + " - " + hour12.format(endTime);
+                            if (startTime != null && endTime != null) {
+                                title = title + hour12.format(startTime) + " - " + hour12.format(endTime);
+                            }
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
