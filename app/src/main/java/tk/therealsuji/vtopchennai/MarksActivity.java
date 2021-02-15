@@ -466,7 +466,7 @@ public class MarksActivity extends AppCompatActivity {
 
                     markViews.add(markView);    //Storing the view
 
-                    Cursor s = myDatabase.rawQuery("SELECT * FROM marks WHERE title = '" + markTitle + "' ORDER BY course, type DESC, ", null);
+                    Cursor s = myDatabase.rawQuery("SELECT * FROM marks WHERE title = '" + markTitle + "' ORDER BY course, type DESC", null);
 
                     int idIndex = s.getColumnIndex("id");
                     int courseIndex = s.getColumnIndex("course");
