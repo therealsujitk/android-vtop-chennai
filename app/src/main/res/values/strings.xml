@@ -77,6 +77,11 @@
     <string name="spotlight">Spotlight</string>
     <string name="spotlight_description">Icon for the spotlight button.</string>
 
+    <string name="summary">Summary</string>
+    <string name="effective">Effective Grades</string>
+    <string name="curriculum">Curriculum Details</string>
+    <string name="basket">Basket Details</string>
+
     <string name="campus">Campus</string>
     <string name="directions">Directions</string>
     <string name="directions_description">Icon for the directions button.</string>
@@ -139,6 +144,10 @@
 
     <string name="filter_by_course">Filter By Course</string>
     <string name="filter_by_title">Filter By Title</string>
+
+    <string name="grade_history">Grade History</string>
+    <string name="credits_title">Credits</string>
+    <string name="grade">Grade</string>
 
 
     <string name="map">Campus Map</string>

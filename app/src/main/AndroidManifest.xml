@@ -106,8 +106,8 @@
             android:name=".MarksActivity"
             android:configChanges="orientation|keyboardHidden"
             android:label="Marks"
-            android:theme="@style/AppTheme.MarksTheme"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.MarksTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MarksActivity" />
@@ -120,6 +120,15 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".GradesActivity" />
+        </activity>
+        <activity
+            android:name=".GradeHistoryActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:label="Grade History"
+            android:screenOrientation="portrait">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".GradeHistoryActivity" />
         </activity>
         <activity
             android:name=".SpotlightActivity"

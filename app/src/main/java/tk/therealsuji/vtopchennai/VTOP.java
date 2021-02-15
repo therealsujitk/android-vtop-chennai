@@ -1980,7 +1980,11 @@ public class VTOP {
                 "               var temp = {};" +
                 "               for (var j = 0; j < columns.length; ++j) {" +
                 "                   var heading = columns[j].innerText.trim();" +
-                "                   temp[heading] = cells[j + columns.length].innerText.trim();" +
+                "                   var prefix = j;" +
+                "                   if (j < 10) {" +
+                "                       prefix = '0' + j;" +
+                "                   }" +
+                "                   temp[prefix + heading] = cells[j + columns.length].innerText.trim();" +
                 "               }" +
                 "               obj[category] = temp;" +
                 "           }" +
@@ -2019,7 +2023,7 @@ public class VTOP {
                                 }
 
                                 myDatabase.execSQL("DROP TABLE IF EXISTS grades_curriculum");
-                                myDatabase.execSQL("CREATE TABLE IF NOT EXISTS grades_curriculum (id INTEGER PRIMARY KEY, type VARCHAR, required VARCHAR, earned VARCHAR)");
+                                myDatabase.execSQL("CREATE TABLE IF NOT EXISTS grades_curriculum (id INTEGER PRIMARY KEY, type VARCHAR, credits VARCHAR)");
 
                                 JSONObject curriculum = new JSONObject(myObj.getString("curriculum"));
 
@@ -2036,24 +2040,44 @@ public class VTOP {
                                         earned = "0";
                                     }
 
-                                    myDatabase.execSQL("INSERT INTO grades_curriculum (type, required, earned) VALUES('" + type + "', '" + required + "', '" + earned + "')");
+                                    String credits = earned + " / " + required;
+
+                                    myDatabase.execSQL("INSERT INTO grades_curriculum (type, credits) VALUES('" + type + "', '" + credits + "')");
                                 }
 
                                 myDatabase.execSQL("DROP TABLE IF EXISTS grades_basket");
-                                myDatabase.execSQL("CREATE TABLE IF NOT EXISTS grades_basket (id INTEGER PRIMARY KEY, title VARCHAR, required VARCHAR, earned VARCHAR)");
+                                myDatabase.execSQL("CREATE TABLE IF NOT EXISTS grades_basket (id INTEGER PRIMARY KEY, title VARCHAR, credits VARCHAR)");
 
                                 JSONObject basket = new JSONObject(myObj.getString("basket"));
 
                                 for (int i = 0; i < basket.length() / 3; ++i) {
                                     String title = basket.getString("title" + i);
-                                    String required = basket.getString("required" + i);
-                                    String earned = basket.getString("earned" + i);
+                                    String credits = basket.getString("earned" + i) + " / " + basket.getString("required" + i);
 
-                                    myDatabase.execSQL("INSERT INTO grades_basket (title, required, earned) VALUES('" + title + "', '" + required + "', '" + earned + "')");
+                                    myDatabase.execSQL("INSERT INTO grades_basket (title, credits) VALUES('" + title + "', '" + credits + "')");
                                 }
 
-                                String summary = myObj.getString("summary");
-                                sharedPreferences.edit().putString("grade_summary", summary).apply();
+                                myDatabase.execSQL("DROP TABLE IF EXISTS grades_summary");
+                                myDatabase.execSQL("CREATE TABLE IF NOT EXISTS grades_summary (id INTEGER PRIMARY KEY, column1 VARCHAR, column2 VARCHAR)");
+
+                                JSONObject summary = new JSONObject(myObj.getString("summary"));
+
+                                Iterator<?> keys = summary.keys();
+
+                                while (keys.hasNext()) {
+                                    String key = (String) keys.next();
+                                    String value = summary.getString(key);
+
+                                    key = key.substring(2);
+
+                                    if (key.toLowerCase().contains("cgpa")) {
+                                        key = "Overall CGPA";
+                                    } else if (key.toLowerCase().contains("grades")) {
+                                        key = "Number of " + key;
+                                    }
+
+                                    myDatabase.execSQL("INSERT INTO grades_summary (column1, column2) VALUES('" + key + "', '" + value + "')");
+                                }
 
                                 ((Activity) context).runOnUiThread(new Runnable() {
                                     @Override
