@@ -178,8 +178,8 @@ public class ExamsActivity extends AppCompatActivity {
                     int locationIndex = s.getColumnIndex("location");
                     int seatIndex = s.getColumnIndex("seat");
 
-                    int[] indexes = {titleIndex, slotIndex, dateIndex, reportingIndex, startIndex, venueIndex, locationIndex, seatIndex};
-                    String[] titles = {getString(R.string.title), getString(R.string.slot), getString(R.string.date), getString(R.string.reporting), getString(R.string.timings), getString(R.string.venue), getString(R.string.location), getString(R.string.seat)};
+                    int[] indexes = {slotIndex, dateIndex, reportingIndex, startIndex, venueIndex, locationIndex, seatIndex};
+                    String[] titles = {getString(R.string.slot), getString(R.string.date), getString(R.string.reporting), getString(R.string.timings), getString(R.string.venue), getString(R.string.location), getString(R.string.seat)};
 
                     s.moveToFirst();
 
@@ -212,7 +212,7 @@ public class ExamsActivity extends AppCompatActivity {
                         );
                         courseParams.setMarginStart((int) (20 * pixelDensity));
                         courseParams.setMarginEnd((int) (20 * pixelDensity));
-                        courseParams.setMargins(0, (int) (20 * pixelDensity), 0, (int) (5 * pixelDensity));
+                        courseParams.setMargins(0, (int) (20 * pixelDensity), 0, (int) (3 * pixelDensity));
                         course.setLayoutParams(courseParams);
                         course.setText(s.getString(courseIndex));
                         course.setTextColor(getColor(R.color.colorPrimary));
@@ -221,15 +221,27 @@ public class ExamsActivity extends AppCompatActivity {
 
                         block.addView(course);  //Adding the course to block
 
-                        for (int k = 0; k < 8; ++k) {
+                        /*
+                            The title TextView
+                         */
+                        TextView titleView = new TextView(context);
+                        TableRow.LayoutParams titleViewParams = new TableRow.LayoutParams(
+                                TableRow.LayoutParams.WRAP_CONTENT,
+                                TableRow.LayoutParams.WRAP_CONTENT
+                        );
+                        titleViewParams.setMarginStart((int) (20 * pixelDensity));
+                        titleViewParams.setMargins(0, (int) (3 * pixelDensity), 0, (int) (5 * pixelDensity));
+                        titleView.setLayoutParams(titleViewParams);
+                        titleView.setText(s.getString(titleIndex));
+                        titleView.setTextColor(getColor(R.color.colorPrimary));
+                        titleView.setTextSize(16);
+                        titleView.setTypeface(ResourcesCompat.getFont(context, R.font.rubik), Typeface.BOLD);
+
+                        block.addView(titleView); //Adding title to block
+
+                        for (int k = 0; k < 7; ++k) {
                             String valueString = s.getString(indexes[k]);
-                            if (k == 0) {
-                                /*
-                                    For the time being i'm removing the course title.
-                                    I might add this back later if I think of a better design
-                                 */
-                                continue;
-                            } else if (k == 3 && !DateFormat.is24HourFormat(context)) {
+                            if (k == 2 && !DateFormat.is24HourFormat(context)) {
                                 try {
                                     Date reportingTime = hour24.parse(valueString);
                                     if (reportingTime != null) {
@@ -238,7 +250,7 @@ public class ExamsActivity extends AppCompatActivity {
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
-                            } else if (k == 4 && !valueString.equals("")) {
+                            } else if (k == 3 && !valueString.equals("")) {
                                 String endTime = s.getString(endIndex);
                                 if (!DateFormat.is24HourFormat(context)) {
                                     try {
