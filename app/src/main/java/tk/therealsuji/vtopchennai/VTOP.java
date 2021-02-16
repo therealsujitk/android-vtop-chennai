@@ -1021,7 +1021,11 @@ public class VTOP {
                 "       }" +
                 "       var key = cells[i].innerText.trim();" +
                 "       var value = cells[++i].innerText.trim();" +
-                "       obj[key] = value;" +
+                "       var prefix = i;" +
+                "       if (i < 10) {" +
+                "           prefix = '0' + i;" +
+                "       }" +
+                "       obj[prefix + key] = value;" +
                 "   }" +
                 "}" +
                 "});" +
@@ -1071,6 +1075,8 @@ public class VTOP {
                                 while (keys.hasNext()) {
                                     String key = (String) keys.next();
                                     String value = myObj.getString(key);
+
+                                    key = key.substring(2);
 
                                     myDatabase.execSQL("INSERT INTO proctor (column1, column2) VALUES('" + key + "', '" + value + "')");
                                 }
@@ -1130,14 +1136,22 @@ public class VTOP {
                 "               }" +
                 "               var key = cells[i].innerText.trim();" +
                 "               var value = cells[++i].innerText.trim();" +
-                "               dean[key] = value;" +
+                "               var prefix = i;" +
+                "               if (i < 10) {" +
+                "                   prefix = '0' + i;" +
+                "               }" +
+                "               dean[prefix + key] = value;" +
                 "               } else {" +
                 "                   if(cells[i].innerHTML.includes('img')) {" +
                 "                   continue;" +
                 "               }" +
                 "               var key = cells[i].innerText.trim();" +
                 "               var value = cells[++i].innerText.trim();" +
-                "               hod[key] = value;" +
+                "               var prefix = i;" +
+                "               if (i < 10) {" +
+                "                   prefix = '0' + i;" +
+                "               }" +
+                "               hod[prefix + key] = value;" +
                 "           }" +
                 "       }" +
                 "       var cells = tables[1].getElementsByTagName('td');" +   //Possible error: If only one table is present
@@ -1148,14 +1162,22 @@ public class VTOP {
                 "               }" +
                 "               var key = cells[i].innerText.trim();" +
                 "               var value = cells[++i].innerText.trim();" +
-                "               hod[key] = value;" +
+                "               var prefix = i;" +
+                "               if (i < 10) {" +
+                "                   prefix = '0' + i;" +
+                "               }" +
+                "               hod[prefix + key] = value;" +
                 "           } else {" +
                 "               if(cells[i].innerHTML.includes('img')) {" +
                 "                   continue;" +
                 "           }" +
                 "           var key = cells[i].innerText.trim();" +
                 "           var value = cells[++i].innerText.trim();" +
-                "           dean[key] = value;" +
+                "           var prefix = i;" +
+                "           if (i < 10) {" +
+                "               prefix = '0' + i;" +
+                "           }" +
+                "           dean[prefix + key] = value;" +
                 "       }" +
                 "   }" +
                 "   obj['dean'] = dean;" +
@@ -1217,6 +1239,8 @@ public class VTOP {
                                     String key = (String) keys.next();
                                     String value = dean.getString(key);
 
+                                    key = key.substring(2);
+
                                     myDatabase.execSQL("INSERT INTO dean (column1, column2) VALUES('" + key + "', '" + value + "')");
                                 }
 
@@ -1225,6 +1249,8 @@ public class VTOP {
                                 while (keys.hasNext()) {
                                     String key = (String) keys.next();
                                     String value = hod.getString(key);
+
+                                    key = key.substring(2);
 
                                     myDatabase.execSQL("INSERT INTO hod (column1, column2) VALUES('" + key + "', '" + value + "')");
                                 }
