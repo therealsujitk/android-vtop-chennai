@@ -190,13 +190,13 @@ public class GradeHistoryActivity extends AppCompatActivity {
 
                     if (grade == 0) {
                         block.setAlpha(0);
+                        block.animate().alpha(1);
                     }
 
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             gradeViews[0].addView(block);
-                            block.animate().alpha(1);
                         }
                     });
                 }
@@ -338,13 +338,13 @@ public class GradeHistoryActivity extends AppCompatActivity {
 
                     if (grade == 1) {
                         block.setAlpha(0);
+                        block.animate().alpha(1);
                     }
 
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             gradeViews[1].addView(block);
-                            block.animate().alpha(1);
                         }
                     });
                 }
@@ -439,13 +439,13 @@ public class GradeHistoryActivity extends AppCompatActivity {
 
                     if (grade == 2) {
                         block.setAlpha(0);
+                        block.animate().alpha(1);
                     }
 
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             gradeViews[2].addView(block);
-                            block.animate().alpha(1);
                         }
                     });
                 }
@@ -540,13 +540,13 @@ public class GradeHistoryActivity extends AppCompatActivity {
 
                     if (grade == 3) {
                         block.setAlpha(0);
+                        block.animate().alpha(1);
                     }
 
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             gradeViews[3].addView(block);
-                            block.animate().alpha(1);
                         }
                     });
                 }
