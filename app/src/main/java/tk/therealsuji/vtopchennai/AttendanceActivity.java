@@ -58,7 +58,6 @@ public class AttendanceActivity extends AppCompatActivity {
                             @Override
                             public void run() {
                                 findViewById(R.id.noData).setVisibility(View.GONE);
-                                findViewById(R.id.loading).setVisibility(View.VISIBLE);
                             }
                         });
                     }

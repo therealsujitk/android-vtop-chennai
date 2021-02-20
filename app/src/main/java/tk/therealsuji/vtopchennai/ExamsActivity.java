@@ -136,7 +136,6 @@ public class ExamsActivity extends AppCompatActivity {
                     examButton.setLayoutParams(buttonParams);
                     examButton.setPadding((int) (20 * pixelDensity), 0, (int) (20 * pixelDensity), 0);
                     if (i == 0) {
-                        index = 0;
                         examButton.setBackground(ContextCompat.getDrawable(context, R.drawable.button_secondary_selected));
                     } else {
                         examButton.setBackground(ContextCompat.getDrawable(context, R.drawable.button_secondary));
@@ -199,8 +198,6 @@ public class ExamsActivity extends AppCompatActivity {
                         block.setLayoutParams(blockParams);
                         block.setBackground(ContextCompat.getDrawable(context, R.drawable.plain_card));
                         block.setOrientation(LinearLayout.VERTICAL);
-                        block.setAlpha(0);
-                        block.animate().alpha(1);
 
                         /*
                             The course TextView
@@ -329,6 +326,11 @@ public class ExamsActivity extends AppCompatActivity {
                             Adding the block to the view
                          */
                         examView.addView(block);
+                    }
+
+                    if (i == index) {
+                        examView.setAlpha(0);
+                        examView.animate().alpha(1);
                     }
 
                     if (i == 0) {

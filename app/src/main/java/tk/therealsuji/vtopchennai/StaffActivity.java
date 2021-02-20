@@ -30,7 +30,6 @@ public class StaffActivity extends AppCompatActivity {
     HorizontalScrollView staffContainer;
     TextView[] staffButtons = new TextView[3];
     LinearLayout[] staffViews = new LinearLayout[3];
-    boolean[] hasStaff = new boolean[3];
     float pixelDensity;
     int staffID, halfWidth;
 
@@ -47,7 +46,7 @@ public class StaffActivity extends AppCompatActivity {
         staff.setAlpha(0);
         staff.animate().alpha(1);
 
-        if (hasStaff[staffID]) {
+        if (staffViews[staffID].getChildCount() > 0) {
             findViewById(R.id.noData).setVisibility(View.INVISIBLE);
             staff.addView(staffViews[staffID]);
         } else {
@@ -103,10 +102,6 @@ public class StaffActivity extends AppCompatActivity {
         staffButtons[1] = findViewById(R.id.dean);
         staffButtons[2] = findViewById(R.id.hod);
 
-        for (int i = 0; i < 3; ++i) {
-            hasStaff[i] = false;
-        }
-
         staffID = 0;
 
         new Thread(new Runnable() {
@@ -121,15 +116,6 @@ public class StaffActivity extends AppCompatActivity {
                 Cursor c = myDatabase.rawQuery("SELECT * FROM proctor", null);
 
                 if (c.getCount() > 0) {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            findViewById(R.id.noData).setVisibility(View.GONE);
-                        }
-                    });
-
-                    hasStaff[0] = true;
-
                     int column1Index = c.getColumnIndex("column1");
                     int column2Index = c.getColumnIndex("column2");
                     c.moveToFirst();
@@ -154,7 +140,6 @@ public class StaffActivity extends AppCompatActivity {
                         outerBlock.setBackground(ContextCompat.getDrawable(context, R.drawable.plain_card));
                         outerBlock.setOrientation(LinearLayout.HORIZONTAL);
                         outerBlock.setGravity(Gravity.CENTER_VERTICAL);
-                        outerBlock.setAlpha(0);
 
                         LinearLayout block = new LinearLayout(context);
                         LinearLayout.LayoutParams blockParams = new LinearLayout.LayoutParams(
@@ -271,15 +256,27 @@ public class StaffActivity extends AppCompatActivity {
                             outerBlock.addView(linkButton);
                         }
 
-                        final LinearLayout proctorView = staffViews[0];
+                        if (staffID == 0) {
+                            outerBlock.setAlpha(0);
+                            outerBlock.animate().alpha(1);
+                        }
 
+                        final LinearLayout proctorView = staffViews[0];
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
                                 proctorView.addView(outerBlock);
-                                outerBlock.animate().alpha(1);
                             }
                         });
+
+                        if (staffID == 0) {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    findViewById(R.id.noData).setVisibility(View.GONE);
+                                }
+                            });
+                        }
                     }
                 }
 
@@ -290,8 +287,6 @@ public class StaffActivity extends AppCompatActivity {
                 c = myDatabase.rawQuery("SELECT * FROM dean", null);
 
                 if (c.getCount() > 0) {
-                    hasStaff[1] = true;
-
                     int column1Index = c.getColumnIndex("column1");
                     int column2Index = c.getColumnIndex("column2");
                     c.moveToFirst();
@@ -316,7 +311,6 @@ public class StaffActivity extends AppCompatActivity {
                         outerBlock.setBackground(ContextCompat.getDrawable(context, R.drawable.plain_card));
                         outerBlock.setOrientation(LinearLayout.HORIZONTAL);
                         outerBlock.setGravity(Gravity.CENTER_VERTICAL);
-                        outerBlock.setAlpha(0);
 
                         LinearLayout block = new LinearLayout(context);
                         LinearLayout.LayoutParams blockParams = new LinearLayout.LayoutParams(
@@ -433,14 +427,27 @@ public class StaffActivity extends AppCompatActivity {
                             outerBlock.addView(linkButton);
                         }
 
-                        final LinearLayout proctorView = staffViews[1];
+                        if (staffID == 1) {
+                            outerBlock.setAlpha(0);
+                            outerBlock.animate().alpha(1);
+                        }
+
+                        final LinearLayout deanView = staffViews[1];
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                proctorView.addView(outerBlock);
-                                outerBlock.animate().alpha(1);
+                                deanView.addView(outerBlock);
                             }
                         });
+
+                        if (staffID == 1) {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    findViewById(R.id.noData).setVisibility(View.GONE);
+                                }
+                            });
+                        }
                     }
                 }
 
@@ -451,8 +458,6 @@ public class StaffActivity extends AppCompatActivity {
                 c = myDatabase.rawQuery("SELECT * FROM hod", null);
 
                 if (c.getCount() > 0) {
-                    hasStaff[2] = true;
-
                     int column1Index = c.getColumnIndex("column1");
                     int column2Index = c.getColumnIndex("column2");
                     c.moveToFirst();
@@ -477,7 +482,6 @@ public class StaffActivity extends AppCompatActivity {
                         outerBlock.setBackground(ContextCompat.getDrawable(context, R.drawable.plain_card));
                         outerBlock.setOrientation(LinearLayout.HORIZONTAL);
                         outerBlock.setGravity(Gravity.CENTER_VERTICAL);
-                        outerBlock.setAlpha(0);
 
                         LinearLayout block = new LinearLayout(context);
                         LinearLayout.LayoutParams blockParams = new LinearLayout.LayoutParams(
@@ -594,14 +598,27 @@ public class StaffActivity extends AppCompatActivity {
                             outerBlock.addView(linkButton);
                         }
 
-                        final LinearLayout proctorView = staffViews[2];
+                        if (staffID == 2) {
+                            outerBlock.setAlpha(0);
+                            outerBlock.animate().alpha(1);
+                        }
+
+                        final LinearLayout hodView = staffViews[2];
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                proctorView.addView(outerBlock);
-                                outerBlock.animate().alpha(1);
+                                hodView.addView(outerBlock);
                             }
                         });
+
+                        if (staffID == 2) {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    findViewById(R.id.noData).setVisibility(View.GONE);
+                                }
+                            });
+                        }
                     }
                 }
 

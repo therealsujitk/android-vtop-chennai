@@ -106,6 +106,8 @@ public class DirectionsActivity extends AppCompatActivity {
         locationViews[4] = findViewById(R.id.amenity_locations);
         locationViews[5] = findViewById(R.id.sports_locations);
 
+        locationCategoriesContainer.animate().alpha(1);
+
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -216,7 +218,6 @@ public class DirectionsActivity extends AppCompatActivity {
                             block.setBackground(ContextCompat.getDrawable(context, R.drawable.plain_card));
                             block.setOrientation(LinearLayout.HORIZONTAL);
                             block.setGravity(Gravity.CENTER_VERTICAL);
-                            block.setAlpha(0);
 
                             /*
                                 The inner block
@@ -305,25 +306,18 @@ public class DirectionsActivity extends AppCompatActivity {
                             linkButton.addView(imageView);
                             block.addView(linkButton);
 
-                            final int index = i;
-                            if (i == 0) {
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        locationCategoriesContainer.animate().alpha(1);
-                                        locationViews[index].addView(block);
-                                        block.animate().alpha(1);
-                                    }
-                                });
-                            } else {
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        locationViews[index].addView(block);
-                                        block.animate().alpha(1);
-                                    }
-                                });
+                            if (i == locationCategory) {
+                                block.setAlpha(0);
+                                block.animate().alpha(1);
                             }
+
+                            final int index = i;
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    locationViews[index].addView(block);
+                                }
+                            });
                         }
                     }
                 } catch (Exception e) {

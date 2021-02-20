@@ -205,7 +205,6 @@ public class SpotlightActivity extends AppCompatActivity {
                     category.setPadding((int) (20 * pixelDensity), 0, (int) (20 * pixelDensity), 0);
                     if (i == 0) {
                         category.setBackground(ContextCompat.getDrawable(context, R.drawable.button_secondary_selected));
-                        index = 0;
                     } else {
                         category.setBackground(ContextCompat.getDrawable(context, R.drawable.button_secondary));
                     }
@@ -258,8 +257,6 @@ public class SpotlightActivity extends AppCompatActivity {
                         block.setBackground(ContextCompat.getDrawable(context, R.drawable.plain_card));
                         block.setGravity(Gravity.CENTER_VERTICAL);
                         block.setOrientation(LinearLayout.HORIZONTAL);
-                        block.setAlpha(0);
-                        block.animate().alpha(1);
 
                         /*
                             The announcement TextView
@@ -349,6 +346,11 @@ public class SpotlightActivity extends AppCompatActivity {
                             Finally adding the block to the announcements layout
                          */
                         announcementsView.addView(block);
+                    }
+
+                    if (i == index) {
+                        announcementsView.setAlpha(0);
+                        announcementsView.animate().alpha(1);
                     }
 
                     if (i == 0) {
