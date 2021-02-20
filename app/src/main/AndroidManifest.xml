@@ -149,6 +149,15 @@
                 android:value=".DirectionsActivity" />
         </activity>
         <activity
+            android:name=".CampusMapActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:label="Campus Map"
+            android:screenOrientation="portrait">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".CampusMapActivity" />
+        </activity>
+        <activity
             android:name=".StaffActivity"
             android:configChanges="orientation|keyboardHidden"
             android:label="Staff"
