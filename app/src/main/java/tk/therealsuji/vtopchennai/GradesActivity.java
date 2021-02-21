@@ -13,7 +13,7 @@ import java.util.Objects;
 public class GradesActivity extends AppCompatActivity {
 
     public void openGradeHistory(MenuItem item) {
-        startActivity(new Intent(GradesActivity.this, GradeHistoryActivity.class));
+        startActivity(new Intent(this, GradeHistoryActivity.class));
     }
 
     @Override

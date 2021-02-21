@@ -74,7 +74,7 @@ public class DirectionsActivity extends AppCompatActivity {
     }
 
     public void openMap(MenuItem item) {
-        startActivity(new Intent(DirectionsActivity.this, CampusMapActivity.class));
+        startActivity(new Intent(this, CampusMapActivity.class));
     }
 
     @Override

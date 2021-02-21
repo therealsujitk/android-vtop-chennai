@@ -66,7 +66,7 @@ public class HomeActivity extends AppCompatActivity {
      */
 
     public void openTimetable(View view) {
-        startActivity(new Intent(HomeActivity.this, TimetableActivity.class));
+        startActivity(new Intent(this, TimetableActivity.class));
 
         if (timetableNotification == -1) {
             return;
@@ -84,11 +84,11 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     public void openAttendance(View view) {
-        startActivity(new Intent(HomeActivity.this, AttendanceActivity.class));
+        startActivity(new Intent(this, AttendanceActivity.class));
     }
 
     public void openMessages(View view) {
-        startActivity(new Intent(HomeActivity.this, MessagesActivity.class));
+        startActivity(new Intent(this, MessagesActivity.class));
 
         if (messagesNotification == -1) {
             return;
@@ -106,7 +106,7 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     public void openFaculty(View view) {
-        startActivity(new Intent(HomeActivity.this, FacultyActivity.class));
+        startActivity(new Intent(this, FacultyActivity.class));
 
         if (facultyNotification == -1) {
             return;
@@ -128,7 +128,7 @@ public class HomeActivity extends AppCompatActivity {
      */
 
     public void openExams(View view) {
-        startActivity(new Intent(HomeActivity.this, ExamsActivity.class));
+        startActivity(new Intent(this, ExamsActivity.class));
 
         if (examsNotification == -1) {
             return;
@@ -142,7 +142,7 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     public void openMarks(View view) {
-        startActivity(new Intent(HomeActivity.this, MarksActivity.class));
+        startActivity(new Intent(this, MarksActivity.class));
 
         if (marksNotification == -1) {
             return;
@@ -156,7 +156,7 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     public void openGrades(View view) {
-        startActivity(new Intent(HomeActivity.this, GradesActivity.class));
+        startActivity(new Intent(this, GradesActivity.class));
 
         if (gradesNotification == -1) {
             return;
@@ -170,7 +170,7 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     public void openSpotlight(View view) {
-        startActivity(new Intent(HomeActivity.this, SpotlightActivity.class));
+        startActivity(new Intent(this, SpotlightActivity.class));
 
         if (spotlightNotification == -1) {
             return;
@@ -188,15 +188,15 @@ public class HomeActivity extends AppCompatActivity {
      */
 
     public void openDirections(View view) {
-        startActivity(new Intent(HomeActivity.this, DirectionsActivity.class));
+        startActivity(new Intent(this, DirectionsActivity.class));
     }
 
     public void openStaff(View view) {
-        startActivity(new Intent(HomeActivity.this, StaffActivity.class));
+        startActivity(new Intent(this, StaffActivity.class));
     }
 
     public void openProctorMessages(View view) {
-        startActivity(new Intent(HomeActivity.this, ProctorMessagesActivity.class));
+        startActivity(new Intent(this, ProctorMessagesActivity.class));
 
         if (proctorMessageNotification == -1) {
             return;
@@ -214,7 +214,7 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     public void openReceipts(View view) {
-        startActivity(new Intent(HomeActivity.this, ReceiptsActivity.class));
+        startActivity(new Intent(this, ReceiptsActivity.class));
 
         if (receiptsNotification == -1) {
             return;
