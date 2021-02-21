@@ -57,7 +57,7 @@ public class HomeActivity extends AppCompatActivity {
     int academicsNotification, examsNotification, marksNotification, gradesNotification, spotlightNotification;
     int campusNotification, proctorMessageNotification, receiptsNotification;
     SharedPreferences sharedPreferences, encryptedSharedPreferences;
-    Dialog download, appearance, signOut;
+    Dialog refresh, download, appearance, signOut;
     Context context;
     VTOP vtop;
 
@@ -266,6 +266,10 @@ public class HomeActivity extends AppCompatActivity {
         download.show();
 
         vtop = new VTOP(this, download);
+
+        if (refresh != null) {
+            refresh.dismiss();
+        }
     }
 
     public void submitCaptcha(View view) {
@@ -1743,7 +1747,7 @@ public class HomeActivity extends AppCompatActivity {
             update.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
             update.show();
         } else if (today != null && futureRefresh != null && (today.after(futureRefresh) || lastRefreshed.after(today))) {  // Next, check if data has been refreshed recently (1 week)
-            Dialog refresh = new Dialog(this);
+            refresh = new Dialog(this);
             refresh.setContentView(R.layout.dialog_refresh);
             refresh.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
             refresh.show();

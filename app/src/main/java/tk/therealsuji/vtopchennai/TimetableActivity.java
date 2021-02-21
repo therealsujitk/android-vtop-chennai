@@ -16,6 +16,7 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 
@@ -69,6 +70,19 @@ public class TimetableActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        if (getIntent().getAction() != null && getIntent().getAction().equals("tk.therealsuji.vtopchennai.LAUNCH_TIMETABLE")) {
+            SharedPreferences sharedPreferences = this.getSharedPreferences("tk.therealsuji.vtopchennai", Context.MODE_PRIVATE);
+            String theme = sharedPreferences.getString("appearance", "system");
+
+            if (theme.equals("light")) {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+            } else if (theme.equals("dark")) {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+            } else {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
+            }
+        }
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timetable);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
