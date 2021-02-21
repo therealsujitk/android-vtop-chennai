@@ -25,7 +25,7 @@ public class GradeHistoryActivity extends AppCompatActivity {
     LinearLayout[] gradeViews = new LinearLayout[4];
     HorizontalScrollView gradeButtonsContainer;
     float pixelDensity;
-    int grade;
+    int grade, halfWidth;
 
     public void setGrades(View view) {
         int index = Integer.parseInt(view.getTag().toString());
@@ -36,25 +36,22 @@ public class GradeHistoryActivity extends AppCompatActivity {
         grade = index;
 
         grades.scrollTo(0, 0);
-        for (int i = 0; i < 4; ++i) {
-            gradeViews[i].setVisibility(View.GONE);
-            gradeButtons[i].setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary));
-        }
+        grades.removeAllViews();
 
         if (gradeViews[grade].getChildCount() > 0) {
             findViewById(R.id.noData).setVisibility(View.GONE);
             gradeViews[grade].setAlpha(0);
-            gradeViews[grade].setVisibility(View.VISIBLE);
+            grades.addView(gradeViews[grade]);
             gradeViews[grade].animate().alpha(1);
         } else {
             findViewById(R.id.noData).setVisibility(View.VISIBLE);
         }
 
+        for (int i = 0; i < 4; ++i) {
+            gradeButtons[i].setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary));
+        }
         gradeButtons[grade].setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary_selected));
 
-        DisplayMetrics displayMetrics = new DisplayMetrics();
-        this.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-        int halfWidth = displayMetrics.widthPixels / 2;
         float location = 0;
         for (int i = 0; i < grade; ++i) {
             location += 10 * pixelDensity + (float) gradeButtons[i].getWidth();
@@ -74,6 +71,10 @@ public class GradeHistoryActivity extends AppCompatActivity {
         pixelDensity = context.getResources().getDisplayMetrics().density;
         grades = findViewById(R.id.grades);
 
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        this.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        halfWidth = displayMetrics.widthPixels / 2;
+
         gradeButtonsContainer = findViewById(R.id.grade_buttons);
 
         gradeButtonsContainer.animate().alpha(1);
@@ -83,10 +84,17 @@ public class GradeHistoryActivity extends AppCompatActivity {
         gradeButtons[2] = findViewById(R.id.curriculum);
         gradeButtons[3] = findViewById(R.id.basket);
 
-        gradeViews[0] = findViewById(R.id.summary_view);
-        gradeViews[1] = findViewById(R.id.effective_view);
-        gradeViews[2] = findViewById(R.id.curriculum_view);
-        gradeViews[3] = findViewById(R.id.basket_view);
+        for (int i = 0; i < 4; ++i) {
+            gradeViews[i] = new LinearLayout(context);
+            gradeViews[i].setLayoutParams(new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+            ));
+            gradeViews[i].setPadding(0, (int) (65 * pixelDensity), 0, (int) (15 * pixelDensity));
+            gradeViews[i].setOrientation(LinearLayout.VERTICAL);
+        }
+
+        grades.addView(gradeViews[0]);
 
         new Thread(new Runnable() {
             @Override
@@ -339,14 +347,16 @@ public class GradeHistoryActivity extends AppCompatActivity {
                     if (grade == 1) {
                         block.setAlpha(0);
                         block.animate().alpha(1);
-                    }
 
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            gradeViews[1].addView(block);
-                        }
-                    });
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                gradeViews[1].addView(block);
+                            }
+                        });
+                    } else {
+                        gradeViews[1].addView(block);
+                    }
                 }
 
                 c.close();
@@ -440,14 +450,16 @@ public class GradeHistoryActivity extends AppCompatActivity {
                     if (grade == 2) {
                         block.setAlpha(0);
                         block.animate().alpha(1);
-                    }
 
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            gradeViews[2].addView(block);
-                        }
-                    });
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                gradeViews[2].addView(block);
+                            }
+                        });
+                    } else {
+                        gradeViews[2].addView(block);
+                    }
                 }
 
                 c.close();
@@ -541,14 +553,16 @@ public class GradeHistoryActivity extends AppCompatActivity {
                     if (grade == 3) {
                         block.setAlpha(0);
                         block.animate().alpha(1);
-                    }
 
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            gradeViews[3].addView(block);
-                        }
-                    });
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                gradeViews[3].addView(block);
+                            }
+                        });
+                    } else {
+                        gradeViews[3].addView(block);
+                    }
                 }
 
                 c.close();

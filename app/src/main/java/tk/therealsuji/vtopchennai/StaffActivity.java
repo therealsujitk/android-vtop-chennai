@@ -37,9 +37,9 @@ public class StaffActivity extends AppCompatActivity {
         int selectedStaffID = Integer.parseInt(view.getTag().toString());
         if (selectedStaffID == staffID) {
             return;
-        } else {
-            staffID = selectedStaffID;
         }
+
+        staffID = selectedStaffID;
 
         staff.scrollTo(0, 0);
         staff.removeAllViews();

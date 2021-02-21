@@ -59,14 +59,13 @@ public class SpotlightActivity extends AppCompatActivity {
         announcements.scrollTo(0, 0);
         announcements.removeAllViews();
         announcements.setAlpha(0);
+        announcements.addView(announcementViews.get(index));
         announcements.animate().alpha(1);
 
         for (int i = 0; i < categories.size(); ++i) {
             categories.get(i).setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary));
         }
-
         categories.get(index).setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary_selected));
-        announcements.addView(announcementViews.get(index));
 
         float location = 0;
         for (int i = 0; i < index; ++i) {

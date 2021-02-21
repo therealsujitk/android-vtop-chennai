@@ -28,54 +28,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <LinearLayout
-                android:id="@+id/summary_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingTop="65dp"
-                android:paddingBottom="15dp">
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/effective_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingTop="65dp"
-                android:paddingBottom="15dp"
-                android:visibility="gone">
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/curriculum_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingTop="65dp"
-                android:paddingBottom="15dp"
-                android:visibility="gone">
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/basket_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingTop="65dp"
-                android:paddingBottom="15dp"
-                android:visibility="gone">
-
-            </LinearLayout>
-        </LinearLayout>
     </ScrollView>
 
     <LinearLayout

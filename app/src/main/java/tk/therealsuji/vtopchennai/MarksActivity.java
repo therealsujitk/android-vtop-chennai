@@ -56,14 +56,13 @@ public class MarksActivity extends AppCompatActivity {
         marks.scrollTo(0, 0);
         marks.removeAllViews();
         marks.setAlpha(0);
+        marks.addView(markViews.get(index));
         marks.animate().alpha(1);
 
         for (int i = 0; i < buttons.size(); ++i) {
             buttons.get(i).setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary));
         }
-
         buttons.get(index).setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary_selected));
-        marks.addView(markViews.get(index));
 
         int halfWidth = screenWidth / 2;
         float location = 0;

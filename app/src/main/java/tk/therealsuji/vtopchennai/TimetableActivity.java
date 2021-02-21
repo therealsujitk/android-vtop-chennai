@@ -33,12 +33,9 @@ public class TimetableActivity extends AppCompatActivity {
     Context context;
     float pixelDensity;
     int halfWidth, day;
-    boolean isViewEmpty;
 
     public void setTimetable(View view) {
         if (view != null) {
-            isViewEmpty = false;
-
             int selectedDay = Integer.parseInt(view.getTag().toString());
 
             if (selectedDay == day) {
@@ -49,12 +46,12 @@ public class TimetableActivity extends AppCompatActivity {
 
             timetable.scrollTo(0, 0);
             timetable.removeAllViews();
-            timetable.setAlpha(0);
-            timetable.animate().alpha(1);
 
             if (dayViews[day].getChildCount() > 0) {
                 findViewById(R.id.noData).setVisibility(View.GONE);
+                timetable.setAlpha(0);
                 timetable.addView(dayViews[day]);
+                timetable.animate().alpha(1);
             } else {
                 findViewById(R.id.noData).setVisibility(View.VISIBLE);
             }
@@ -86,6 +83,16 @@ public class TimetableActivity extends AppCompatActivity {
 
         daysContainer = findViewById(R.id.daysContainer);
 
+        buttons[0] = findViewById(R.id.sunday);
+        buttons[1] = findViewById(R.id.monday);
+        buttons[2] = findViewById(R.id.tuesday);
+        buttons[3] = findViewById(R.id.wednesday);
+        buttons[4] = findViewById(R.id.thursday);
+        buttons[5] = findViewById(R.id.friday);
+        buttons[6] = findViewById(R.id.saturday);
+
+        daysContainer.animate().alpha(1);
+
         for (int i = 0; i < 7; ++i) {
             dayViews[i] = new LinearLayout(context);
             dayViews[i].setLayoutParams(new LinearLayout.LayoutParams(
@@ -96,18 +103,10 @@ public class TimetableActivity extends AppCompatActivity {
             dayViews[i].setOrientation(LinearLayout.VERTICAL);
         }
 
-        buttons[0] = findViewById(R.id.sunday);
-        buttons[1] = findViewById(R.id.monday);
-        buttons[2] = findViewById(R.id.tuesday);
-        buttons[3] = findViewById(R.id.wednesday);
-        buttons[4] = findViewById(R.id.thursday);
-        buttons[5] = findViewById(R.id.friday);
-        buttons[6] = findViewById(R.id.saturday);
-
         Calendar c = Calendar.getInstance();
         day = c.get(Calendar.DAY_OF_WEEK) - 1;
 
-        daysContainer.animate().alpha(1);
+        timetable.addView(dayViews[day]);
 
         daysContainer.post(new Runnable() {
             @Override
@@ -115,8 +114,6 @@ public class TimetableActivity extends AppCompatActivity {
                 setTimetable(null);
             }
         });
-
-        isViewEmpty = true;
 
         new Thread(new Runnable() {
             @Override
@@ -161,8 +158,6 @@ public class TimetableActivity extends AppCompatActivity {
                 SimpleDateFormat hour24 = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
                 SimpleDateFormat hour12 = new SimpleDateFormat("h:mm a", Locale.ENGLISH);
 
-                boolean isNoDataVisible = true;
-
                 for (int i = 0; i < theory.getCount() && i < lab.getCount(); ++i, theory.moveToNext(), lab.moveToNext()) {
                     /*
                         The starting and ending times
@@ -202,15 +197,13 @@ public class TimetableActivity extends AppCompatActivity {
                             The outer block for theory (Initialized later to make the code faster)
                          */
                         if (theoryFlag) {
-                            if (isNoDataVisible && j == day && dayViews[j].getChildCount() == 0) {
+                            if (j == day && dayViews[day].getChildCount() == 0) {
                                 runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
                                         findViewById(R.id.noData).setVisibility(View.GONE);
                                     }
                                 });
-
-                                isNoDataVisible = false;
                             }
 
                             final LinearLayout block = new LinearLayout(context);
@@ -286,32 +279,22 @@ public class TimetableActivity extends AppCompatActivity {
                             block.addView(period);
                             block.addView(innerBlock);
 
-                            if (j == day) {
-                                block.setAlpha(0);
-                                block.animate().alpha(1);
-                            }
-
-                            if (isViewEmpty) {
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        timetable.addView(dayViews[day]);
-                                    }
-                                });
-
-                                isViewEmpty = false;
-                            }
-
                             /*
                                 Finally adding block to the main sections
                              */
-                            final LinearLayout dayBlock = dayViews[j];
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    dayBlock.addView(block);
-                                }
-                            });
+                            if (j == day) {
+                                block.setAlpha(0);
+                                block.animate().alpha(1);
+
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        dayViews[day].addView(block);
+                                    }
+                                });
+                            } else {
+                                dayViews[j].addView(block);
+                            }
                         }
 
                         /*
@@ -341,15 +324,13 @@ public class TimetableActivity extends AppCompatActivity {
                             The outer block for lab (Initialized later to make the code faster)
                          */
                         if (labFlag) {
-                            if (isNoDataVisible && j == day && dayViews[j].getChildCount() == 0) {
+                            if (j == day && dayViews[day].getChildCount() == 0) {
                                 runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
                                         findViewById(R.id.noData).setVisibility(View.GONE);
                                     }
                                 });
-
-                                isNoDataVisible = false;
                             }
 
                             final LinearLayout block = new LinearLayout(context);
@@ -431,32 +412,22 @@ public class TimetableActivity extends AppCompatActivity {
                             block.addView(period);
                             block.addView(innerBlock);
 
-                            if (j == day) {
-                                block.setAlpha(0);
-                                block.animate().alpha(1);
-                            }
-
-                            if (isViewEmpty) {
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        timetable.addView(dayViews[day]);
-                                    }
-                                });
-
-                                isViewEmpty = false;
-                            }
-
                             /*
                                 Finally adding block to the main sections
                              */
-                            final LinearLayout dayBlock = dayViews[j];
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    dayBlock.addView(block);
-                                }
-                            });
+                            if (j == day) {
+                                block.setAlpha(0);
+                                block.animate().alpha(1);
+
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        dayViews[day].addView(block);
+                                    }
+                                });
+                            } else {
+                                dayViews[j].addView(block);
+                            }
                         }
                     }
                 }

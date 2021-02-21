@@ -40,21 +40,23 @@ public class ExamsActivity extends AppCompatActivity {
         int selectedIndex = Integer.parseInt(view.getTag().toString());
         if (index == selectedIndex) {
             return;
-        } else {
-            index = selectedIndex;
         }
+
+        index = selectedIndex;
 
         exams.scrollTo(0, 0);
         exams.removeAllViews();
-        exams.setAlpha(0);
-        exams.animate().alpha(1);
+
+        if (exams.getChildCount() == 0) {
+            exams.setAlpha(0);
+            exams.addView(examViews.get(index));
+            exams.animate().alpha(1);
+        }
 
         for (int i = 0; i < buttons.size(); ++i) {
             buttons.get(i).setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary));
         }
-
         buttons.get(index).setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary_selected));
-        exams.addView(examViews.get(index));
 
         float location = 0;
         for (int i = 0; i < index; ++i) {
@@ -135,7 +137,7 @@ public class ExamsActivity extends AppCompatActivity {
                     buttonParams.setMargins(0, (int) (20 * pixelDensity), 0, (int) (20 * pixelDensity));
                     examButton.setLayoutParams(buttonParams);
                     examButton.setPadding((int) (20 * pixelDensity), 0, (int) (20 * pixelDensity), 0);
-                    if (i == 0) {
+                    if (i == 0 && i == index) {
                         examButton.setBackground(ContextCompat.getDrawable(context, R.drawable.button_secondary_selected));
                     } else {
                         examButton.setBackground(ContextCompat.getDrawable(context, R.drawable.button_secondary));
@@ -163,6 +165,15 @@ public class ExamsActivity extends AppCompatActivity {
                             examButtons.addView(examButton);
                         }
                     });
+
+                    if (i == 0 && i == index && exams.getChildCount() == 0) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                exams.addView(examView);
+                            }
+                        });
+                    }
 
                     Cursor s = myDatabase.rawQuery("SELECT * FROM exams WHERE exam = '" + exam + "' ORDER BY id", null);
 
@@ -325,21 +336,19 @@ public class ExamsActivity extends AppCompatActivity {
                         /*
                             Adding the block to the view
                          */
-                        examView.addView(block);
-                    }
+                        if (i == index) {
+                            block.setAlpha(0);
+                            block.animate().alpha(1);
 
-                    if (i == index) {
-                        examView.setAlpha(0);
-                        examView.animate().alpha(1);
-                    }
-
-                    if (i == 0) {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                exams.addView(examView);
-                            }
-                        });
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    examView.addView(block);
+                                }
+                            });
+                        } else {
+                            examView.addView(block);
+                        }
                     }
 
                     s.close();
