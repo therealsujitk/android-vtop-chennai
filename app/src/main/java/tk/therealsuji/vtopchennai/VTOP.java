@@ -188,7 +188,7 @@ public class VTOP {
         Function to hide all layouts at once because i'm too lazy to keep typing these
      */
     public void hideLayouts() {
-        loading.animate().alpha(0);
+        loading.setVisibility(View.INVISIBLE);
 
         compress(downloadingLayout);
         compress(semesterLayout);
@@ -210,9 +210,9 @@ public class VTOP {
         If something goes wrong, it'll log out and ask for the captcha again.
      */
     public void reloadPage() {
-        if (loading.getAlpha() == 0) {
+        if (loading.getVisibility() == View.INVISIBLE) {
             hideLayouts();
-            loading.animate().alpha(1);
+            loading.setVisibility(View.VISIBLE);
         }
 
         webView.clearCache(true);
@@ -2607,7 +2607,7 @@ public class VTOP {
 
     public void finishUp() {
         hideLayouts();
-        loading.animate().alpha(1);
+        loading.setVisibility(View.VISIBLE);
         sharedPreferences.edit().putBoolean("isSignedIn", true).apply();
         myDatabase.close();
 

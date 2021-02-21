@@ -69,7 +69,7 @@ public class LoginActivity extends AppCompatActivity {
         LinearLayout captchaLayout = download.findViewById(R.id.captchaLayout);
         ProgressBar loading = download.findViewById(R.id.loading);
         VTOP.compress(captchaLayout);
-        loading.animate().alpha(1);
+        loading.setVisibility(View.INVISIBLE);
 
         String username = encryptedSharedPreferences.getString("username", null);
         String password = encryptedSharedPreferences.getString("password", null);
@@ -106,7 +106,7 @@ public class LoginActivity extends AppCompatActivity {
         LinearLayout semesterLayout = download.findViewById(R.id.semesterLayout);
         ProgressBar loading = download.findViewById(R.id.loading);
         VTOP.compress(semesterLayout);
-        loading.animate().alpha(1);
+        loading.setVisibility(View.INVISIBLE);
 
         Spinner selectSemester = download.findViewById(R.id.selectSemester);
         String semester = selectSemester.getSelectedItem().toString().toLowerCase();
