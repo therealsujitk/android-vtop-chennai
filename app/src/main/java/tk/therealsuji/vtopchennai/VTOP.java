@@ -391,15 +391,27 @@ public class VTOP {
                     error();
                 } else {
                     try {
+                        int index = 0;
+                        boolean isIndexStored = false;
+                        String storedSemester = sharedPreferences.getString("semester", "null");
+
+
                         JSONObject myObj = new JSONObject(obj);
                         List<String> options = new ArrayList<>();
                         for (int i = 0; i < myObj.length(); ++i) {
-                            options.add(myObj.getString(Integer.toString(i)));
+                            String semester = myObj.getString(Integer.toString(i));
+                            options.add(semester);
+
+                            if (!isIndexStored && semester.toLowerCase().equals(storedSemester)) {
+                                index = i;
+                                isIndexStored = true;
+                            }
                         }
                         ArrayAdapter<String> adapter = new ArrayAdapter<>(context, R.layout.style_spinner_selected, options);
                         adapter.setDropDownViewResource(R.layout.style_spinner);
-
                         selectSemester.setAdapter(adapter);
+                        selectSemester.setSelection(index);
+
                         hideLayouts();
                         expand(semesterLayout);
                     } catch (Exception e) {
