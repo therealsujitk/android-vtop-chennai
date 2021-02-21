@@ -43,12 +43,12 @@ public class StaffActivity extends AppCompatActivity {
 
         staff.scrollTo(0, 0);
         staff.removeAllViews();
-        staff.setAlpha(0);
-        staff.animate().alpha(1);
 
         if (staffViews[staffID].getChildCount() > 0) {
             findViewById(R.id.noData).setVisibility(View.INVISIBLE);
+            staff.setAlpha(0);
             staff.addView(staffViews[staffID]);
+            staff.animate().alpha(1);
         } else {
             findViewById(R.id.noData).setVisibility(View.VISIBLE);
         }
@@ -56,7 +56,6 @@ public class StaffActivity extends AppCompatActivity {
         for (int i = 0; i < 3; ++i) {
             staffButtons[i].setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary));
         }
-
         staffButtons[staffID].setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary_selected));
 
         float location = 0;
@@ -84,6 +83,10 @@ public class StaffActivity extends AppCompatActivity {
 
         staffContainer = findViewById(R.id.staffContainer);
 
+        staffButtons[0] = findViewById(R.id.proctor);
+        staffButtons[1] = findViewById(R.id.dean);
+        staffButtons[2] = findViewById(R.id.hod);
+
         staffContainer.animate().alpha(1);
 
         for (int i = 0; i < 3; ++i) {
@@ -97,12 +100,6 @@ public class StaffActivity extends AppCompatActivity {
         }
 
         staff.addView(staffViews[0]);
-
-        staffButtons[0] = findViewById(R.id.proctor);
-        staffButtons[1] = findViewById(R.id.dean);
-        staffButtons[2] = findViewById(R.id.hod);
-
-        staffID = 0;
 
         new Thread(new Runnable() {
             @Override
@@ -259,23 +256,20 @@ public class StaffActivity extends AppCompatActivity {
                         if (staffID == 0) {
                             outerBlock.setAlpha(0);
                             outerBlock.animate().alpha(1);
-                        }
 
-                        final LinearLayout proctorView = staffViews[0];
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                proctorView.addView(outerBlock);
-                            }
-                        });
-
-                        if (staffID == 0) {
+                            final LinearLayout proctorView = staffViews[0];
+                            final int index = i;
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    findViewById(R.id.noData).setVisibility(View.GONE);
+                                    proctorView.addView(outerBlock);
+                                    if (index <= 1) {
+                                        findViewById(R.id.noData).setVisibility(View.GONE);
+                                    }
                                 }
                             });
+                        } else {
+                            staffViews[0].addView(outerBlock);
                         }
                     }
                 }
@@ -430,23 +424,20 @@ public class StaffActivity extends AppCompatActivity {
                         if (staffID == 1) {
                             outerBlock.setAlpha(0);
                             outerBlock.animate().alpha(1);
-                        }
 
-                        final LinearLayout deanView = staffViews[1];
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                deanView.addView(outerBlock);
-                            }
-                        });
-
-                        if (staffID == 1) {
+                            final LinearLayout deanView = staffViews[1];
+                            final int index = i;
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    findViewById(R.id.noData).setVisibility(View.GONE);
+                                    deanView.addView(outerBlock);
+                                    if (index <= 1) {
+                                        findViewById(R.id.noData).setVisibility(View.GONE);
+                                    }
                                 }
                             });
+                        } else {
+                            staffViews[1].addView(outerBlock);
                         }
                     }
                 }
@@ -601,23 +592,20 @@ public class StaffActivity extends AppCompatActivity {
                         if (staffID == 2) {
                             outerBlock.setAlpha(0);
                             outerBlock.animate().alpha(1);
-                        }
 
-                        final LinearLayout hodView = staffViews[2];
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                hodView.addView(outerBlock);
-                            }
-                        });
-
-                        if (staffID == 2) {
+                            final LinearLayout hodView = staffViews[2];
+                            final int index = i;
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    findViewById(R.id.noData).setVisibility(View.GONE);
+                                    hodView.addView(outerBlock);
+                                    if (index <= 1) {
+                                        findViewById(R.id.noData).setVisibility(View.GONE);
+                                    }
                                 }
                             });
+                        } else {
+                            staffViews[2].addView(outerBlock);
                         }
                     }
                 }

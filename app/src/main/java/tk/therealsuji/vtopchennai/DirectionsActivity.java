@@ -35,7 +35,7 @@ public class DirectionsActivity extends AppCompatActivity {
     LinearLayout[] locationViews = new LinearLayout[6];
     HorizontalScrollView locationCategoriesContainer;
     float pixelDensity;
-    int locationCategory;
+    int locationCategory, halfWidth;
 
     public void setCategory(View view) {
         int index = Integer.parseInt(view.getTag().toString());
@@ -46,19 +46,16 @@ public class DirectionsActivity extends AppCompatActivity {
         locationCategory = index;
 
         locations.scrollTo(0, 0);
+        locations.removeAllViews();
+        locations.setAlpha(0);
+        locations.addView(locationViews[locationCategory]);
+        locations.animate().alpha(1);
+
         for (int i = 0; i < 6; ++i) {
-            locationViews[i].setVisibility(View.GONE);
             locationCategories[i].setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary));
         }
-
-        locationViews[locationCategory].setAlpha(0);
-        locationViews[locationCategory].setVisibility(View.VISIBLE);
-        locationViews[locationCategory].animate().alpha(1);
         locationCategories[locationCategory].setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary_selected));
 
-        DisplayMetrics displayMetrics = new DisplayMetrics();
-        this.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-        int halfWidth = displayMetrics.widthPixels / 2;
         float location = 0;
         for (int i = 0; i < locationCategory; ++i) {
             location += 10 * pixelDensity + (float) locationCategories[i].getWidth();
@@ -90,6 +87,10 @@ public class DirectionsActivity extends AppCompatActivity {
         pixelDensity = context.getResources().getDisplayMetrics().density;
         locations = findViewById(R.id.locations);
 
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        this.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        halfWidth = displayMetrics.widthPixels / 2;
+
         locationCategoriesContainer = findViewById(R.id.location_categories);
 
         locationCategories[0] = findViewById(R.id.main_blocks);
@@ -99,14 +100,19 @@ public class DirectionsActivity extends AppCompatActivity {
         locationCategories[4] = findViewById(R.id.amenities);
         locationCategories[5] = findViewById(R.id.sports);
 
-        locationViews[0] = findViewById(R.id.main_locations);
-        locationViews[1] = findViewById(R.id.hostel_locations);
-        locationViews[2] = findViewById(R.id.food_locations);
-        locationViews[3] = findViewById(R.id.atm_locations);
-        locationViews[4] = findViewById(R.id.amenity_locations);
-        locationViews[5] = findViewById(R.id.sports_locations);
-
         locationCategoriesContainer.animate().alpha(1);
+
+        for (int i = 0; i < 6; ++i) {
+            locationViews[i] = new LinearLayout(context);
+            locationViews[i].setLayoutParams(new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+            ));
+            locationViews[i].setPadding(0, (int) (65 * pixelDensity), 0, (int) (15 * pixelDensity));
+            locationViews[i].setOrientation(LinearLayout.VERTICAL);
+        }
+
+        locations.addView(locationViews[0]);
 
         new Thread(new Runnable() {
             @Override
@@ -309,15 +315,16 @@ public class DirectionsActivity extends AppCompatActivity {
                             if (i == locationCategory) {
                                 block.setAlpha(0);
                                 block.animate().alpha(1);
-                            }
 
-                            final int index = i;
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    locationViews[index].addView(block);
-                                }
-                            });
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        locationViews[locationCategory].addView(block);
+                                    }
+                                });
+                            } else {
+                                locationViews[i].addView(block);
+                            }
                         }
                     }
                 } catch (Exception e) {
