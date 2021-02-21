@@ -125,7 +125,7 @@ public class DirectionsActivity extends AppCompatActivity {
                     main.put("Academic Block 1", "{\"description\": \"\", \"tag\": \"wWaWFDiuUnrSkv7Q8\"}");
                     main.put("Academic Block 2", "{\"description\": \"\", \"tag\": \"2DcLPUj6JBU2SD698\"}");
                     main.put("Administrative Block", "{\"description\": \"\", \"tag\": \"GNYq3VdZytBk42Jp7\"}");
-                    main.put("Alpha Block", "{\"description\": \"Health Centre\", \"tag\": \"c4eDWs1L2RJLpcoH8\"}");
+                    main.put("Alpha Block", "{\"description\": \"Health Centre\", \"tag\": \"hkRzrEu8fHjFKxMX6\"}");
                     main.put("Central Library", "{\"description\": \"\", \"tag\": \"B61HccC3wuTcepRE6\"}");
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -134,8 +134,8 @@ public class DirectionsActivity extends AppCompatActivity {
                 JSONObject hostels = new JSONObject();
                 try {
                     hostels.put("Hostel A Block", "{\"description\": \"Hostel for Sophomore & Junior Boys\", \"tag\": \"sp6v7XomBw5sZ3cy8\"}");
-                    hostels.put("Hostel B Block", "{\"description\": \"Hostel for Senior Boys\", \"tag\": \"cJvcHPEBYoDymvP88\"}");
-                    hostels.put("Hostel C Block", "{\"description\": \"Hostel for Girls & Freshmen Boys\", \"tag\": \"Mwk7WG6uRBZ6CNne7\"}");
+                    hostels.put("Hostel B Block", "{\"description\": \"Hostel for Girls & Freshmen Boys\", \"tag\": \"cJvcHPEBYoDymvP88\"}");
+                    hostels.put("Hostel C Block", "{\"description\": \"Hostel for Senior Boys\", \"tag\": \"ZoqkXMuMh3GN3NVH9\"}");
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
