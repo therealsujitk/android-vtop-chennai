@@ -220,6 +220,9 @@ public class TimetableActivity extends AppCompatActivity {
                                 });
                             }
 
+                            /*
+                                The outer block
+                             */
                             final LinearLayout block = new LinearLayout(context);
                             LinearLayout.LayoutParams blockParams = new LinearLayout.LayoutParams(
                                     LinearLayout.LayoutParams.MATCH_PARENT,
@@ -232,6 +235,9 @@ public class TimetableActivity extends AppCompatActivity {
                             block.setBackground(ContextCompat.getDrawable(context, R.drawable.plain_card));
                             block.setOrientation(LinearLayout.VERTICAL);
 
+                            /*
+                                The innerBlock to hold the period and venue
+                             */
                             LinearLayout innerBlock = new LinearLayout(context);
                             LinearLayout.LayoutParams innerBlockParams = new LinearLayout.LayoutParams(
                                     LinearLayout.LayoutParams.MATCH_PARENT,
@@ -239,6 +245,39 @@ public class TimetableActivity extends AppCompatActivity {
                             );
                             innerBlock.setLayoutParams(innerBlockParams);
                             innerBlock.setOrientation(LinearLayout.HORIZONTAL);
+
+                            innerBlock.addView(period);
+
+                            String[] rawPeriod = theory.getString(theoryIndexes[j]).split("-");
+                            String venueString = rawPeriod[rawPeriod.length - 3] + " - " + rawPeriod[rawPeriod.length - 2];
+                            TextView venue = new TextView(context);
+                            TableRow.LayoutParams venueParams = new TableRow.LayoutParams(
+                                    TableRow.LayoutParams.MATCH_PARENT,
+                                    TableRow.LayoutParams.WRAP_CONTENT
+                            );
+                            venueParams.setMarginEnd((int) (20 * pixelDensity));
+                            venueParams.setMargins(0, (int) (20 * pixelDensity), 0, (int) (5 * pixelDensity));
+                            venue.setLayoutParams(venueParams);
+                            venue.setText(venueString);
+                            venue.setTextColor(getColor(R.color.colorPrimary));
+                            venue.setTextSize(20);
+                            venue.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
+                            venue.setTypeface(ResourcesCompat.getFont(context, R.font.rubik));
+
+                            innerBlock.addView(venue);
+
+                            block.addView(innerBlock);
+
+                            /*
+                                The secondInnerBlock to hold the timings and class type
+                             */
+                            LinearLayout secondInnerBlock = new LinearLayout(context);
+                            LinearLayout.LayoutParams secondInnerBlockParams = new LinearLayout.LayoutParams(
+                                    LinearLayout.LayoutParams.MATCH_PARENT,
+                                    LinearLayout.LayoutParams.WRAP_CONTENT
+                            );
+                            secondInnerBlock.setLayoutParams(secondInnerBlockParams);
+                            secondInnerBlock.setOrientation(LinearLayout.HORIZONTAL);
 
                             /*
                                 Making a proper string of the timings
@@ -269,7 +308,7 @@ public class TimetableActivity extends AppCompatActivity {
                             time.setTextSize(16);
                             time.setTypeface(ResourcesCompat.getFont(context, R.font.rubik));
 
-                            innerBlock.addView(time);   //Adding the timings to innerBlock
+                            secondInnerBlock.addView(time);   //Adding the timings to innerBlock
 
                             TextView theoryText = new TextView(context);
                             TableRow.LayoutParams theoryParams = new TableRow.LayoutParams(
@@ -285,13 +324,12 @@ public class TimetableActivity extends AppCompatActivity {
                             theoryText.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
                             theoryText.setTypeface(ResourcesCompat.getFont(context, R.font.rubik));
 
-                            innerBlock.addView(theoryText); //Adding the theory text to innerBlock
+                            secondInnerBlock.addView(theoryText); //Adding the theory text to innerBlock
 
                             /*
                                 Adding period and other details to block
                              */
-                            block.addView(period);
-                            block.addView(innerBlock);
+                            block.addView(secondInnerBlock);
 
                             /*
                                 Finally adding block to the main sections
@@ -359,6 +397,9 @@ public class TimetableActivity extends AppCompatActivity {
                             block.setBackground(ContextCompat.getDrawable(context, R.drawable.plain_card));
                             block.setOrientation(LinearLayout.VERTICAL);
 
+                            /*
+                                The innerBlock to hold the period and venue
+                             */
                             LinearLayout innerBlock = new LinearLayout(context);
                             LinearLayout.LayoutParams innerBlockParams = new LinearLayout.LayoutParams(
                                     LinearLayout.LayoutParams.MATCH_PARENT,
@@ -366,6 +407,39 @@ public class TimetableActivity extends AppCompatActivity {
                             );
                             innerBlock.setLayoutParams(innerBlockParams);
                             innerBlock.setOrientation(LinearLayout.HORIZONTAL);
+
+                            innerBlock.addView(period);
+
+                            String[] rawPeriod = lab.getString(theoryIndexes[j]).split("-");
+                            String venueString = rawPeriod[rawPeriod.length - 3] + " - " + rawPeriod[rawPeriod.length - 2];
+                            TextView venue = new TextView(context);
+                            TableRow.LayoutParams venueParams = new TableRow.LayoutParams(
+                                    TableRow.LayoutParams.MATCH_PARENT,
+                                    TableRow.LayoutParams.WRAP_CONTENT
+                            );
+                            venueParams.setMarginEnd((int) (20 * pixelDensity));
+                            venueParams.setMargins(0, (int) (20 * pixelDensity), 0, (int) (5 * pixelDensity));
+                            venue.setLayoutParams(venueParams);
+                            venue.setText(venueString);
+                            venue.setTextColor(getColor(R.color.colorPrimary));
+                            venue.setTextSize(20);
+                            venue.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
+                            venue.setTypeface(ResourcesCompat.getFont(context, R.font.rubik));
+
+                            innerBlock.addView(venue);
+
+                            block.addView(innerBlock);
+
+                            /*
+                                The secondInnerBlock to hold the timings and class type
+                             */
+                            LinearLayout secondInnerBlock = new LinearLayout(context);
+                            LinearLayout.LayoutParams secondInnerBlockParams = new LinearLayout.LayoutParams(
+                                    LinearLayout.LayoutParams.MATCH_PARENT,
+                                    LinearLayout.LayoutParams.WRAP_CONTENT
+                            );
+                            secondInnerBlock.setLayoutParams(secondInnerBlockParams);
+                            secondInnerBlock.setOrientation(LinearLayout.HORIZONTAL);
 
                             /*
                                 Making a proper string of the timings
@@ -399,7 +473,7 @@ public class TimetableActivity extends AppCompatActivity {
                             time.setTextSize(16);
                             time.setTypeface(ResourcesCompat.getFont(context, R.font.rubik));
 
-                            innerBlock.addView(time);   //Adding the timings to innerBlock
+                            secondInnerBlock.addView(time);   //Adding the timings to innerBlock
 
                             /*
                                 The lab text TextView
@@ -418,13 +492,12 @@ public class TimetableActivity extends AppCompatActivity {
                             labText.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
                             labText.setTypeface(ResourcesCompat.getFont(context, R.font.rubik));
 
-                            innerBlock.addView(labText);    //Adding the lab text to innerBlock
+                            secondInnerBlock.addView(labText);    //Adding the lab text to innerBlock
 
                             /*
                                 Adding period and other details to block
                              */
-                            block.addView(period);
-                            block.addView(innerBlock);
+                            block.addView(secondInnerBlock);
 
                             /*
                                 Finally adding block to the main sections
