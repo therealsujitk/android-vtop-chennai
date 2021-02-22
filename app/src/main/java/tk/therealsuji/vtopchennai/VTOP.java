@@ -2216,8 +2216,9 @@ public class VTOP {
                         @Override
                         public void run() {
                             try {
-                                myDatabase.execSQL("DROP TABLE IF EXISTS messages");
+                                myDatabase.execSQL("DROP TABLE IF EXISTS messages_new");
                                 myDatabase.execSQL("CREATE TABLE IF NOT EXISTS messages (id INTEGER PRIMARY KEY, course VARCHAR, type VARCHAR, message VARCHAR)");
+                                myDatabase.execSQL("CREATE TABLE IF NOT EXISTS messages_new (id INTEGER PRIMARY KEY, course VARCHAR, type VARCHAR, message VARCHAR)");
 
                                 JSONObject myObj = new JSONObject(obj);
 
@@ -2227,8 +2228,21 @@ public class VTOP {
                                     String type = tempObj.getString("type");
                                     String message = tempObj.getString("message");
 
-                                    myDatabase.execSQL("INSERT INTO messages (course, type, message) VALUES('" + course + "', '" + type + "', '" + message + "')");
+                                    myDatabase.execSQL("INSERT INTO messages_new (course, type, message) VALUES('" + course + "', '" + type + "', '" + message + "')");
                                 }
+
+                                Cursor newSpotlight = myDatabase.rawQuery("SELECT id FROM messages_new WHERE message NOT IN (SELECT message FROM messages)", null);
+
+                                if (newSpotlight.getCount() > 0) {
+                                    sharedPreferences.edit().putBoolean("newMessages", true).apply();
+
+                                    myDatabase.execSQL("DROP TABLE messages");
+                                    myDatabase.execSQL("ALTER TABLE messages_new RENAME TO spotlight");
+                                } else {
+                                    myDatabase.execSQL("DROP TABLE messages_new");
+                                }
+
+                                newSpotlight.close();
 
                                 ((Activity) context).runOnUiThread(new Runnable() {
                                     @Override
@@ -2237,8 +2251,6 @@ public class VTOP {
                                         downloadProctorMessages();
                                     }
                                 });
-
-                                sharedPreferences.edit().putBoolean("newMessages", true).apply();
                             } catch (Exception e) {
                                 e.printStackTrace();
                                 error();
@@ -2463,16 +2475,18 @@ public class VTOP {
                                     }
                                 }
 
-                                Cursor newSpotlight = myDatabase.rawQuery("SELECT id FROM spotlight_new WHERE announcement NOT IN (SELECT announcement FROM spotlight)", null);
+                                Cursor newSpotlight = myDatabase.rawQuery("SELECT id FROM spotlight_new WHERE (announcement, link) NOT IN (SELECT announcement, link FROM spotlight)", null);
 
                                 if (newSpotlight.getCount() > 0) {
                                     sharedPreferences.edit().putBoolean("newSpotlight", true).apply();
+
+                                    myDatabase.execSQL("DROP TABLE spotlight");
+                                    myDatabase.execSQL("ALTER TABLE spotlight_new RENAME TO spotlight");
+                                } else {
+                                    myDatabase.execSQL("DROP TABLE spotlight_new");
                                 }
 
                                 newSpotlight.close();
-
-                                myDatabase.execSQL("DROP TABLE spotlight");
-                                myDatabase.execSQL("ALTER TABLE spotlight_new RENAME TO spotlight");
 
                                 ((Activity) context).runOnUiThread(new Runnable() {
                                     @Override
