@@ -2146,7 +2146,7 @@ public class VTOP {
 
         webView.evaluateJavascript("(function() {" +
                 "var data = 'verifyMenu=true&winImage=' + $('#winImage').val() + '&authorizedID=' + $('#authorizedIDX').val() + '&nocache=@(new Date().getTime())';" +
-                "var successFlag = false;" +
+                "var obj = {};" +
                 "$.ajax({" +
                 "   type: 'POST'," +
                 "   url : 'academics/common/StudentClassMessage'," +
@@ -2154,21 +2154,33 @@ public class VTOP {
                 "   async: false," +
                 "   success: function(response) {" +
                 "       if(response.toLowerCase().includes('no messages')) {" +
-                "           successFlag = true;" +
+                "           obj = 'nothing';" +
                 "       } else {" +
-                "           successFlag = 'new';" +
+                "           var doc = new DOMParser().parseFromString(response, 'text/html');" +
+                "           var messages = doc.getElementsByTagName('a');" +
+                "           for (var i = 0; i < messages.length; ++i) {" +
+                "               var temp = {};" +
+                "               var content = messages[i].getElementsByTagName('span');" +
+                "               var course = content[0].innerText.split('-');" +
+                "               temp['message'] = content[1].innerText;" +
+                "               temp['course'] = course[0].trim();" +
+                "               temp['type'] = course[course.length - 1].trim();" +
+                "               obj[i] = temp;" +
+                "           }" +
                 "       }" +
                 "   }" +
                 "});" +
-                "return successFlag;" +
+                "return obj;" +
                 "})();", new ValueCallback<String>() {
             @Override
-            public void onReceiveValue(String value) {
+            public void onReceiveValue(final String obj) {
                 /*
-                    obj is in the form of a JSON string that is yet to be created
+                    obj is in the form of a JSON string like {"0": {"course": "MAT1001", "type": "Embedded Theory", "message": "All of you have failed!"}}
                  */
-                String temp = value.substring(1, value.length() - 1);
-                if (value.equals("true")) {
+                final String temp = obj.substring(1, obj.length() - 1);
+                if (obj.equals("null") || temp.equals("{}")) {
+                    error();
+                } else if (temp.equals("nothing")) {
                     /*
                         Dropping and recreating an empty table
                      */
@@ -2177,7 +2189,7 @@ public class VTOP {
                         public void run() {
                             try {
                                 myDatabase.execSQL("DROP TABLE IF EXISTS messages");
-                                myDatabase.execSQL("CREATE TABLE IF NOT EXISTS messages (id INTEGER PRIMARY KEY, faculty VARCHAR, time VARCHAR, message VARCHAR)");
+                                myDatabase.execSQL("CREATE TABLE IF NOT EXISTS messages (id INTEGER PRIMARY KEY, course VARCHAR, type VARCHAR, message VARCHAR)");
 
                                 ((Activity) context).runOnUiThread(new Runnable() {
                                     @Override
@@ -2196,7 +2208,7 @@ public class VTOP {
                             sharedPreferences.edit().remove("newMessages").apply();
                         }
                     }).start();
-                } else if (temp.equals("new")) {
+                } else {
                     /*
                         Dropping, recreating and adding announcements
                      */
@@ -2205,9 +2217,18 @@ public class VTOP {
                         public void run() {
                             try {
                                 myDatabase.execSQL("DROP TABLE IF EXISTS messages");
-                                myDatabase.execSQL("CREATE TABLE IF NOT EXISTS messages (id INTEGER PRIMARY KEY, faculty VARCHAR, time VARCHAR, message VARCHAR)");
+                                myDatabase.execSQL("CREATE TABLE IF NOT EXISTS messages (id INTEGER PRIMARY KEY, course VARCHAR, type VARCHAR, message VARCHAR)");
 
-                                myDatabase.execSQL("INSERT INTO messages (faculty, time, message) VALUES('null', 'null', 'null')"); //To be changed with the actual announcements
+                                JSONObject myObj = new JSONObject(obj);
+
+                                for (int i = 0; i < myObj.length(); ++i) {
+                                    JSONObject tempObj = new JSONObject(myObj.getString(Integer.toString(i)));
+                                    String course = tempObj.getString("course");
+                                    String type = tempObj.getString("type");
+                                    String message = tempObj.getString("message");
+
+                                    myDatabase.execSQL("INSERT INTO messages (course, type, message) VALUES('" + course + "', '" + type + "', '" + message + "')");
+                                }
 
                                 ((Activity) context).runOnUiThread(new Runnable() {
                                     @Override
@@ -2224,8 +2245,6 @@ public class VTOP {
                             }
                         }
                     }).start();
-                } else {
-                    error();
                 }
             }
         });
