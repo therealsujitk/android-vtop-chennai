@@ -339,6 +339,7 @@ public class VTOP {
                         if (value.equals("Invalid User Id / Password") || value.equals("User Id Not available")) {
                             sharedPreferences.edit().putString("isLoggedIn", "false").apply();
                             myDatabase.close();
+                            downloadDialog.dismiss();
                             context.startActivity(new Intent(context, LoginActivity.class));
                             ((Activity) context).finish();
                         }
@@ -2237,7 +2238,7 @@ public class VTOP {
                                     sharedPreferences.edit().putBoolean("newMessages", true).apply();
 
                                     myDatabase.execSQL("DROP TABLE messages");
-                                    myDatabase.execSQL("ALTER TABLE messages_new RENAME TO spotlight");
+                                    myDatabase.execSQL("ALTER TABLE messages_new RENAME TO messages");
                                 } else {
                                     myDatabase.execSQL("DROP TABLE messages_new");
                                 }

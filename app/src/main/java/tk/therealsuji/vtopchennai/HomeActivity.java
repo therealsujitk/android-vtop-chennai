@@ -479,15 +479,32 @@ public class HomeActivity extends AppCompatActivity {
                     Remove other data to prevent issues in the next sign in
                  */
                 sharedPreferences.edit().remove("semester").apply();
-                sharedPreferences.edit().remove("newTimetable").apply();
-                sharedPreferences.edit().remove("failedAttendance").apply();
-                sharedPreferences.edit().remove("newMessages").apply();
-                sharedPreferences.edit().remove("newFaculty").apply();
-                sharedPreferences.edit().remove("newExams").apply();
+                sharedPreferences.edit().remove("newMarks").apply();
                 sharedPreferences.edit().remove("examsCount").apply();
                 sharedPreferences.edit().remove("receiptsCount").apply();
 
-                // Something has to be done about the marks activity and the spotlight activity
+                SQLiteDatabase myDatabase = context.openOrCreateDatabase("vtop", Context.MODE_PRIVATE, null);
+                /*
+                    Dropping Messages
+                 */
+                myDatabase.execSQL("DROP TABLE messages");
+
+                /*
+                    Dropping Marks
+                 */
+                myDatabase.execSQL("DROP TABLE marks");
+
+                /*
+                    Dropping Spotlight
+                 */
+                myDatabase.execSQL("DROP TABLE spotlight");
+
+                /*
+                    Dropping Proctor Messages
+                 */
+                myDatabase.execSQL("DROP TABLE proctor_messages");
+
+                myDatabase.close();
             }
         }).start();
     }
