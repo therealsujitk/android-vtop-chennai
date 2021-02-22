@@ -749,6 +749,24 @@ public class VTOP {
                                         }
                                     }
 
+                                    if (isHour12) {
+                                        try {
+                                            Date startTimeLab = hour12.parse(start_time_lab + " PM");
+                                            Date endTimeLab = hour12.parse(end_time_lab + " PM");
+                                            Date startTimeTheory = hour12.parse(start_time_theory + " PM");
+                                            Date endTimeTheory = hour12.parse(end_time_theory + " PM");
+
+                                            if (startTimeLab != null && endTimeLab != null && startTimeTheory != null && endTimeTheory != null) {
+                                                start_time_lab = hour24.format(startTimeLab);
+                                                end_time_lab = hour24.format(endTimeLab);
+                                                start_time_theory = hour24.format(startTimeTheory);
+                                                end_time_theory = hour24.format(endTimeTheory);
+                                            }
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+
                                     String[] labPeriods = {"null", "null", "null", "null", "null", "null", "null"};
                                     String[] theoryPeriods = {"null", "null", "null", "null", "null", "null", "null"};
 
@@ -829,24 +847,6 @@ public class VTOP {
                                             c.add(Calendar.MINUTE, -30);
                                             pendingIntent = PendingIntent.getBroadcast(context, alarmCount++, notificationIntent, 0);
                                             alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
-                                        }
-                                    }
-
-                                    if (isHour12) {
-                                        try {
-                                            Date startTimeLab = hour12.parse(start_time_lab + " PM");
-                                            Date endTimeLab = hour12.parse(end_time_lab + " PM");
-                                            Date startTimeTheory = hour12.parse(start_time_theory + " PM");
-                                            Date endTimeTheory = hour12.parse(end_time_theory + " PM");
-
-                                            if (startTimeLab != null && endTimeLab != null && startTimeTheory != null && endTimeTheory != null) {
-                                                start_time_lab = hour24.format(startTimeLab);
-                                                end_time_lab = hour24.format(endTimeLab);
-                                                start_time_theory = hour24.format(startTimeTheory);
-                                                end_time_theory = hour24.format(endTimeTheory);
-                                            }
-                                        } catch (Exception e) {
-                                            e.printStackTrace();
                                         }
                                     }
 
