@@ -497,12 +497,12 @@ public class HomeActivity extends AppCompatActivity {
                 /*
                     Dropping Spotlight
                  */
-                myDatabase.execSQL("DROP TABLE spotlight");
+                myDatabase.execSQL("DROP TABLE IF EXISTS spotlight");
 
                 /*
                     Dropping Proctor Messages
                  */
-                myDatabase.execSQL("DROP TABLE proctor_messages");
+                myDatabase.execSQL("DROP TABLE IF EXISTS proctor_messages");
 
                 myDatabase.close();
             }
