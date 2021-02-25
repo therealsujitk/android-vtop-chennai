@@ -19,6 +19,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.ColorMatrixColorFilter;
 import android.util.Base64;
 import android.view.View;
+import android.view.ViewStub;
 import android.view.animation.AccelerateInterpolator;
 import android.webkit.CookieManager;
 import android.webkit.ValueCallback;
@@ -55,7 +56,8 @@ public class VTOP {
     EditText captchaView;
     ProgressBar loading, progressBar;
     Spinner selectSemester;
-    LinearLayout captchaLayout, downloadingLayout, semesterLayout;
+    LinearLayout captchaLayout, progressLayout, semesterLayout;
+    ViewStub captchaStub, semesterStub, progressStub;
 
     /*
         DARK is used to change the colours of the captcha image when in dark mode
@@ -71,28 +73,14 @@ public class VTOP {
     SQLiteDatabase myDatabase;
     TextView downloading, progressText;
     int counter, lastDownload;
-    Boolean isOpened, isLoggedIn;
+    Boolean isOpened, isLoggedIn, isCaptchaInflated, isSemesterInflated, isProgressInflated;
 
     String semesterID;
 
     @SuppressLint("SetJavaScriptEnabled")
-    public VTOP(final Context context, final Dialog downloadDialog) {
+    public VTOP(final Context context) {
         this.context = context;
-        this.downloadDialog = downloadDialog;
         webView = new WebView(context);
-        loading = downloadDialog.findViewById(R.id.loading);
-        captcha = downloadDialog.findViewById(R.id.captchaCode);
-        captchaLayout = downloadDialog.findViewById(R.id.captchaLayout);
-        captchaView = downloadDialog.findViewById(R.id.captcha);
-        downloadingLayout = downloadDialog.findViewById(R.id.downloadingLayout);
-        semesterLayout = downloadDialog.findViewById(R.id.semesterLayout);
-        downloading = downloadDialog.findViewById(R.id.downloading);
-        progressBar = downloadDialog.findViewById(R.id.progressBar);
-        progressText = downloadDialog.findViewById(R.id.progressText);
-        selectSemester = downloadDialog.findViewById(R.id.selectSemester);
-        sharedPreferences = context.getSharedPreferences("tk.therealsuji.vtopchennai", Context.MODE_PRIVATE);
-        myDatabase = context.openOrCreateDatabase("vtop", Context.MODE_PRIVATE, null);
-
         webView.getSettings().setJavaScriptEnabled(true);
         webView.getSettings().setUserAgentString("Mozilla/5.0 (Linux; Android 10) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.99 Mobile Safari/537.36");
         webView.setWebViewClient(new WebViewClient() {
@@ -110,19 +98,69 @@ public class VTOP {
                 }
             }
         });
+    }
+
+    /*
+        Start referencing the views
+     */
+    public void start(final Dialog downloadDialog) {
+        this.downloadDialog = downloadDialog;
+
+        loading = downloadDialog.findViewById(R.id.loading);
+
+        captchaStub = downloadDialog.findViewById(R.id.captchaStub);
+        semesterStub = downloadDialog.findViewById(R.id.semesterStub);
+        progressStub = downloadDialog.findViewById(R.id.progressStub);
+
+        sharedPreferences = context.getSharedPreferences("tk.therealsuji.vtopchennai", Context.MODE_PRIVATE);
+        myDatabase = context.openOrCreateDatabase("vtop", Context.MODE_PRIVATE, null);
 
         isOpened = false;
         isLoggedIn = false;
-        counter = 0;
-        lastDownload = 0;
+        isCaptchaInflated = false;
+        isSemesterInflated = false;
+        isProgressInflated = false;
 
         reloadPage();
     }
 
     /*
+        Setup Captcha Layout
+     */
+    public void setupCaptcha() {
+        captchaStub.inflate();
+        captcha = downloadDialog.findViewById(R.id.captchaCode);
+        captchaLayout = downloadDialog.findViewById(R.id.captchaLayout);
+        captchaView = downloadDialog.findViewById(R.id.captcha);
+        isCaptchaInflated = true;
+    }
+
+    /*
+        Setup Semester Layout
+     */
+    public void setupSemester() {
+        semesterStub.inflate();
+        semesterLayout = downloadDialog.findViewById(R.id.semesterLayout);
+        selectSemester = downloadDialog.findViewById(R.id.selectSemester);
+        isSemesterInflated = true;
+    }
+
+    /*
+        Setup Progress Layout
+     */
+    public void setupProgress() {
+        progressStub.inflate();
+        progressLayout = downloadDialog.findViewById(R.id.progressLayout);
+        downloading = downloadDialog.findViewById(R.id.downloading);
+        progressBar = downloadDialog.findViewById(R.id.progressBar);
+        progressText = downloadDialog.findViewById(R.id.progressText);
+        isProgressInflated = true;
+    }
+
+    /*
         Function to perform a smooth animation of expanding the layouts in the dialog
      */
-    public static void expand(final View view) {
+    public void expand(final View view) {
         view.measure(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         final int targetHeight = view.getMeasuredHeight();
 
@@ -156,7 +194,7 @@ public class VTOP {
     /*
         Function to perform a smooth animation of compressing the layouts in the dialog
      */
-    public static void compress(final View view) {
+    public void compress(final View view) {
         if (view.getVisibility() == View.GONE) {
             return;
         }
@@ -190,9 +228,17 @@ public class VTOP {
     public void hideLayouts() {
         loading.setVisibility(View.INVISIBLE);
 
-        compress(downloadingLayout);
-        compress(semesterLayout);
-        compress(captchaLayout);
+        if (isProgressInflated) {
+            compress(progressLayout);
+        }
+
+        if (isSemesterInflated) {
+            compress(semesterLayout);
+        }
+
+        if (isCaptchaInflated) {
+            compress(captchaLayout);
+        }
     }
 
     /*
@@ -281,8 +327,12 @@ public class VTOP {
                         Bitmap decodedImage = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
 
                         String appearance = sharedPreferences.getString("appearance", "system");
-                        captcha.setImageBitmap(decodedImage);
 
+                        if (!isCaptchaInflated) {
+                            setupCaptcha();
+                        }
+
+                        captcha.setImageBitmap(decodedImage);
                         if (appearance.equals("dark") || (appearance.equals("system") && (context.getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES)) {
                             captcha.setColorFilter(new ColorMatrixColorFilter(DARK));
                         }
@@ -396,6 +446,9 @@ public class VTOP {
                         boolean isIndexStored = false;
                         String storedSemester = sharedPreferences.getString("semester", "null");
 
+                        if (!isSemesterInflated) {
+                            setupSemester();
+                        }
 
                         JSONObject myObj = new JSONObject(obj);
                         List<String> options = new ArrayList<>();
@@ -468,10 +521,14 @@ public class VTOP {
         TBD: Saving the users profile picture
      */
     public void downloadProfile() {
+        if (!isProgressInflated) {
+            setupProgress();
+        }
+
         downloading.setText(context.getString(R.string.downloading_profile));
-        if (downloadingLayout.getVisibility() == View.GONE) {
+        if (progressLayout.getVisibility() == View.GONE) {
             hideLayouts();
-            expand(downloadingLayout);
+            expand(progressLayout);
         }
 
         webView.evaluateJavascript("(function() {" +
@@ -536,9 +593,9 @@ public class VTOP {
      */
     public void downloadTimetable() {
         downloading.setText(context.getString(R.string.downloading_timetable));
-        if (downloadingLayout.getVisibility() == View.GONE) {
+        if (progressLayout.getVisibility() == View.GONE) {
             hideLayouts();
-            expand(downloadingLayout);
+            expand(progressLayout);
         }
 
         webView.evaluateJavascript("(function() {" +
@@ -885,9 +942,9 @@ public class VTOP {
      */
     public void downloadFaculty() {
         downloading.setText(context.getString(R.string.downloading_faculty));
-        if (downloadingLayout.getVisibility() == View.GONE) {
+        if (progressLayout.getVisibility() == View.GONE) {
             hideLayouts();
-            expand(downloadingLayout);
+            expand(progressLayout);
         }
 
         webView.evaluateJavascript("(function() {" +
@@ -1008,9 +1065,9 @@ public class VTOP {
      */
     public void downloadProctor() {
         downloading.setText(context.getString(R.string.downloading_staff));
-        if (downloadingLayout.getVisibility() == View.GONE) {
+        if (progressLayout.getVisibility() == View.GONE) {
             hideLayouts();
-            expand(downloadingLayout);
+            expand(progressLayout);
         }
 
         webView.evaluateJavascript("(function() {" +
@@ -1117,9 +1174,9 @@ public class VTOP {
      */
     public void downloadDeanHOD() {
         downloading.setText(context.getString(R.string.downloading_staff));
-        if (downloadingLayout.getVisibility() == View.GONE) {
+        if (progressLayout.getVisibility() == View.GONE) {
             hideLayouts();
-            expand(downloadingLayout);
+            expand(progressLayout);
         }
         webView.evaluateJavascript("(function() {" +
                 "var data = 'verifyMenu=true&winImage=' + $('#winImage').val() + '&authorizedID=' + $('#authorizedIDX').val() + '&nocache=@(new Date().getTime())';" +
@@ -1291,9 +1348,9 @@ public class VTOP {
      */
     public void downloadAttendance() {
         downloading.setText(context.getString(R.string.downloading_attendance));
-        if (downloadingLayout.getVisibility() == View.GONE) {
+        if (progressLayout.getVisibility() == View.GONE) {
             hideLayouts();
-            expand(downloadingLayout);
+            expand(progressLayout);
         }
 
         webView.evaluateJavascript("(function() {" +
@@ -1439,9 +1496,9 @@ public class VTOP {
      */
     public void downloadExams() {
         downloading.setText(context.getString(R.string.downloading_exams));
-        if (downloadingLayout.getVisibility() == View.GONE) {
+        if (progressLayout.getVisibility() == View.GONE) {
             hideLayouts();
-            expand(downloadingLayout);
+            expand(progressLayout);
         }
 
         webView.evaluateJavascript("(function() {" +
@@ -1669,9 +1726,9 @@ public class VTOP {
      */
     public void downloadMarks() {
         downloading.setText(R.string.downloading_marks);
-        if (downloadingLayout.getVisibility() == View.GONE) {
+        if (progressLayout.getVisibility() == View.GONE) {
             hideLayouts();
-            expand(downloadingLayout);
+            expand(progressLayout);
         }
 
         webView.evaluateJavascript("(function() {" +
@@ -1906,9 +1963,9 @@ public class VTOP {
      */
     public void downloadGradeHistory() {
         downloading.setText(context.getString(R.string.downloading_grade_history));
-        if (downloadingLayout.getVisibility() == View.GONE) {
+        if (progressLayout.getVisibility() == View.GONE) {
             hideLayouts();
-            expand(downloadingLayout);
+            expand(progressLayout);
         }
 
         webView.evaluateJavascript("(function() {" +
@@ -2140,9 +2197,9 @@ public class VTOP {
      */
     public void downloadMessages() {
         downloading.setText(context.getString(R.string.downloading_messages));
-        if (downloadingLayout.getVisibility() == View.GONE) {
+        if (progressLayout.getVisibility() == View.GONE) {
             hideLayouts();
-            expand(downloadingLayout);
+            expand(progressLayout);
         }
 
         webView.evaluateJavascript("(function() {" +
@@ -2266,9 +2323,9 @@ public class VTOP {
      */
     public void downloadProctorMessages() {
         downloading.setText(context.getString(R.string.downloading_messages));
-        if (downloadingLayout.getVisibility() == View.GONE) {
+        if (progressLayout.getVisibility() == View.GONE) {
             hideLayouts();
-            expand(downloadingLayout);
+            expand(progressLayout);
         }
         webView.evaluateJavascript("(function() {" +
                 "var data = 'verifyMenu=true&winImage=' + $('#winImage').val() + '&authorizedID=' + $('#authorizedIDX').val() + '&nocache=@(new Date().getTime())';" +
@@ -2362,9 +2419,9 @@ public class VTOP {
      */
     public void downloadSpotlight() {
         downloading.setText(context.getString(R.string.downloading_spotlight));
-        if (downloadingLayout.getVisibility() == View.GONE) {
+        if (progressLayout.getVisibility() == View.GONE) {
             hideLayouts();
-            expand(downloadingLayout);
+            expand(progressLayout);
         }
 
         webView.evaluateJavascript("(function() {" +
@@ -2508,9 +2565,9 @@ public class VTOP {
     */
     public void downloadReceipts() {
         downloading.setText(context.getString(R.string.downloading_receipts));
-        if (downloadingLayout.getVisibility() == View.GONE) {
+        if (progressLayout.getVisibility() == View.GONE) {
             hideLayouts();
-            expand(downloadingLayout);
+            expand(progressLayout);
         }
 
         webView.evaluateJavascript("(function() {" +

@@ -14,8 +14,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.Spinner;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -56,7 +54,7 @@ public class LoginActivity extends AppCompatActivity {
 
         download.show();
 
-        vtop = new VTOP(this, download);
+        vtop.start(download);
 
         /*
             Remove any non-encrypted credentials
@@ -66,10 +64,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void submitCaptcha(View view) {
-        LinearLayout captchaLayout = download.findViewById(R.id.captchaLayout);
-        ProgressBar loading = download.findViewById(R.id.loading);
-        VTOP.compress(captchaLayout);
-        loading.setVisibility(View.INVISIBLE);
+        vtop.hideLayouts();
 
         String username = encryptedSharedPreferences.getString("username", null);
         String password = encryptedSharedPreferences.getString("password", null);
@@ -103,10 +98,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void selectSemester(View view) {
-        LinearLayout semesterLayout = download.findViewById(R.id.semesterLayout);
-        ProgressBar loading = download.findViewById(R.id.loading);
-        VTOP.compress(semesterLayout);
-        loading.setVisibility(View.INVISIBLE);
+        vtop.hideLayouts();
 
         Spinner selectSemester = download.findViewById(R.id.selectSemester);
         String semester = selectSemester.getSelectedItem().toString().toLowerCase();
@@ -283,5 +275,10 @@ public class LoginActivity extends AppCompatActivity {
             update.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
             update.show();
         }
+
+        /*
+            Initialising the VTOP WebView
+         */
+        vtop = new VTOP(this);
     }
 }

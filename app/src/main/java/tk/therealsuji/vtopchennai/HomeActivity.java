@@ -27,7 +27,6 @@ import android.view.animation.AccelerateInterpolator;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
@@ -265,7 +264,7 @@ public class HomeActivity extends AppCompatActivity {
 
         download.show();
 
-        vtop = new VTOP(this, download);
+        vtop.start(download);
 
         if (refresh != null) {
             refresh.dismiss();
@@ -273,10 +272,7 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     public void submitCaptcha(View view) {
-        LinearLayout captchaLayout = download.findViewById(R.id.captchaLayout);
-        ProgressBar loading = download.findViewById(R.id.loading);
-        VTOP.compress(captchaLayout);
-        loading.setVisibility(View.INVISIBLE);
+        vtop.hideLayouts();
 
         String username = encryptedSharedPreferences.getString("username", null);
         String password = encryptedSharedPreferences.getString("password", null);
@@ -310,10 +306,7 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     public void selectSemester(View view) {
-        LinearLayout semesterLayout = download.findViewById(R.id.semesterLayout);
-        ProgressBar loading = download.findViewById(R.id.loading);
-        VTOP.compress(semesterLayout);
-        loading.setVisibility(View.INVISIBLE);
+        vtop.hideLayouts();
 
         Spinner selectSemester = download.findViewById(R.id.selectSemester);
         String semester = selectSemester.getSelectedItem().toString().toLowerCase();
@@ -1772,6 +1765,11 @@ public class HomeActivity extends AppCompatActivity {
 
         TextView myLink = findViewById(R.id.builtBy);
         myLink.setMovementMethod(LinkMovementMethod.getInstance());
+
+        /*
+            Initialising the VTOP WebView
+         */
+        vtop = new VTOP(this);
     }
 
     @Override

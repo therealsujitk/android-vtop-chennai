@@ -11,7 +11,10 @@
             android:valueType="floatType" />
     </item>
 
-    <item>
+    <item
+        android:state_enabled="true"
+        android:state_pressed="false">
+
         <objectAnimator
             android:duration="@android:integer/config_shortAnimTime"
             android:propertyName="translationZ"

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -28,161 +27,22 @@
             android:layout_centerVertical="true"
             android:padding="2dp" />
 
-        <LinearLayout
-            android:id="@+id/captchaLayout"
+        <ViewStub
+            android:id="@+id/captchaStub"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout="@layout/layout_download_captcha" />
+
+        <ViewStub
+            android:id="@+id/semesterStub"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:visibility="gone">
+            android:layout="@layout/layout_download_semester" />
 
-            <ImageView
-                android:id="@+id/captchaCode"
-                android:layout_width="180dp"
-                android:layout_height="45dp"
-                android:layout_marginEnd="5dp"
-                android:contentDescription="@string/captcha_description" />
-
-            <EditText
-                android:id="@+id/captcha"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="25dp"
-                android:autofillHints="Enter your VTOP username"
-                android:background="@drawable/text_field_primary"
-                android:ems="10"
-                android:hint="@string/captcha"
-                android:inputType="textCapCharacters"
-                android:padding="10dp"
-                android:textAlignment="center"
-                android:textColor="@color/colorText"
-                android:textColorHint="@color/colorHint" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:gravity="end"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="2dp"
-                    android:background="@drawable/button_tertiary"
-                    android:onClick="cancelDownload"
-                    android:padding="10dp"
-                    android:text="@string/cancel"
-                    android:textAllCaps="true"
-                    android:textColor="@color/colorPrimary"
-                    android:textSize="14sp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="2dp"
-                    android:background="@drawable/button_tertiary"
-                    android:onClick="submitCaptcha"
-                    android:padding="10dp"
-                    android:text="@string/submit"
-                    android:textAllCaps="true"
-                    android:textColor="@color/colorPrimary"
-                    android:textSize="14sp" />
-            </LinearLayout>
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/semesterLayout"
+        <ViewStub
+            android:id="@+id/progressStub"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:visibility="gone">
-
-            <Spinner
-                android:id="@+id/selectSemester"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="35dp"
-                android:background="@drawable/spinner_primary" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:gravity="end"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="2dp"
-                    android:background="@drawable/button_tertiary"
-                    android:onClick="cancelDownload"
-                    android:padding="10dp"
-                    android:text="@string/cancel"
-                    android:textAllCaps="true"
-                    android:textColor="@color/colorPrimary"
-                    android:textSize="14sp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="2dp"
-                    android:background="@drawable/button_tertiary"
-                    android:onClick="selectSemester"
-                    android:padding="10dp"
-                    android:text="@string/select"
-                    android:textAllCaps="true"
-                    android:textColor="@color/colorPrimary"
-                    android:textSize="14sp" />
-            </LinearLayout>
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/downloadingLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="10dp"
-            android:layout_centerVertical="true"
-            android:orientation="vertical"
-            android:visibility="gone">
-
-            <TextView
-                android:id="@+id/downloading"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/downloading_profile"
-                android:textColor="@color/colorPrimary"
-                android:textSize="16sp" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <ProgressBar
-                    android:id="@+id/progressBar"
-                    style="?android:attr/progressBarStyleHorizontal"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="5dp"
-                    android:layout_weight="1"
-                    android:max="13"
-                    android:progressTint="@color/colorPrimary" />
-
-                <TextView
-                    android:id="@+id/progressText"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="5dp"
-                    android:text="0 / 12"
-                    android:textColor="@color/colorPrimary"
-                    tools:ignore="HardcodedText" />
-            </LinearLayout>
-        </LinearLayout>
+            android:layout="@layout/layout_download_progress" />
     </RelativeLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

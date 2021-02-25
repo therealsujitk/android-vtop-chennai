@@ -41,12 +41,14 @@ import java.util.Objects;
 public class SpotlightActivity extends AppCompatActivity {
     ScrollView announcements;
     HorizontalScrollView categoriesContainer;
+    WebView download;
     ArrayList<TextView> categories = new ArrayList<>();
     ArrayList<LinearLayout> announcementViews = new ArrayList<>();
-    String savedLink;
+    String downloadLink;
     float pixelDensity;
     int index, halfWidth;
     int STORAGE_PERMISSION_CODE = 1;
+    boolean isDownloadOpened;
 
     public void setAnnouncements(View view) {
         int selectedIndex = Integer.parseInt(view.getTag().toString());
@@ -81,43 +83,49 @@ public class SpotlightActivity extends AppCompatActivity {
     }
 
     public void downloadDocument(String link) {
+        downloadLink = link;
+
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, STORAGE_PERMISSION_CODE);
-            savedLink = link;
             return;
         }
 
-        final String downloadLink = "http://vtopcc.vit.ac.in/vtop/" + link + "?&x=";
-        final boolean[] isOpened = {false};
+        isDownloadOpened = false;
 
-        final WebView download = new WebView(this);
-        download.getSettings().setUserAgentString("Mozilla/5.0 (Linux; Android 10) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.99 Mobile Safari/537.36");
-        download.setWebViewClient(new WebViewClient() {
-            public void onPageFinished(WebView view, String url) {
-                if (isOpened[0]) {
-                    return;
+        if (download == null) {
+            download = new WebView(this);
+            download.getSettings().setUserAgentString("Mozilla/5.0 (Linux; Android 10) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.99 Mobile Safari/537.36");
+            download.setWebViewClient(new WebViewClient() {
+                public void onPageFinished(WebView view, String url) {
+                    if (isDownloadOpened) {
+                        return;
+                    }
+
+                    isDownloadOpened = true;
+                    download.loadUrl("http://vtopcc.vit.ac.in/vtop/" + downloadLink + "?&x=");
                 }
+            });
+            download.setDownloadListener(new DownloadListener() {
+                @Override
+                public void onDownloadStart(String url, String userAgent, String contentDisposition, String mimetype, long contentLength) {
+                    Toast.makeText(SpotlightActivity.this, "Downloading document", Toast.LENGTH_SHORT).show();
 
-                isOpened[0] = true;
-                download.loadUrl(downloadLink);
-            }
-        });
-        download.setDownloadListener(new DownloadListener() {
-            @Override
-            public void onDownloadStart(String url, String userAgent, String contentDisposition, String mimetype, long contentLength) {
-                Toast.makeText(SpotlightActivity.this, "Downloading document", Toast.LENGTH_SHORT).show();
-
-                DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
-                request.allowScanningByMediaScanner();
-                request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-                String fileName = contentDisposition.split("filename=")[1];
-                request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "VTOP Spotlight/" + fileName);
-                request.setMimeType(mimetype);
-                request.addRequestHeader("cookie", CookieManager.getInstance().getCookie(url));
-                DownloadManager downloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
-                downloadManager.enqueue(request);
-            }
-        });
+                    DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
+                    request.allowScanningByMediaScanner();
+                    request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+                    String fileName = contentDisposition.split("filename=")[1];
+                    request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "VTOP Spotlight/" + fileName);
+                    request.setMimeType(mimetype);
+                    request.addRequestHeader("cookie", CookieManager.getInstance().getCookie(url));
+                    DownloadManager downloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
+                    downloadManager.enqueue(request);
+                }
+            });
+        } else {
+            download.clearCache(true);
+            download.clearHistory();
+            CookieManager.getInstance().removeAllCookies(null);
+        }
 
         download.loadUrl("http://vtopcc.vit.ac.in/vtop");
     }
@@ -128,7 +136,7 @@ public class SpotlightActivity extends AppCompatActivity {
 
         if (requestCode == STORAGE_PERMISSION_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                downloadDocument(savedLink);
+                downloadDocument(downloadLink);
             } else {
                 Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
             }
