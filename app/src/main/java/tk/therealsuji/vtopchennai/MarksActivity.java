@@ -2,13 +2,10 @@ package tk.therealsuji.vtopchennai;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -19,13 +16,10 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
-import android.widget.TableRow;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
-import androidx.core.content.res.ResourcesCompat;
-import androidx.core.widget.ImageViewCompat;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -44,6 +38,8 @@ public class MarksActivity extends AppCompatActivity {
     int screenWidth, index;
     SharedPreferences sharedPreferences;
     JSONObject newMarks;
+
+    boolean terminateThread = false;
 
     public void setMarks(View view) {
         int selectedIndex = Integer.parseInt(view.getTag().toString());
@@ -105,7 +101,17 @@ public class MarksActivity extends AppCompatActivity {
                 int courseIndex = c.getColumnIndex("course");
                 c.moveToFirst();
 
+                LayoutGenerator myLayout = new LayoutGenerator(context);
+                ButtonGenerator myButton = new ButtonGenerator(context);
+                CardGenerator myMark = new CardGenerator(context, CardGenerator.CARD_MARK);
+
+                NotificationDotGenerator myNotification = new NotificationDotGenerator(context);
+
                 for (int i = 0; i < c.getCount(); ++i, c.moveToNext()) {
+                    if (terminateThread) {
+                        return;
+                    }
+
                     if (i == 0) {
                         runOnUiThread(new Runnable() {
                             @Override
@@ -120,14 +126,7 @@ public class MarksActivity extends AppCompatActivity {
                     /*
                         Creating a the mark view
                      */
-                    final LinearLayout markView = new LinearLayout(context);
-                    LinearLayout.LayoutParams markViewParams = new LinearLayout.LayoutParams(
-                            LinearLayout.LayoutParams.MATCH_PARENT,
-                            LinearLayout.LayoutParams.MATCH_PARENT
-                    );
-                    markView.setLayoutParams(markViewParams);
-                    markView.setPadding(0, (int) (65 * pixelDensity), 0, (int) (15 * pixelDensity));
-                    markView.setOrientation(LinearLayout.VERTICAL);
+                    final LinearLayout markView = myLayout.generateLayout();
 
                     markViews.add(markView);    //Storing the view
 
@@ -141,160 +140,48 @@ public class MarksActivity extends AppCompatActivity {
                     int weightageIndex = s.getColumnIndex("weightage");
                     int averageIndex = s.getColumnIndex("average");
 
-                    int[] indexes = {typeIndex, scoreIndex, weightageIndex, averageIndex, statusIndex};
-                    String[] titles = {getString(R.string.type), getString(R.string.score), getString(R.string.weightage), getString(R.string.average), getString(R.string.status)};
-
                     s.moveToFirst();
 
                     final ArrayList<String> readMarks = new ArrayList<>();
 
                     for (int j = 0; j < s.getCount(); ++j, s.moveToNext()) {
-                        /*
-                            The outer block for the mark
-                         */
-                        final LinearLayout block = new LinearLayout(context);
-                        LinearLayout.LayoutParams blockParams = new LinearLayout.LayoutParams(
-                                LinearLayout.LayoutParams.MATCH_PARENT,
-                                LinearLayout.LayoutParams.WRAP_CONTENT
-                        );
-                        blockParams.setMarginStart((int) (20 * pixelDensity));
-                        blockParams.setMarginEnd((int) (20 * pixelDensity));
-                        blockParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (5 * pixelDensity));
-                        block.setPadding(0, 0, 0, (int) (17 * pixelDensity));
-                        block.setLayoutParams(blockParams);
-                        block.setBackground(ContextCompat.getDrawable(context, R.drawable.plain_card));
-                        block.setOrientation(LinearLayout.VERTICAL);
-
-                        /*
-                            The mark title TextView
-                         */
-                        TextView markTitle = new TextView(context);
-                        TableRow.LayoutParams markTitleParams = new TableRow.LayoutParams(
-                                TableRow.LayoutParams.WRAP_CONTENT,
-                                TableRow.LayoutParams.WRAP_CONTENT
-                        );
-                        markTitleParams.setMarginStart((int) (20 * pixelDensity));
-                        markTitleParams.setMarginEnd((int) (20 * pixelDensity));
-                        markTitleParams.setMargins(0, (int) (20 * pixelDensity), 0, (int) (5 * pixelDensity));
-                        markTitle.setLayoutParams(markTitleParams);
-                        markTitle.setText(s.getString(titleIndex));
-                        markTitle.setTextColor(getColor(R.color.colorPrimary));
-                        markTitle.setTextSize(20);
-                        markTitle.setTypeface(ResourcesCompat.getFont(context, R.font.rubik), Typeface.BOLD);
-
-                        block.addView(markTitle);  //Adding the title to block
-
-                        for (int k = 0; k < 5; ++k) {
-                            String valueString = s.getString(indexes[k]);
-                            if (!valueString.equals("")) {
-                                /*
-                                    The inner block
-                                 */
-                                LinearLayout innerBlock = new LinearLayout(context);
-                                innerBlock.setLayoutParams(new LinearLayout.LayoutParams(
-                                        LinearLayout.LayoutParams.MATCH_PARENT,
-                                        LinearLayout.LayoutParams.WRAP_CONTENT
-                                ));
-                                innerBlock.setOrientation(LinearLayout.HORIZONTAL);
-
-                                /*
-                                    The title TextView
-                                 */
-                                TextView title = new TextView(context);
-                                TableRow.LayoutParams titleParams = new TableRow.LayoutParams(
-                                        TableRow.LayoutParams.WRAP_CONTENT,
-                                        TableRow.LayoutParams.WRAP_CONTENT
-                                );
-                                titleParams.setMarginStart((int) (20 * pixelDensity));
-                                titleParams.setMargins(0, (int) (3 * pixelDensity), 0, (int) (3 * pixelDensity));
-                                title.setLayoutParams(titleParams);
-                                title.setText(titles[k]);
-                                title.setTextColor(getColor(R.color.colorPrimary));
-                                title.setTextSize(16);
-                                title.setTypeface(ResourcesCompat.getFont(context, R.font.rubik));
-
-                                innerBlock.addView(title);  //Adding the title to the inner block
-
-                                /*
-                                    The value TextView
-                                 */
-                                TextView value = new TextView(context);
-                                TableRow.LayoutParams valueParams = new TableRow.LayoutParams(
-                                        TableRow.LayoutParams.MATCH_PARENT,
-                                        TableRow.LayoutParams.WRAP_CONTENT
-                                );
-                                valueParams.setMarginEnd((int) (20 * pixelDensity));
-                                valueParams.setMargins(0, (int) (3 * pixelDensity), 0, (int) (3 * pixelDensity));
-                                value.setLayoutParams(valueParams);
-                                value.setText(valueString);
-                                value.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
-                                value.setTextColor(getColor(R.color.colorPrimary));
-                                value.setTextSize(16);
-                                value.setTypeface(ResourcesCompat.getFont(context, R.font.rubik), Typeface.BOLD);
-
-                                innerBlock.addView(value);  //Adding the value to the inner block
-
-                                /*
-                                    Finally adding the inner block to the main block
-                                 */
-                                block.addView(innerBlock);
-                            }
+                        if (terminateThread) {
+                            return;
                         }
 
+                        String title = s.getString(titleIndex);
+                        String type = s.getString(typeIndex);
+                        String score = s.getString(scoreIndex);
+                        String weightage = s.getString(weightageIndex);
+                        String average = s.getString(averageIndex);
+                        String status = s.getString(statusIndex);
+
+                        final LinearLayout card = myMark.generateCard(title, type, score, weightage, average, status);
+
                         /*
-                            Finally adding the main block to the view
+                            Adding the card / container to the view
                          */
                         String id = s.getString(idIndex);
                         if (newMarks.has(id)) {
-                            RelativeLayout container = new RelativeLayout(context);
-                            RelativeLayout.LayoutParams containerParams = new RelativeLayout.LayoutParams(
-                                    RelativeLayout.LayoutParams.WRAP_CONTENT,
-                                    RelativeLayout.LayoutParams.WRAP_CONTENT
-                            );
-                            container.setLayoutParams(containerParams);
-
-                            container.addView(block);
+                            RelativeLayout container = myNotification.generateNotificationContainer();
+                            container.addView(card);
 
                             int marginStart = (int) (screenWidth - 30 * pixelDensity);
-
-                            ImageView notification = new ImageView(context);
-                            LinearLayout.LayoutParams notificationParams = new LinearLayout.LayoutParams(
-                                    LinearLayout.LayoutParams.WRAP_CONTENT,
-                                    LinearLayout.LayoutParams.WRAP_CONTENT
-                            );
-                            notificationParams.setMarginStart(marginStart);
-                            notificationParams.setMargins(0, (int) (5 * pixelDensity), 0, 0);
-                            notification.setLayoutParams(notificationParams);
-                            notification.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_notification_dot));
-                            ImageViewCompat.setImageTintList(notification, ColorStateList.valueOf(getColor(R.color.colorPrimaryTransparent)));
-                            notification.setScaleX(0);
-                            notification.setScaleY(0);
-
-                            notification.animate().scaleX(1).scaleY(1);
-
+                            ImageView notification = myNotification.generateNotificationDot(marginStart, NotificationDotGenerator.NOTIFICATION_DEFAULT);
+                            notification.setPadding(0, (int) (5 * pixelDensity), 0, 0);
                             container.addView(notification);
 
                             markView.addView(container);
-
                             readMarks.add(id);
                         } else {
-                            markView.addView(block);
+                            markView.addView(card);
                         }
                     }
 
                     /*
                         Creating the course button
                      */
-                    final TextView markButton = new TextView(context);
-                    LinearLayout.LayoutParams buttonParams = new LinearLayout.LayoutParams(
-                            LinearLayout.LayoutParams.WRAP_CONTENT,
-                            (int) (25 * pixelDensity)
-                    );
-                    buttonParams.setMarginStart((int) (5 * pixelDensity));
-                    buttonParams.setMarginEnd((int) (5 * pixelDensity));
-                    buttonParams.setMargins(0, (int) (20 * pixelDensity), 0, (int) (20 * pixelDensity));
-                    markButton.setLayoutParams(buttonParams);
-                    markButton.setPadding((int) (20 * pixelDensity), 0, (int) (20 * pixelDensity), 0);
+                    final TextView markButton = myButton.generateButton(course);
                     if (i == 0) {
                         markButton.setBackground(ContextCompat.getDrawable(context, R.drawable.button_secondary_selected));
                         index = 0;
@@ -307,15 +194,8 @@ public class MarksActivity extends AppCompatActivity {
                         }
 
                         sharedPreferences.edit().putString("newMarks", newMarks.toString()).apply();
-                    } else {
-                        markButton.setBackground(ContextCompat.getDrawable(context, R.drawable.button_secondary));
                     }
                     markButton.setTag(i);
-                    markButton.setText(course);
-                    markButton.setTextColor(getColor(R.color.colorPrimary));
-                    markButton.setTextSize(12);
-                    markButton.setGravity(Gravity.CENTER_VERTICAL);
-                    markButton.setTypeface(ResourcesCompat.getFont(context, R.font.rubik), Typeface.BOLD);
                     markButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -337,7 +217,7 @@ public class MarksActivity extends AppCompatActivity {
                     buttons.add(markButton);    //Storing the button
 
                     /*
-                        Finally adding the button to the HorizontalScrollView
+                        Adding the button to the HorizontalScrollView
                      */
                     if (readMarks.isEmpty()) {
                         runOnUiThread(new Runnable() {
@@ -347,28 +227,11 @@ public class MarksActivity extends AppCompatActivity {
                             }
                         });
                     } else {
-                        final RelativeLayout container = new RelativeLayout(context);
-                        RelativeLayout.LayoutParams containerParams = new RelativeLayout.LayoutParams(
-                                RelativeLayout.LayoutParams.WRAP_CONTENT,
-                                RelativeLayout.LayoutParams.WRAP_CONTENT
-                        );
-                        container.setLayoutParams(containerParams);
-
+                        final RelativeLayout container = myNotification.generateNotificationContainer();
                         container.addView(markButton);
 
-                        final ImageView notification = new ImageView(context);
-                        LinearLayout.LayoutParams notificationParams = new LinearLayout.LayoutParams(
-                                LinearLayout.LayoutParams.WRAP_CONTENT,
-                                LinearLayout.LayoutParams.WRAP_CONTENT
-                        );
-                        notificationParams.setMarginStart((int) (3 * pixelDensity));
-                        notificationParams.setMargins(0, (int) (20 * pixelDensity), 0, 0);
-                        notification.setLayoutParams(notificationParams);
-                        notification.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_notification_dot));
-                        ImageViewCompat.setImageTintList(notification, ColorStateList.valueOf(getColor(R.color.colorPrimaryTransparent)));
-                        notification.setScaleX(0);
-                        notification.setScaleY(0);
-
+                        final ImageView notification = myNotification.generateNotificationDot((int) (3 * pixelDensity), NotificationDotGenerator.NOTIFICATION_DEFAULT);
+                        notification.setPadding(0, (int) (20 * pixelDensity), 0, 0);
                         container.addView(notification);
 
                         runOnUiThread(new Runnable() {
@@ -442,7 +305,17 @@ public class MarksActivity extends AppCompatActivity {
                 int titleIndex = c.getColumnIndex("title");
                 c.moveToFirst();
 
+                LayoutGenerator myLayout = new LayoutGenerator(context);
+                ButtonGenerator myButton = new ButtonGenerator(context);
+                CardGenerator myMark = new CardGenerator(context, CardGenerator.CARD_MARK);
+
+                NotificationDotGenerator myNotification = new NotificationDotGenerator(context);
+
                 for (int i = 0; i < c.getCount(); ++i, c.moveToNext()) {
+                    if (terminateThread) {
+                        return;
+                    }
+
                     if (i == 0) {
                         runOnUiThread(new Runnable() {
                             @Override
@@ -457,14 +330,7 @@ public class MarksActivity extends AppCompatActivity {
                     /*
                         Creating a the mark view
                      */
-                    final LinearLayout markView = new LinearLayout(context);
-                    LinearLayout.LayoutParams markViewParams = new LinearLayout.LayoutParams(
-                            LinearLayout.LayoutParams.MATCH_PARENT,
-                            LinearLayout.LayoutParams.MATCH_PARENT
-                    );
-                    markView.setLayoutParams(markViewParams);
-                    markView.setPadding(0, (int) (65 * pixelDensity), 0, (int) (15 * pixelDensity));
-                    markView.setOrientation(LinearLayout.VERTICAL);
+                    final LinearLayout markView = myLayout.generateLayout();
 
                     markViews.add(markView);    //Storing the view
 
@@ -478,160 +344,48 @@ public class MarksActivity extends AppCompatActivity {
                     int weightageIndex = s.getColumnIndex("weightage");
                     int averageIndex = s.getColumnIndex("average");
 
-                    int[] indexes = {typeIndex, scoreIndex, weightageIndex, averageIndex, statusIndex};
-                    String[] titles = {getString(R.string.type), getString(R.string.score), getString(R.string.weightage), getString(R.string.average), getString(R.string.status)};
-
                     s.moveToFirst();
 
                     final ArrayList<String> readMarks = new ArrayList<>();
 
                     for (int j = 0; j < s.getCount(); ++j, s.moveToNext()) {
-                        /*
-                            The outer block for the mark
-                         */
-                        final LinearLayout block = new LinearLayout(context);
-                        LinearLayout.LayoutParams blockParams = new LinearLayout.LayoutParams(
-                                LinearLayout.LayoutParams.MATCH_PARENT,
-                                LinearLayout.LayoutParams.WRAP_CONTENT
-                        );
-                        blockParams.setMarginStart((int) (20 * pixelDensity));
-                        blockParams.setMarginEnd((int) (20 * pixelDensity));
-                        blockParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (5 * pixelDensity));
-                        block.setPadding(0, 0, 0, (int) (17 * pixelDensity));
-                        block.setLayoutParams(blockParams);
-                        block.setBackground(ContextCompat.getDrawable(context, R.drawable.plain_card));
-                        block.setOrientation(LinearLayout.VERTICAL);
-
-                        /*
-                            The course TextView
-                         */
-                        TextView course = new TextView(context);
-                        TableRow.LayoutParams courseParams = new TableRow.LayoutParams(
-                                TableRow.LayoutParams.WRAP_CONTENT,
-                                TableRow.LayoutParams.WRAP_CONTENT
-                        );
-                        courseParams.setMarginStart((int) (20 * pixelDensity));
-                        courseParams.setMarginEnd((int) (20 * pixelDensity));
-                        courseParams.setMargins(0, (int) (20 * pixelDensity), 0, (int) (5 * pixelDensity));
-                        course.setLayoutParams(courseParams);
-                        course.setText(s.getString(courseIndex));
-                        course.setTextColor(getColor(R.color.colorPrimary));
-                        course.setTextSize(20);
-                        course.setTypeface(ResourcesCompat.getFont(context, R.font.rubik), Typeface.BOLD);
-
-                        block.addView(course);  //Adding the course to block
-
-                        for (int k = 0; k < 5; ++k) {
-                            String valueString = s.getString(indexes[k]);
-                            if (!valueString.equals("")) {
-                                /*
-                                    The inner block
-                                 */
-                                LinearLayout innerBlock = new LinearLayout(context);
-                                innerBlock.setLayoutParams(new LinearLayout.LayoutParams(
-                                        LinearLayout.LayoutParams.MATCH_PARENT,
-                                        LinearLayout.LayoutParams.WRAP_CONTENT
-                                ));
-                                innerBlock.setOrientation(LinearLayout.HORIZONTAL);
-
-                                /*
-                                    The title TextView
-                                 */
-                                TextView title = new TextView(context);
-                                TableRow.LayoutParams titleParams = new TableRow.LayoutParams(
-                                        TableRow.LayoutParams.WRAP_CONTENT,
-                                        TableRow.LayoutParams.WRAP_CONTENT
-                                );
-                                titleParams.setMarginStart((int) (20 * pixelDensity));
-                                titleParams.setMargins(0, (int) (3 * pixelDensity), 0, (int) (3 * pixelDensity));
-                                title.setLayoutParams(titleParams);
-                                title.setText(titles[k]);
-                                title.setTextColor(getColor(R.color.colorPrimary));
-                                title.setTextSize(16);
-                                title.setTypeface(ResourcesCompat.getFont(context, R.font.rubik));
-
-                                innerBlock.addView(title);  //Adding the title to the inner block
-
-                                /*
-                                    The value TextView
-                                 */
-                                TextView value = new TextView(context);
-                                TableRow.LayoutParams valueParams = new TableRow.LayoutParams(
-                                        TableRow.LayoutParams.MATCH_PARENT,
-                                        TableRow.LayoutParams.WRAP_CONTENT
-                                );
-                                valueParams.setMarginEnd((int) (20 * pixelDensity));
-                                valueParams.setMargins(0, (int) (3 * pixelDensity), 0, (int) (3 * pixelDensity));
-                                value.setLayoutParams(valueParams);
-                                value.setText(valueString);
-                                value.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
-                                value.setTextColor(getColor(R.color.colorPrimary));
-                                value.setTextSize(16);
-                                value.setTypeface(ResourcesCompat.getFont(context, R.font.rubik), Typeface.BOLD);
-
-                                innerBlock.addView(value);  //Adding the value to the inner block
-
-                                /*
-                                    Finally adding the inner block to the main block
-                                 */
-                                block.addView(innerBlock);
-                            }
+                        if (terminateThread) {
+                            return;
                         }
 
+                        String course = s.getString(courseIndex);
+                        String type = s.getString(typeIndex);
+                        String score = s.getString(scoreIndex);
+                        String weightage = s.getString(weightageIndex);
+                        String average = s.getString(averageIndex);
+                        String status = s.getString(statusIndex);
+
+                        final LinearLayout card = myMark.generateCard(course, type, score, weightage, average, status);
+
                         /*
-                            Finally adding the main block to the view
+                            Adding the card / container to the view
                          */
                         String id = s.getString(idIndex);
                         if (newMarks.has(id)) {
-                            RelativeLayout container = new RelativeLayout(context);
-                            RelativeLayout.LayoutParams containerParams = new RelativeLayout.LayoutParams(
-                                    RelativeLayout.LayoutParams.WRAP_CONTENT,
-                                    RelativeLayout.LayoutParams.WRAP_CONTENT
-                            );
-                            container.setLayoutParams(containerParams);
-
-                            container.addView(block);
+                            RelativeLayout container = myNotification.generateNotificationContainer();
+                            container.addView(card);
 
                             int marginStart = (int) (screenWidth - 30 * pixelDensity);
-
-                            ImageView notification = new ImageView(context);
-                            LinearLayout.LayoutParams notificationParams = new LinearLayout.LayoutParams(
-                                    LinearLayout.LayoutParams.WRAP_CONTENT,
-                                    LinearLayout.LayoutParams.WRAP_CONTENT
-                            );
-                            notificationParams.setMarginStart(marginStart);
-                            notificationParams.setMargins(0, (int) (5 * pixelDensity), 0, 0);
-                            notification.setLayoutParams(notificationParams);
-                            notification.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_notification_dot));
-                            ImageViewCompat.setImageTintList(notification, ColorStateList.valueOf(getColor(R.color.colorPrimaryTransparent)));
-                            notification.setScaleX(0);
-                            notification.setScaleY(0);
-
-                            notification.animate().scaleX(1).scaleY(1);
-
+                            ImageView notification = myNotification.generateNotificationDot(marginStart, NotificationDotGenerator.NOTIFICATION_DEFAULT);
+                            notification.setPadding(0, (int) (5 * pixelDensity), 0, 0);
                             container.addView(notification);
 
                             markView.addView(container);
-
                             readMarks.add(id);
                         } else {
-                            markView.addView(block);
+                            markView.addView(card);
                         }
                     }
 
                     /*
                         Creating the markTitle button
                      */
-                    final TextView markButton = new TextView(context);
-                    LinearLayout.LayoutParams buttonParams = new LinearLayout.LayoutParams(
-                            LinearLayout.LayoutParams.WRAP_CONTENT,
-                            (int) (25 * pixelDensity)
-                    );
-                    buttonParams.setMarginStart((int) (5 * pixelDensity));
-                    buttonParams.setMarginEnd((int) (5 * pixelDensity));
-                    buttonParams.setMargins(0, (int) (20 * pixelDensity), 0, (int) (20 * pixelDensity));
-                    markButton.setLayoutParams(buttonParams);
-                    markButton.setPadding((int) (20 * pixelDensity), 0, (int) (20 * pixelDensity), 0);
+                    final TextView markButton = myButton.generateButton(markTitle);
                     if (i == 0) {
                         markButton.setBackground(ContextCompat.getDrawable(context, R.drawable.button_secondary_selected));
                         index = 0;
@@ -644,15 +398,8 @@ public class MarksActivity extends AppCompatActivity {
                         }
 
                         sharedPreferences.edit().putString("newMarks", newMarks.toString()).apply();
-                    } else {
-                        markButton.setBackground(ContextCompat.getDrawable(context, R.drawable.button_secondary));
                     }
                     markButton.setTag(i);
-                    markButton.setText(markTitle);
-                    markButton.setTextColor(getColor(R.color.colorPrimary));
-                    markButton.setTextSize(12);
-                    markButton.setGravity(Gravity.CENTER_VERTICAL);
-                    markButton.setTypeface(ResourcesCompat.getFont(context, R.font.rubik), Typeface.BOLD);
                     markButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -674,7 +421,7 @@ public class MarksActivity extends AppCompatActivity {
                     buttons.add(markButton);    //Storing the button
 
                     /*
-                        Finally adding the button to the HorizontalScrollView
+                        Adding the button to the HorizontalScrollView
                      */
                     if (readMarks.isEmpty()) {
                         runOnUiThread(new Runnable() {
@@ -684,28 +431,11 @@ public class MarksActivity extends AppCompatActivity {
                             }
                         });
                     } else {
-                        final RelativeLayout container = new RelativeLayout(context);
-                        RelativeLayout.LayoutParams containerParams = new RelativeLayout.LayoutParams(
-                                RelativeLayout.LayoutParams.WRAP_CONTENT,
-                                RelativeLayout.LayoutParams.WRAP_CONTENT
-                        );
-                        container.setLayoutParams(containerParams);
-
+                        final RelativeLayout container = myNotification.generateNotificationContainer();
                         container.addView(markButton);
 
-                        final ImageView notification = new ImageView(context);
-                        LinearLayout.LayoutParams notificationParams = new LinearLayout.LayoutParams(
-                                LinearLayout.LayoutParams.WRAP_CONTENT,
-                                LinearLayout.LayoutParams.WRAP_CONTENT
-                        );
-                        notificationParams.setMarginStart((int) (3 * pixelDensity));
-                        notificationParams.setMargins(0, (int) (20 * pixelDensity), 0, 0);
-                        notification.setLayoutParams(notificationParams);
-                        notification.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_notification_dot));
-                        ImageViewCompat.setImageTintList(notification, ColorStateList.valueOf(getColor(R.color.colorPrimaryTransparent)));
-                        notification.setScaleX(0);
-                        notification.setScaleY(0);
-
+                        final ImageView notification = myNotification.generateNotificationDot((int) (3 * pixelDensity), NotificationDotGenerator.NOTIFICATION_DEFAULT);
+                        notification.setPadding(0, (int) (20 * pixelDensity), 0, 0);
                         container.addView(notification);
 
                         runOnUiThread(new Runnable() {

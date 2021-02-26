@@ -4,21 +4,17 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.util.DisplayMetrics;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
-import android.widget.TableRow;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
-import androidx.core.content.res.ResourcesCompat;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -35,6 +31,8 @@ public class ExamsActivity extends AppCompatActivity {
     Context context;
     float pixelDensity;
     int index, halfWidth;
+
+    boolean terminateThread = false;
 
     public void setExams(View view) {
         int selectedIndex = Integer.parseInt(view.getTag().toString());
@@ -98,7 +96,15 @@ public class ExamsActivity extends AppCompatActivity {
                 int examIndex = c.getColumnIndex("exam");
                 c.moveToFirst();
 
+                LayoutGenerator myLayout = new LayoutGenerator(context);
+                ButtonGenerator myButton = new ButtonGenerator(context);
+                CardGenerator myExam = new CardGenerator(context, CardGenerator.CARD_EXAM);
+
                 for (int i = 0; i < c.getCount(); ++i, c.moveToNext()) {
+                    if (terminateThread) {
+                        return;
+                    }
+
                     if (i == 0) {
                         runOnUiThread(new Runnable() {
                             @Override
@@ -113,49 +119,24 @@ public class ExamsActivity extends AppCompatActivity {
                     /*
                         Creating a the mark view
                      */
-                    final LinearLayout examView = new LinearLayout(context);
-                    LinearLayout.LayoutParams examViewParams = new LinearLayout.LayoutParams(
-                            LinearLayout.LayoutParams.MATCH_PARENT,
-                            LinearLayout.LayoutParams.MATCH_PARENT
-                    );
-                    examView.setLayoutParams(examViewParams);
-                    examView.setPadding(0, (int) (65 * pixelDensity), 0, (int) (15 * pixelDensity));
-                    examView.setOrientation(LinearLayout.VERTICAL);
+                    final LinearLayout examView = myLayout.generateLayout();
 
                     examViews.add(examView);    //Storing the view
 
                     /*
                         Creating the markTitle button
                      */
-                    final TextView examButton = new TextView(context);
-                    LinearLayout.LayoutParams buttonParams = new LinearLayout.LayoutParams(
-                            LinearLayout.LayoutParams.WRAP_CONTENT,
-                            (int) (25 * pixelDensity)
-                    );
-                    buttonParams.setMarginStart((int) (5 * pixelDensity));
-                    buttonParams.setMarginEnd((int) (5 * pixelDensity));
-                    buttonParams.setMargins(0, (int) (20 * pixelDensity), 0, (int) (20 * pixelDensity));
-                    examButton.setLayoutParams(buttonParams);
-                    examButton.setPadding((int) (20 * pixelDensity), 0, (int) (20 * pixelDensity), 0);
+                    final TextView examButton = myButton.generateButton(exam);
                     if (i == 0 && i == index) {
                         examButton.setBackground(ContextCompat.getDrawable(context, R.drawable.button_secondary_selected));
-                    } else {
-                        examButton.setBackground(ContextCompat.getDrawable(context, R.drawable.button_secondary));
                     }
                     examButton.setTag(i);
-                    examButton.setText(exam);
-                    examButton.setTextColor(getColor(R.color.colorPrimary));
-                    examButton.setTextSize(12);
-                    examButton.setGravity(Gravity.CENTER_VERTICAL);
-                    examButton.setTypeface(ResourcesCompat.getFont(context, R.font.rubik), Typeface.BOLD);
                     examButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             setExams(examButton);
                         }
                     });
-                    examButton.setAlpha(0);
-                    examButton.animate().alpha(1);
 
                     buttons.add(examButton);    //Storing the button
 
@@ -188,166 +169,72 @@ public class ExamsActivity extends AppCompatActivity {
                     int locationIndex = s.getColumnIndex("location");
                     int seatIndex = s.getColumnIndex("seat");
 
-                    int[] indexes = {slotIndex, dateIndex, reportingIndex, startIndex, venueIndex, locationIndex, seatIndex};
-                    String[] titles = {getString(R.string.slot), getString(R.string.date), getString(R.string.reporting), getString(R.string.timings), getString(R.string.venue), getString(R.string.location), getString(R.string.seat)};
-
                     s.moveToFirst();
 
                     for (int j = 0; j < s.getCount(); ++j, s.moveToNext()) {
-                        /*
-                            The outer block for the exam
-                         */
-                        final LinearLayout block = new LinearLayout(context);
-                        LinearLayout.LayoutParams blockParams = new LinearLayout.LayoutParams(
-                                LinearLayout.LayoutParams.MATCH_PARENT,
-                                LinearLayout.LayoutParams.WRAP_CONTENT
-                        );
-                        blockParams.setMarginStart((int) (20 * pixelDensity));
-                        blockParams.setMarginEnd((int) (20 * pixelDensity));
-                        blockParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (5 * pixelDensity));
-                        block.setPadding(0, 0, 0, (int) (17 * pixelDensity));
-                        block.setLayoutParams(blockParams);
-                        block.setBackground(ContextCompat.getDrawable(context, R.drawable.plain_card));
-                        block.setOrientation(LinearLayout.VERTICAL);
+                        if (terminateThread) {
+                            return;
+                        }
 
-                        /*
-                            The course TextView
-                         */
-                        TextView course = new TextView(context);
-                        TableRow.LayoutParams courseParams = new TableRow.LayoutParams(
-                                TableRow.LayoutParams.WRAP_CONTENT,
-                                TableRow.LayoutParams.WRAP_CONTENT
-                        );
-                        courseParams.setMarginStart((int) (20 * pixelDensity));
-                        courseParams.setMarginEnd((int) (20 * pixelDensity));
-                        courseParams.setMargins(0, (int) (20 * pixelDensity), 0, (int) (3 * pixelDensity));
-                        course.setLayoutParams(courseParams);
-                        course.setText(s.getString(courseIndex));
-                        course.setTextColor(getColor(R.color.colorPrimary));
-                        course.setTextSize(20);
-                        course.setTypeface(ResourcesCompat.getFont(context, R.font.rubik), Typeface.BOLD);
+                        String course = s.getString(courseIndex);
+                        String title = s.getString(titleIndex);
 
-                        block.addView(course);  //Adding the course to block
-
-                        /*
-                            The title TextView
-                         */
-                        TextView titleView = new TextView(context);
-                        TableRow.LayoutParams titleViewParams = new TableRow.LayoutParams(
-                                TableRow.LayoutParams.WRAP_CONTENT,
-                                TableRow.LayoutParams.WRAP_CONTENT
-                        );
-                        titleViewParams.setMarginStart((int) (20 * pixelDensity));
-                        titleViewParams.setMargins(0, (int) (3 * pixelDensity), 0, (int) (5 * pixelDensity));
-                        titleView.setLayoutParams(titleViewParams);
-                        titleView.setText(s.getString(titleIndex));
-                        titleView.setTextColor(getColor(R.color.colorPrimary));
-                        titleView.setTextSize(16);
-                        titleView.setTypeface(ResourcesCompat.getFont(context, R.font.rubik), Typeface.BOLD);
-
-                        block.addView(titleView); //Adding title to block
-
-                        for (int k = 0; k < 7; ++k) {
-                            String valueString = s.getString(indexes[k]);
-                            if (k == 2 && !DateFormat.is24HourFormat(context)) {
-                                try {
-                                    Date reportingTime = hour24.parse(valueString);
-                                    if (reportingTime != null) {
-                                        valueString = hour12.format(reportingTime);
-                                    }
-                                } catch (Exception e) {
-                                    e.printStackTrace();
+                        String slot = s.getString(slotIndex);
+                        String date = s.getString(dateIndex);
+                        String reporting = s.getString(reportingIndex);
+                        if (!reporting.equals("") && !DateFormat.is24HourFormat(context)) {
+                            try {
+                                Date reportingTime = hour24.parse(reporting);
+                                if (reportingTime != null) {
+                                    reporting = hour12.format(reportingTime);
                                 }
-                            } else if (k == 3 && !valueString.equals("")) {
-                                String endTime = s.getString(endIndex);
-                                if (!DateFormat.is24HourFormat(context)) {
-                                    try {
-                                        Date startTimeDate = hour24.parse(valueString);
-                                        Date endTimeDate = hour24.parse(endTime);
-                                        if (startTimeDate != null) {
-                                            valueString = hour12.format(startTimeDate);
-                                        }
-                                        if (endTimeDate != null) {
-                                            endTime = hour12.format(endTimeDate);
-                                        }
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-
-                                valueString = valueString + " - " + endTime;
-                            }
-
-                            if (!valueString.equals("") && !valueString.equals("-")) {
-                                /*
-                                    The inner block
-                                 */
-                                LinearLayout innerBlock = new LinearLayout(context);
-                                innerBlock.setLayoutParams(new LinearLayout.LayoutParams(
-                                        LinearLayout.LayoutParams.MATCH_PARENT,
-                                        LinearLayout.LayoutParams.WRAP_CONTENT
-                                ));
-                                innerBlock.setOrientation(LinearLayout.HORIZONTAL);
-
-                                /*
-                                    The title TextView
-                                 */
-                                TextView title = new TextView(context);
-                                TableRow.LayoutParams titleParams = new TableRow.LayoutParams(
-                                        TableRow.LayoutParams.WRAP_CONTENT,
-                                        TableRow.LayoutParams.WRAP_CONTENT
-                                );
-                                titleParams.setMarginStart((int) (20 * pixelDensity));
-                                titleParams.setMargins(0, (int) (3 * pixelDensity), 0, (int) (3 * pixelDensity));
-                                title.setLayoutParams(titleParams);
-                                title.setText(titles[k]);
-                                title.setTextColor(getColor(R.color.colorPrimary));
-                                title.setTextSize(16);
-                                title.setTypeface(ResourcesCompat.getFont(context, R.font.rubik));
-
-                                innerBlock.addView(title);  //Adding the title to the inner block
-
-                                /*
-                                    The value TextView
-                                 */
-                                TextView value = new TextView(context);
-                                TableRow.LayoutParams valueParams = new TableRow.LayoutParams(
-                                        TableRow.LayoutParams.MATCH_PARENT,
-                                        TableRow.LayoutParams.WRAP_CONTENT
-                                );
-                                valueParams.setMarginEnd((int) (20 * pixelDensity));
-                                valueParams.setMargins(0, (int) (3 * pixelDensity), 0, (int) (3 * pixelDensity));
-                                value.setLayoutParams(valueParams);
-                                value.setText(valueString);
-                                value.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
-                                value.setTextColor(getColor(R.color.colorPrimary));
-                                value.setTextSize(16);
-                                value.setTypeface(ResourcesCompat.getFont(context, R.font.rubik), Typeface.BOLD);
-
-                                innerBlock.addView(value);  //Adding the value to the inner block
-
-                                /*
-                                    Finally adding the inner block to the main block
-                                 */
-                                block.addView(innerBlock);
+                            } catch (Exception e) {
+                                e.printStackTrace();
                             }
                         }
 
+                        String startTime = s.getString(startIndex);
+                        String endTime = s.getString(endIndex);
+                        String timings = startTime + " - " + endTime;
+                        if (!startTime.equals("") && !DateFormat.is24HourFormat(context)) {
+                            try {
+                                Date reportingTime = hour24.parse(reporting);
+                                if (reportingTime != null) {
+                                    reporting = hour12.format(reportingTime);
+                                }
+
+                                Date startTimeDate = hour24.parse(startTime);
+                                Date endTimeDate = hour24.parse(endTime);
+                                if (startTimeDate != null && endTimeDate != null) {
+                                    reporting = hour12.format(startTimeDate) + " - " + hour12.format(endTimeDate);
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        timings = timings.trim();
+
+                        String venue = s.getString(venueIndex);
+                        String location = s.getString(locationIndex);
+                        String seat = s.getString(seatIndex);
+
+                        final LinearLayout card = myExam.generateCard(course, title, slot, date, reporting, timings, venue, location, seat);
+
                         /*
-                            Adding the block to the view
+                            Adding the card to the view
                          */
                         if (i == index) {
-                            block.setAlpha(0);
-                            block.animate().alpha(1);
+                            card.setAlpha(0);
+                            card.animate().alpha(1);
 
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    examView.addView(block);
+                                    examView.addView(card);
                                 }
                             });
                         } else {
-                            examView.addView(block);
+                            examView.addView(card);
                         }
                     }
 
@@ -368,5 +255,12 @@ public class ExamsActivity extends AppCompatActivity {
                 sharedPreferences.edit().remove("newExams").apply();
             }
         }).start();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        terminateThread = true;
     }
 }

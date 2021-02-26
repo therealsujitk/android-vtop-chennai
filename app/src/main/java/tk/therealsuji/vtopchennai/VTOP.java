@@ -59,6 +59,8 @@ public class VTOP {
     LinearLayout captchaLayout, progressLayout, semesterLayout;
     ViewStub captchaStub, semesterStub, progressStub;
 
+    private boolean terminateDownload = false;
+
     /*
         DARK is used to change the colours of the captcha image when in dark mode
      */
@@ -85,6 +87,10 @@ public class VTOP {
         webView.getSettings().setUserAgentString("Mozilla/5.0 (Linux; Android 10) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.99 Mobile Safari/537.36");
         webView.setWebViewClient(new WebViewClient() {
             public void onPageFinished(WebView view, String url) {
+                if (terminateDownload) {
+                    return;
+                }
+
                 if (!isOpened) {
                     if (counter >= 60) {
                         Toast.makeText(context, "Sorry, we had some trouble connecting to the server. Please try again later.", Toast.LENGTH_LONG).show();
@@ -104,6 +110,8 @@ public class VTOP {
         Start referencing the views
      */
     public void start(final Dialog downloadDialog) {
+        terminateDownload = false;
+
         this.downloadDialog = downloadDialog;
 
         loading = downloadDialog.findViewById(R.id.loading);
@@ -128,6 +136,10 @@ public class VTOP {
         Setup Captcha Layout
      */
     public void setupCaptcha() {
+        if (terminateDownload) {
+            return;
+        }
+
         captchaStub.inflate();
         captcha = downloadDialog.findViewById(R.id.captchaCode);
         captchaLayout = downloadDialog.findViewById(R.id.captchaLayout);
@@ -139,6 +151,10 @@ public class VTOP {
         Setup Semester Layout
      */
     public void setupSemester() {
+        if (terminateDownload) {
+            return;
+        }
+
         semesterStub.inflate();
         semesterLayout = downloadDialog.findViewById(R.id.semesterLayout);
         selectSemester = downloadDialog.findViewById(R.id.selectSemester);
@@ -149,6 +165,10 @@ public class VTOP {
         Setup Progress Layout
      */
     public void setupProgress() {
+        if (terminateDownload) {
+            return;
+        }
+
         progressStub.inflate();
         progressLayout = downloadDialog.findViewById(R.id.progressLayout);
         downloading = downloadDialog.findViewById(R.id.downloading);
@@ -161,6 +181,10 @@ public class VTOP {
         Function to perform a smooth animation of expanding the layouts in the dialog
      */
     public void expand(final View view) {
+        if (terminateDownload) {
+            return;
+        }
+
         view.measure(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         final int targetHeight = view.getMeasuredHeight();
 
@@ -195,6 +219,10 @@ public class VTOP {
         Function to perform a smooth animation of compressing the layouts in the dialog
      */
     public void compress(final View view) {
+        if (terminateDownload) {
+            return;
+        }
+
         if (view.getVisibility() == View.GONE) {
             return;
         }
@@ -226,6 +254,10 @@ public class VTOP {
         Function to hide all layouts at once because i'm too lazy to keep typing these
      */
     public void hideLayouts() {
+        if (terminateDownload) {
+            return;
+        }
+
         loading.setVisibility(View.INVISIBLE);
 
         if (isProgressInflated) {
@@ -246,6 +278,10 @@ public class VTOP {
         the max value can simply be updated here (SHOULD ALSO BE UPDATED IN dialog_download.xml)
      */
     public void setProgress() {
+        if (terminateDownload) {
+            return;
+        }
+
         progressBar.setProgress(++lastDownload, true);
         String progress = lastDownload + " / 13";
         progressText.setText(progress);
@@ -256,6 +292,10 @@ public class VTOP {
         If something goes wrong, it'll log out and ask for the captcha again.
      */
     public void reloadPage() {
+        if (terminateDownload) {
+            return;
+        }
+
         if (loading.getVisibility() == View.INVISIBLE) {
             hideLayouts();
             loading.setVisibility(View.VISIBLE);
@@ -267,10 +307,18 @@ public class VTOP {
         webView.loadUrl("http://vtopcc.vit.ac.in/vtop");
     }
 
+    public void terminateDownload() {
+        terminateDownload = true;
+    }
+
     /*
         Function to open the sign in page
      */
     private void openSignIn() {
+        if (terminateDownload) {
+            return;
+        }
+
         webView.evaluateJavascript("(function() {" +
                 "var successFlag = false;" +
                 "$.ajax({" +
@@ -303,6 +351,10 @@ public class VTOP {
         Function to get the captcha from the portal's sign in page and load it into the ImageView
      */
     private void getCaptcha() {
+        if (terminateDownload) {
+            return;
+        }
+
         webView.evaluateJavascript("(function() {" +
                 "var images = document.getElementsByTagName('img');" +
                 "for(var i = 0; i < images.length; ++i) {" +
@@ -353,6 +405,10 @@ public class VTOP {
         Function to sign in to the portal
      */
     public void signIn(String username, String password, String captcha) {
+        if (terminateDownload) {
+            return;
+        }
+
         webView.evaluateJavascript("(function() {" +
                 "var credentials = 'uname=" + username + "&passwd=' + encodeURIComponent('" + password + "') + '&captchaCheck=" + captcha + "';" +
                 "var successFlag = false;" +
@@ -408,6 +464,10 @@ public class VTOP {
         Function to get a list of the semesters. These semesters are obtained from the Timetable page
      */
     public void getSemesters() {
+        if (terminateDownload) {
+            return;
+        }
+
         webView.evaluateJavascript("(function() {" +
                 "var data = 'verifyMenu=true&winImage=' + $('#winImage').val() + '&authorizedID=' + $('#authorizedIDX').val() + '&nocache=@(new Date().getTime())';" +
                 "var obj = false;" +
@@ -482,6 +542,10 @@ public class VTOP {
         This is required to download the timetable, faculty, attendance, exam schedule, marks & grades
      */
     public void getSemesterID(String semester) {
+        if (terminateDownload) {
+            return;
+        }
+
         webView.evaluateJavascript("(function() {" +
                 "var data = 'verifyMenu=true&winImage=' + $('#winImage').val() + '&authorizedID=' + $('#authorizedIDX').val() + '&nocache=@(new Date().getTime())';" +
                 "var semID = '';" +
@@ -521,6 +585,10 @@ public class VTOP {
         TBD: Saving the users profile picture
      */
     public void downloadProfile() {
+        if (terminateDownload) {
+            return;
+        }
+
         if (!isProgressInflated) {
             setupProgress();
         }
@@ -592,6 +660,14 @@ public class VTOP {
         Function to save the timetable in the SQLite database, and the credit score in SharedPreferences
      */
     public void downloadTimetable() {
+        if (terminateDownload) {
+            return;
+        }
+
+        if (!isProgressInflated) {
+            setupProgress();
+        }
+
         downloading.setText(context.getString(R.string.downloading_timetable));
         if (progressLayout.getVisibility() == View.GONE) {
             hideLayouts();
@@ -941,6 +1017,14 @@ public class VTOP {
         Function to store the faculty info from the timetable page in the SQLite database.
      */
     public void downloadFaculty() {
+        if (terminateDownload) {
+            return;
+        }
+
+        if (!isProgressInflated) {
+            setupProgress();
+        }
+
         downloading.setText(context.getString(R.string.downloading_faculty));
         if (progressLayout.getVisibility() == View.GONE) {
             hideLayouts();
@@ -1064,6 +1148,14 @@ public class VTOP {
         Function to store the proctor info (1 / 2 - Staff info) in the SQLite database.
      */
     public void downloadProctor() {
+        if (terminateDownload) {
+            return;
+        }
+
+        if (!isProgressInflated) {
+            setupProgress();
+        }
+
         downloading.setText(context.getString(R.string.downloading_staff));
         if (progressLayout.getVisibility() == View.GONE) {
             hideLayouts();
@@ -1173,6 +1265,14 @@ public class VTOP {
         Function to store the HOD & Dean info (2 / 2 - Staff info) in the SQLite database.
      */
     public void downloadDeanHOD() {
+        if (terminateDownload) {
+            return;
+        }
+
+        if (!isProgressInflated) {
+            setupProgress();
+        }
+
         downloading.setText(context.getString(R.string.downloading_staff));
         if (progressLayout.getVisibility() == View.GONE) {
             hideLayouts();
@@ -1347,6 +1447,14 @@ public class VTOP {
         Function to store the attendance in the SQLite database.
      */
     public void downloadAttendance() {
+        if (terminateDownload) {
+            return;
+        }
+
+        if (!isProgressInflated) {
+            setupProgress();
+        }
+
         downloading.setText(context.getString(R.string.downloading_attendance));
         if (progressLayout.getVisibility() == View.GONE) {
             hideLayouts();
@@ -1495,6 +1603,14 @@ public class VTOP {
         Function to store the exam schedule in the SQLite database.
      */
     public void downloadExams() {
+        if (terminateDownload) {
+            return;
+        }
+
+        if (!isProgressInflated) {
+            setupProgress();
+        }
+
         downloading.setText(context.getString(R.string.downloading_exams));
         if (progressLayout.getVisibility() == View.GONE) {
             hideLayouts();
@@ -1725,6 +1841,14 @@ public class VTOP {
         Function to download marks
      */
     public void downloadMarks() {
+        if (terminateDownload) {
+            return;
+        }
+
+        if (!isProgressInflated) {
+            setupProgress();
+        }
+
         downloading.setText(R.string.downloading_marks);
         if (progressLayout.getVisibility() == View.GONE) {
             hideLayouts();
@@ -1962,6 +2086,14 @@ public class VTOP {
         Function to download grade history
      */
     public void downloadGradeHistory() {
+        if (terminateDownload) {
+            return;
+        }
+
+        if (!isProgressInflated) {
+            setupProgress();
+        }
+
         downloading.setText(context.getString(R.string.downloading_grade_history));
         if (progressLayout.getVisibility() == View.GONE) {
             hideLayouts();
@@ -2196,6 +2328,14 @@ public class VTOP {
         Function to store the class messages in the SQLite database.
      */
     public void downloadMessages() {
+        if (terminateDownload) {
+            return;
+        }
+
+        if (!isProgressInflated) {
+            setupProgress();
+        }
+
         downloading.setText(context.getString(R.string.downloading_messages));
         if (progressLayout.getVisibility() == View.GONE) {
             hideLayouts();
@@ -2322,6 +2462,14 @@ public class VTOP {
         Function to store the proctor messages in the SQLite database.
      */
     public void downloadProctorMessages() {
+        if (terminateDownload) {
+            return;
+        }
+
+        if (!isProgressInflated) {
+            setupProgress();
+        }
+
         downloading.setText(context.getString(R.string.downloading_messages));
         if (progressLayout.getVisibility() == View.GONE) {
             hideLayouts();
@@ -2418,6 +2566,14 @@ public class VTOP {
         Function to store spotlight in the SQLite database.
      */
     public void downloadSpotlight() {
+        if (terminateDownload) {
+            return;
+        }
+
+        if (!isProgressInflated) {
+            setupProgress();
+        }
+
         downloading.setText(context.getString(R.string.downloading_spotlight));
         if (progressLayout.getVisibility() == View.GONE) {
             hideLayouts();
@@ -2564,6 +2720,14 @@ public class VTOP {
         Function to store payment receipts
     */
     public void downloadReceipts() {
+        if (terminateDownload) {
+            return;
+        }
+
+        if (!isProgressInflated) {
+            setupProgress();
+        }
+
         downloading.setText(context.getString(R.string.downloading_receipts));
         if (progressLayout.getVisibility() == View.GONE) {
             hideLayouts();
@@ -2669,6 +2833,10 @@ public class VTOP {
         Check for payment dues
      */
     public void checkDues() {
+        if (terminateDownload) {
+            return;
+        }
+
         webView.evaluateJavascript("(function() {" +
                 "var data = 'verifyMenu=true&winImage=' + $('#winImage').val() + '&authorizedID=' + $('#authorizedIDX').val() + '&nocache=@(new Date().getTime())';" +
                 "var duePayments;" +
@@ -2705,6 +2873,10 @@ public class VTOP {
     }
 
     public void finishUp() {
+        if (terminateDownload) {
+            return;
+        }
+
         hideLayouts();
         loading.setVisibility(View.VISIBLE);
         sharedPreferences.edit().putBoolean("isSignedIn", true).apply();
@@ -2732,6 +2904,10 @@ public class VTOP {
     }
 
     public void error() {
+        if (terminateDownload) {
+            return;
+        }
+
         ((Activity) context).runOnUiThread(new Runnable() {
             @Override
             public void run() {

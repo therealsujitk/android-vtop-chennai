@@ -1,28 +1,21 @@
 package tk.therealsuji.vtopchennai;
 
-import android.animation.AnimatorInflater;
-import android.animation.StateListAnimator;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.HorizontalScrollView;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
-import android.widget.TableRow;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
-import androidx.core.content.res.ResourcesCompat;
 
 import org.json.JSONObject;
 
@@ -36,6 +29,8 @@ public class DirectionsActivity extends AppCompatActivity {
     HorizontalScrollView locationCategoriesContainer;
     float pixelDensity;
     int locationCategory, halfWidth;
+
+    boolean terminateThread = false;
 
     public void setCategory(View view) {
         int index = Integer.parseInt(view.getTag().toString());
@@ -102,14 +97,10 @@ public class DirectionsActivity extends AppCompatActivity {
 
         locationCategoriesContainer.animate().alpha(1);
 
+        LayoutGenerator myLayout = new LayoutGenerator(this);
+
         for (int i = 0; i < 6; ++i) {
-            locationViews[i] = new LinearLayout(context);
-            locationViews[i].setLayoutParams(new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT
-            ));
-            locationViews[i].setPadding(0, (int) (65 * pixelDensity), 0, (int) (15 * pixelDensity));
-            locationViews[i].setOrientation(LinearLayout.VERTICAL);
+            locationViews[i] = myLayout.generateLayout();
         }
 
         locations.addView(locationViews[0]);
@@ -199,131 +190,54 @@ public class DirectionsActivity extends AppCompatActivity {
                 JSONObject[] locationData = {main, hostels, food, atms, amenities, sports};
 
                 try {
+                    CardGenerator myDirection = new CardGenerator(context, CardGenerator.CARD_DIRECTION);
+                    LinkButtonGenerator myLink = new LinkButtonGenerator(context);
+
                     for (int i = 0; i < locationViews.length; ++i) {
+                        if (terminateThread) {
+                            return;
+                        }
+
                         Iterator<?> keys = locationData[i].keys();
 
                         while (keys.hasNext()) {
+                            if (terminateThread) {
+                                return;
+                            }
+
                             String title = (String) keys.next();
 
                             JSONObject data = new JSONObject(locationData[i].getString(title));
                             String description = data.getString("description");
                             String tag = data.getString("tag");
 
-                            /*
-                                The outer block
-                             */
-                            final LinearLayout block = new LinearLayout(context);
-                            LinearLayout.LayoutParams blockParams = new LinearLayout.LayoutParams(
-                                    LinearLayout.LayoutParams.MATCH_PARENT,
-                                    LinearLayout.LayoutParams.WRAP_CONTENT
-                            );
-                            blockParams.setMarginStart((int) (20 * pixelDensity));
-                            blockParams.setMarginEnd((int) (20 * pixelDensity));
-                            blockParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (5 * pixelDensity));
-                            block.setLayoutParams(blockParams);
-                            block.setBackground(ContextCompat.getDrawable(context, R.drawable.plain_card));
-                            block.setOrientation(LinearLayout.HORIZONTAL);
-                            block.setGravity(Gravity.CENTER_VERTICAL);
-
-                            /*
-                                The inner block
-                             */
-                            LinearLayout innerBlock = new LinearLayout(context);
-                            LinearLayout.LayoutParams innerBlockParams = new LinearLayout.LayoutParams(
-                                    LinearLayout.LayoutParams.WRAP_CONTENT,
-                                    LinearLayout.LayoutParams.WRAP_CONTENT,
-                                    1
-                            );
-                            innerBlockParams.setMarginStart((int) (20 * pixelDensity));
-                            innerBlockParams.setMarginEnd((int) (20 * pixelDensity));
-                            innerBlock.setLayoutParams(innerBlockParams);
-                            innerBlock.setOrientation(LinearLayout.VERTICAL);
-
-                            /*
-                                The title TextView
-                             */
-                            TextView titleView = new TextView(context);
-                            TableRow.LayoutParams titleViewParams = new TableRow.LayoutParams(
-                                    TableRow.LayoutParams.WRAP_CONTENT,
-                                    TableRow.LayoutParams.WRAP_CONTENT
-                            );
-                            titleViewParams.setMargins(0, (int) (20 * pixelDensity), 0, (int) (5 * pixelDensity));
-                            titleView.setLayoutParams(titleViewParams);
-                            titleView.setText(title);
-                            titleView.setTextColor(getColor(R.color.colorPrimary));
-                            titleView.setTextSize(20);
-                            titleView.setTypeface(ResourcesCompat.getFont(context, R.font.rubik), Typeface.BOLD);
-
-                            innerBlock.addView(titleView);   //Adding title to the inner block
-
-                            /*
-                                The description TextView
-                             */
-                            if (description.equals("")) {
-                                titleViewParams.setMargins(0, (int) (20 * pixelDensity), 0, (int) (20 * pixelDensity));
-                            } else {
-                                TextView descriptionView = new TextView(context);
-                                TableRow.LayoutParams descriptionViewParams = new TableRow.LayoutParams(
-                                        TableRow.LayoutParams.WRAP_CONTENT,
-                                        TableRow.LayoutParams.WRAP_CONTENT
-                                );
-                                descriptionViewParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (20 * pixelDensity));
-                                descriptionView.setLayoutParams(descriptionViewParams);
-                                descriptionView.setText(description);
-                                descriptionView.setTextColor(getColor(R.color.colorPrimary));
-                                descriptionView.setTextSize(16);
-                                descriptionView.setTypeface(ResourcesCompat.getFont(context, R.font.rubik));
-
-                                innerBlock.addView(descriptionView);   //Adding description to the inner block
-                            }
-
-                            block.addView(innerBlock);
-
-                            /*
-                                The link button
-                             */
-                            final LinearLayout linkButton = new LinearLayout(context);
-                            LinearLayout.LayoutParams linkParams = new LinearLayout.LayoutParams(
-                                    (int) (50 * pixelDensity),
-                                    (int) (50 * pixelDensity)
-                            );
-                            linkParams.setMarginEnd((int) (20 * pixelDensity));
-                            linkParams.setMargins(0, (int) (20 * pixelDensity), 0, (int) (20 * pixelDensity));
-                            linkButton.setLayoutParams(linkParams);
-                            linkButton.setClickable(true);
-                            linkButton.setFocusable(true);
-                            linkButton.setGravity(Gravity.CENTER);
-                            linkButton.setBackground(ContextCompat.getDrawable(context, R.drawable.button_link));
-                            linkButton.setTag(tag);
-
-                            StateListAnimator elevation = AnimatorInflater.loadStateListAnimator(context, R.animator.item_elevation);
-                            linkButton.setStateListAnimator(elevation);
-
-                            linkButton.setOnClickListener(new View.OnClickListener() {
+                            final LinearLayout card = myDirection.generateCard(title, description);
+                            final LinearLayout linkView = myLink.generateButton(null, LinkButtonGenerator.LINK_DIRECTION);
+                            linkView.setTag(tag);
+                            linkView.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-                                    openLocation(linkButton);
+                                    openLocation(linkView);
                                 }
                             });
 
-                            ImageView imageView = new ImageView(context);
-                            imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_location));
+                            card.addView(linkView);
 
-                            linkButton.addView(imageView);
-                            block.addView(linkButton);
-
+                            /*
+                                Adding the card to the view
+                             */
                             if (i == locationCategory) {
-                                block.setAlpha(0);
-                                block.animate().alpha(1);
+                                card.setAlpha(0);
+                                card.animate().alpha(1);
 
                                 runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        locationViews[locationCategory].addView(block);
+                                        locationViews[locationCategory].addView(card);
                                     }
                                 });
                             } else {
-                                locationViews[i].addView(block);
+                                locationViews[i].addView(card);
                             }
                         }
                     }
@@ -347,5 +261,12 @@ public class DirectionsActivity extends AppCompatActivity {
         inflater.inflate(R.menu.directions_menu, menu);
 
         return true;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        terminateThread = true;
     }
 }

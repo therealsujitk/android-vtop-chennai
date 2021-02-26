@@ -1,31 +1,24 @@
 package tk.therealsuji.vtopchennai;
 
 import android.Manifest;
-import android.animation.AnimatorInflater;
-import android.animation.StateListAnimator;
 import android.app.DownloadManager;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.DisplayMetrics;
-import android.view.Gravity;
 import android.view.View;
 import android.webkit.CookieManager;
 import android.webkit.DownloadListener;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.HorizontalScrollView;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
-import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,7 +26,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.core.content.res.ResourcesCompat;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -48,7 +40,7 @@ public class SpotlightActivity extends AppCompatActivity {
     float pixelDensity;
     int index, halfWidth;
     int STORAGE_PERMISSION_CODE = 1;
-    boolean isDownloadOpened;
+    boolean isDownloadOpened, terminateThread = false;
 
     public void setAnnouncements(View view) {
         int selectedIndex = Integer.parseInt(view.getTag().toString());
@@ -75,11 +67,6 @@ public class SpotlightActivity extends AppCompatActivity {
         }
         location += 20 * pixelDensity + (float) categories.get(index).getWidth() / 2;
         categoriesContainer.smoothScrollTo((int) location - halfWidth, 0);
-    }
-
-    public void openLink(String link) {
-        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(link));
-        startActivity(browserIntent);
     }
 
     public void downloadDocument(String link) {
@@ -171,7 +158,16 @@ public class SpotlightActivity extends AppCompatActivity {
                 int categoryIndex = c.getColumnIndex("category");
                 c.moveToFirst();
 
+                LayoutGenerator myLayouot = new LayoutGenerator(context);
+                ButtonGenerator myButton = new ButtonGenerator(context);
+                CardGenerator myAnnouncement = new CardGenerator(context, CardGenerator.CARD_SPOTLIGHT);
+                LinkButtonGenerator myLink = new LinkButtonGenerator(context);
+
                 for (int i = 0; i < c.getCount(); ++i, c.moveToNext()) {
+                    if (terminateThread) {
+                        return;
+                    }
+
                     if (i == 0) {
                         runOnUiThread(new Runnable() {
                             @Override
@@ -186,49 +182,24 @@ public class SpotlightActivity extends AppCompatActivity {
                     /*
                         Creating the announcements view
                      */
-                    final LinearLayout announcementsView = new LinearLayout(context);
-                    LinearLayout.LayoutParams announcementsViewParams = new LinearLayout.LayoutParams(
-                            LinearLayout.LayoutParams.MATCH_PARENT,
-                            LinearLayout.LayoutParams.MATCH_PARENT
-                    );
-                    announcementsView.setLayoutParams(announcementsViewParams);
-                    announcementsView.setPadding(0, (int) (65 * pixelDensity), 0, 0);
-                    announcementsView.setOrientation(LinearLayout.VERTICAL);
+                    final LinearLayout announcementsView = myLayouot.generateLayout();
 
                     announcementViews.add(announcementsView);    //Storing the view
 
                     /*
                         Creating the category button
                      */
-                    final TextView category = new TextView(context);
-                    LinearLayout.LayoutParams categoryParams = new LinearLayout.LayoutParams(
-                            LinearLayout.LayoutParams.WRAP_CONTENT,
-                            (int) (25 * pixelDensity)
-                    );
-                    categoryParams.setMarginStart((int) (5 * pixelDensity));
-                    categoryParams.setMarginEnd((int) (5 * pixelDensity));
-                    categoryParams.setMargins(0, (int) (20 * pixelDensity), 0, (int) (20 * pixelDensity));
-                    category.setLayoutParams(categoryParams);
-                    category.setPadding((int) (20 * pixelDensity), 0, (int) (20 * pixelDensity), 0);
-                    if (i == 0) {
+                    final TextView category = myButton.generateButton(categoryTitle);
+                    if (i == 0 && i == index) {
                         category.setBackground(ContextCompat.getDrawable(context, R.drawable.button_secondary_selected));
-                    } else {
-                        category.setBackground(ContextCompat.getDrawable(context, R.drawable.button_secondary));
                     }
                     category.setTag(i);
-                    category.setText(categoryTitle.toUpperCase());
-                    category.setTextColor(getColor(R.color.colorPrimary));
-                    category.setTextSize(12);
-                    category.setGravity(Gravity.CENTER_VERTICAL);
-                    category.setTypeface(ResourcesCompat.getFont(context, R.font.rubik), Typeface.BOLD);
                     category.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             setAnnouncements(category);
                         }
                     });
-                    category.setAlpha(0);
-                    category.animate().alpha(1);
 
                     categories.add(category);    //Storing the button
 
@@ -249,110 +220,32 @@ public class SpotlightActivity extends AppCompatActivity {
                     s.moveToFirst();
 
                     for (int j = 0; j < s.getCount(); ++j, s.moveToNext()) {
-                        /*
-                            The outer block
-                         */
-                        final LinearLayout block = new LinearLayout(context);
-                        LinearLayout.LayoutParams blockParams = new LinearLayout.LayoutParams(
-                                LinearLayout.LayoutParams.MATCH_PARENT,
-                                LinearLayout.LayoutParams.WRAP_CONTENT
-                        );
-                        blockParams.setMarginStart((int) (20 * pixelDensity));
-                        blockParams.setMarginEnd((int) (20 * pixelDensity));
-                        blockParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (5 * pixelDensity));
-                        block.setLayoutParams(blockParams);
-                        block.setBackground(ContextCompat.getDrawable(context, R.drawable.plain_card));
-                        block.setGravity(Gravity.CENTER_VERTICAL);
-                        block.setOrientation(LinearLayout.HORIZONTAL);
+                        if (terminateThread) {
+                            return;
+                        }
 
-                        /*
-                            The announcement TextView
-                         */
-                        TextView announcement = new TextView(context);
-                        TableRow.LayoutParams announcementParams = new TableRow.LayoutParams(
-                                TableRow.LayoutParams.WRAP_CONTENT,
-                                TableRow.LayoutParams.WRAP_CONTENT,
-                                1
-                        );
-                        announcementParams.setMarginStart((int) (20 * pixelDensity));
-                        announcementParams.setMarginEnd((int) (20 * pixelDensity));
-                        announcementParams.setMargins(0, (int) (20 * pixelDensity), 0, (int) (20 * pixelDensity));
-                        announcement.setLayoutParams(announcementParams);
-                        announcement.setText(s.getString(announcementIndex));
-                        announcement.setTextColor(getColor(R.color.colorPrimary));
-                        announcement.setTextSize(16);
-                        announcement.setTypeface(ResourcesCompat.getFont(context, R.font.rubik), Typeface.BOLD);
-
-                        block.addView(announcement); //Adding course code to block
-
-                        /*
-                            Setting up the links
-                         */
+                        String announcement = s.getString(announcementIndex);
                         final String link = s.getString(linkIndex);
-                        if (link.startsWith("http")) {
-                            LinearLayout linkButton = new LinearLayout(context);
-                            LinearLayout.LayoutParams linkParams = new LinearLayout.LayoutParams(
-                                    (int) (50 * pixelDensity),
-                                    (int) (50 * pixelDensity)
-                            );
-                            linkParams.setMarginEnd((int) (20 * pixelDensity));
-                            linkParams.setMargins(0, (int) (20 * pixelDensity), 0, (int) (20 * pixelDensity));
-                            linkButton.setLayoutParams(linkParams);
-                            linkButton.setClickable(true);
-                            linkButton.setFocusable(true);
-                            linkButton.setGravity(Gravity.CENTER);
-                            linkButton.setBackground(ContextCompat.getDrawable(context, R.drawable.button_link));
 
-                            StateListAnimator elevation = AnimatorInflater.loadStateListAnimator(context, R.animator.item_elevation);
-                            linkButton.setStateListAnimator(elevation);
+                        final LinearLayout card = myAnnouncement.generateCard(announcement, link);
 
-                            linkButton.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    openLink(link);
-                                }
-                            });
-
-                            ImageView imageView = new ImageView(context);
-                            imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_link));
-
-                            linkButton.addView(imageView);
-                            block.addView(linkButton);
+                        if (link.toLowerCase().startsWith("http")) {
+                            card.addView(myLink.generateButton(link, LinkButtonGenerator.LINK_LINK));
                         } else if (!link.equals("null")) {
-                            LinearLayout linkButton = new LinearLayout(context);
-                            LinearLayout.LayoutParams linkParams = new LinearLayout.LayoutParams(
-                                    (int) (50 * pixelDensity),
-                                    (int) (50 * pixelDensity)
-                            );
-                            linkParams.setMarginEnd((int) (20 * pixelDensity));
-                            linkParams.setMargins(0, (int) (20 * pixelDensity), 0, (int) (20 * pixelDensity));
-                            linkButton.setLayoutParams(linkParams);
-                            linkButton.setClickable(true);
-                            linkButton.setFocusable(true);
-                            linkButton.setGravity(Gravity.CENTER);
-                            linkButton.setBackground(ContextCompat.getDrawable(context, R.drawable.button_link));
-
-                            StateListAnimator elevation = AnimatorInflater.loadStateListAnimator(context, R.animator.item_elevation);
-                            linkButton.setStateListAnimator(elevation);
-
-                            linkButton.setOnClickListener(new View.OnClickListener() {
+                            LinearLayout linkView = myLink.generateButton(null, LinkButtonGenerator.LINK_DOWNLOAD);
+                            linkView.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
                                     downloadDocument(link);
                                 }
                             });
-
-                            ImageView imageView = new ImageView(context);
-                            imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_download));
-
-                            linkButton.addView(imageView);
-                            block.addView(linkButton);
+                            card.addView(linkView);
                         }
 
                         /*
-                            Finally adding the block to the announcements layout
+                            Adding the block to the announcements layout
                          */
-                        announcementsView.addView(block);
+                        announcementsView.addView(card);
                     }
 
                     if (i == index) {
@@ -386,5 +279,12 @@ public class SpotlightActivity extends AppCompatActivity {
                 sharedPreferences.edit().remove("newSpotlight").apply();
             }
         }).start();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        terminateThread = true;
     }
 }

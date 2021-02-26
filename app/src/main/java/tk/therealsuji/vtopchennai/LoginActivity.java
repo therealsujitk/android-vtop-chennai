@@ -3,6 +3,7 @@ package tk.therealsuji.vtopchennai;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -51,6 +52,19 @@ public class LoginActivity extends AppCompatActivity {
 //        prevent it from closing during a download.
 
 //        download.setCancelable(false);
+
+        download.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                vtop.terminateDownload();
+            }
+        });
+        download.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialog) {
+                vtop.terminateDownload();
+            }
+        });
 
         download.show();
 
@@ -280,5 +294,14 @@ public class LoginActivity extends AppCompatActivity {
             Initialising the VTOP WebView
          */
         vtop = new VTOP(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        if (vtop != null) {
+            vtop.terminateDownload();
+        }
     }
 }
