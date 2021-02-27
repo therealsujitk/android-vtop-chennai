@@ -32,7 +32,7 @@ public class TimetableActivity extends AppCompatActivity {
     float pixelDensity;
     int halfWidth, day;
 
-    boolean terminateThread = false;
+    boolean terminateThread;
 
     public void setTimetable(View view) {
         if (view != null) {

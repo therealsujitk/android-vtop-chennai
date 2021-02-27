@@ -32,7 +32,7 @@ public class ExamsActivity extends AppCompatActivity {
     float pixelDensity;
     int index, halfWidth;
 
-    boolean terminateThread = false;
+    boolean terminateThread;
 
     public void setExams(View view) {
         int selectedIndex = Integer.parseInt(view.getTag().toString());

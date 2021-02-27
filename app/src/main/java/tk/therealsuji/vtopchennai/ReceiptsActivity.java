@@ -16,7 +16,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.util.Objects;
 
 public class ReceiptsActivity extends AppCompatActivity {
-    boolean terminateThread = false;
+    boolean terminateThread;
 
     private String convertToReadableAmount(String amount) {
         StringBuilder separatedAmount = new StringBuilder(amount);

@@ -13,7 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.util.Objects;
 
 public class FacultyActivity extends AppCompatActivity {
-    boolean terminateThread = false;
+    boolean terminateThread;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

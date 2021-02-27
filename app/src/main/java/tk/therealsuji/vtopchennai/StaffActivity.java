@@ -24,7 +24,7 @@ public class StaffActivity extends AppCompatActivity {
     float pixelDensity;
     int staffID, halfWidth;
 
-    boolean terminateThread = false;
+    boolean terminateThread;
 
     public void setStaff(View view) {
         int selectedStaffID = Integer.parseInt(view.getTag().toString());

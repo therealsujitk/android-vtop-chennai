@@ -40,7 +40,7 @@ public class SpotlightActivity extends AppCompatActivity {
     float pixelDensity;
     int index, halfWidth;
     int STORAGE_PERMISSION_CODE = 1;
-    boolean isDownloadOpened, terminateThread = false;
+    boolean isDownloadOpened, terminateThread;
 
     public void setAnnouncements(View view) {
         int selectedIndex = Integer.parseInt(view.getTag().toString());

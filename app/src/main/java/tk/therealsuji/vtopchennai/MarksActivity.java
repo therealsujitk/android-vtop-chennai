@@ -39,7 +39,7 @@ public class MarksActivity extends AppCompatActivity {
     SharedPreferences sharedPreferences;
     JSONObject newMarks;
 
-    boolean terminateThread = false;
+    boolean terminateThread;
 
     public void setMarks(View view) {
         int selectedIndex = Integer.parseInt(view.getTag().toString());

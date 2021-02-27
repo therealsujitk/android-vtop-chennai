@@ -59,12 +59,6 @@ public class LoginActivity extends AppCompatActivity {
                 vtop.terminateDownload();
             }
         });
-        download.setOnCancelListener(new DialogInterface.OnCancelListener() {
-            @Override
-            public void onCancel(DialogInterface dialog) {
-                vtop.terminateDownload();
-            }
-        });
 
         download.show();
 

@@ -59,8 +59,6 @@ public class VTOP {
     LinearLayout captchaLayout, progressLayout, semesterLayout;
     ViewStub captchaStub, semesterStub, progressStub;
 
-    private boolean terminateDownload = false;
-
     /*
         DARK is used to change the colours of the captcha image when in dark mode
      */
@@ -68,16 +66,18 @@ public class VTOP {
             -0.853f, 0, 0, 0, 255, // R
             0, -0.853f, 0, 0, 255, // G
             0, 0, -0.853f, 0, 255, // B
-            0, 0, 0, 1, 0  // A
+            0, 0, 0, 1.0f, 1.0f  // A
     };
 
     SharedPreferences sharedPreferences;
     SQLiteDatabase myDatabase;
     TextView downloading, progressText;
     int counter, lastDownload;
-    Boolean isOpened, isLoggedIn, isCaptchaInflated, isSemesterInflated, isProgressInflated;
+    boolean isOpened, isCaptchaInflated, isSemesterInflated, isProgressInflated;
 
     String semesterID;
+
+    private boolean terminateDownload;
 
     @SuppressLint("SetJavaScriptEnabled")
     public VTOP(final Context context) {
@@ -92,7 +92,7 @@ public class VTOP {
                 }
 
                 if (!isOpened) {
-                    if (counter >= 60) {
+                    if (counter >= 60) {    // If it has tried to open the sign in page for over 60 times and failed, something is wrong
                         Toast.makeText(context, "Sorry, we had some trouble connecting to the server. Please try again later.", Toast.LENGTH_LONG).show();
                         myDatabase.close();
                         downloadDialog.dismiss();
@@ -110,7 +110,8 @@ public class VTOP {
         Start referencing the views
      */
     public void start(final Dialog downloadDialog) {
-        terminateDownload = false;
+        terminateDownload = false;      // If the download has been terminated, it has to be reset when asked to download again
+        counter = 0;                    // If the counter has turned to 60, it won't allow future downloads unless it has been reset
 
         this.downloadDialog = downloadDialog;
 
@@ -123,8 +124,9 @@ public class VTOP {
         sharedPreferences = context.getSharedPreferences("tk.therealsuji.vtopchennai", Context.MODE_PRIVATE);
         myDatabase = context.openOrCreateDatabase("vtop", Context.MODE_PRIVATE, null);
 
-        isOpened = false;
-        isLoggedIn = false;
+        /*
+            These views have to be re-inflated in case the download was terminated
+         */
         isCaptchaInflated = false;
         isSemesterInflated = false;
         isProgressInflated = false;
@@ -133,10 +135,10 @@ public class VTOP {
     }
 
     /*
-        Setup Captcha Layout
+        Setup the Captcha Layout
      */
-    public void setupCaptcha() {
-        if (terminateDownload) {
+    private void setupCaptcha() {
+        if (isCaptchaInflated || terminateDownload) {
             return;
         }
 
@@ -148,10 +150,10 @@ public class VTOP {
     }
 
     /*
-        Setup Semester Layout
+        Setup the Semester Layout
      */
-    public void setupSemester() {
-        if (terminateDownload) {
+    private void setupSemester() {
+        if (isSemesterInflated || terminateDownload) {
             return;
         }
 
@@ -162,10 +164,10 @@ public class VTOP {
     }
 
     /*
-        Setup Progress Layout
+        Setup the Progress Layout
      */
-    public void setupProgress() {
-        if (terminateDownload) {
+    private void setupProgress() {
+        if (isProgressInflated || terminateDownload) {
             return;
         }
 
@@ -180,8 +182,12 @@ public class VTOP {
     /*
         Function to perform a smooth animation of expanding the layouts in the dialog
      */
-    public void expand(final View view) {
+    private void expand(final View view) {
         if (terminateDownload) {
+            return;
+        }
+
+        if (view.getVisibility() == View.VISIBLE) {
             return;
         }
 
@@ -218,7 +224,7 @@ public class VTOP {
     /*
         Function to perform a smooth animation of compressing the layouts in the dialog
      */
-    public void compress(final View view) {
+    private void compress(final View view) {
         if (terminateDownload) {
             return;
         }
@@ -277,7 +283,7 @@ public class VTOP {
         Function to update the progress of the download. If more data needs to be downloaded,
         the max value can simply be updated here (SHOULD ALSO BE UPDATED IN dialog_download.xml)
      */
-    public void setProgress() {
+    private void setProgress() {
         if (terminateDownload) {
             return;
         }
@@ -291,10 +297,12 @@ public class VTOP {
         Function to reload the page using javascript in case of an error.
         If something goes wrong, it'll log out and ask for the captcha again.
      */
-    public void reloadPage() {
+    private void reloadPage() {
         if (terminateDownload) {
             return;
         }
+
+        isOpened = false;
 
         if (loading.getVisibility() == View.INVISIBLE) {
             hideLayouts();
@@ -370,7 +378,6 @@ public class VTOP {
                  */
                 if (src.equals("null")) {
                     Toast.makeText(context, "Sorry, something went wrong while trying to fetch the captcha code. Please try again.", Toast.LENGTH_LONG).show();
-                    isOpened = false;
                     reloadPage();
                 } else {
                     try {
@@ -380,9 +387,7 @@ public class VTOP {
 
                         String appearance = sharedPreferences.getString("appearance", "system");
 
-                        if (!isCaptchaInflated) {
-                            setupCaptcha();
-                        }
+                        setupCaptcha();     // Inflating the captcha layout
 
                         captcha.setImageBitmap(decodedImage);
                         if (appearance.equals("dark") || (appearance.equals("system") && (context.getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES)) {
@@ -437,7 +442,6 @@ public class VTOP {
             @Override
             public void onReceiveValue(String value) {
                 if (value.equals("true")) {
-                    isLoggedIn = true;
                     getSemesters();
                 } else {
                     if (!value.equals("false") && !value.equals("null")) {
@@ -463,7 +467,7 @@ public class VTOP {
     /*
         Function to get a list of the semesters. These semesters are obtained from the Timetable page
      */
-    public void getSemesters() {
+    private void getSemesters() {
         if (terminateDownload) {
             return;
         }
@@ -506,9 +510,7 @@ public class VTOP {
                         boolean isIndexStored = false;
                         String storedSemester = sharedPreferences.getString("semester", "null");
 
-                        if (!isSemesterInflated) {
-                            setupSemester();
-                        }
+                        setupSemester();        // Inflating the semester layout
 
                         JSONObject myObj = new JSONObject(obj);
                         List<String> options = new ArrayList<>();
@@ -589,9 +591,7 @@ public class VTOP {
             return;
         }
 
-        if (!isProgressInflated) {
-            setupProgress();
-        }
+        setupProgress();    // Inflating the progress layout
 
         downloading.setText(context.getString(R.string.downloading_profile));
         if (progressLayout.getVisibility() == View.GONE) {
@@ -664,9 +664,7 @@ public class VTOP {
             return;
         }
 
-        if (!isProgressInflated) {
-            setupProgress();
-        }
+        setupProgress();    // Inflating the progress layout
 
         downloading.setText(context.getString(R.string.downloading_timetable));
         if (progressLayout.getVisibility() == View.GONE) {
@@ -1021,9 +1019,7 @@ public class VTOP {
             return;
         }
 
-        if (!isProgressInflated) {
-            setupProgress();
-        }
+        setupProgress();    // Inflating the progress layout
 
         downloading.setText(context.getString(R.string.downloading_faculty));
         if (progressLayout.getVisibility() == View.GONE) {
@@ -1152,9 +1148,7 @@ public class VTOP {
             return;
         }
 
-        if (!isProgressInflated) {
-            setupProgress();
-        }
+        setupProgress();    // Inflating the progress layout
 
         downloading.setText(context.getString(R.string.downloading_staff));
         if (progressLayout.getVisibility() == View.GONE) {
@@ -1196,7 +1190,7 @@ public class VTOP {
             @Override
             public void onReceiveValue(final String obj) {
                 /*
-                    obj is in the form of a JSON string like {"Faculty Name": "Jack Ryan", "Email ID": "jack@cia.gov.us",...}
+                    obj is in the form of a JSON string like {"00Faculty Name": "Jack Ryan", "01Email ID": "jack@cia.gov.us",...}
                  */
                 String temp = obj.substring(1, obj.length() - 1);
                 if (obj.equals("null") || temp.equals("")) {
@@ -1269,9 +1263,7 @@ public class VTOP {
             return;
         }
 
-        if (!isProgressInflated) {
-            setupProgress();
-        }
+        setupProgress();    // Inflating the progress layout
 
         downloading.setText(context.getString(R.string.downloading_staff));
         if (progressLayout.getVisibility() == View.GONE) {
@@ -1359,7 +1351,7 @@ public class VTOP {
             @Override
             public void onReceiveValue(final String obj) {
                 /*
-                    obj is in the form of a JSON string like {"dean": {"Faculty Name": "Jack Ryan", "Email ID": "jack@cia.gov.us",...}, "hod: {"Jimmy Fallon": "Jack Ryan", "Email ID": "jimmy@tonight.us",...}"}
+                    obj is in the form of a JSON string like {"dean": {"00Faculty Name": "Jack Ryan", "01Email ID": "jack@cia.gov.us",...}, "hod: {"00Faculty Name": "Jimmy Fallon", "01Email ID": "jimmy@tonight.us",...}"}
                  */
                 String temp = obj.substring(1, obj.length() - 1);
                 if (obj.equals("null") || temp.equals("")) {
@@ -1451,9 +1443,7 @@ public class VTOP {
             return;
         }
 
-        if (!isProgressInflated) {
-            setupProgress();
-        }
+        setupProgress();    // Inflating the progress layout
 
         downloading.setText(context.getString(R.string.downloading_attendance));
         if (progressLayout.getVisibility() == View.GONE) {
@@ -1607,9 +1597,7 @@ public class VTOP {
             return;
         }
 
-        if (!isProgressInflated) {
-            setupProgress();
-        }
+        setupProgress();    // Inflating the progress layout
 
         downloading.setText(context.getString(R.string.downloading_exams));
         if (progressLayout.getVisibility() == View.GONE) {
@@ -1845,9 +1833,7 @@ public class VTOP {
             return;
         }
 
-        if (!isProgressInflated) {
-            setupProgress();
-        }
+        setupProgress();    // Inflating the progress layout
 
         downloading.setText(R.string.downloading_marks);
         if (progressLayout.getVisibility() == View.GONE) {
@@ -2090,9 +2076,7 @@ public class VTOP {
             return;
         }
 
-        if (!isProgressInflated) {
-            setupProgress();
-        }
+        setupProgress();    // Inflating the progress layout
 
         downloading.setText(context.getString(R.string.downloading_grade_history));
         if (progressLayout.getVisibility() == View.GONE) {
@@ -2224,7 +2208,7 @@ public class VTOP {
             @Override
             public void onReceiveValue(final String obj) {
                 /*
-                    obj is in the form of a JSON string
+                    obj is in the form of a JSON string like {"effective": "{course: "MAT1011", ...}", "curriculum": "{"type": "Program Core", ...}, ...}
                  */
                 String temp = obj.substring(1, obj.length() - 1);
                 if (obj.equals("null") || temp.equals("")) {
@@ -2325,16 +2309,14 @@ public class VTOP {
     }
 
     /*
-        Function to store the class messages in the SQLite database.
+        Function to store the class messages (1 / 2 - Messages) in the SQLite database.
      */
     public void downloadMessages() {
         if (terminateDownload) {
             return;
         }
 
-        if (!isProgressInflated) {
-            setupProgress();
-        }
+        setupProgress();    // Inflating the progress layout
 
         downloading.setText(context.getString(R.string.downloading_messages));
         if (progressLayout.getVisibility() == View.GONE) {
@@ -2459,16 +2441,14 @@ public class VTOP {
     }
 
     /*
-        Function to store the proctor messages in the SQLite database.
+        Function to store the proctor messages (2 / 2 - Messages) in the SQLite database.
      */
     public void downloadProctorMessages() {
         if (terminateDownload) {
             return;
         }
 
-        if (!isProgressInflated) {
-            setupProgress();
-        }
+        setupProgress();    // Inflating the progress layout
 
         downloading.setText(context.getString(R.string.downloading_messages));
         if (progressLayout.getVisibility() == View.GONE) {
@@ -2570,9 +2550,7 @@ public class VTOP {
             return;
         }
 
-        if (!isProgressInflated) {
-            setupProgress();
-        }
+        setupProgress();    // Inflating the progress layout
 
         downloading.setText(context.getString(R.string.downloading_spotlight));
         if (progressLayout.getVisibility() == View.GONE) {
@@ -2724,9 +2702,7 @@ public class VTOP {
             return;
         }
 
-        if (!isProgressInflated) {
-            setupProgress();
-        }
+        setupProgress();    // Inflating the progress layout
 
         downloading.setText(context.getString(R.string.downloading_receipts));
         if (progressLayout.getVisibility() == View.GONE) {
@@ -2815,6 +2791,7 @@ public class VTOP {
                                 ((Activity) context).runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
+                                        setProgress();
                                         checkDues();
                                     }
                                 });
@@ -2872,11 +2849,11 @@ public class VTOP {
         });
     }
 
+    /*
+        Closing the database & dialog, storing the last refreshed date & time,
+        clearing cache and finally signing the user in
+     */
     public void finishUp() {
-        if (terminateDownload) {
-            return;
-        }
-
         hideLayouts();
         loading.setVisibility(View.VISIBLE);
         sharedPreferences.edit().putBoolean("isSignedIn", true).apply();
@@ -2912,12 +2889,15 @@ public class VTOP {
             @Override
             public void run() {
                 Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
-                isOpened = false;
                 reloadPage();
             }
         });
     }
 
+    /*
+        Get the last successful download so that it can continue from
+        where it left off instead of starting from the first
+     */
     public int getLastDownload() {
         return lastDownload;
     }

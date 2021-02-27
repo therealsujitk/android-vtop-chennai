@@ -37,6 +37,9 @@ public class CardGenerator {
     }
 
     private TextView generateTextView(String string, float textSize, boolean bold, boolean textEnd) {
+        /*
+            The text views with proper formatting
+         */
         TextView view = new TextView(context);
         TableRow.LayoutParams viewParams = new TableRow.LayoutParams(
                 TableRow.LayoutParams.WRAP_CONTENT,
@@ -83,7 +86,7 @@ public class CardGenerator {
 
     private LinearLayout generateInnerBlock(String startString, String endString, boolean horizontal, boolean header) {  // header is to check if it is the top layout or the bottom
         /*
-            The innerBlock to hold the start and end strings
+            The innerBlock to hold the start / top and end / bottom strings
          */
         LinearLayout innerBlock = new LinearLayout(context);
         LinearLayout.LayoutParams innerBlockParams = new LinearLayout.LayoutParams(

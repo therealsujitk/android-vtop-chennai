@@ -56,7 +56,7 @@ public class HomeActivity extends AppCompatActivity {
     Context context;
     VTOP vtop;
 
-    boolean terminateThread = false;
+    boolean terminateThread;
 
     /*
         The following functions are to open the activities in the "Classes" category
@@ -299,12 +299,6 @@ public class HomeActivity extends AppCompatActivity {
         download.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialog) {
-                vtop.terminateDownload();
-            }
-        });
-        download.setOnCancelListener(new DialogInterface.OnCancelListener() {
-            @Override
-            public void onCancel(DialogInterface dialog) {
                 vtop.terminateDownload();
             }
         });

@@ -24,7 +24,7 @@ public class GradeHistoryActivity extends AppCompatActivity {
     float pixelDensity;
     int grade, halfWidth;
 
-    boolean terminateThread = false;
+    boolean terminateThread;
 
     public void setGrades(View view) {
         int index = Integer.parseInt(view.getTag().toString());

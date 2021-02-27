@@ -30,7 +30,7 @@ public class DirectionsActivity extends AppCompatActivity {
     float pixelDensity;
     int locationCategory, halfWidth;
 
-    boolean terminateThread = false;
+    boolean terminateThread;
 
     public void setCategory(View view) {
         int index = Integer.parseInt(view.getTag().toString());
