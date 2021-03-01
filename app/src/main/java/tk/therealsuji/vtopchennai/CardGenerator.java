@@ -19,13 +19,14 @@ public class CardGenerator {
     static int CARD_GRADE_HISTORY_A = 4;
     static int CARD_GRADE_HISTORY_B = 5;
     static int CARD_GRADE = 6;
-    static int CARD_MARK = 7;
-    static int CARD_MESSAGE = 8;
-    static int CARD_PROCTOR_MESSAGE = 9;
-    static int CARD_RECEIPT = 10;
-    static int CARD_SPOTLIGHT = 11;
-    static int CARD_STAFF = 12;
-    static int CARD_TIMETABLE = 13;
+    static int CARD_HOME = 7;
+    static int CARD_MARK = 8;
+    static int CARD_MESSAGE = 9;
+    static int CARD_PROCTOR_MESSAGE = 10;
+    static int CARD_RECEIPT = 11;
+    static int CARD_SPOTLIGHT = 12;
+    static int CARD_STAFF = 13;
+    static int CARD_TIMETABLE = 14;
     Context context;
     int cardType;
     float pixelDensity;
@@ -84,7 +85,10 @@ public class CardGenerator {
         return view;
     }
 
-    private LinearLayout generateInnerBlock(String startString, String endString, boolean horizontal, boolean header) {  // header is to check if it is the top layout or the bottom
+    /*
+        This method is public because it is used by the HomeActivity
+     */
+    public LinearLayout generateInnerBlock(String startString, String endString, boolean horizontal, boolean header) {  // header is to check if it is the top layout or the bottom
         /*
             The innerBlock to hold the start / top and end / bottom strings
          */
@@ -105,7 +109,7 @@ public class CardGenerator {
         boolean boldStart = false;
         boolean boldEnd = false;
 
-        if (header && (cardType == CARD_ATTENDANCE || cardType == CARD_DIRECTION || cardType == CARD_GRADE_HISTORY_A || cardType == CARD_STAFF || cardType == CARD_TIMETABLE)) {
+        if (header && (cardType == CARD_ATTENDANCE || cardType == CARD_DIRECTION || cardType == CARD_GRADE_HISTORY_A || cardType == CARD_HOME || cardType == CARD_STAFF || cardType == CARD_TIMETABLE)) {
             textSize = 20;
         }
 
@@ -113,6 +117,21 @@ public class CardGenerator {
             boldEnd = true;
         } else if (header && (cardType == CARD_DIRECTION || cardType == CARD_GRADE_HISTORY_A || cardType == CARD_STAFF || cardType == CARD_TIMETABLE)) {
             boldStart = true;
+        } else if (cardType == CARD_HOME) {
+            innerBlockParams = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+            );
+            innerBlock.setLayoutParams(innerBlockParams);
+
+            if (header) {
+                boldStart = true;
+                boldEnd = true;
+
+                innerBlock.setPadding((int) (20 * pixelDensity), (int) (-5 * pixelDensity), (int) (20 * pixelDensity), 0);
+            } else {
+                innerBlock.setPadding((int) (20 * pixelDensity), 0, (int) (20 * pixelDensity), (int) (15 * pixelDensity));
+            }
         }
 
         /*

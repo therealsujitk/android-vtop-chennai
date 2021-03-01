@@ -206,6 +206,9 @@ public class LoginActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
+        /*
+            The below code is just to addd some beautiful animation to the views
+         */
         final EditText username = findViewById(R.id.username);
         final EditText password = findViewById(R.id.password);
 
@@ -272,7 +275,7 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         /*
-            Check for a new version
+            Locally check for a new version (The actually checking is done in the SplashScreenActivity)
          */
         int versionCode = BuildConfig.VERSION_CODE;
         int latestVersion = sharedPreferences.getInt("latest", versionCode);
@@ -285,7 +288,8 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         /*
-            Initialising the VTOP WebView
+            Initialising the VTOP WebView before hand to speed things up for the user
+            because for some reason, initialising WebView's take a second
          */
         vtop = new VTOP(this);
     }

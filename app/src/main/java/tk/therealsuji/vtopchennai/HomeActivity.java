@@ -14,7 +14,6 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -29,7 +28,6 @@ import android.widget.RadioButton;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.Spinner;
-import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,7 +35,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.content.res.ResourcesCompat;
 import androidx.security.crypto.EncryptedSharedPreferences;
 import androidx.security.crypto.MasterKey;
 
@@ -640,6 +637,10 @@ public class HomeActivity extends AppCompatActivity {
         idView.setText(id);
         creditsView.setText(credits);
 
+        /*
+            This initialising is just to check if notification
+            dots are in the layout in future
+         */
         classesNotification = -1;
         timetableNotification = -1;
         messagesNotification = -1;
@@ -655,7 +656,6 @@ public class HomeActivity extends AppCompatActivity {
         proctorMessageNotification = -1;
         receiptsNotification = -1;
 
-        final float pixelDensity = this.getResources().getDisplayMetrics().density;
         final SimpleDateFormat hour24 = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
         final SimpleDateFormat hour12 = new SimpleDateFormat("h:mm a", Locale.ENGLISH);
 
@@ -666,8 +666,9 @@ public class HomeActivity extends AppCompatActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
+                float pixelDensity = context.getResources().getDisplayMetrics().density;
                 /*
-                    The outer OUTER block
+                    The outer block that holds the upcoming or ongoing & upcoming classes
                  */
                 final LinearLayout outerBlock = new LinearLayout(context);
                 LinearLayout.LayoutParams outerBlockParams = new LinearLayout.LayoutParams(
@@ -721,6 +722,8 @@ public class HomeActivity extends AppCompatActivity {
 
                 boolean flag = false;
 
+                CardGenerator myBlock = new CardGenerator(context, CardGenerator.CARD_HOME);
+
                 for (int i = 0; i < theory.getCount() && i < lab.getCount(); ++i, theory.moveToNext(), lab.moveToNext()) {
                     if (terminateThread) {
                         return;
@@ -735,83 +738,13 @@ public class HomeActivity extends AppCompatActivity {
                         Date currentTime = hour24.parse(hour24.format(cal.getTime()));
                         Date futureTime = hour24.parse(hour24.format(calFuture.getTime()));
 
-                        assert currentTime != null;
-                        assert futureTime != null;
-
-                        if ((futureTime.after(hour24.parse(startTimeTheory)) || futureTime.equals(hour24.parse(startTimeTheory))) && currentTime.before(hour24.parse(startTimeTheory)) && !theory.getString(dayTheory).equals("null")) {
-                            /*
-                                The outer block
-                             */
-                            LinearLayout block = new LinearLayout(context);
-                            LinearLayout.LayoutParams blockParams = new LinearLayout.LayoutParams(
-                                    LinearLayout.LayoutParams.MATCH_PARENT,
-                                    LinearLayout.LayoutParams.WRAP_CONTENT
-                            );
-                            block.setLayoutParams(blockParams);
-                            block.setOrientation(LinearLayout.VERTICAL);
-
-                            /*
-                                The inner LinearLayout
-                             */
-                            LinearLayout innerBlockHeading = new LinearLayout(context);
-                            LinearLayout.LayoutParams innerBlockHeadingParams = new LinearLayout.LayoutParams(
-                                    LinearLayout.LayoutParams.MATCH_PARENT,
-                                    LinearLayout.LayoutParams.WRAP_CONTENT
-                            );
-                            innerBlockHeading.setLayoutParams(innerBlockHeadingParams);
-                            innerBlockHeading.setOrientation(LinearLayout.HORIZONTAL);
-
-                            /*
-                                The upcoming text
-                             */
-                            TextView heading = new TextView(context);
-                            TableRow.LayoutParams headingParams = new TableRow.LayoutParams(
-                                    TableRow.LayoutParams.WRAP_CONTENT,
-                                    TableRow.LayoutParams.WRAP_CONTENT
-                            );
-                            headingParams.setMarginStart((int) (20 * pixelDensity));
-                            headingParams.setMargins(0, 0, 0, (int) (5 * pixelDensity));
-                            heading.setLayoutParams(headingParams);
-                            heading.setText(getString(R.string.upcoming));
-                            heading.setTextColor(getColor(R.color.colorPrimary));
-                            heading.setTextSize(20);
-                            heading.setTypeface(ResourcesCompat.getFont(context, R.font.rubik), Typeface.BOLD);
-
-                            innerBlockHeading.addView(heading);
-
-                            /*
-                                The upcoming class course code
-                             */
+                        if (currentTime != null && futureTime != null && (futureTime.after(hour24.parse(startTimeTheory)) || futureTime.equals(hour24.parse(startTimeTheory))) && currentTime.before(hour24.parse(startTimeTheory)) && !theory.getString(dayTheory).equals("null")) {
+                            String upcoming = getString(R.string.upcoming);
                             String course = theory.getString(dayTheory).split("-")[1].trim();
 
-                            TextView period = new TextView(context);
-                            TableRow.LayoutParams periodParams = new TableRow.LayoutParams(
-                                    TableRow.LayoutParams.MATCH_PARENT,
-                                    TableRow.LayoutParams.WRAP_CONTENT
-                            );
-                            periodParams.setMarginEnd((int) (20 * pixelDensity));
-                            periodParams.setMargins(0, 0, 0, (int) (5 * pixelDensity));
-                            period.setLayoutParams(periodParams);
-                            period.setText(course);
-                            period.setTextColor(getColor(R.color.colorPrimary));
-                            period.setTextSize(20);
-                            period.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
-                            period.setTypeface(ResourcesCompat.getFont(context, R.font.rubik), Typeface.BOLD);
+                            LinearLayout headingBlock = myBlock.generateInnerBlock(upcoming, course, true, true);
 
-                            innerBlockHeading.addView(period);
-
-                            block.addView(innerBlockHeading);
-
-                            /*
-                                The inner LinearLayout
-                             */
-                            LinearLayout innerBlock = new LinearLayout(context);
-                            LinearLayout.LayoutParams innerBlockParams = new LinearLayout.LayoutParams(
-                                    LinearLayout.LayoutParams.MATCH_PARENT,
-                                    LinearLayout.LayoutParams.WRAP_CONTENT
-                            );
-                            innerBlock.setLayoutParams(innerBlockParams);
-                            innerBlock.setOrientation(LinearLayout.HORIZONTAL);
+                            outerBlock.addView(headingBlock);  // Adding the headingBlock to the outer block
 
                             /*
                                 Making a proper string of the timings
@@ -828,125 +761,22 @@ public class HomeActivity extends AppCompatActivity {
                                     e.printStackTrace();
                                 }
                             }
+                            String type = getString(R.string.theory);
 
-                            /*
-                                The timing TextView
-                             */
-                            TextView timing = new TextView(context);
-                            TableRow.LayoutParams timingParams = new TableRow.LayoutParams(
-                                    TableRow.LayoutParams.WRAP_CONTENT,
-                                    TableRow.LayoutParams.WRAP_CONTENT
-                            );
-                            timingParams.setMarginStart((int) (20 * pixelDensity));
-                            timingParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (20 * pixelDensity));
-                            timing.setLayoutParams(timingParams);
-                            timing.setText(timings);
-                            timing.setTextColor(getColor(R.color.colorPrimary));
-                            timing.setTextSize(16);
-                            timing.setTypeface(ResourcesCompat.getFont(context, R.font.rubik));
+                            LinearLayout block = myBlock.generateInnerBlock(timings, type, true, false);
 
-                            innerBlock.addView(timing); //Adding timing to innerBlock
+                            outerBlock.addView(block);  // Adding the block to the outer block
 
-                            /*
-                                The upcoming class course type
-                             */
-                            TextView courseType = new TextView(context);
-                            TableRow.LayoutParams courseTypeParams = new TableRow.LayoutParams(
-                                    TableRow.LayoutParams.MATCH_PARENT,
-                                    TableRow.LayoutParams.WRAP_CONTENT
-                            );
-                            courseTypeParams.setMarginEnd((int) (20 * pixelDensity));
-                            courseTypeParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (20 * pixelDensity));
-                            courseType.setLayoutParams(courseTypeParams);
-                            courseType.setText(getString(R.string.theory));
-                            courseType.setTextColor(getColor(R.color.colorPrimary));
-                            courseType.setTextSize(16);
-                            courseType.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
-                            courseType.setTypeface(ResourcesCompat.getFont(context, R.font.rubik));
-
-                            innerBlock.addView(courseType); //Adding the upcoming class type to innerBlock
-
-                            block.addView(innerBlock);
-
-                            outerBlock.addView(block);
-
-                            flag = true;    //Flag is set so that the next code doesn't erase everything
+                            flag = true;    // Flag is set so terminate the loop when the time comes
                         }
 
-                        if ((futureTime.after(hour24.parse(startTimeLab)) || futureTime.equals(hour24.parse(startTimeLab))) && currentTime.before(hour24.parse(startTimeLab)) && !lab.getString(dayLab).equals("null")) {
-                            /*
-                                The outer block
-                             */
-                            LinearLayout block = new LinearLayout(context);
-                            LinearLayout.LayoutParams blockParams = new LinearLayout.LayoutParams(
-                                    LinearLayout.LayoutParams.MATCH_PARENT,
-                                    LinearLayout.LayoutParams.WRAP_CONTENT
-                            );
-                            block.setLayoutParams(blockParams);
-                            block.setOrientation(LinearLayout.VERTICAL);
-
-                            /*
-                                The inner LinearLayout
-                             */
-                            LinearLayout innerBlockHeading = new LinearLayout(context);
-                            LinearLayout.LayoutParams innerBlockHeadingParams = new LinearLayout.LayoutParams(
-                                    LinearLayout.LayoutParams.MATCH_PARENT,
-                                    LinearLayout.LayoutParams.WRAP_CONTENT
-                            );
-                            innerBlockHeading.setLayoutParams(innerBlockHeadingParams);
-                            innerBlockHeading.setOrientation(LinearLayout.HORIZONTAL);
-
-                            /*
-                                The upcoming text
-                             */
-                            TextView heading = new TextView(context);
-                            TableRow.LayoutParams headingParams = new TableRow.LayoutParams(
-                                    TableRow.LayoutParams.WRAP_CONTENT,
-                                    TableRow.LayoutParams.WRAP_CONTENT
-                            );
-                            headingParams.setMarginStart((int) (20 * pixelDensity));
-                            headingParams.setMargins(0, 0, 0, (int) (5 * pixelDensity));
-                            heading.setLayoutParams(headingParams);
-                            heading.setText(getString(R.string.upcoming));
-                            heading.setTextColor(getColor(R.color.colorPrimary));
-                            heading.setTextSize(20);
-                            heading.setTypeface(ResourcesCompat.getFont(context, R.font.rubik), Typeface.BOLD);
-
-                            innerBlockHeading.addView(heading);
-
-                            /*
-                                The upcoming class course code
-                             */
+                        if (currentTime != null && futureTime != null && (futureTime.after(hour24.parse(startTimeLab)) || futureTime.equals(hour24.parse(startTimeLab))) && currentTime.before(hour24.parse(startTimeLab)) && !lab.getString(dayLab).equals("null")) {
+                            String upcoming = getString(R.string.upcoming);
                             String course = lab.getString(dayLab).split("-")[1].trim();
 
-                            TextView period = new TextView(context);
-                            TableRow.LayoutParams periodParams = new TableRow.LayoutParams(
-                                    TableRow.LayoutParams.MATCH_PARENT,
-                                    TableRow.LayoutParams.WRAP_CONTENT
-                            );
-                            periodParams.setMarginEnd((int) (20 * pixelDensity));
-                            periodParams.setMargins(0, 0, 0, (int) (5 * pixelDensity));
-                            period.setLayoutParams(periodParams);
-                            period.setText(course);
-                            period.setTextColor(getColor(R.color.colorPrimary));
-                            period.setTextSize(20);
-                            period.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
-                            period.setTypeface(ResourcesCompat.getFont(context, R.font.rubik), Typeface.BOLD);
+                            LinearLayout headingBlock = myBlock.generateInnerBlock(upcoming, course, true, true);
 
-                            innerBlockHeading.addView(period); //Adding the upcoming class to innerBlock
-
-                            block.addView(innerBlockHeading);
-
-                            /*
-                                The inner LinearLayout
-                             */
-                            LinearLayout innerBlock = new LinearLayout(context);
-                            LinearLayout.LayoutParams innerBlockParams = new LinearLayout.LayoutParams(
-                                    LinearLayout.LayoutParams.MATCH_PARENT,
-                                    LinearLayout.LayoutParams.WRAP_CONTENT
-                            );
-                            innerBlock.setLayoutParams(innerBlockParams);
-                            innerBlock.setOrientation(LinearLayout.HORIZONTAL);
+                            outerBlock.addView(headingBlock);  // Adding the headingBlock to the outer block
 
                             /*
                                 Making a proper string of the timings
@@ -963,128 +793,26 @@ public class HomeActivity extends AppCompatActivity {
                                     e.printStackTrace();
                                 }
                             }
+                            String type = getString(R.string.lab);
 
-                            /*
-                                The timing TextView
-                             */
-                            TextView timing = new TextView(context);
-                            TableRow.LayoutParams timingParams = new TableRow.LayoutParams(
-                                    TableRow.LayoutParams.WRAP_CONTENT,
-                                    TableRow.LayoutParams.WRAP_CONTENT
-                            );
-                            timingParams.setMarginStart((int) (20 * pixelDensity));
-                            timingParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (20 * pixelDensity));
-                            timing.setLayoutParams(timingParams);
-                            timing.setText(timings);
-                            timing.setTextColor(getColor(R.color.colorPrimary));
-                            timing.setTextSize(16);
-                            timing.setTypeface(ResourcesCompat.getFont(context, R.font.rubik));
+                            LinearLayout block = myBlock.generateInnerBlock(timings, type, true, false);
 
-                            innerBlock.addView(timing); //Adding timing to innerBlock
+                            outerBlock.addView(block);  // Adding the block to the outer block
 
-                            /*
-                                The upcoming class course code
-                             */
-                            TextView courseType = new TextView(context);
-                            TableRow.LayoutParams courseTypeParams = new TableRow.LayoutParams(
-                                    TableRow.LayoutParams.MATCH_PARENT,
-                                    TableRow.LayoutParams.WRAP_CONTENT
-                            );
-                            courseTypeParams.setMarginEnd((int) (20 * pixelDensity));
-                            courseTypeParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (20 * pixelDensity));
-                            courseType.setLayoutParams(courseTypeParams);
-                            courseType.setText(getString(R.string.lab));
-                            courseType.setTextColor(getColor(R.color.colorPrimary));
-                            courseType.setTextSize(16);
-                            courseType.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
-                            courseType.setTypeface(ResourcesCompat.getFont(context, R.font.rubik));
-
-                            innerBlock.addView(courseType); //Adding the upcoming class type to innerBlock
-
-                            block.addView(innerBlock);
-
-                            outerBlock.addView(block);
-
-                            flag = true;    //Flag is set so that the next code doesn't erase everything
+                            flag = true;    // Flag is set so terminate the loop when the time comes
                         }
 
                         if (flag) {
-                            break;  // If either Upcoming or Ongoing and Upcoming has been added, the loop can stop
+                            break;  // If either Upcoming or Ongoing & Upcoming classes are available, the loop can terminate
                         }
 
-                        if ((currentTime.after(hour24.parse(startTimeTheory)) || currentTime.equals(hour24.parse(startTimeTheory))) && (currentTime.before(hour24.parse(endTimeTheory)) || currentTime.equals(hour24.parse(endTimeTheory))) && !theory.getString(dayTheory).equals("null")) {
-                            /*
-                                The outer block
-                             */
-                            LinearLayout block = new LinearLayout(context);
-                            LinearLayout.LayoutParams blockParams = new LinearLayout.LayoutParams(
-                                    LinearLayout.LayoutParams.MATCH_PARENT,
-                                    LinearLayout.LayoutParams.WRAP_CONTENT
-                            );
-                            block.setLayoutParams(blockParams);
-                            block.setOrientation(LinearLayout.VERTICAL);
-
-                            /*
-                                The inner LinearLayout
-                             */
-                            LinearLayout innerBlockHeading = new LinearLayout(context);
-                            LinearLayout.LayoutParams innerBlockHeadingParams = new LinearLayout.LayoutParams(
-                                    LinearLayout.LayoutParams.MATCH_PARENT,
-                                    LinearLayout.LayoutParams.WRAP_CONTENT
-                            );
-                            innerBlockHeading.setLayoutParams(innerBlockHeadingParams);
-                            innerBlockHeading.setOrientation(LinearLayout.HORIZONTAL);
-
-                            /*
-                                The ongoing text
-                             */
-                            TextView heading = new TextView(context);
-                            TableRow.LayoutParams headingParams = new TableRow.LayoutParams(
-                                    TableRow.LayoutParams.WRAP_CONTENT,
-                                    TableRow.LayoutParams.WRAP_CONTENT
-                            );
-                            headingParams.setMarginStart((int) (20 * pixelDensity));
-                            headingParams.setMargins(0, 0, 0, (int) (5 * pixelDensity));
-                            heading.setLayoutParams(headingParams);
-                            heading.setText(getString(R.string.ongoing));
-                            heading.setTextColor(getColor(R.color.colorPrimary));
-                            heading.setTextSize(20);
-                            heading.setTypeface(ResourcesCompat.getFont(context, R.font.rubik), Typeface.BOLD);
-
-                            innerBlockHeading.addView(heading);
-
-                            /*
-                                The ongoing class course code
-                             */
+                        if (currentTime != null && (currentTime.after(hour24.parse(startTimeTheory)) || currentTime.equals(hour24.parse(startTimeTheory))) && (currentTime.before(hour24.parse(endTimeTheory)) || currentTime.equals(hour24.parse(endTimeTheory))) && !theory.getString(dayTheory).equals("null")) {
+                            String upcoming = getString(R.string.ongoing);
                             String course = theory.getString(dayTheory).split("-")[1].trim();
-                            TextView period = new TextView(context);
-                            TableRow.LayoutParams periodParams = new TableRow.LayoutParams(
-                                    TableRow.LayoutParams.MATCH_PARENT,
-                                    TableRow.LayoutParams.WRAP_CONTENT
-                            );
-                            periodParams.setMarginEnd((int) (20 * pixelDensity));
-                            periodParams.setMargins(0, 0, 0, (int) (5 * pixelDensity));
-                            period.setLayoutParams(periodParams);
-                            period.setText(course);
-                            period.setTextColor(getColor(R.color.colorPrimary));
-                            period.setTextSize(20);
-                            period.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
-                            period.setTypeface(ResourcesCompat.getFont(context, R.font.rubik), Typeface.BOLD);
 
-                            innerBlockHeading.addView(period); //Adding the ongoing class to innerBlock
+                            LinearLayout headingBlock = myBlock.generateInnerBlock(upcoming, course, true, true);
 
-                            block.addView(innerBlockHeading);
-
-                            /*
-                                The inner LinearLayout
-                             */
-                            LinearLayout innerBlock = new LinearLayout(context);
-                            LinearLayout.LayoutParams innerBlockParams = new LinearLayout.LayoutParams(
-                                    LinearLayout.LayoutParams.MATCH_PARENT,
-                                    LinearLayout.LayoutParams.WRAP_CONTENT
-                            );
-                            innerBlock.setLayoutParams(innerBlockParams);
-                            innerBlock.setOrientation(LinearLayout.HORIZONTAL);
+                            outerBlock.addView(headingBlock);  // Adding the headingBlock to the outer block
 
                             /*
                                 Making a proper string of the timings
@@ -1101,127 +829,22 @@ public class HomeActivity extends AppCompatActivity {
                                     e.printStackTrace();
                                 }
                             }
+                            String type = getString(R.string.theory);
 
-                            /*
-                                The timing TextView
-                             */
-                            TextView timing = new TextView(context);
-                            TableRow.LayoutParams timingParams = new TableRow.LayoutParams(
-                                    TableRow.LayoutParams.WRAP_CONTENT,
-                                    TableRow.LayoutParams.WRAP_CONTENT
-                            );
-                            timingParams.setMarginStart((int) (20 * pixelDensity));
-                            timingParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (20 * pixelDensity));
-                            timing.setLayoutParams(timingParams);
-                            timing.setText(timings);
-                            timing.setTextColor(getColor(R.color.colorPrimary));
-                            timing.setTextSize(16);
-                            timing.setTypeface(ResourcesCompat.getFont(context, R.font.rubik));
+                            LinearLayout block = myBlock.generateInnerBlock(timings, type, true, false);
 
-                            /*
-                                Finally adding the innerBlock to the main block
-                             */
-                            innerBlock.addView(timing);
+                            outerBlock.addView(block);  // Adding the block to the outer block
 
-                            /*
-                                The ongoing class course code
-                             */
-                            TextView courseType = new TextView(context);
-                            TableRow.LayoutParams courseTypeParams = new TableRow.LayoutParams(
-                                    TableRow.LayoutParams.MATCH_PARENT,
-                                    TableRow.LayoutParams.WRAP_CONTENT
-                            );
-                            courseTypeParams.setMarginEnd((int) (20 * pixelDensity));
-                            courseTypeParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (20 * pixelDensity));
-                            courseType.setLayoutParams(courseTypeParams);
-                            courseType.setText(getString(R.string.theory));
-                            courseType.setTextColor(getColor(R.color.colorPrimary));
-                            courseType.setTextSize(16);
-                            courseType.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
-                            courseType.setTypeface(ResourcesCompat.getFont(context, R.font.rubik));
-
-                            innerBlock.addView(courseType); //Adding the ongoing class type to innerBlock
-
-                            block.addView(innerBlock);
-
-                            outerBlock.addView(block);
-
-                            flag = true;    //Flag is set so that the next code doesn't erase everything
+                            flag = true;    // Flag is set so terminate the loop when the time comes
                         }
 
                         if ((currentTime.after(hour24.parse(startTimeLab)) || currentTime.equals(hour24.parse(startTimeLab))) && (currentTime.before(hour24.parse(endTimeLab)) || currentTime.equals(hour24.parse(endTimeLab))) && !lab.getString(dayLab).equals("null")) {
-                            /*
-                                The outer block
-                             */
-                            LinearLayout block = new LinearLayout(context);
-                            LinearLayout.LayoutParams blockParams = new LinearLayout.LayoutParams(
-                                    LinearLayout.LayoutParams.MATCH_PARENT,
-                                    LinearLayout.LayoutParams.WRAP_CONTENT
-                            );
-                            block.setLayoutParams(blockParams);
-                            block.setOrientation(LinearLayout.VERTICAL);
-
-                            /*
-                                The inner LinearLayout
-                             */
-                            LinearLayout innerBlockHeading = new LinearLayout(context);
-                            LinearLayout.LayoutParams innerBlockHeadingParams = new LinearLayout.LayoutParams(
-                                    LinearLayout.LayoutParams.MATCH_PARENT,
-                                    LinearLayout.LayoutParams.WRAP_CONTENT
-                            );
-                            innerBlockHeading.setLayoutParams(innerBlockHeadingParams);
-                            innerBlockHeading.setOrientation(LinearLayout.HORIZONTAL);
-
-                            /*
-                                The ongoing text
-                             */
-                            TextView heading = new TextView(context);
-                            TableRow.LayoutParams headingParams = new TableRow.LayoutParams(
-                                    TableRow.LayoutParams.WRAP_CONTENT,
-                                    TableRow.LayoutParams.WRAP_CONTENT
-                            );
-                            headingParams.setMarginStart((int) (20 * pixelDensity));
-                            headingParams.setMargins(0, 0, 0, (int) (5 * pixelDensity));
-                            heading.setLayoutParams(headingParams);
-                            heading.setText(getString(R.string.ongoing));
-                            heading.setTextColor(getColor(R.color.colorPrimary));
-                            heading.setTextSize(20);
-                            heading.setTypeface(ResourcesCompat.getFont(context, R.font.rubik), Typeface.BOLD);
-
-                            innerBlockHeading.addView(heading);
-
-                            /*
-                                The ongoing class course code
-                             */
+                            String upcoming = getString(R.string.ongoing);
                             String course = lab.getString(dayLab).split("-")[1].trim();
-                            TextView period = new TextView(context);
-                            TableRow.LayoutParams periodParams = new TableRow.LayoutParams(
-                                    TableRow.LayoutParams.MATCH_PARENT,
-                                    TableRow.LayoutParams.WRAP_CONTENT
-                            );
-                            periodParams.setMarginEnd((int) (20 * pixelDensity));
-                            periodParams.setMargins(0, 0, 0, (int) (5 * pixelDensity));
-                            period.setLayoutParams(periodParams);
-                            period.setText(course);
-                            period.setTextColor(getColor(R.color.colorPrimary));
-                            period.setTextSize(20);
-                            period.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
-                            period.setTypeface(ResourcesCompat.getFont(context, R.font.rubik), Typeface.BOLD);
 
-                            innerBlockHeading.addView(period); //Adding the ongoing class to innerBlock
+                            LinearLayout headingBlock = myBlock.generateInnerBlock(upcoming, course, true, true);
 
-                            block.addView(innerBlockHeading);
-
-                            /*
-                                The inner LinearLayout
-                             */
-                            LinearLayout innerBlock = new LinearLayout(context);
-                            LinearLayout.LayoutParams innerBlockParams = new LinearLayout.LayoutParams(
-                                    LinearLayout.LayoutParams.MATCH_PARENT,
-                                    LinearLayout.LayoutParams.WRAP_CONTENT
-                            );
-                            innerBlock.setLayoutParams(innerBlockParams);
-                            innerBlock.setOrientation(LinearLayout.HORIZONTAL);
+                            outerBlock.addView(headingBlock);  // Adding the headingBlock to the outer block
 
                             /*
                                 Making a proper string of the timings
@@ -1238,52 +861,13 @@ public class HomeActivity extends AppCompatActivity {
                                     e.printStackTrace();
                                 }
                             }
+                            String type = getString(R.string.lab);
 
-                            /*
-                                The timing TextView
-                             */
-                            TextView timing = new TextView(context);
-                            TableRow.LayoutParams timingParams = new TableRow.LayoutParams(
-                                    TableRow.LayoutParams.WRAP_CONTENT,
-                                    TableRow.LayoutParams.WRAP_CONTENT
-                            );
-                            timingParams.setMarginStart((int) (20 * pixelDensity));
-                            timingParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (20 * pixelDensity));
-                            timing.setLayoutParams(timingParams);
-                            timing.setText(timings);
-                            timing.setTextColor(getColor(R.color.colorPrimary));
-                            timing.setTextSize(16);
-                            timing.setTypeface(ResourcesCompat.getFont(context, R.font.rubik));
+                            LinearLayout block = myBlock.generateInnerBlock(timings, type, true, false);
 
-                            /*
-                                Finally adding the innerBlock to the main block
-                             */
-                            innerBlock.addView(timing);
+                            outerBlock.addView(block);  // Adding the block to the outer block
 
-                            /*
-                                The ongoing class course type
-                             */
-                            TextView courseType = new TextView(context);
-                            TableRow.LayoutParams courseTypeParams = new TableRow.LayoutParams(
-                                    TableRow.LayoutParams.MATCH_PARENT,
-                                    TableRow.LayoutParams.WRAP_CONTENT
-                            );
-                            courseTypeParams.setMarginEnd((int) (20 * pixelDensity));
-                            courseTypeParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (20 * pixelDensity));
-                            courseType.setLayoutParams(courseTypeParams);
-                            courseType.setText(getString(R.string.lab));
-                            courseType.setTextColor(getColor(R.color.colorPrimary));
-                            courseType.setTextSize(16);
-                            courseType.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
-                            courseType.setTypeface(ResourcesCompat.getFont(context, R.font.rubik));
-
-                            innerBlock.addView(courseType); //Adding the ongoing class type to innerBlock
-
-                            block.addView(innerBlock);
-
-                            outerBlock.addView(block);
-
-                            flag = true;    //Flag is set so that the next code doesn't erase everything
+                            flag = true;    // Flag is set so terminate the loop when the time comes
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -1305,6 +889,10 @@ public class HomeActivity extends AppCompatActivity {
                 lab.close();
                 myDatabase.close();
 
+                /*
+                    From this point forward, it is to check for unread data
+                    to display default or urgent notification dots
+                 */
                 NotificationDotGenerator myNotification = new NotificationDotGenerator(context);
 
                 boolean classesFlag = false;
@@ -1600,6 +1188,9 @@ public class HomeActivity extends AppCompatActivity {
             }
         }).start();
 
+        /*
+            Displaying the last time data was refreshed
+         */
         String refreshedDate = sharedPreferences.getString("refreshedDate", getString(R.string.refreshed_unavailable));
         String refreshedTime = sharedPreferences.getString("refreshedTime", getString(R.string.refreshed_unavailable));
         TextView refreshedView = findViewById(R.id.refreshed);
@@ -1621,6 +1212,9 @@ public class HomeActivity extends AppCompatActivity {
             refreshedView.setText(refreshed);
         }
 
+        /*
+            This little piece of code is some necessary steps to check if data has been refreshed recently
+         */
         Calendar c = Calendar.getInstance();
         SimpleDateFormat dateFormat = new SimpleDateFormat("MMM d", Locale.ENGLISH);
         Date today = null, lastRefreshed = null, futureRefresh = null;
@@ -1636,7 +1230,7 @@ public class HomeActivity extends AppCompatActivity {
         }
 
         /*
-            Check for a new version
+            Locally check for a new version (The actually checking is done in the SplashScreenActivity)
          */
         int versionCode = BuildConfig.VERSION_CODE;
         int latestVersion = sharedPreferences.getInt("latest", versionCode);
@@ -1657,7 +1251,8 @@ public class HomeActivity extends AppCompatActivity {
         myLink.setMovementMethod(LinkMovementMethod.getInstance());
 
         /*
-            Initialising the VTOP WebView
+            Initialising the VTOP WebView before hand to speed things up for the user
+            because for some reason, initialising WebView's take a second
          */
         vtop = new VTOP(this);
     }
