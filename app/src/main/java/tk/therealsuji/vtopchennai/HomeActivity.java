@@ -21,6 +21,7 @@ import android.text.format.DateFormat;
 import android.text.method.LinkMovementMethod;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -310,6 +311,7 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     public void submitCaptcha(View view) {
+        hideKeyboard();
         vtop.hideLayouts();
 
         String username = encryptedSharedPreferences.getString("username", null);
@@ -549,6 +551,19 @@ public class HomeActivity extends AppCompatActivity {
         String link = "http://vtopchennai.therealsuji.tk";
         Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(link));
         startActivity(browserIntent);
+    }
+
+    private void hideKeyboard() {
+        if (download == null) {
+            return;
+        }
+
+        View view = download.getCurrentFocus();
+
+        if (view != null) {
+            InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
     }
 
     public static void expand(final View view) {
@@ -838,7 +853,7 @@ public class HomeActivity extends AppCompatActivity {
                             flag = true;    // Flag is set so terminate the loop when the time comes
                         }
 
-                        if ((currentTime.after(hour24.parse(startTimeLab)) || currentTime.equals(hour24.parse(startTimeLab))) && (currentTime.before(hour24.parse(endTimeLab)) || currentTime.equals(hour24.parse(endTimeLab))) && !lab.getString(dayLab).equals("null")) {
+                        if (currentTime != null && (currentTime.after(hour24.parse(startTimeLab)) || currentTime.equals(hour24.parse(startTimeLab))) && (currentTime.before(hour24.parse(endTimeLab)) || currentTime.equals(hour24.parse(endTimeLab))) && !lab.getString(dayLab).equals("null")) {
                             String upcoming = getString(R.string.ongoing);
                             String course = lab.getString(dayLab).split("-")[1].trim();
 

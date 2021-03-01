@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -27,6 +28,8 @@ public class LoginActivity extends AppCompatActivity {
     VTOP vtop;
 
     public void signIn(View view) {
+        hideKeyboard(this.getCurrentFocus());
+
         if (download != null) {
             download.dismiss();
             download = null;
@@ -72,6 +75,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void submitCaptcha(View view) {
+        hideKeyboard(download.getCurrentFocus());
         vtop.hideLayouts();
 
         String username = encryptedSharedPreferences.getString("username", null);
@@ -170,6 +174,13 @@ public class LoginActivity extends AppCompatActivity {
 
     public void cancelDownload(View view) {
         download.dismiss();
+    }
+
+    private void hideKeyboard(View view) {
+        if (view != null) {
+            InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
     }
 
     public void openPrivacy(View view) {
