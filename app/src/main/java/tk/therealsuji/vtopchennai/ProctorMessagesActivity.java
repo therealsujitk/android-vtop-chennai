@@ -32,7 +32,7 @@ public class ProctorMessagesActivity extends AppCompatActivity {
             public void run() {
                 SQLiteDatabase myDatabase = context.openOrCreateDatabase("vtop", Context.MODE_PRIVATE, null);
 
-                myDatabase.execSQL("CREATE TABLE IF NOT EXISTS proctor_messages (id INT(3) PRIMARY KEY, time VARCHAR, message VARCHAR)");
+                myDatabase.execSQL("CREATE TABLE IF NOT EXISTS proctor_messages (id INTEGER PRIMARY KEY, time VARCHAR, message VARCHAR)");
                 Cursor c = myDatabase.rawQuery("SELECT * FROM proctor_messages", null);
 
                 int timeIndex = c.getColumnIndex("time");

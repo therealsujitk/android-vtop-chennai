@@ -289,7 +289,7 @@ public class VTOP {
         }
 
         progressBar.setProgress(++lastDownload, true);
-        String progress = lastDownload + " / 13";
+        String progress = lastDownload + " / 14";
         progressText.setText(progress);
     }
 
@@ -2069,7 +2069,102 @@ public class VTOP {
         Function to download grades
      */
     public void downloadGrades() {
-        downloadGradeHistory();
+        if (terminateDownload) {
+            return;
+        }
+
+        setupProgress();    // Inflating the progress layout
+
+        downloading.setText(context.getString(R.string.downloading_grades));
+        if (progressLayout.getVisibility() == View.GONE) {
+            hideLayouts();
+            expand(progressLayout);
+        }
+        webView.evaluateJavascript("(function() {" +
+                "var data = 'semesterSubId=' + '" + semesterID + "' + '&authorizedID=' + $('#authorizedIDX').val();" +
+                "var successFlag = false;" +
+                "$.ajax({" +
+                "   type: 'POST'," +
+                "   url : 'examinations/examGradeView/doStudentGradeView'," +
+                "   data : data," +
+                "   async: false," +
+                "   success: function(response) {" +
+                "       if(response.toLowerCase().includes('no records')) {" +
+                "           successFlag = true;" +
+                "       } else {" +
+                "           successFlag = 'new';" +
+                "       }" +
+                "   }" +
+                "});" +
+                "return successFlag;" +
+                "})();", new ValueCallback<String>() {
+            @Override
+            public void onReceiveValue(String value) {
+                /*
+                    obj is in the form of a JSON string that is yet to be created
+                 */
+                String temp = value.substring(1, value.length() - 1);
+                if (value.equals("true")) {
+                    /*
+                        Dropping and recreating an empty table
+                     */
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                myDatabase.execSQL("DROP TABLE IF EXISTS grades");
+                                myDatabase.execSQL("CREATE TABLE grades (id INTEGER PRIMARY KEY, course VARCHAR)");
+
+                                ((Activity) context).runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        setProgress();
+                                        downloadGradeHistory();
+                                    }
+                                });
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
+                                isOpened = false;
+                                reloadPage();
+                            }
+
+                            sharedPreferences.edit().remove("newGrades").apply();
+                        }
+                    }).start();
+                } else if (temp.equals("new")) {
+                    /*
+                        Dropping, recreating and adding announcements
+                     */
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                myDatabase.execSQL("DROP TABLE IF EXISTS grades");
+                                myDatabase.execSQL("CREATE TABLE grades (id INTEGER PRIMARY KEY, course VARCHAR)");
+
+                                myDatabase.execSQL("INSERT INTO grades (course) VALUES('null')"); //To be changed with the actual grades
+
+                                ((Activity) context).runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        setProgress();
+                                        downloadGradeHistory();
+                                    }
+                                });
+
+                                sharedPreferences.edit().putBoolean("newGrades", true).apply();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                error();
+                            }
+                        }
+                    }).start();
+                } else {
+                    error();
+                }
+            }
+        });
     }
 
     /*
