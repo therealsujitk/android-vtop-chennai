@@ -2676,7 +2676,7 @@ public class VTOP {
                 "               if(category.toLowerCase().includes('finance')) {" +
                 "                   category = 'Others';" +
                 "               } else {" +
-                "                   category = category.trim().replaceAll('\\t','').replaceAll('\\n','');" +
+                "                   category = category.trim().replace(/\\t/g,'').replace(/\\n/g,'');" +
                 "                   category = category.substring(0, category.length - 9).trim();" +
                 "               }" +
                 "               var announcements = modals[i].getElementsByTagName('li');" +
@@ -2685,7 +2685,7 @@ public class VTOP {
                 "               }" +
                 "               var temp = {};" +
                 "               for(var j = 0; j < announcements.length; ++j) {" +
-                "                   temp[j + 'announcement'] = announcements[j].innerText.trim().replaceAll('\\t','').replaceAll('\\n',' ');" +
+                "                   temp[j + 'announcement'] = announcements[j].innerText.trim().replace(/\\t/g,'').replace(/\\n/g,' ');" +
                 "                   if(!announcements[j].getElementsByTagName('a').length) {" +
                 "                       temp[j + 'link'] = 'null';" +
                 "                   } else {" +
