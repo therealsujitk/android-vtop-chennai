@@ -127,7 +127,6 @@
     <string name="new_data">Looks like you do have some new data available, however <a href="https://therealsuji.tk">@therealsujitk</a> was a bit too lazy to add this feature, why don\'t you contact him and give him a piece of your mind.</string>
 
 
-    <string name="title">Title</string>
     <string name="slot">Slot</string>
     <string name="date">Date</string>
     <string name="reporting">Reporting Time</string>
@@ -147,7 +146,6 @@
     <string name="filter_by_title">Filter By Title</string>
 
     <string name="grade_history">Grade History</string>
-    <string name="credits_title">Credits</string>
     <string name="grade">Grade</string>
 
 
