@@ -124,9 +124,9 @@ public class DirectionsActivity extends AppCompatActivity {
 
                 JSONObject hostels = new JSONObject();
                 try {
-                    hostels.put("Hostel A Block", "{\"description\": \"Hostel for Sophomore & Junior Boys\", \"tag\": \"sp6v7XomBw5sZ3cy8\"}");
+                    hostels.put("Hostel A Block", "{\"description\": \"Hostel for Senior Boys\", \"tag\": \"sp6v7XomBw5sZ3cy8\"}");
                     hostels.put("Hostel B Block", "{\"description\": \"Hostel for Girls & Freshmen Boys\", \"tag\": \"cJvcHPEBYoDymvP88\"}");
-                    hostels.put("Hostel C Block", "{\"description\": \"Hostel for Senior Boys\", \"tag\": \"ZoqkXMuMh3GN3NVH9\"}");
+                    hostels.put("Hostel C Block", "{\"description\": \"Hostel for Boys\", \"tag\": \"ZoqkXMuMh3GN3NVH9\"}");
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
