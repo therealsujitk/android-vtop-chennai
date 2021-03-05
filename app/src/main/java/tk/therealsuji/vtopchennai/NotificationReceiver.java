@@ -122,7 +122,7 @@ public class NotificationReceiver extends BroadcastReceiver {
                     break;
                 }
 
-                if (!theory.getString(dayTheory).equals("null") && (currentTime.after(hour24.parse(startTimeTheory)) || currentTime.equals(hour24.parse(startTimeTheory))) && (currentTime.before(hour24.parse(endTimeTheory)) || currentTime.equals(hour24.parse(endTimeTheory)))) {
+                if (!theory.getString(dayTheory).equals("null") && (currentTime.after(hour24.parse(startTimeTheory)) || currentTime.equals(hour24.parse(startTimeTheory))) && currentTime.before(hour24.parse(endTimeTheory))) {
                     title = "Ongoing: ";
                     if (DateFormat.is24HourFormat(context)) {
                         title = title + startTimeTheory + " - " + endTimeTheory;
@@ -142,7 +142,7 @@ public class NotificationReceiver extends BroadcastReceiver {
                     flag = true;
                 }
 
-                if (!lab.getString(dayLab).equals("null") && (currentTime.after(hour24.parse(startTimeLab)) || currentTime.equals(hour24.parse(startTimeLab))) && (currentTime.before(hour24.parse(endTimeLab)) || currentTime.equals(hour24.parse(endTimeLab)))) {
+                if (!lab.getString(dayLab).equals("null") && (currentTime.after(hour24.parse(startTimeLab)) || currentTime.equals(hour24.parse(startTimeLab))) && currentTime.before(hour24.parse(endTimeLab))) {
                     title = "Ongoing: ";
                     if (DateFormat.is24HourFormat(context)) {
                         title = title + startTimeLab + " - " + endTimeLab;

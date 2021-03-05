@@ -20,6 +20,7 @@ import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.text.method.LinkMovementMethod;
 import android.view.View;
+import android.view.Window;
 import android.view.animation.AccelerateInterpolator;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
@@ -303,6 +304,9 @@ public class HomeActivity extends AppCompatActivity {
 
         download.show();
 
+        Window window = download.getWindow();
+        window.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+
         vtop.start(download);
 
         if (refresh != null) {
@@ -431,6 +435,9 @@ public class HomeActivity extends AppCompatActivity {
         }
 
         appearance.show();
+
+        Window window = appearance.getWindow();
+        window.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
     }
 
     public void setAppearance(View view) {
@@ -476,6 +483,9 @@ public class HomeActivity extends AppCompatActivity {
         signOut.setContentView(R.layout.dialog_signout);
         signOut.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         signOut.show();
+
+        Window window = signOut.getWindow();
+        window.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
     }
 
     public void signOut(View view) {
@@ -753,7 +763,7 @@ public class HomeActivity extends AppCompatActivity {
                         Date currentTime = hour24.parse(hour24.format(cal.getTime()));
                         Date futureTime = hour24.parse(hour24.format(calFuture.getTime()));
 
-                        if (currentTime != null && futureTime != null && (futureTime.after(hour24.parse(startTimeTheory)) || futureTime.equals(hour24.parse(startTimeTheory))) && currentTime.before(hour24.parse(startTimeTheory)) && !theory.getString(dayTheory).equals("null")) {
+                        if (currentTime != null && futureTime != null && !theory.getString(dayTheory).equals("null") && (futureTime.after(hour24.parse(startTimeTheory)) || futureTime.equals(hour24.parse(startTimeTheory))) && currentTime.before(hour24.parse(startTimeTheory))) {
                             String upcoming = getString(R.string.upcoming);
                             String course = theory.getString(dayTheory).split("-")[1].trim();
 
@@ -785,7 +795,7 @@ public class HomeActivity extends AppCompatActivity {
                             flag = true;    // Flag is set so terminate the loop when the time comes
                         }
 
-                        if (currentTime != null && futureTime != null && (futureTime.after(hour24.parse(startTimeLab)) || futureTime.equals(hour24.parse(startTimeLab))) && currentTime.before(hour24.parse(startTimeLab)) && !lab.getString(dayLab).equals("null")) {
+                        if (currentTime != null && futureTime != null && !lab.getString(dayLab).equals("null") && (futureTime.after(hour24.parse(startTimeLab)) || futureTime.equals(hour24.parse(startTimeLab))) && currentTime.before(hour24.parse(startTimeLab))) {
                             String upcoming = getString(R.string.upcoming);
                             String course = lab.getString(dayLab).split("-")[1].trim();
 
@@ -821,7 +831,7 @@ public class HomeActivity extends AppCompatActivity {
                             break;  // If either Upcoming or Ongoing & Upcoming classes are available, the loop can terminate
                         }
 
-                        if (currentTime != null && (currentTime.after(hour24.parse(startTimeTheory)) || currentTime.equals(hour24.parse(startTimeTheory))) && (currentTime.before(hour24.parse(endTimeTheory)) || currentTime.equals(hour24.parse(endTimeTheory))) && !theory.getString(dayTheory).equals("null")) {
+                        if (currentTime != null && !theory.getString(dayTheory).equals("null") && (currentTime.after(hour24.parse(startTimeTheory)) || currentTime.equals(hour24.parse(startTimeTheory))) && currentTime.before(hour24.parse(endTimeTheory))) {
                             String upcoming = getString(R.string.ongoing);
                             String course = theory.getString(dayTheory).split("-")[1].trim();
 
@@ -853,7 +863,7 @@ public class HomeActivity extends AppCompatActivity {
                             flag = true;    // Flag is set so terminate the loop when the time comes
                         }
 
-                        if (currentTime != null && (currentTime.after(hour24.parse(startTimeLab)) || currentTime.equals(hour24.parse(startTimeLab))) && (currentTime.before(hour24.parse(endTimeLab)) || currentTime.equals(hour24.parse(endTimeLab))) && !lab.getString(dayLab).equals("null")) {
+                        if (currentTime != null && !lab.getString(dayLab).equals("null") && (currentTime.after(hour24.parse(startTimeLab)) || currentTime.equals(hour24.parse(startTimeLab))) && currentTime.before(hour24.parse(endTimeLab))) {
                             String upcoming = getString(R.string.ongoing);
                             String course = lab.getString(dayLab).split("-")[1].trim();
 
@@ -1255,11 +1265,17 @@ public class HomeActivity extends AppCompatActivity {
             update.setContentView(R.layout.dialog_update);
             update.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
             update.show();
+
+            Window window = update.getWindow();
+            window.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         } else if (today != null && futureRefresh != null && (today.after(futureRefresh) || lastRefreshed.after(today))) {  // Next, check if data has been refreshed recently (1 week)
             refresh = new Dialog(this);
             refresh.setContentView(R.layout.dialog_refresh);
             refresh.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
             refresh.show();
+
+            Window window = refresh.getWindow();
+            window.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         }
 
         TextView myLink = findViewById(R.id.builtBy);

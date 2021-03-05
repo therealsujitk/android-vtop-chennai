@@ -699,6 +699,7 @@ public class VTOP {
                 "       var cells = doc.getElementById('timeTableStyle').getElementsByTagName('td');" +
                 "       var category = '';" +
                 "       var timings = '';" +
+                "       var postfix = '';" +
                 "       var theory = {}, lab = {}, mon = {}, tue = {}, wed = {}, thu = {}, fri = {}, sat = {}, sun = {};" +
                 "       var i = 0;" +
                 "       for(var j = 0; j < cells.length; ++j) {" +
@@ -833,20 +834,6 @@ public class VTOP {
                                 JSONObject sat = new JSONObject(myObj.getString("sat"));
                                 JSONObject sun = new JSONObject(myObj.getString("sun"));
 
-                                Calendar c = Calendar.getInstance();
-                                AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
-                                Intent notificationIntent = new Intent(context, NotificationReceiver.class);
-                                SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy HH:mm", Locale.ENGLISH);
-                                SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
-                                SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
-                                Date today = dateFormat.parse(dateFormat.format(c.getTime()));
-                                Date now = timeFormat.parse(timeFormat.format(c.getTime()));
-                                int day = c.get(Calendar.DAY_OF_WEEK) - 1;
-
-                                JSONObject[] days = {sun, mon, tue, wed, thu, fri, sat};
-
-                                int alarmCount = 0;
-
                                 /*
                                     This 12 hour check is because the genius developers at VIT decided it
                                     would be a great idea to use both 12 hour and 24 hour formats together
@@ -854,55 +841,62 @@ public class VTOP {
                                  */
                                 SimpleDateFormat hour24 = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
                                 SimpleDateFormat hour12 = new SimpleDateFormat("h:mm a", Locale.ENGLISH);
-                                boolean checkHour12 = false, isHour12 = false;
+
+                                Calendar c = Calendar.getInstance();
+                                AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
+                                Intent notificationIntent = new Intent(context, NotificationReceiver.class);
+                                SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy HH:mm", Locale.ENGLISH);
+                                SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
+                                Date today = dateFormat.parse(dateFormat.format(c.getTime()));
+                                Date now = hour24.parse(hour24.format(c.getTime()));
+                                int day = c.get(Calendar.DAY_OF_WEEK) - 1;
+
+                                JSONObject[] days = {sun, mon, tue, wed, thu, fri, sat};
+
+                                int alarmCount = 0;
 
                                 for (int i = 0; i < lab.length() / 2 && i < theory.length() / 2; ++i) {
                                     String start_time_lab = lab.getString(i + "start");
                                     if (start_time_lab.toLowerCase().equals("lunch")) {
-                                        checkHour12 = true;
                                         continue;
                                     }
                                     String end_time_lab = lab.getString(i + "end");
                                     String start_time_theory = theory.getString(i + "start");
                                     String end_time_theory = theory.getString(i + "end");
 
-                                    if (checkHour12) {
+                                    /*
+                                        Formatting the time incase it is given in 12-hour format
+                                     */
+                                    String[] times = {start_time_lab, end_time_lab, start_time_theory, end_time_theory};
+                                    for (int j = 0; j < times.length; ++j) {
                                         try {
-                                            Date startTime = hour24.parse(start_time_lab);
-                                            Date hourNoon = hour24.parse("12:00");
+                                            Date time = hour24.parse(times[j]);
+                                            Date hourStart = hour24.parse("08:00");
 
-                                            if (startTime != null && startTime.before(hourNoon)) {
-                                                isHour12 = true;
-                                            }
-
-                                            checkHour12 = false;
-                                        } catch (Exception e) {
-                                            e.printStackTrace();
-                                        }
-                                    }
-
-                                    if (isHour12) {
-                                        try {
-                                            Date startTimeLab = hour12.parse(start_time_lab + " PM");
-                                            Date endTimeLab = hour12.parse(end_time_lab + " PM");
-                                            Date startTimeTheory = hour12.parse(start_time_theory + " PM");
-                                            Date endTimeTheory = hour12.parse(end_time_theory + " PM");
-
-                                            if (startTimeLab != null && endTimeLab != null && startTimeTheory != null && endTimeTheory != null) {
-                                                start_time_lab = hour24.format(startTimeLab);
-                                                end_time_lab = hour24.format(endTimeLab);
-                                                start_time_theory = hour24.format(startTimeTheory);
-                                                end_time_theory = hour24.format(endTimeTheory);
+                                            if (time != null && time.before(hourStart)) {
+                                                time = hour12.parse(times[j] + " PM");
+                                                if (time != null) {
+                                                    times[j] = hour24.format(time);
+                                                }
                                             }
                                         } catch (Exception e) {
                                             e.printStackTrace();
                                         }
                                     }
 
-                                    String[] labPeriods = {"null", "null", "null", "null", "null", "null", "null"};
-                                    String[] theoryPeriods = {"null", "null", "null", "null", "null", "null", "null"};
+                                    start_time_lab = times[0];
+                                    end_time_lab = times[1];
+                                    start_time_theory = times[2];
+                                    end_time_theory = times[3];
+
+                                    /*
+                                        Inserting the periods
+                                     */
+                                    String[] labPeriods = new String[7];
+                                    String[] theoryPeriods = new String[7];
 
                                     for (int j = 0; j < 7; ++j) {
+                                        labPeriods[j] = "null";
                                         /*
                                             Inserting Lab Periods
                                          */
@@ -910,7 +904,7 @@ public class VTOP {
                                             labPeriods[j] = days[j].getString(i + "lab");
 
                                             if (j == day) {
-                                                Date current = timeFormat.parse(start_time_lab);
+                                                Date current = hour24.parse(start_time_lab);
                                                 assert current != null;
                                                 if (current.after(now) || current.equals(now)) {
                                                     assert today != null;
@@ -942,6 +936,7 @@ public class VTOP {
                                             alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
                                         }
 
+                                        theoryPeriods[j] = "null";
                                         /*
                                             Inserting Theory periods
                                          */
@@ -949,7 +944,7 @@ public class VTOP {
                                             theoryPeriods[j] = days[j].getString(i + "theory");
 
                                             if (j == day) {
-                                                Date current = timeFormat.parse(start_time_theory);
+                                                Date current = hour24.parse(start_time_theory);
                                                 assert current != null;
                                                 if (current.after(now) || current.equals(now)) {
                                                     assert today != null;
@@ -1990,6 +1985,9 @@ public class VTOP {
                                     myDatabase.execSQL("INSERT INTO marks_new (course, type, title, score, status, weightage, average, posted) VALUES('" + course + "', '" + type + "', '" + title + "', '" + score + "', '" + status + "', '" + weightage + "', '" + average + "', '" + posted + "')");
                                 }
 
+                                /*
+                                    Removing any marks if they were deleted for some reason
+                                 */
                                 Cursor delete = myDatabase.rawQuery("SELECT id FROM marks WHERE (course, title, type) NOT IN (SELECT course, title, type FROM marks_new)", null);
 
                                 int deleteIndex = delete.getColumnIndex("id");
@@ -2010,22 +2008,28 @@ public class VTOP {
 
                                 delete.close();
 
+                                /*
+                                    Updating IDs if they have changed
+                                 */
                                 Iterator<?> keys = newMarks.keys();
 
-                                JSONObject tempObj = new JSONObject(newMarks.toString());
                                 while (keys.hasNext()) {
                                     String oldID = (String) keys.next();
                                     Cursor update = myDatabase.rawQuery("SELECT id FROM marks_new WHERE (course, title, type) IN (SELECT course, title, type FROM marks WHERE id = " + oldID + ")", null);
                                     update.moveToFirst();
                                     String newID = update.getString(update.getColumnIndex("id"));
 
-                                    tempObj.remove(oldID);
-                                    tempObj.put(newID, true);
+                                    if (!oldID.equals(newID)) {
+                                        newMarks.remove(oldID);
+                                        newMarks.put(newID, true);
+                                    }
 
                                     update.close();
                                 }
-                                newMarks = new JSONObject(tempObj.toString());
 
+                                /*
+                                    Adding the newly downloaded marks
+                                 */
                                 Cursor add = myDatabase.rawQuery("SELECT id FROM marks_new WHERE (course, title, type) NOT IN (SELECT course, title, type FROM marks)", null);
 
                                 int addIndex = add.getColumnIndex("id");

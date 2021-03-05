@@ -6,7 +6,7 @@
 
     <LinearLayout
         android:id="@+id/container"
-        android:layout_width="275dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/dialog_background"
         android:orientation="vertical"
@@ -14,6 +14,7 @@
         android:paddingTop="20dp"
         android:paddingEnd="10dp"
         android:paddingBottom="10dp"
+        android:layout_margin="40dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

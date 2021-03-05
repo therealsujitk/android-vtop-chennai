@@ -9,6 +9,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.View;
+import android.view.Window;
 import android.widget.LinearLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -112,6 +113,9 @@ public class ReceiptsActivity extends AppCompatActivity {
             duePayments.setContentView(R.layout.dialog_due_payments);
             duePayments.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
             duePayments.show();
+
+            Window window = duePayments.getWindow();
+            window.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         }
     }
 

@@ -13,9 +13,11 @@ import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -64,6 +66,9 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         download.show();
+
+        Window window = download.getWindow();
+        window.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
 
         vtop.start(download);
 
@@ -296,6 +301,9 @@ public class LoginActivity extends AppCompatActivity {
             update.setContentView(R.layout.dialog_update);
             update.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
             update.show();
+
+            Window window = update.getWindow();
+            window.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         }
 
         /*
