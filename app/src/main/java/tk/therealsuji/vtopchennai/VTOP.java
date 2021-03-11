@@ -2082,7 +2082,7 @@ public class VTOP {
         }
         webView.evaluateJavascript("(function() {" +
                 "var data = 'semesterSubId=' + '" + semesterID + "' + '&authorizedID=' + $('#authorizedIDX').val();" +
-                "var successFlag = false;" +
+                "var obj = {};" +
                 "$.ajax({" +
                 "   type: 'POST'," +
                 "   url : 'examinations/examGradeView/doStudentGradeView'," +
@@ -2090,21 +2090,84 @@ public class VTOP {
                 "   async: false," +
                 "   success: function(response) {" +
                 "       if(response.toLowerCase().includes('no records')) {" +
-                "           successFlag = true;" +
+                "           obj = 'nothing';" +
                 "       } else {" +
-                "           successFlag = 'new';" +
+                "           var doc = new DOMParser().parseFromString(response, 'text/html');" +
+                "           var courseIndex, typeIndex, gradeTypeIndex, totalIndex, gradeIndex;" +
+                "           var creditsIndex, creditsSpan, flag = 0;" +
+                "           var columns = doc.getElementsByTagName('tr')[0].getElementsByTagName('th');" +
+                "           for (var i = 0; i < columns.length; ++i) {" +
+                "               var heading = columns[i].innerText.toLowerCase();" +
+                "               if (heading.includes('code')) {" +
+                "                   courseIndex = i;" +
+                "                   ++flag;" +
+                "               } else if (heading.includes('course') && heading.includes('type')) {" +
+                "                   typeIndex = i;" +
+                "                   ++flag;" +
+                "               } else if (heading.includes('grading')) {" +
+                "                   gradeTypeIndex = i;" +
+                "                   ++flag;" +
+                "               } else if (heading.includes('total')) {" +
+                "                   totalIndex = i;" +
+                "                   ++flag;" +
+                "               } else if (heading.includes('grade')) {" +
+                "                   gradeIndex = i;" +
+                "                   ++flag;" +
+                "               } else if (heading.includes('credits')) {" +
+                "                   creditsIndex = i;" +
+                "                   creditsSpan = columns[i].colSpan;" +
+                "                   ++flag;" +
+                "               }" +
+                "               if (flag >= 6) {" +
+                "                   break;" +
+                "               }" +
+                "           }" +
+                "           if (courseIndex > creditsIndex) {" +
+                "               courseIndex += creditsSpan - 1;" +
+                "           }" +
+                "           if (typeIndex > creditsIndex) {" +
+                "               typeIndex += creditsSpan - 1;" +
+                "           }" +
+                "           if (gradeTypeIndex > creditsIndex) {" +
+                "               gradeTypeIndex += creditsSpan - 1;" +
+                "           }" +
+                "           if (totalIndex > creditsIndex) {" +
+                "               totalIndex += creditsSpan - 1;" +
+                "           }" +
+                "           if (gradeIndex > creditsIndex) {" +
+                "               gradeIndex += creditsSpan - 1;" +
+                "           }" +
+                "           var cells = doc.getElementsByTagName('td');" +
+                "           var columnLength = columns.length + creditsSpan - 1;" +
+                "           for (var i = 0; courseIndex < cells.length && typeIndex < cells.length && gradeTypeIndex < cells.length && totalIndex < cells.length && gradeIndex < cells.length; ++i) {" +
+                "               var temp = {};" +
+                "               temp['course'] = cells[courseIndex].innerText.trim();" +
+                "               temp['type'] = cells[typeIndex].innerText.trim();" +
+                "               temp['gradetype'] = cells[gradeTypeIndex].innerText.trim();" +
+                "               temp['total'] = cells[totalIndex].innerText.trim();" +
+                "               temp['grade'] = cells[gradeIndex].innerText.trim();" +
+                "               obj[i] = temp;" +
+                "               courseIndex += columnLength;" +
+                "               typeIndex += columnLength;" +
+                "               gradeTypeIndex += columnLength;" +
+                "               totalIndex += columnLength;" +
+                "               gradeIndex += columnLength;" +
+                "           }" +
+                "           obj['gpa'] = cells[cells.length - 1].innerText.split(':')[1].trim();" +
                 "       }" +
                 "   }" +
                 "});" +
                 "return successFlag;" +
                 "})();", new ValueCallback<String>() {
             @Override
-            public void onReceiveValue(String value) {
+            public void onReceiveValue(final String obj) {
                 /*
-                    obj is in the form of a JSON string that is yet to be created
+                    obj is in the form of a JSON string like {"0": {"course": "MAT1001", "type": "Embedded Theory",...},..., "gpa": "9.6"}
                  */
-                String temp = value.substring(1, value.length() - 1);
-                if (value.equals("true")) {
+                final String temp = obj.substring(1, obj.length() - 1);
+                if (obj.equals("null") || temp.equals("")) {
+                    error();
+                } else if (temp.equals("nothing")) {
                     /*
                         Dropping and recreating an empty table
                      */
@@ -2113,7 +2176,7 @@ public class VTOP {
                         public void run() {
                             try {
                                 myDatabase.execSQL("DROP TABLE IF EXISTS grades");
-                                myDatabase.execSQL("CREATE TABLE grades (id INTEGER PRIMARY KEY, course VARCHAR)");
+                                myDatabase.execSQL("CREATE TABLE grades (id INTEGER PRIMARY KEY, course VARCHAR, type VARCHAR, grade_type VARCHAR, total VARCHAR, grade VARCHAR)");
 
                                 ((Activity) context).runOnUiThread(new Runnable() {
                                     @Override
@@ -2130,20 +2193,48 @@ public class VTOP {
                             }
 
                             sharedPreferences.edit().remove("newGrades").apply();
+                            sharedPreferences.edit().remove("gradesCount").apply();
+                            sharedPreferences.edit().remove("gpa").apply();
                         }
                     }).start();
-                } else if (temp.equals("new")) {
+                } else {
                     /*
-                        Dropping, recreating and adding announcements
+                        Dropping, recreating and adding grades
                      */
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
                             try {
                                 myDatabase.execSQL("DROP TABLE IF EXISTS grades");
-                                myDatabase.execSQL("CREATE TABLE grades (id INTEGER PRIMARY KEY, course VARCHAR)");
+                                myDatabase.execSQL("CREATE TABLE grades (id INTEGER PRIMARY KEY, course VARCHAR, type VARCHAR, grade_type VARCHAR, total VARCHAR, grade VARCHAR)");
 
-                                myDatabase.execSQL("INSERT INTO grades (course) VALUES('null')"); //To be changed with the actual grades
+                                JSONObject myObj = new JSONObject(obj);
+
+                                int i;
+                                for (i = 0; i < myObj.length() - 1; ++i) {
+                                    JSONObject tempObj = new JSONObject(myObj.getString(String.valueOf(i)));
+                                    String course = tempObj.getString("course");
+                                    String type = tempObj.getString("type");
+                                    String gradeType = tempObj.getString("gradetype");
+                                    String total = tempObj.getString("total");
+                                    String grade = tempObj.getString("grade");
+
+                                    if (gradeType.toLowerCase().equals("ag")) {
+                                        gradeType = "Absolute";
+                                    } else if (gradeType.toLowerCase().equals("rg")) {
+                                        gradeType = "Relative";
+                                    }
+
+                                    myDatabase.execSQL("INSERT INTO grades (course, type, grade_type, total, grade) VALUES('" + course + "', '" + type + "', '" + gradeType + "', '" + total + "', '" + grade + "')");
+                                }
+
+                                if (i != sharedPreferences.getInt("gradesCount", 0)) {
+                                    sharedPreferences.edit().putBoolean("newGrades", true).apply();
+                                    sharedPreferences.edit().putInt("gradesCount", i).apply();
+                                }
+
+                                String gpa = myObj.getString("gpa");
+                                sharedPreferences.edit().putString("gpa", gpa).apply();
 
                                 ((Activity) context).runOnUiThread(new Runnable() {
                                     @Override
@@ -2160,8 +2251,6 @@ public class VTOP {
                             }
                         }
                     }).start();
-                } else {
-                    error();
                 }
             }
         });
