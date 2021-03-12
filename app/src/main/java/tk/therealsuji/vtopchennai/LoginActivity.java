@@ -68,7 +68,7 @@ public class LoginActivity extends AppCompatActivity {
         download.show();
 
         Window window = download.getWindow();
-        window.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        window.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
 
         vtop.start(download);
 
@@ -83,35 +83,9 @@ public class LoginActivity extends AppCompatActivity {
         hideKeyboard(download.getCurrentFocus());
         vtop.hideLayouts();
 
-        String username = encryptedSharedPreferences.getString("username", null);
-        String password = encryptedSharedPreferences.getString("password", null);
-
-        /*
-            If the credentials aren't encrypted
-         */
-        if (username == null) {
-            /*
-                Get the non-encrypted credentials
-             */
-            username = sharedPreferences.getString("username", null);
-            password = sharedPreferences.getString("password", null);
-
-            /*
-                Encrypt them
-             */
-            encryptedSharedPreferences.edit().putString("username", username).apply();
-            encryptedSharedPreferences.edit().putString("password", password).apply();
-
-            /*
-                Remove the non-encrypted credentials
-             */
-            sharedPreferences.edit().remove("username").apply();
-            sharedPreferences.edit().remove("password").apply();
-        }
-
         EditText captchaView = download.findViewById(R.id.captcha);
         String captcha = captchaView.getText().toString();
-        vtop.signIn(username, password, captcha);
+        vtop.signIn("captchaCheck=" + captcha);
     }
 
     public void selectSemester(View view) {

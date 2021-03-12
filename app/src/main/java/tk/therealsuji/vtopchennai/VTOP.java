@@ -16,12 +16,16 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.ColorMatrixColorFilter;
 import android.util.Base64;
+import android.util.DisplayMetrics;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewStub;
 import android.view.animation.AccelerateInterpolator;
 import android.webkit.CookieManager;
+import android.webkit.JavascriptInterface;
 import android.webkit.ValueCallback;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -34,6 +38,9 @@ import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.security.crypto.EncryptedSharedPreferences;
+import androidx.security.crypto.MasterKey;
 
 import org.json.JSONObject;
 
@@ -59,6 +66,8 @@ public class VTOP {
     LinearLayout captchaLayout, progressLayout, semesterLayout;
     ViewStub captchaStub, semesterStub, progressStub;
 
+    String username, password, semesterID;
+
     /*
         DARK is used to change the colours of the captcha image when in dark mode
      */
@@ -73,16 +82,18 @@ public class VTOP {
     SQLiteDatabase myDatabase;
     TextView downloading, progressText;
     int counter, lastDownload;
-    boolean isOpened, isCaptchaInflated, isSemesterInflated, isProgressInflated;
+    float pixelDensity;
+    boolean isOpened, isWebViewInflated, isCaptchaInflated, isSemesterInflated, isProgressInflated;
 
-    String semesterID;
-
-    private boolean terminateDownload;
+    boolean terminateDownload;
 
     @SuppressLint("SetJavaScriptEnabled")
     public VTOP(final Context context) {
         this.context = context;
         webView = new WebView(context);
+        webView.setBackgroundColor(Color.TRANSPARENT);
+        webView.setHorizontalScrollBarEnabled(false);
+        webView.setVerticalScrollBarEnabled(false);
         webView.getSettings().setJavaScriptEnabled(true);
         webView.getSettings().setUserAgentString("Mozilla/5.0 (Linux; Android 10) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.99 Mobile Safari/537.36");
         webView.setWebViewClient(new WebViewClient() {
@@ -104,6 +115,7 @@ public class VTOP {
                 }
             }
         });
+        webView.addJavascriptInterface(this, "Android");
     }
 
     /*
@@ -114,6 +126,36 @@ public class VTOP {
         counter = 0;                    // If the counter has turned to 60, it won't allow future downloads unless it has been reset
 
         this.downloadDialog = downloadDialog;
+
+        /*
+            Getting the saved credentials
+         */
+        SharedPreferences encryptedSharedPreferences = null;
+
+        try {
+            MasterKey masterKey = new MasterKey.Builder(context, MasterKey.DEFAULT_MASTER_KEY_ALIAS)
+                    .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
+                    .build();
+
+            encryptedSharedPreferences = EncryptedSharedPreferences.create(
+                    context,
+                    "credentials",
+                    masterKey,
+                    EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                    EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+            );
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        if (encryptedSharedPreferences == null) {
+            Toast.makeText(context, "Sorry, something went wrong. Please try again later.", Toast.LENGTH_SHORT).show();
+            downloadDialog.dismiss();
+            return;
+        }
+
+        username = encryptedSharedPreferences.getString("username", null);
+        password = encryptedSharedPreferences.getString("password", null);
 
         loading = downloadDialog.findViewById(R.id.loading);
 
@@ -130,6 +172,31 @@ public class VTOP {
         isCaptchaInflated = false;
         isSemesterInflated = false;
         isProgressInflated = false;
+
+        /*
+            If the credentials aren't encrypted
+         */
+        if (username == null) {
+            /*
+                Get the non-encrypted credentials
+             */
+            username = sharedPreferences.getString("username", null);
+            password = sharedPreferences.getString("password", null);
+
+            /*
+                Encrypt them
+             */
+            encryptedSharedPreferences.edit().putString("username", username).apply();
+            encryptedSharedPreferences.edit().putString("password", password).apply();
+
+            /*
+                Remove the non-encrypted credentials
+             */
+            sharedPreferences.edit().remove("username").apply();
+            sharedPreferences.edit().remove("password").apply();
+        }
+
+        pixelDensity = context.getResources().getDisplayMetrics().density;
 
         reloadPage();
     }
@@ -346,7 +413,7 @@ public class VTOP {
             @Override
             public void onReceiveValue(String value) {
                 if (value.equals("true")) {
-                    getCaptcha();
+                    getCaptchaType();
                 } else {
                     isOpened = false;
                     reloadPage();
@@ -356,7 +423,36 @@ public class VTOP {
     }
 
     /*
+        Function to get the type of captcha
+     */
+    private void getCaptchaType() {
+        if (terminateDownload) {
+            return;
+        }
+
+        webView.evaluateJavascript("(function() {" +
+                "return x == 'local';" +
+                "})();", new ValueCallback<String>() {
+            @Override
+            public void onReceiveValue(String isLocalCaptcha) {
+                /*
+                    isLocalCaptcha will true true / false
+                    If true, the default captcha is being used else, Google's reCaptcha is being used
+                 */
+                if (isLocalCaptcha.equals("null")) {
+                    error();
+                } else if (isLocalCaptcha.equals("true")) {
+                    getCaptcha();
+                } else {
+                    addCaptchaListeners();
+                }
+            }
+        });
+    }
+
+    /*
         Function to get the captcha from the portal's sign in page and load it into the ImageView
+        This is for the local captcha (the default captcha)
      */
     private void getCaptcha() {
         if (terminateDownload) {
@@ -407,59 +503,166 @@ public class VTOP {
     }
 
     /*
-        Function to sign in to the portal
+        Function to override the default onSubmit function and
+        add add an attribute listener to the captcha
      */
-    public void signIn(String username, String password, String captcha) {
+    private void addCaptchaListeners() {
         if (terminateDownload) {
             return;
         }
 
-        webView.evaluateJavascript("(function() {" +
-                "var credentials = 'uname=" + username + "&passwd=' + encodeURIComponent('" + password + "') + '&captchaCheck=" + captcha + "';" +
-                "var successFlag = false;" +
-                "$.ajax({" +
-                "   type : 'POST'," +
-                "   url : 'doLogin'," +
-                "   data : credentials," +
-                "   async: false," +
-                "   success : function(response) {" +
-                "       if(response.search('___INTERNAL___RESPONSE___') == -1) {" +
-                "           if(response.includes('authorizedIDX')) {" +
-                "               $('#page_outline').html(response);" +
-                "               successFlag = true;" +
-                "           } else if(response.toLowerCase().includes('invalid captcha')) {" +
-                "               successFlag = 'Invalid Captcha';" +
-                "           } else if(response.toLowerCase().includes('invalid user id / password')) {" +
-                "               successFlag = 'Invalid User Id / Password';" +
-                "               } else if(response.toLowerCase().includes('user id not available')) {" +
-                "               successFlag = 'User Id Not available';" +
-                "           }" +
-                "       }" +
-                "   }" +
-                "});" +
-                "return successFlag;" +
+        /*
+            This will display the webView,
+            however the user  won't see anything
+            other than the Captcha Challenge (If it shows up)
+         */
+        renderCaptcha();
+
+        /*
+            Overriding the existing onSubmit function
+
+            Executing the captcha
+         */
+        webView.evaluateJavascript("function onSubmit(token) {" +
+                "   Android.signIn('g-recaptcha-response=' + token);" +
+                "}" +
+                "(function() {" +
+                "   grecaptcha.execute();" +
                 "})();", new ValueCallback<String>() {
             @Override
             public void onReceiveValue(String value) {
-                if (value.equals("true")) {
-                    getSemesters();
-                } else {
-                    if (!value.equals("false") && !value.equals("null")) {
-                        value = value.substring(1, value.length() - 1);
-                        if (value.equals("Invalid User Id / Password") || value.equals("User Id Not available")) {
-                            sharedPreferences.edit().putString("isLoggedIn", "false").apply();
-                            myDatabase.close();
-                            downloadDialog.dismiss();
-                            context.startActivity(new Intent(context, LoginActivity.class));
-                            ((Activity) context).finish();
-                        }
-                        Toast.makeText(context, value, Toast.LENGTH_LONG).show();
-                    } else {
-                        Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
-                    }
-                    isOpened = false;
-                    reloadPage();
+            }
+        });
+    }
+
+    /*
+        Function to display Google's reCaptcha to the user
+        if it needs to be solved
+     */
+    @JavascriptInterface
+    public void renderCaptcha() {
+        if (terminateDownload) {
+            return;
+        }
+
+        ((Activity) context).runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                DisplayMetrics displayMetrics = new DisplayMetrics();
+                ((Activity) context).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+                float width = displayMetrics.widthPixels;
+                float scale = (width / pixelDensity - 80) / 300;
+
+                if (scale > 1) {
+                    scale = 1;
                 }
+
+                webView.evaluateJavascript("(function() {" +
+                        "var body = document.getElementsByTagName('body')[0];" +
+                        "body.style.backgroundColor = 'transparent';" +
+                        "var children = body.children;" +
+                        "for (var i = 0; i < children.length - 1; ++i) {" +
+                        "   children[i].style.display = 'none';" +
+                        "}" +
+                        "var captchaInterval = setInterval(function() {" +
+                        "   var children = document.getElementsByTagName('body')[0].children;" +
+                        "   var captcha = children[children.length - 1];" +
+                        "   if (captcha.children[0] != null) {" +
+                        "       captcha.style.transform = 'scale(" + scale + ")';" +
+                        "       captcha.children[0].style.display = 'none';" +
+                        "       clearInterval(captchaInterval);" +
+                        "   }" +
+                        "}, 500);" +
+                        "})();", new ValueCallback<String>() {
+                    @Override
+                    public void onReceiveValue(String value) {
+                        if (!isWebViewInflated) {
+                            LinearLayout.LayoutParams webViewParams = new LinearLayout.LayoutParams(
+                                    LinearLayout.LayoutParams.MATCH_PARENT,
+                                    LinearLayout.LayoutParams.MATCH_PARENT
+                            );
+                            webViewParams.setMarginStart((int) (40 * pixelDensity));
+                            webViewParams.setMarginEnd((int) (40 * pixelDensity));
+                            webViewParams.setMargins(0, (int) (40 * pixelDensity), 0, (int) (40 * pixelDensity));
+                            downloadDialog.addContentView(webView, webViewParams);
+
+                            isWebViewInflated = true;
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+    /*
+        Function to sign in to the portal
+     */
+    @JavascriptInterface
+    public void signIn(final String captcha) {
+        if (terminateDownload) {
+            return;
+        }
+
+        ((Activity) context).runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (isWebViewInflated) {
+                    ((ViewGroup) webView.getParent()).removeView(webView);
+                    isWebViewInflated = false;
+                }
+
+                webView.evaluateJavascript("(function() {" +
+                        "var credentials = 'uname=" + username + "&passwd=' + encodeURIComponent('" + password + "') + '&" + captcha + "';" +
+                        "var successFlag = false;" +
+                        "$.ajax({" +
+                        "   type : 'POST'," +
+                        "   url : 'doLogin'," +
+                        "   data : credentials," +
+                        "   async: false," +
+                        "   success : function(response) {" +
+                        "       if(response.search('___INTERNAL___RESPONSE___') == -1) {" +
+                        "               $('#page_outline').html(response);" +
+                        "           if(response.includes('authorizedIDX')) {" +
+                        "               successFlag = true;" +
+                        "           } else if(response.toLowerCase().includes('invalid captcha')) {" +
+                        "               successFlag = 'Invalid Captcha';" +
+                        "           } else if(response.toLowerCase().includes('invalid user id / password')) {" +
+                        "               successFlag = 'Invalid User ID / Password';" +
+                        "           } else if(response.toLowerCase().includes('user id not available')) {" +
+                        "               successFlag = 'Invalid User ID';" +
+                        "           }" +
+                        "       }" +
+                        "   }" +
+                        "});" +
+                        "return successFlag;" +
+                        "})();", new ValueCallback<String>() {
+                    @Override
+                    public void onReceiveValue(String value) {
+                        if (value.equals("true")) {
+                            getSemesters();
+                        } else {
+                            if (!value.equals("false") && !value.equals("null")) {
+                                value = value.substring(1, value.length() - 1);
+                                if (value.equals("Invalid User ID / Password") || value.equals("Invalid User ID")) {
+                                    sharedPreferences.edit().putString("isLoggedIn", "false").apply();
+                                    myDatabase.close();
+                                    downloadDialog.dismiss();
+                                    context.startActivity(new Intent(context, LoginActivity.class));
+                                    ((Activity) context).finish();
+                                } else {
+                                    Toast.makeText(context, value, Toast.LENGTH_LONG).show();
+                                    getCaptchaType();
+                                    return;
+                                }
+                                Toast.makeText(context, value, Toast.LENGTH_LONG).show();
+                            } else {
+                                Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
+                            }
+                            isOpened = false;
+                            reloadPage();
+                        }
+                    }
+                });
             }
         });
     }
@@ -2157,7 +2360,7 @@ public class VTOP {
                 "       }" +
                 "   }" +
                 "});" +
-                "return successFlag;" +
+                "return obj;" +
                 "})();", new ValueCallback<String>() {
             @Override
             public void onReceiveValue(final String obj) {
