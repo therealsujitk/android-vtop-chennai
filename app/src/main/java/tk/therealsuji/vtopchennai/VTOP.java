@@ -170,6 +170,7 @@ public class VTOP {
             These views have to be re-inflated in case the download was terminated
          */
         isCaptchaInflated = false;
+        isWebViewInflated = false;
         isSemesterInflated = false;
         isProgressInflated = false;
 
@@ -444,7 +445,7 @@ public class VTOP {
                 } else if (isLocalCaptcha.equals("true")) {
                     getCaptcha();
                 } else {
-                    addCaptchaListeners();
+                    executeCaptcha();
                 }
             }
         });
@@ -503,10 +504,10 @@ public class VTOP {
     }
 
     /*
-        Function to override the default onSubmit function and
-        add add an attribute listener to the captcha
+        Function to override the default onSubmit function
+        and execute the captcha
      */
-    private void addCaptchaListeners() {
+    private void executeCaptcha() {
         if (terminateDownload) {
             return;
         }
@@ -527,7 +528,12 @@ public class VTOP {
                 "   Android.signIn('g-recaptcha-response=' + token);" +
                 "}" +
                 "(function() {" +
-                "   grecaptcha.execute();" +
+                "var executeInterval = setInterval(function () {" +
+                "   if (typeof grecaptcha != undefined) {" +
+                "       grecaptcha.execute();" +
+                "       clearInterval(executeInterval);" +
+                "   }" +
+                "}, 500);" +
                 "})();", new ValueCallback<String>() {
             @Override
             public void onReceiveValue(String value) {
@@ -567,9 +573,10 @@ public class VTOP {
                         "var captchaInterval = setInterval(function() {" +
                         "   var children = document.getElementsByTagName('body')[0].children;" +
                         "   var captcha = children[children.length - 1];" +
-                        "   if (captcha.children[0] != null) {" +
-                        "       captcha.style.transform = 'scale(" + scale + ")';" +
+                        "   if (captcha.children[0] != null && captcha.children[1] != null) {" +
                         "       captcha.children[0].style.display = 'none';" +
+                        "       captcha.children[1].style.transform = 'scale(" + scale + ")';" +
+                        "       captcha.children[1].style.transformOrigin = '0 0';" +
                         "       clearInterval(captchaInterval);" +
                         "   }" +
                         "}, 500);" +
