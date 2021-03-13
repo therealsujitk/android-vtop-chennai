@@ -2503,7 +2503,7 @@ public class VTOP {
                 "               var columns = tables[i].getElementsByTagName('tr')[1].getElementsByTagName('td');" +
                 "               for (var j = 0; j < columns.length; ++j) {" +
                 "                   var heading = columns[j].innerText.trim().toLowerCase();" +
-                "                   if (heading.includes('course') && heading.includes('codes')) {" +
+                "                   if (heading.includes('code')) {" +
                 "                       courseIndex = j + columns.length + 1;" +
                 "                       ++flag;" +
                 "                   } else if (heading.includes('title')) {" +
@@ -2512,7 +2512,7 @@ public class VTOP {
                 "                   } else if (heading.includes('credits')) {" +
                 "                       creditsIndex = j + columns.length + 1;" +
                 "                       ++flag;" +
-                "                   } else if (heading.includes('grades')) {" +
+                "                   } else if (heading.includes('grade')) {" +
                 "                       gradeIndex = j + columns.length + 1;" +
                 "                       ++flag;" +
                 "                   }" +

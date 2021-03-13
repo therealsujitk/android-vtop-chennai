@@ -626,7 +626,7 @@ public class HomeActivity extends AppCompatActivity {
 
         String name = sharedPreferences.getString("name", getString(R.string.name));
         String id = sharedPreferences.getString("id", getString(R.string.id));
-        String credits = sharedPreferences.getString("credits", getString(R.string.credits));
+        String credits = sharedPreferences.getString("credits", getString(R.string.credits) + ": 0");
 
         TextView nameView = findViewById(R.id.name);
         TextView idView = findViewById(R.id.id);

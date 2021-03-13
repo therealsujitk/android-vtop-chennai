@@ -72,7 +72,7 @@ public class CardGenerator {
             view.setTypeface(ResourcesCompat.getFont(context, R.font.rubik));
         }
 
-        if (cardType == CARD_EXAM || cardType == CARD_MARK) {
+        if (cardType == CARD_EXAM || cardType == CARD_GRADE_HISTORY_B || cardType == CARD_MARK) {
             viewParams.setMargins(0, (int) (3 * pixelDensity), 0, (int) (3 * pixelDensity));
         } else {
             viewParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (5 * pixelDensity));
@@ -113,7 +113,7 @@ public class CardGenerator {
             textSize = 20;
         }
 
-        if (cardType == CARD_ATTENDANCE || cardType == CARD_EXAM || cardType == CARD_MARK) {
+        if (cardType == CARD_ATTENDANCE || cardType == CARD_EXAM || cardType == CARD_GRADE_HISTORY_B || cardType == CARD_MARK) {
             boldEnd = true;
         } else if (header && (cardType == CARD_DIRECTION || cardType == CARD_GRADE_HISTORY_A || cardType == CARD_STAFF || cardType == CARD_TIMETABLE)) {
             boldStart = true;
