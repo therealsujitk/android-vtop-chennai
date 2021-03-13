@@ -37,6 +37,8 @@ public class FacultyActivity extends AppCompatActivity {
 
                 CardGenerator myFaculty = new CardGenerator(context, CardGenerator.CARD_FACULTY);
 
+                boolean isUsingNewLayout = false, checkIfIsUsingNewLayout = true;
+
                 for (int i = 0; i < c.getCount(); ++i) {
                     if (terminateThread) {
                         return;
@@ -56,6 +58,18 @@ public class FacultyActivity extends AppCompatActivity {
                     String faculty = c.getString(facultyIndex).split("-")[0];
                     String course = rawString[0];
                     String type = rawString[rawString.length - 1];
+
+                    if (checkIfIsUsingNewLayout) {
+                        if (type.contains("(")) {
+                            isUsingNewLayout = true;
+                        }
+
+                        checkIfIsUsingNewLayout = false;
+                    }
+
+                    if (isUsingNewLayout) {
+                        type = type.substring(type.indexOf("(") + 1, type.indexOf(")"));
+                    }
 
                     final LinearLayout card = myFaculty.generateCard(faculty, course, type);
                     card.setAlpha(0);

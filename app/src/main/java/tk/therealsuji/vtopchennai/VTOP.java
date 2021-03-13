@@ -1247,18 +1247,22 @@ public class VTOP {
                 "           obj = 'nothing';" +
                 "           return;" +
                 "       }" +
-                "       var division = doc.getElementById('studentDetailsList'); " +
+                "       var division = doc.getElementById('studentDetailsList').getElementsByTagName('table')[0]; " +
+                "       var correction = 0;" +
+                "       if (division.getElementsByTagName('tr')[0].getElementsByTagName('td')[0] != null) {" +
+                "           correction = 1;" +      // +1 is a correction due to an extra 'td' element at the top
+                "       }" +
                 "       var heads = division.getElementsByTagName('th');" +
                 "       var courseIndex, facultyIndex, flag = 0;" +
                 "       var columns = heads.length;" +
                 "       for(var i = 0; i < columns; ++i) {" +
                 "          var heading = heads[i].innerText.toLowerCase();" +
                 "          if(heading == 'course') {" +
-                "              courseIndex = i + 1;" + // +1 is a correction due to an extra 'td' element at the top
+                "              courseIndex = i + correction;" +
                 "              ++flag;" +
                 "          }" +
                 "          if(heading.includes('faculty') && heading.includes('details')) {" +
-                "              facultyIndex = i + 1;" + // +1 is a correction due to an extra 'td' element at the top
+                "              facultyIndex = i + correction;" +
                 "              ++flag;" +
                 "          }" +
                 "          if(flag >= 2) {" +
