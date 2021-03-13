@@ -83,7 +83,7 @@ public class VTOP {
     TextView downloading, progressText;
     int counter, lastDownload;
     float pixelDensity;
-    boolean isOpened, isWebViewInflated, isCaptchaInflated, isSemesterInflated, isProgressInflated;
+    boolean isOpened, isCaptchaInflated, isSemesterInflated, isProgressInflated;
 
     boolean terminateDownload;
 
@@ -170,7 +170,6 @@ public class VTOP {
             These views have to be re-inflated in case the download was terminated
          */
         isCaptchaInflated = false;
-        isWebViewInflated = false;
         isSemesterInflated = false;
         isProgressInflated = false;
 
@@ -259,6 +258,8 @@ public class VTOP {
             return;
         }
 
+        loading.setVisibility(View.INVISIBLE);
+
         view.measure(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         final int targetHeight = view.getMeasuredHeight();
 
@@ -301,27 +302,32 @@ public class VTOP {
             return;
         }
 
-        view.animate().alpha(0);
+        loading.setVisibility(View.VISIBLE);
 
-        final int viewHeight = view.getMeasuredHeight();
-        ValueAnimator anim = ValueAnimator.ofInt(viewHeight, 0);
-        anim.setInterpolator(new AccelerateInterpolator());
-        anim.setDuration(500);
-        anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) view.getLayoutParams();
-                layoutParams.height = (int) (viewHeight * (1 - animation.getAnimatedFraction()));
-                view.setLayoutParams(layoutParams);
-            }
-        });
-        anim.addListener(new AnimatorListenerAdapter() {
+        view.animate().alpha(0).setListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
-                view.setVisibility(View.GONE);
+                final int viewHeight = view.getMeasuredHeight();
+                ValueAnimator anim = ValueAnimator.ofInt(viewHeight, 0);
+                anim.setInterpolator(new AccelerateInterpolator());
+                anim.setDuration(500);
+                anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                    @Override
+                    public void onAnimationUpdate(ValueAnimator animation) {
+                        RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) view.getLayoutParams();
+                        layoutParams.height = (int) (viewHeight * (1 - animation.getAnimatedFraction()));
+                        view.setLayoutParams(layoutParams);
+                    }
+                });
+                anim.addListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        view.setVisibility(View.GONE);
+                    }
+                });
+                anim.start();
             }
         });
-        anim.start();
     }
 
     /*
@@ -583,18 +589,19 @@ public class VTOP {
                         "})();", new ValueCallback<String>() {
                     @Override
                     public void onReceiveValue(String value) {
-                        if (!isWebViewInflated) {
-                            LinearLayout.LayoutParams webViewParams = new LinearLayout.LayoutParams(
-                                    LinearLayout.LayoutParams.MATCH_PARENT,
-                                    LinearLayout.LayoutParams.MATCH_PARENT
-                            );
-                            webViewParams.setMarginStart((int) (40 * pixelDensity));
-                            webViewParams.setMarginEnd((int) (40 * pixelDensity));
-                            webViewParams.setMargins(0, (int) (40 * pixelDensity), 0, (int) (40 * pixelDensity));
-                            downloadDialog.addContentView(webView, webViewParams);
-
-                            isWebViewInflated = true;
+                        ViewGroup webViewParent = (ViewGroup) webView.getParent();
+                        if (webViewParent != null) {
+                            webViewParent.removeView(webView);
                         }
+
+                        LinearLayout.LayoutParams webViewParams = new LinearLayout.LayoutParams(
+                                LinearLayout.LayoutParams.MATCH_PARENT,
+                                LinearLayout.LayoutParams.MATCH_PARENT
+                        );
+                        webViewParams.setMarginStart((int) (40 * pixelDensity));
+                        webViewParams.setMarginEnd((int) (40 * pixelDensity));
+                        webViewParams.setMargins(0, (int) (40 * pixelDensity), 0, (int) (40 * pixelDensity));
+                        downloadDialog.addContentView(webView, webViewParams);
                     }
                 });
             }
@@ -613,9 +620,9 @@ public class VTOP {
         ((Activity) context).runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (isWebViewInflated) {
-                    ((ViewGroup) webView.getParent()).removeView(webView);
-                    isWebViewInflated = false;
+                ViewGroup webViewParent = (ViewGroup) webView.getParent();
+                if (webViewParent != null) {
+                    webViewParent.removeView(webView);
                 }
 
                 webView.evaluateJavascript("(function() {" +
@@ -654,14 +661,15 @@ public class VTOP {
                                     sharedPreferences.edit().putString("isLoggedIn", "false").apply();
                                     myDatabase.close();
                                     downloadDialog.dismiss();
+                                    Toast.makeText(context, value, Toast.LENGTH_LONG).show();
                                     context.startActivity(new Intent(context, LoginActivity.class));
                                     ((Activity) context).finish();
+                                    return;
                                 } else {
                                     Toast.makeText(context, value, Toast.LENGTH_LONG).show();
                                     getCaptchaType();
                                     return;
                                 }
-                                Toast.makeText(context, value, Toast.LENGTH_LONG).show();
                             } else {
                                 Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
                             }

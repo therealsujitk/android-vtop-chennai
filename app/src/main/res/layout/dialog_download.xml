@@ -9,12 +9,8 @@
         android:layout_height="wrap_content"
         android:background="@drawable/dialog_background"
         android:orientation="vertical"
-        android:paddingStart="20dp"
-        android:paddingTop="20dp"
-        android:paddingEnd="10dp"
-        android:paddingBottom="10dp"
+        android:padding="10dp"
         android:layout_margin="40dp"
-        android:gravity="center"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -23,28 +19,30 @@
         <ProgressBar
             android:id="@+id/loading"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="10dp"
-            android:layout_marginBottom="10dp" />
+            android:layout_height="35dp"
+            android:layout_centerVertical="true"
+            android:layout_margin="10dp" />
 
         <ViewStub
             android:id="@+id/captchaStub"
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
+            android:layout_centerVertical="true"
             android:layout="@layout/layout_download_captcha" />
 
         <ViewStub
             android:id="@+id/semesterStub"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
             android:layout="@layout/layout_download_semester" />
 
         <ViewStub
             android:id="@+id/progressStub"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="10dp"
-            android:layout_marginBottom="10dp"
+            android:layout_centerVertical="true"
+            android:layout_margin="10dp"
             android:layout="@layout/layout_download_progress" />
     </RelativeLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -17,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.util.Objects;
 
 public class GradesActivity extends AppCompatActivity {
+    boolean terminateThread;
 
     public void openGradeHistory(MenuItem item) {
         startActivity(new Intent(this, GradeHistoryActivity.class));
@@ -50,6 +51,10 @@ public class GradesActivity extends AppCompatActivity {
 
                 int i;
                 for (i = 0; i < c.getCount(); ++i, c.moveToNext()) {
+                    if (terminateThread) {
+                        return;
+                    }
+
                     if (i == 0) {
                         runOnUiThread(new Runnable() {
                             @Override
@@ -113,5 +118,12 @@ public class GradesActivity extends AppCompatActivity {
         inflater.inflate(R.menu.grades_menu, menu);
 
         return true;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        terminateThread = true;
     }
 }
