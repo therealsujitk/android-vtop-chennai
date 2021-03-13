@@ -68,7 +68,7 @@ public class FacultyActivity extends AppCompatActivity {
                     }
 
                     if (isUsingNewLayout) {
-                        type = type.substring(type.indexOf("(") + 1, type.indexOf(")"));
+                        type = type.substring(type.indexOf("(") + 1, type.indexOf(")")).trim();
                     }
 
                     final LinearLayout card = myFaculty.generateCard(faculty, course, type);
