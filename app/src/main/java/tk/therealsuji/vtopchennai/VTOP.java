@@ -2430,7 +2430,7 @@ public class VTOP {
                                     String course = tempObj.getString("course");
                                     String type = tempObj.getString("type");
                                     String gradeType = tempObj.getString("gradetype");
-                                    String total = tempObj.getString("total");
+                                    String total = tempObj.getString("total") + " / 100";
                                     String grade = tempObj.getString("grade");
 
                                     if (gradeType.toLowerCase().equals("ag")) {
@@ -2457,8 +2457,6 @@ public class VTOP {
                                         downloadGradeHistory();
                                     }
                                 });
-
-                                sharedPreferences.edit().putBoolean("newGrades", true).apply();
                             } catch (Exception e) {
                                 e.printStackTrace();
                                 error();

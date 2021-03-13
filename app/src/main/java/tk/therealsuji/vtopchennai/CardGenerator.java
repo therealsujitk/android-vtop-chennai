@@ -19,14 +19,15 @@ public class CardGenerator {
     static int CARD_GRADE_HISTORY_A = 4;
     static int CARD_GRADE_HISTORY_B = 5;
     static int CARD_GRADE = 6;
-    static int CARD_HOME = 7;
-    static int CARD_MARK = 8;
-    static int CARD_MESSAGE = 9;
-    static int CARD_PROCTOR_MESSAGE = 10;
-    static int CARD_RECEIPT = 11;
-    static int CARD_SPOTLIGHT = 12;
-    static int CARD_STAFF = 13;
-    static int CARD_TIMETABLE = 14;
+    static int CARD_GPA = 7;
+    static int CARD_HOME = 8;
+    static int CARD_MARK = 9;
+    static int CARD_MESSAGE = 10;
+    static int CARD_PROCTOR_MESSAGE = 11;
+    static int CARD_RECEIPT = 12;
+    static int CARD_SPOTLIGHT = 13;
+    static int CARD_STAFF = 14;
+    static int CARD_TIMETABLE = 15;
     Context context;
     int cardType;
     float pixelDensity;
@@ -47,7 +48,7 @@ public class CardGenerator {
                 TableRow.LayoutParams.WRAP_CONTENT
         );
 
-        if (cardType == CARD_SPOTLIGHT || cardType == CARD_DIRECTION) {
+        if (cardType == CARD_DIRECTION || cardType == CARD_GPA || cardType == CARD_SPOTLIGHT) {
             viewParams = new TableRow.LayoutParams(
                     TableRow.LayoutParams.WRAP_CONTENT,
                     TableRow.LayoutParams.WRAP_CONTENT,
@@ -72,7 +73,7 @@ public class CardGenerator {
             view.setTypeface(ResourcesCompat.getFont(context, R.font.rubik));
         }
 
-        if (cardType == CARD_EXAM || cardType == CARD_GRADE_HISTORY_B || cardType == CARD_MARK) {
+        if (cardType == CARD_EXAM || cardType == CARD_GRADE || cardType == CARD_GRADE_HISTORY_B || cardType == CARD_MARK) {
             viewParams.setMargins(0, (int) (3 * pixelDensity), 0, (int) (3 * pixelDensity));
         } else {
             viewParams.setMargins(0, (int) (5 * pixelDensity), 0, (int) (5 * pixelDensity));
@@ -109,13 +110,13 @@ public class CardGenerator {
         boolean boldStart = false;
         boolean boldEnd = false;
 
-        if (header && (cardType == CARD_ATTENDANCE || cardType == CARD_DIRECTION || cardType == CARD_GRADE_HISTORY_A || cardType == CARD_HOME || cardType == CARD_STAFF || cardType == CARD_TIMETABLE)) {
+        if (header && (cardType == CARD_ATTENDANCE || cardType == CARD_DIRECTION || cardType == CARD_GPA || cardType == CARD_GRADE_HISTORY_A || cardType == CARD_HOME || cardType == CARD_STAFF || cardType == CARD_TIMETABLE)) {
             textSize = 20;
         }
 
-        if (cardType == CARD_ATTENDANCE || cardType == CARD_EXAM || cardType == CARD_GRADE_HISTORY_B || cardType == CARD_MARK) {
+        if (cardType == CARD_ATTENDANCE || cardType == CARD_EXAM || cardType == CARD_GRADE || cardType == CARD_GRADE_HISTORY_B || cardType == CARD_MARK) {
             boldEnd = true;
-        } else if (header && (cardType == CARD_DIRECTION || cardType == CARD_GRADE_HISTORY_A || cardType == CARD_STAFF || cardType == CARD_TIMETABLE)) {
+        } else if (header && (cardType == CARD_DIRECTION || cardType == CARD_GPA || cardType == CARD_GRADE_HISTORY_A || cardType == CARD_STAFF || cardType == CARD_TIMETABLE)) {
             boldStart = true;
         } else if (cardType == CARD_HOME) {
             innerBlockParams = new LinearLayout.LayoutParams(
@@ -264,6 +265,25 @@ public class CardGenerator {
             for (int i = 2; i < strings.length; ++i) {
                 card.addView(generateInnerBlock(titles[i - 2], strings[i], true, false));
             }
+        } else if (cardType == CARD_GRADE) {
+            card.setPadding((int) (20 * pixelDensity), (int) (17 * pixelDensity), (int) (20 * pixelDensity), (int) (17 * pixelDensity));
+
+            card.addView(generateTextView(strings[0], 20, true, false));
+
+            String[] titles = {context.getString(R.string.type), context.getString(R.string.grade_type), context.getString(R.string.score), context.getString(R.string.grade)};
+            for (int i = 1; i < strings.length; ++i) {
+                if (strings[i].equals("") || strings[i].equals("-")) {
+                    continue;
+                }
+
+                card.addView(generateInnerBlock(titles[i - 1], strings[i], true, false));
+            }
+        } else if (cardType == CARD_GPA) {
+            card.setOrientation(LinearLayout.HORIZONTAL);
+            card.setPadding(0, 0, 0, 0);
+            LinearLayout innerBlock = generateInnerBlock(strings[1], strings[0], false, true);
+            innerBlock.setPadding((int) (20 * pixelDensity), (int) (15 * pixelDensity), (int) (20 * pixelDensity), (int) (15 * pixelDensity));
+            card.addView(innerBlock);
         }
 
         return card;
