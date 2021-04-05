@@ -664,12 +664,11 @@ public class VTOP {
                                     Toast.makeText(context, value, Toast.LENGTH_LONG).show();
                                     context.startActivity(new Intent(context, LoginActivity.class));
                                     ((Activity) context).finish();
-                                    return;
                                 } else {
                                     Toast.makeText(context, value, Toast.LENGTH_LONG).show();
                                     getCaptchaType();
-                                    return;
                                 }
+                                return;
                             } else {
                                 Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
                             }
@@ -1990,6 +1989,8 @@ public class VTOP {
                                         String venue = schedule.getString("venue" + i);
                                         String location = schedule.getString("location" + i);
                                         String seat = schedule.getString("seat" + i);
+
+                                        venue = venue.replace("-", " - ");
 
                                         /*
                                             Converting to 24 hour format if necessary

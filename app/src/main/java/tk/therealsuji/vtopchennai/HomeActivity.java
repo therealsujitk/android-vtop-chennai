@@ -481,16 +481,16 @@ public class HomeActivity extends AppCompatActivity {
                 }
 
                 /*
-                    Remove any non-encrypted credentials
-                 */
-                sharedPreferences.edit().remove("username").apply();
-                sharedPreferences.edit().remove("password").apply();
-
-                /*
                     Remove the encrypted credentials
                  */
                 encryptedSharedPreferences.edit().remove("username").apply();
                 encryptedSharedPreferences.edit().remove("password").apply();
+
+                /*
+                    Remove any non-encrypted credentials
+                 */
+                sharedPreferences.edit().remove("username").apply();
+                sharedPreferences.edit().remove("password").apply();
 
                 /*
                     Remove other data to prevent issues in the next sign in
@@ -498,6 +498,7 @@ public class HomeActivity extends AppCompatActivity {
                 sharedPreferences.edit().remove("semester").apply();
                 sharedPreferences.edit().remove("newMarks").apply();
                 sharedPreferences.edit().remove("examsCount").apply();
+                sharedPreferences.edit().remove("gradesCount").apply();
                 sharedPreferences.edit().remove("receiptsCount").apply();
 
                 SQLiteDatabase myDatabase = context.openOrCreateDatabase("vtop", Context.MODE_PRIVATE, null);
