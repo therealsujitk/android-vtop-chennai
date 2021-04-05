@@ -184,7 +184,6 @@ public class MarksActivity extends AppCompatActivity {
                     final TextView markButton = myButton.generateButton(course);
                     if (i == 0) {
                         markButton.setBackground(ContextCompat.getDrawable(context, R.drawable.button_secondary_selected));
-                        index = 0;
 
                         for (int j = 0; j < readMarks.size(); ++j) {
                             String id = readMarks.get(j);
@@ -388,7 +387,6 @@ public class MarksActivity extends AppCompatActivity {
                     final TextView markButton = myButton.generateButton(markTitle);
                     if (i == 0) {
                         markButton.setBackground(ContextCompat.getDrawable(context, R.drawable.button_secondary_selected));
-                        index = 0;
 
                         for (int j = 0; j < readMarks.size(); ++j) {
                             String id = readMarks.get(j);
