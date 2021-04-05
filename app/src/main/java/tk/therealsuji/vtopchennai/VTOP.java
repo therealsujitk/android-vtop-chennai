@@ -1990,7 +1990,7 @@ public class VTOP {
                                         String location = schedule.getString("location" + i);
                                         String seat = schedule.getString("seat" + i);
 
-                                        venue = venue.replace("-", " - ");
+                                        venue = venue.replace("-", " - ").trim();
 
                                         /*
                                             Converting to 24 hour format if necessary
