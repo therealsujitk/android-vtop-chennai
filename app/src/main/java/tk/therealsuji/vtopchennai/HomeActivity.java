@@ -663,6 +663,12 @@ public class HomeActivity extends AppCompatActivity {
         final LinearLayout upcoming = findViewById(R.id.upcoming);
         final TextView noUpcoming = findViewById(R.id.no_upcoming);
 
+        /*
+            Initialising the VTOP WebView before hand to speed things up for the user
+            because for some reason, initialising WebView's take a second
+         */
+        vtop = new VTOP(this);
+
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -1255,12 +1261,6 @@ public class HomeActivity extends AppCompatActivity {
 
         TextView myLink = findViewById(R.id.builtBy);
         myLink.setMovementMethod(LinkMovementMethod.getInstance());
-
-        /*
-            Initialising the VTOP WebView before hand to speed things up for the user
-            because for some reason, initialising WebView's take a second
-         */
-        vtop = new VTOP(this);
     }
 
     @Override

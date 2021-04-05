@@ -2533,9 +2533,9 @@ public class VTOP {
                 "               }" +
                 "               var temp = {};" +
                 "               var cells = tables[i].getElementsByTagName('td');" +
-                "               for (var i = 0; i < cells.length; ++i) {" +
-                "                   if (cells[i].getElementsByTagName('table').length != 0) {" +
-                "                       cells[i].remove();" +
+                "               for (var j = 0; j < cells.length; ++j) {" +
+                "                   if (cells[j].getElementsByTagName('table').length != 0) {" +
+                "                       cells[j].remove();" +
                 "                   }" +
                 "               }" +
                 "               for (var j = 0; courseIndex < cells.length && titleIndex < cells.length && creditsIndex < cells.length && gradeIndex < cells.length; ++j) {" +
