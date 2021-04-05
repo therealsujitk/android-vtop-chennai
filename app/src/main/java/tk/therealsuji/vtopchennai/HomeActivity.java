@@ -145,7 +145,7 @@ public class HomeActivity extends AppCompatActivity {
         try {
             findViewById(examsNotification).animate().scaleX(0).scaleY(0);
 
-            if (sharedPreferences.getString("newMarks", "{}").equals("{}") && !sharedPreferences.getBoolean("newGrades", false) && !sharedPreferences.getBoolean("newSpotlight", false)) {
+            if (sharedPreferences.getString("newMarks", "{}").equals("{}") && !sharedPreferences.getBoolean("newGrades", false) && sharedPreferences.getString("newSpotlight", "{}").equals("{}")) {
                 findViewById(academicsNotification).animate().scaleX(0).scaleY(0);
             }
         } catch (Exception e) {
@@ -163,7 +163,7 @@ public class HomeActivity extends AppCompatActivity {
         try {
             findViewById(marksNotification).animate().scaleX(0).scaleY(0);
 
-            if (!sharedPreferences.getBoolean("newExams", false) && !sharedPreferences.getBoolean("newGrades", false) && !sharedPreferences.getBoolean("newSpotlight", false)) {
+            if (!sharedPreferences.getBoolean("newExams", false) && !sharedPreferences.getBoolean("newGrades", false) && sharedPreferences.getString("newSpotlight", "{}").equals("{}")) {
                 findViewById(academicsNotification).animate().scaleX(0).scaleY(0);
             }
         } catch (Exception e) {
@@ -181,7 +181,7 @@ public class HomeActivity extends AppCompatActivity {
         try {
             findViewById(gradesNotification).animate().scaleX(0).scaleY(0);
 
-            if (!sharedPreferences.getBoolean("newExams", false) && sharedPreferences.getString("newMarks", "{}").equals("{}") && !sharedPreferences.getBoolean("newSpotlight", false)) {
+            if (!sharedPreferences.getBoolean("newExams", false) && sharedPreferences.getString("newMarks", "{}").equals("{}") && sharedPreferences.getString("newSpotlight", "{}").equals("{}")) {
                 findViewById(academicsNotification).animate().scaleX(0).scaleY(0);
             }
         } catch (Exception e) {
@@ -669,6 +669,18 @@ public class HomeActivity extends AppCompatActivity {
          */
         vtop = new VTOP(this);
 
+        /*
+            Deleting the old boolean value of newSpotlight
+         */
+        try {
+            boolean newSpotlight = sharedPreferences.getBoolean("newSpotlight", false);
+            if (newSpotlight) {
+                sharedPreferences.edit().remove("newSpotlight").apply();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -1060,7 +1072,7 @@ public class HomeActivity extends AppCompatActivity {
                     });
                 }
 
-                if (sharedPreferences.getBoolean("newSpotlight", false)) {
+                if (!sharedPreferences.getString("newSpotlight", "{}").equals("{}")) {
                     academicsFlag = true;
                     final ImageView notification = myNotification.generateNotificationDot((int) (570 * pixelDensity), NotificationDotGenerator.NOTIFICATION_DEFAULT);
                     notification.setPadding(0, (int) (10 * pixelDensity), 0, 0);
@@ -1267,13 +1279,22 @@ public class HomeActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        if (marksNotification == -1 || academicsNotification == -1) {
-            return;
-        }
-
-        if (!sharedPreferences.getString("newMarks", "{}").equals("{}")) {
+        if (marksNotification != -1 && academicsNotification != -1 && !sharedPreferences.getString("newMarks", "{}").equals("{}")) {
             try {
                 findViewById(marksNotification).animate().scaleX(1).scaleY(1);
+
+                ImageView academicsNotificationView = findViewById(academicsNotification);
+                if (academicsNotificationView.getScaleX() == 0) {
+                    academicsNotificationView.animate().scaleX(1).scaleY(1);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        if (spotlightNotification != -1 && academicsNotification != -1 && !sharedPreferences.getString("newSpotlight", "{}").equals("{}")) {
+            try {
+                findViewById(spotlightNotification).animate().scaleX(1).scaleY(1);
 
                 ImageView academicsNotificationView = findViewById(academicsNotification);
                 if (academicsNotificationView.getScaleX() == 0) {

@@ -3079,16 +3079,67 @@ public class VTOP {
                                     }
                                 }
 
-                                Cursor newSpotlight = myDatabase.rawQuery("SELECT id FROM spotlight_new WHERE announcement NOT IN (SELECT announcement FROM spotlight)", null);
+                                /*
+                                    Removing any marks if they were deleted for some reason
+                                 */
+                                Cursor delete = myDatabase.rawQuery("SELECT id FROM spotlight WHERE announcement NOT IN (SELECT announcement FROM spotlight_new)", null);
 
-                                if (newSpotlight.getCount() > 0) {
-                                    sharedPreferences.edit().putBoolean("newSpotlight", true).apply();
+                                int deleteIndex = delete.getColumnIndex("id");
+                                delete.moveToFirst();
+
+                                String newSpotlightString = sharedPreferences.getString("newSpotlight", "{}");
+                                JSONObject newSpotlight = new JSONObject(newSpotlightString);
+
+                                if (!newSpotlightString.equals("{}")) {
+                                    for (int i = 0; i < delete.getCount(); ++i, delete.moveToNext()) {
+                                        String id = delete.getString(deleteIndex);
+
+                                        if (newSpotlight.has(id)) {
+                                            newSpotlight.remove(id);
+                                        }
+                                    }
                                 }
 
-                                newSpotlight.close();
+                                delete.close();
+
+                                /*
+                                    Updating IDs if they have changed
+                                 */
+                                keys = newSpotlight.keys();
+
+                                while (keys.hasNext()) {
+                                    String oldID = (String) keys.next();
+                                    Cursor update = myDatabase.rawQuery("SELECT id FROM spotlight_new WHERE announcement IN (SELECT announcement FROM spotlight WHERE id = " + oldID + ")", null);
+                                    update.moveToFirst();
+                                    String newID = update.getString(update.getColumnIndex("id"));
+
+                                    if (!oldID.equals(newID)) {
+                                        newSpotlight.remove(oldID);
+                                        newSpotlight.put(newID, true);
+                                    }
+
+                                    update.close();
+                                }
+
+                                /*
+                                    Adding the newly downloaded announcements
+                                 */
+                                Cursor add = myDatabase.rawQuery("SELECT id FROM spotlight_new WHERE announcement NOT IN (SELECT announcement FROM spotlight)", null);
+
+                                int addIndex = add.getColumnIndex("id");
+                                add.moveToFirst();
+
+                                for (int i = 0; i < add.getCount(); ++i, add.moveToNext()) {
+                                    String id = add.getString(addIndex);
+                                    newSpotlight.put(id, true);
+                                }
+
+                                add.close();
 
                                 myDatabase.execSQL("DROP TABLE spotlight");
                                 myDatabase.execSQL("ALTER TABLE spotlight_new RENAME TO spotlight");
+
+                                sharedPreferences.edit().putString("newSpotlight", newSpotlight.toString()).apply();
 
                                 ((Activity) context).runOnUiThread(new Runnable() {
                                     @Override

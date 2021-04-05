@@ -17,7 +17,9 @@ import android.webkit.DownloadListener;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.HorizontalScrollView;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,6 +28,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -38,9 +42,11 @@ public class SpotlightActivity extends AppCompatActivity {
     ArrayList<LinearLayout> announcementViews = new ArrayList<>();
     String downloadLink;
     float pixelDensity;
-    int index, halfWidth;
+    int index, screenWidth;
     int STORAGE_PERMISSION_CODE = 1;
     boolean isDownloadOpened, terminateThread;
+    SharedPreferences sharedPreferences;
+    JSONObject newSpotlight;
 
     public void setAnnouncements(View view) {
         int selectedIndex = Integer.parseInt(view.getTag().toString());
@@ -61,6 +67,7 @@ public class SpotlightActivity extends AppCompatActivity {
         }
         categories.get(index).setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary_selected));
 
+        int halfWidth = screenWidth / 2;
         float location = 0;
         for (int i = 0; i < index; ++i) {
             location += 10 * pixelDensity + (float) categories.get(i).getWidth();
@@ -136,6 +143,8 @@ public class SpotlightActivity extends AppCompatActivity {
         setContentView(R.layout.activity_spotlight);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
+        sharedPreferences = this.getSharedPreferences("tk.therealsuji.vtopchennai", Context.MODE_PRIVATE);
+
         final Context context = this;
         final LinearLayout categoryButtons = findViewById(R.id.categories);
         announcements = findViewById(R.id.announcements);
@@ -143,9 +152,16 @@ public class SpotlightActivity extends AppCompatActivity {
 
         DisplayMetrics displayMetrics = new DisplayMetrics();
         this.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-        halfWidth = displayMetrics.widthPixels / 2;
+        screenWidth = displayMetrics.widthPixels;
 
         categoriesContainer = findViewById(R.id.categoriesContainer);
+
+        newSpotlight = new JSONObject();
+        try {
+            newSpotlight = new JSONObject(sharedPreferences.getString("newSpotlight", "{}"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         new Thread(new Runnable() {
             @Override
@@ -162,6 +178,8 @@ public class SpotlightActivity extends AppCompatActivity {
                 ButtonGenerator myButton = new ButtonGenerator(context);
                 CardGenerator myAnnouncement = new CardGenerator(context, CardGenerator.CARD_SPOTLIGHT);
                 LinkButtonGenerator myLink = new LinkButtonGenerator(context);
+
+                NotificationDotGenerator myNotification = new NotificationDotGenerator(context);
 
                 for (int i = 0; i < c.getCount(); ++i, c.moveToNext()) {
                     if (terminateThread) {
@@ -186,38 +204,15 @@ public class SpotlightActivity extends AppCompatActivity {
 
                     announcementViews.add(announcementsView);    //Storing the view
 
-                    /*
-                        Creating the category button
-                     */
-                    final TextView category = myButton.generateButton(categoryTitle);
-                    if (i == 0 && i == index) {
-                        category.setBackground(ContextCompat.getDrawable(context, R.drawable.button_secondary_selected));
-                    }
-                    category.setTag(i);
-                    category.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            setAnnouncements(category);
-                        }
-                    });
+                    Cursor s = myDatabase.rawQuery("SELECT * FROM spotlight WHERE category = '" + categoryTitle + "'", null);
 
-                    categories.add(category);    //Storing the button
-
-                    /*
-                        Finally adding the button to the HorizontalScrollView
-                     */
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            categoryButtons.addView(category);
-                        }
-                    });
-
-                    Cursor s = myDatabase.rawQuery("SELECT announcement, link FROM spotlight WHERE category = '" + categoryTitle + "'", null);
-
+                    int idIndex = s.getColumnIndex("id");
                     int announcementIndex = s.getColumnIndex("announcement");
                     int linkIndex = s.getColumnIndex("link");
+
                     s.moveToFirst();
+
+                    final ArrayList<String> readAnnouncements = new ArrayList<>();
 
                     for (int j = 0; j < s.getCount(); ++j, s.moveToNext()) {
                         if (terminateThread) {
@@ -245,7 +240,85 @@ public class SpotlightActivity extends AppCompatActivity {
                         /*
                             Adding the block to the announcements layout
                          */
-                        announcementsView.addView(card);
+                        String id = s.getString(idIndex);
+                        if (newSpotlight.has(id)) {
+                            RelativeLayout container = myNotification.generateNotificationContainer();
+                            container.addView(card);
+
+                            int marginStart = (int) (screenWidth - 30 * pixelDensity);
+                            ImageView notification = myNotification.generateNotificationDot(marginStart, NotificationDotGenerator.NOTIFICATION_DEFAULT);
+                            notification.setPadding(0, (int) (5 * pixelDensity), 0, 0);
+                            container.addView(notification);
+
+                            announcementsView.addView(container);
+                            readAnnouncements.add(id);
+                        } else {
+                            announcementsView.addView(card);
+                        }
+                    }
+
+                    /*
+                        Creating the category button
+                     */
+                    final TextView category = myButton.generateButton(categoryTitle);
+                    if (i == 0) {
+                        category.setBackground(ContextCompat.getDrawable(context, R.drawable.button_secondary_selected));
+
+                        for (int j = 0; j < readAnnouncements.size(); ++j) {
+                            String id = readAnnouncements.get(j);
+                            if (newSpotlight.has(id)) {
+                                newSpotlight.remove(id);
+                            }
+                        }
+
+                        sharedPreferences.edit().putString("newSpotlight", newSpotlight.toString()).apply();
+                    }
+                    category.setTag(i);
+                    category.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            setAnnouncements(category);
+
+                            for (int j = 0; j < readAnnouncements.size(); ++j) {
+                                String id = readAnnouncements.get(j);
+                                if (newSpotlight.has(id)) {
+                                    newSpotlight.remove(id);
+                                }
+                            }
+
+                            sharedPreferences.edit().putString("newSpotlight", newSpotlight.toString()).apply();
+                        }
+                    });
+                    category.setAlpha(0);
+                    category.animate().alpha(1);
+
+                    categories.add(category);    //Storing the button
+
+                    /*
+                        Adding the button to the HorizontalScrollView
+                     */
+                    if (readAnnouncements.isEmpty()) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                categoryButtons.addView(category);
+                            }
+                        });
+                    } else {
+                        final RelativeLayout container = myNotification.generateNotificationContainer();
+                        container.addView(category);
+
+                        final ImageView notification = myNotification.generateNotificationDot((int) (3 * pixelDensity), NotificationDotGenerator.NOTIFICATION_DEFAULT);
+                        notification.setPadding(0, (int) (20 * pixelDensity), 0, 0);
+                        container.addView(notification);
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                categoryButtons.addView(container);
+                                notification.animate().scaleX(1).scaleY(1);
+                            }
+                        });
                     }
 
                     if (i == index) {
@@ -274,9 +347,6 @@ public class SpotlightActivity extends AppCompatActivity {
 
                 c.close();
                 myDatabase.close();
-
-                SharedPreferences sharedPreferences = context.getSharedPreferences("tk.therealsuji.vtopchennai", Context.MODE_PRIVATE);
-                sharedPreferences.edit().remove("newSpotlight").apply();
             }
         }).start();
     }
