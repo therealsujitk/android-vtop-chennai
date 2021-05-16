@@ -287,21 +287,12 @@ public class HomeActivity extends AppCompatActivity {
         download.setContentView(R.layout.dialog_download);
         download.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         download.setCanceledOnTouchOutside(false);
-
-//        This part was commented because in some rare cases, the algorithm gets stuck
-//        at loading and the only way to come out of it would be to close the application.
-//        The statement below disables the back button when dialog_dialog is opened to
-//        prevent it from closing during a download.
-
-//        download.setCancelable(false);
-
         download.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialog) {
                 vtop.terminateDownload();
             }
         });
-
         download.show();
 
         Window window = download.getWindow();
@@ -324,6 +315,11 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     public void selectSemester(View view) {
+        if (vtop.isInProgress) {
+            return;
+        }
+
+        vtop.isInProgress = true;
         vtop.hideLayouts();
 
         Spinner selectSemester = download.findViewById(R.id.selectSemester);
@@ -332,17 +328,22 @@ public class HomeActivity extends AppCompatActivity {
         if (!sharedPreferences.getString("semester", "null").equals(semester)) {
             sharedPreferences.edit().putBoolean("newTimetable", true).apply();
             sharedPreferences.edit().putBoolean("newFaculty", true).apply();
+
             sharedPreferences.edit().remove("newExams").apply();
+            sharedPreferences.edit().remove("examsCount").apply();
+
             sharedPreferences.edit().remove("newMarks").apply();
+
             sharedPreferences.edit().remove("newGrades").apply();
+            sharedPreferences.edit().remove("gradesCount").apply();
 
             sharedPreferences.edit().putString("semester", semester).apply();
             vtop.getSemesterID(semester);
+
             return;
         }
 
-        int lastDownload = vtop.getLastDownload();
-        switch (lastDownload) {
+        switch (vtop.getLastDownload()) {
             case 1:
                 vtop.downloadTimetable();
                 break;
@@ -665,7 +666,7 @@ public class HomeActivity extends AppCompatActivity {
 
         /*
             Initialising the VTOP WebView before hand to speed things up for the user
-            because for some reason, initialising WebView's take a second
+            because for some reason, initialising WebView's take a while
          */
         vtop = new VTOP(this);
 

@@ -83,9 +83,8 @@ public class VTOP {
     TextView downloading, progressText;
     int counter, lastDownload;
     float pixelDensity;
-    boolean isOpened, isCaptchaInflated, isSemesterInflated, isProgressInflated;
-
-    boolean terminateDownload;
+    public boolean isInProgress;
+    boolean isOpened, isCaptchaInflated, isSemesterInflated, isProgressInflated, terminateDownload;
 
     @SuppressLint("SetJavaScriptEnabled")
     public VTOP(final Context context) {
@@ -109,6 +108,7 @@ public class VTOP {
                         downloadDialog.dismiss();
                         return;
                     }
+
                     isOpened = true;
                     openSignIn();
                     ++counter;
@@ -250,11 +250,7 @@ public class VTOP {
         Function to perform a smooth animation of expanding the layouts in the dialog
      */
     private void expand(final View view) {
-        if (terminateDownload) {
-            return;
-        }
-
-        if (view.getVisibility() == View.VISIBLE) {
+        if (terminateDownload || view.getVisibility() == View.VISIBLE) {
             return;
         }
 
@@ -294,11 +290,7 @@ public class VTOP {
         Function to perform a smooth animation of compressing the layouts in the dialog
      */
     private void compress(final View view) {
-        if (terminateDownload) {
-            return;
-        }
-
-        if (view.getVisibility() == View.GONE) {
+        if (terminateDownload || view.getVisibility() == View.GONE) {
             return;
         }
 
@@ -357,7 +349,7 @@ public class VTOP {
         Function to update the progress of the download. If more data needs to be downloaded,
         the max value can simply be updated here (SHOULD ALSO BE UPDATED IN dialog_download.xml)
      */
-    private void setProgress() {
+    private void updateProgress() {
         if (terminateDownload) {
             return;
         }
@@ -377,6 +369,7 @@ public class VTOP {
         }
 
         isOpened = false;
+        isInProgress = false;
 
         if (loading.getVisibility() == View.INVISIBLE) {
             hideLayouts();
@@ -422,7 +415,6 @@ public class VTOP {
                 if (value.equals("true")) {
                     getCaptchaType();
                 } else {
-                    isOpened = false;
                     reloadPage();
                 }
             }
@@ -443,7 +435,7 @@ public class VTOP {
             @Override
             public void onReceiveValue(String isLocalCaptcha) {
                 /*
-                    isLocalCaptcha will true true / false
+                    isLocalCaptcha will be either true / false
                     If true, the default captcha is being used else, Google's reCaptcha is being used
                  */
                 if (isLocalCaptcha.equals("null")) {
@@ -526,9 +518,7 @@ public class VTOP {
         renderCaptcha();
 
         /*
-            Overriding the existing onSubmit function
-
-            Executing the captcha
+            Overriding the existing onSubmit function and attempting to render the reCaptcha
          */
         webView.evaluateJavascript("function onSubmit(token) {" +
                 "   Android.signIn('g-recaptcha-response=' + token);" +
@@ -548,8 +538,10 @@ public class VTOP {
     }
 
     /*
-        Function to display Google's reCaptcha to the user
-        if it needs to be solved
+        Function to display Google's reCaptcha (hiding everything else)
+        to the user if it needs to be solved
+        TODO: There is still a minor design issue if the captcha has to be resubmitted by the user,
+              also I'm not very comfortable using setInterval() here.
      */
     @JavascriptInterface
     public void renderCaptcha() {
@@ -668,12 +660,10 @@ public class VTOP {
                                     Toast.makeText(context, value, Toast.LENGTH_LONG).show();
                                     getCaptchaType();
                                 }
-                                return;
                             } else {
-                                Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
+                                // We don't want to refresh the page unless a timeout error has been returned
+                                error();
                             }
-                            isOpened = false;
-                            reloadPage();
                         }
                     }
                 });
@@ -808,7 +798,7 @@ public class VTOP {
             return;
         }
 
-        setupProgress();    // Inflating the progress layout
+        setupProgress();    // Inflating the progress layout if it hasn't been inflated yet
 
         downloading.setText(context.getString(R.string.downloading_profile));
         if (progressLayout.getVisibility() == View.GONE) {
@@ -861,7 +851,7 @@ public class VTOP {
                         sharedPreferences.edit().putString("id", myObj.getString("id")).apply();
 
                         lastDownload = 0;
-                        setProgress();
+                        updateProgress();
 
                         downloadTimetable();
                     } catch (Exception e) {
@@ -881,7 +871,7 @@ public class VTOP {
             return;
         }
 
-        setupProgress();    // Inflating the progress layout
+        setupProgress();    // Inflating the progress layout if it hasn't been inflated yet
 
         downloading.setText(context.getString(R.string.downloading_timetable));
         if (progressLayout.getVisibility() == View.GONE) {
@@ -1020,7 +1010,7 @@ public class VTOP {
                             ((Activity) context).runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    setProgress();
+                                    updateProgress();
                                     downloadFaculty();
                                 }
                             });
@@ -1082,7 +1072,7 @@ public class VTOP {
                                     String end_time_theory = theory.getString(i + "end");
 
                                     /*
-                                        Formatting the time incase it is given in 12-hour format
+                                        Formatting the time in-case it is given in 12-hour format
                                      */
                                     String[] times = {start_time_lab, end_time_lab, start_time_theory, end_time_theory};
                                     for (int j = 0; j < times.length; ++j) {
@@ -1208,7 +1198,7 @@ public class VTOP {
                                 ((Activity) context).runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        setProgress();
+                                        updateProgress();
                                         downloadFaculty();
                                     }
                                 });
@@ -1231,7 +1221,7 @@ public class VTOP {
             return;
         }
 
-        setupProgress();    // Inflating the progress layout
+        setupProgress();    // Inflating the progress layout if it hasn't been inflated yet
 
         downloading.setText(context.getString(R.string.downloading_faculty));
         if (progressLayout.getVisibility() == View.GONE) {
@@ -1308,7 +1298,7 @@ public class VTOP {
                                 ((Activity) context).runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        setProgress();
+                                        updateProgress();
                                         downloadProctor();
                                     }
                                 });
@@ -1341,7 +1331,7 @@ public class VTOP {
                                 ((Activity) context).runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        setProgress();
+                                        updateProgress();
                                         downloadProctor();
                                     }
                                 });
@@ -1364,7 +1354,7 @@ public class VTOP {
             return;
         }
 
-        setupProgress();    // Inflating the progress layout
+        setupProgress();    // Inflating the progress layout if it hasn't been inflated yet
 
         downloading.setText(context.getString(R.string.downloading_staff));
         if (progressLayout.getVisibility() == View.GONE) {
@@ -1422,7 +1412,7 @@ public class VTOP {
                                 ((Activity) context).runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        setProgress();
+                                        updateProgress();
                                         downloadDeanHOD();
                                     }
                                 });
@@ -1456,7 +1446,7 @@ public class VTOP {
                                 ((Activity) context).runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        setProgress();
+                                        updateProgress();
                                         downloadDeanHOD();
                                     }
                                 });
@@ -1479,7 +1469,7 @@ public class VTOP {
             return;
         }
 
-        setupProgress();    // Inflating the progress layout
+        setupProgress();    // Inflating the progress layout if it hasn't been inflated yet
 
         downloading.setText(context.getString(R.string.downloading_staff));
         if (progressLayout.getVisibility() == View.GONE) {
@@ -1586,7 +1576,7 @@ public class VTOP {
                                 ((Activity) context).runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        setProgress();
+                                        updateProgress();
                                         downloadAttendance();
                                     }
                                 });
@@ -1636,7 +1626,7 @@ public class VTOP {
                                 ((Activity) context).runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        setProgress();
+                                        updateProgress();
                                         downloadAttendance();
                                     }
                                 });
@@ -1659,7 +1649,7 @@ public class VTOP {
             return;
         }
 
-        setupProgress();    // Inflating the progress layout
+        setupProgress();    // Inflating the progress layout if it hasn't been inflated yet
 
         downloading.setText(context.getString(R.string.downloading_attendance));
         if (progressLayout.getVisibility() == View.GONE) {
@@ -1749,7 +1739,7 @@ public class VTOP {
                                 ((Activity) context).runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        setProgress();
+                                        updateProgress();
                                         downloadExams();
                                     }
                                 });
@@ -1790,7 +1780,7 @@ public class VTOP {
                                 ((Activity) context).runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        setProgress();
+                                        updateProgress();
                                         downloadExams();
                                     }
                                 });
@@ -1813,7 +1803,7 @@ public class VTOP {
             return;
         }
 
-        setupProgress();    // Inflating the progress layout
+        setupProgress();    // Inflating the progress layout if it hasn't been inflated yet
 
         downloading.setText(context.getString(R.string.downloading_exams));
         if (progressLayout.getVisibility() == View.GONE) {
@@ -1856,7 +1846,7 @@ public class VTOP {
                 "               } else if (heading.includes('exam') && heading.includes('time')) {" +
                 "                   timingIndex = i;" +
                 "                   ++flag;" +
-                "               } else if (heading.includes('venu')) {" +
+                "               } else if (heading.includes('venue')) {" +
                 "                   venueIndex = i;" +
                 "                   ++flag;" +
                 "               } else if (heading.includes('location')) {" +
@@ -1946,7 +1936,7 @@ public class VTOP {
                                 ((Activity) context).runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        setProgress();
+                                        updateProgress();
                                         downloadMarks();
                                     }
                                 });
@@ -1991,6 +1981,7 @@ public class VTOP {
                                         String seat = schedule.getString("seat" + i);
 
                                         venue = venue.replace("-", " - ").trim();
+                                        slot = slot.replace("+", " + ");
 
                                         /*
                                             Converting to 24 hour format if necessary
@@ -2028,7 +2019,7 @@ public class VTOP {
                                 ((Activity) context).runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        setProgress();
+                                        updateProgress();
                                         downloadMarks();
                                     }
                                 });
@@ -2051,7 +2042,7 @@ public class VTOP {
             return;
         }
 
-        setupProgress();    // Inflating the progress layout
+        setupProgress();    // Inflating the progress layout if it hasn't been inflated yet
 
         downloading.setText(R.string.downloading_marks);
         if (progressLayout.getVisibility() == View.GONE) {
@@ -2170,7 +2161,7 @@ public class VTOP {
                                 ((Activity) context).runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        setProgress();
+                                        updateProgress();
                                         downloadGrades();
                                     }
                                 });
@@ -2180,7 +2171,6 @@ public class VTOP {
                             }
 
                             sharedPreferences.edit().remove("newMarks").apply();
-                            sharedPreferences.edit().remove("marksCount").apply();
                         }
                     }).start();
                 } else {
@@ -2273,7 +2263,7 @@ public class VTOP {
                                 ((Activity) context).runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        setProgress();
+                                        updateProgress();
                                         downloadGrades();
                                     }
                                 });
@@ -2296,7 +2286,7 @@ public class VTOP {
             return;
         }
 
-        setupProgress();    // Inflating the progress layout
+        setupProgress();    // Inflating the progress layout if it hasn't been inflated yet
 
         downloading.setText(context.getString(R.string.downloading_grades));
         if (progressLayout.getVisibility() == View.GONE) {
@@ -2404,7 +2394,7 @@ public class VTOP {
                                 ((Activity) context).runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        setProgress();
+                                        updateProgress();
                                         downloadGradeHistory();
                                     }
                                 });
@@ -2462,7 +2452,7 @@ public class VTOP {
                                 ((Activity) context).runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        setProgress();
+                                        updateProgress();
                                         downloadGradeHistory();
                                     }
                                 });
@@ -2485,7 +2475,7 @@ public class VTOP {
             return;
         }
 
-        setupProgress();    // Inflating the progress layout
+        setupProgress();    // Inflating the progress layout if it hasn't been inflated yet
 
         downloading.setText(context.getString(R.string.downloading_grade_history));
         if (progressLayout.getVisibility() == View.GONE) {
@@ -2637,6 +2627,9 @@ public class VTOP {
                                 myDatabase.execSQL("DROP TABLE IF EXISTS grades_effective");
                                 myDatabase.execSQL("CREATE TABLE grades_effective (id INTEGER PRIMARY KEY, course VARCHAR, title VARCHAR, credits VARCHAR, grade VARCHAR)");
 
+                                /*
+                                    Storing the effective grades
+                                 */
                                 JSONObject effective = new JSONObject(myObj.getString("effective"));
 
                                 for (int i = 0; i < effective.length() / 4; ++i) {
@@ -2651,6 +2644,9 @@ public class VTOP {
                                 myDatabase.execSQL("DROP TABLE IF EXISTS grades_curriculum");
                                 myDatabase.execSQL("CREATE TABLE grades_curriculum (id INTEGER PRIMARY KEY, type VARCHAR, credits VARCHAR)");
 
+                                /*
+                                    Storing the curriculum details
+                                 */
                                 JSONObject curriculum = new JSONObject(myObj.getString("curriculum"));
 
                                 for (int i = 0; i < curriculum.length() / 3; ++i) {
@@ -2674,6 +2670,9 @@ public class VTOP {
                                 myDatabase.execSQL("DROP TABLE IF EXISTS grades_basket");
                                 myDatabase.execSQL("CREATE TABLE grades_basket (id INTEGER PRIMARY KEY, title VARCHAR, credits VARCHAR)");
 
+                                /*
+                                    Storing the basket grades
+                                 */
                                 JSONObject basket = new JSONObject(myObj.getString("basket"));
 
                                 for (int i = 0; i < basket.length() / 3; ++i) {
@@ -2686,6 +2685,9 @@ public class VTOP {
                                 myDatabase.execSQL("DROP TABLE IF EXISTS grades_summary");
                                 myDatabase.execSQL("CREATE TABLE grades_summary (id INTEGER PRIMARY KEY, column1 VARCHAR, column2 VARCHAR)");
 
+                                /*
+                                    Storing the summary
+                                 */
                                 JSONObject summary = new JSONObject(myObj.getString("summary"));
 
                                 Iterator<?> keys = summary.keys();
@@ -2708,7 +2710,7 @@ public class VTOP {
                                 ((Activity) context).runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        setProgress();
+                                        updateProgress();
                                         downloadMessages();
                                     }
                                 });
@@ -2730,7 +2732,7 @@ public class VTOP {
             return;
         }
 
-        setupProgress();    // Inflating the progress layout
+        setupProgress();    // Inflating the progress layout if it hasn't been inflated yet
 
         downloading.setText(context.getString(R.string.downloading_messages));
         if (progressLayout.getVisibility() == View.GONE) {
@@ -2788,7 +2790,7 @@ public class VTOP {
                                 ((Activity) context).runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        setProgress();
+                                        updateProgress();
                                         downloadProctorMessages();
                                     }
                                 });
@@ -2804,7 +2806,7 @@ public class VTOP {
                     }).start();
                 } else {
                     /*
-                        Dropping, recreating and adding announcements
+                        Dropping, recreating and adding messages
                      */
                     new Thread(new Runnable() {
                         @Override
@@ -2825,6 +2827,9 @@ public class VTOP {
                                     myDatabase.execSQL("INSERT INTO messages_new (course, type, message) VALUES('" + course + "', '" + type + "', '" + message + "')");
                                 }
 
+                                /*
+                                    Checking for messages that haven't been downloaded before
+                                 */
                                 Cursor newSpotlight = myDatabase.rawQuery("SELECT id FROM messages_new WHERE message NOT IN (SELECT message FROM messages)", null);
 
                                 if (newSpotlight.getCount() > 0) {
@@ -2839,7 +2844,7 @@ public class VTOP {
                                 ((Activity) context).runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        setProgress();
+                                        updateProgress();
                                         downloadProctorMessages();
                                     }
                                 });
@@ -2862,7 +2867,7 @@ public class VTOP {
             return;
         }
 
-        setupProgress();    // Inflating the progress layout
+        setupProgress();    // Inflating the progress layout if it hasn't been inflated yet
 
         downloading.setText(context.getString(R.string.downloading_messages));
         if (progressLayout.getVisibility() == View.GONE) {
@@ -2907,7 +2912,7 @@ public class VTOP {
                                 ((Activity) context).runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        setProgress();
+                                        updateProgress();
                                         downloadSpotlight();
                                     }
                                 });
@@ -2923,7 +2928,7 @@ public class VTOP {
                     }).start();
                 } else if (temp.equals("new")) {
                     /*
-                        Dropping, recreating and adding announcements
+                        Dropping, recreating and adding new proctor messages
                      */
                     new Thread(new Runnable() {
                         @Override
@@ -2937,7 +2942,7 @@ public class VTOP {
                                 ((Activity) context).runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        setProgress();
+                                        updateProgress();
                                         downloadSpotlight();
                                     }
                                 });
@@ -2964,7 +2969,7 @@ public class VTOP {
             return;
         }
 
-        setupProgress();    // Inflating the progress layout
+        setupProgress();    // Inflating the progress layout if it hasn't been inflated yet
 
         downloading.setText(context.getString(R.string.downloading_spotlight));
         if (progressLayout.getVisibility() == View.GONE) {
@@ -3039,7 +3044,7 @@ public class VTOP {
                                 ((Activity) context).runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        setProgress();
+                                        updateProgress();
                                         downloadReceipts();
                                     }
                                 });
@@ -3080,7 +3085,7 @@ public class VTOP {
                                 }
 
                                 /*
-                                    Removing any marks if they were deleted for some reason
+                                    Removing any announcements if they were deleted on the portal
                                  */
                                 Cursor delete = myDatabase.rawQuery("SELECT id FROM spotlight WHERE announcement NOT IN (SELECT announcement FROM spotlight_new)", null);
 
@@ -3103,7 +3108,7 @@ public class VTOP {
                                 delete.close();
 
                                 /*
-                                    Updating IDs if they have changed
+                                    Updating any announcements IDs that have been changed in the new table
                                  */
                                 keys = newSpotlight.keys();
 
@@ -3122,7 +3127,7 @@ public class VTOP {
                                 }
 
                                 /*
-                                    Adding the newly downloaded announcements
+                                    Adding the new announcements
                                  */
                                 Cursor add = myDatabase.rawQuery("SELECT id FROM spotlight_new WHERE announcement NOT IN (SELECT announcement FROM spotlight)", null);
 
@@ -3144,7 +3149,7 @@ public class VTOP {
                                 ((Activity) context).runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        setProgress();
+                                        updateProgress();
                                         downloadReceipts();
                                     }
                                 });
@@ -3167,7 +3172,7 @@ public class VTOP {
             return;
         }
 
-        setupProgress();    // Inflating the progress layout
+        setupProgress();    // Inflating the progress layout if it hasn't been inflated yet
 
         downloading.setText(context.getString(R.string.downloading_receipts));
         if (progressLayout.getVisibility() == View.GONE) {
@@ -3256,7 +3261,7 @@ public class VTOP {
                                 ((Activity) context).runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        setProgress();
+                                        updateProgress();
                                         checkDues();
                                     }
                                 });
