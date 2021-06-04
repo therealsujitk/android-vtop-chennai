@@ -113,200 +113,167 @@ public class TimetableActivity extends AppCompatActivity {
 
         timetable.addView(dayViews[day]);
 
-        daysContainer.post(new Runnable() {
-            @Override
-            public void run() {
-                setTimetable(null);
-            }
-        });
+        daysContainer.post(() -> setTimetable(null));
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
+        new Thread(() -> {
+            /*
+                Displaying the timetable
+             */
+
+            SQLiteDatabase myDatabase = context.openOrCreateDatabase("vtop", Context.MODE_PRIVATE, null);
+            myDatabase.execSQL("CREATE TABLE IF NOT EXISTS timetable_theory (id INT(3) PRIMARY KEY, start_time VARCHAR, end_time VARCHAR, sun VARCHAR, mon VARCHAR, tue VARCHAR, wed VARCHAR, thu VARCHAR, fri VARCHAR, sat VARCHAR)");
+            myDatabase.execSQL("CREATE TABLE IF NOT EXISTS timetable_lab (id INT(3) PRIMARY KEY, start_time VARCHAR, end_time VARCHAR, sun VARCHAR, mon VARCHAR, tue VARCHAR, wed VARCHAR, thu VARCHAR, fri VARCHAR, sat VARCHAR)");
+
+            Cursor theory = myDatabase.rawQuery("SELECT * FROM timetable_theory", null);
+            Cursor lab = myDatabase.rawQuery("SELECT * FROM timetable_lab", null);
+
+            int startTheory = theory.getColumnIndex("start_time");
+            int endTheory = theory.getColumnIndex("end_time");
+            int sundayTheory = theory.getColumnIndex("sun");
+            int mondayTheory = theory.getColumnIndex("mon");
+            int tuesdayTheory = theory.getColumnIndex("tue");
+            int wednesdayTheory = theory.getColumnIndex("wed");
+            int thursdayTheory = theory.getColumnIndex("thu");
+            int fridayTheory = theory.getColumnIndex("fri");
+            int saturdayTheory = theory.getColumnIndex("sat");
+
+            int startLab = lab.getColumnIndex("start_time");
+            int endLab = lab.getColumnIndex("end_time");
+            int sundayLab = lab.getColumnIndex("sun");
+            int mondayLab = lab.getColumnIndex("mon");
+            int tuesdayLab = lab.getColumnIndex("tue");
+            int wednesdayLab = lab.getColumnIndex("wed");
+            int thursdayLab = lab.getColumnIndex("thu");
+            int fridayLab = lab.getColumnIndex("fri");
+            int saturdayLab = lab.getColumnIndex("sat");
+
+            theory.moveToFirst();
+            lab.moveToFirst();
+
+            int[] theoryIndexes = {sundayTheory, mondayTheory, tuesdayTheory, wednesdayTheory, thursdayTheory, fridayTheory, saturdayTheory};
+            int[] labIndexes = {sundayLab, mondayLab, tuesdayLab, wednesdayLab, thursdayLab, fridayLab, saturdayLab};
+
+            SimpleDateFormat hour24 = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
+            SimpleDateFormat hour12 = new SimpleDateFormat("h:mm a", Locale.ENGLISH);
+
+            CardGenerator myPeriod = new CardGenerator(context, CardGenerator.CARD_TIMETABLE);
+
+            for (int i = 0; i < theory.getCount() && i < lab.getCount(); ++i, theory.moveToNext(), lab.moveToNext()) {
+                if (terminateThread) {
+                    return;
+                }
+
                 /*
-                    Displaying the timetable
+                    The starting and ending times
                  */
+                String startTimeTheory = theory.getString(startTheory);
+                String endTimeTheory = theory.getString(endTheory);
+                String startTimeLab = lab.getString(startLab);
+                String endTimeLab = lab.getString(endLab);
 
-                SQLiteDatabase myDatabase = context.openOrCreateDatabase("vtop", Context.MODE_PRIVATE, null);
-                myDatabase.execSQL("CREATE TABLE IF NOT EXISTS timetable_theory (id INT(3) PRIMARY KEY, start_time VARCHAR, end_time VARCHAR, sun VARCHAR, mon VARCHAR, tue VARCHAR, wed VARCHAR, thu VARCHAR, fri VARCHAR, sat VARCHAR)");
-                myDatabase.execSQL("CREATE TABLE IF NOT EXISTS timetable_lab (id INT(3) PRIMARY KEY, start_time VARCHAR, end_time VARCHAR, sun VARCHAR, mon VARCHAR, tue VARCHAR, wed VARCHAR, thu VARCHAR, fri VARCHAR, sat VARCHAR)");
-
-                Cursor theory = myDatabase.rawQuery("SELECT * FROM timetable_theory", null);
-                Cursor lab = myDatabase.rawQuery("SELECT * FROM timetable_lab", null);
-
-                int startTheory = theory.getColumnIndex("start_time");
-                int endTheory = theory.getColumnIndex("end_time");
-                int sundayTheory = theory.getColumnIndex("sun");
-                int mondayTheory = theory.getColumnIndex("mon");
-                int tuesdayTheory = theory.getColumnIndex("tue");
-                int wednesdayTheory = theory.getColumnIndex("wed");
-                int thursdayTheory = theory.getColumnIndex("thu");
-                int fridayTheory = theory.getColumnIndex("fri");
-                int saturdayTheory = theory.getColumnIndex("sat");
-
-                int startLab = lab.getColumnIndex("start_time");
-                int endLab = lab.getColumnIndex("end_time");
-                int sundayLab = lab.getColumnIndex("sun");
-                int mondayLab = lab.getColumnIndex("mon");
-                int tuesdayLab = lab.getColumnIndex("tue");
-                int wednesdayLab = lab.getColumnIndex("wed");
-                int thursdayLab = lab.getColumnIndex("thu");
-                int fridayLab = lab.getColumnIndex("fri");
-                int saturdayLab = lab.getColumnIndex("sat");
-
-                theory.moveToFirst();
-                lab.moveToFirst();
-
-                int[] theoryIndexes = {sundayTheory, mondayTheory, tuesdayTheory, wednesdayTheory, thursdayTheory, fridayTheory, saturdayTheory};
-                int[] labIndexes = {sundayLab, mondayLab, tuesdayLab, wednesdayLab, thursdayLab, fridayLab, saturdayLab};
-
-                SimpleDateFormat hour24 = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
-                SimpleDateFormat hour12 = new SimpleDateFormat("h:mm a", Locale.ENGLISH);
-
-                CardGenerator myPeriod = new CardGenerator(context, CardGenerator.CARD_TIMETABLE);
-
-                for (int i = 0; i < theory.getCount() && i < lab.getCount(); ++i, theory.moveToNext(), lab.moveToNext()) {
+                for (int j = 0; j < 7; ++j) {
                     if (terminateThread) {
                         return;
                     }
 
                     /*
-                        The starting and ending times
+                        The period TextView for theory
                      */
-                    String startTimeTheory = theory.getString(startTheory);
-                    String endTimeTheory = theory.getString(endTheory);
-                    String startTimeLab = lab.getString(startLab);
-                    String endTimeLab = lab.getString(endLab);
+                    if (!theory.getString(theoryIndexes[j]).equals("null")) {
+                        String[] rawPeriod = theory.getString(theoryIndexes[j]).split("-");
 
-                    for (int j = 0; j < 7; ++j) {
-                        if (terminateThread) {
-                            return;
-                        }
-
+                        String course = rawPeriod[1].trim();
+                        String venue = rawPeriod[rawPeriod.length - 3] + " - " + rawPeriod[rawPeriod.length - 2];
                         /*
-                            The period TextView for theory
+                            Making a proper string of the timings depending on the system settings
                          */
-                        if (!theory.getString(theoryIndexes[j]).equals("null")) {
-                            String[] rawPeriod = theory.getString(theoryIndexes[j]).split("-");
-
-                            String course = rawPeriod[1].trim();
-                            String venue = rawPeriod[rawPeriod.length - 3] + " - " + rawPeriod[rawPeriod.length - 2];
-                            /*
-                                Making a proper string of the timings depending on the system settings
-                             */
-                            String timings = startTimeTheory + " - " + endTimeTheory;
-                            if (!DateFormat.is24HourFormat(context)) {
-                                try {
-                                    Date startTime = hour24.parse(startTimeTheory);
-                                    Date endTime = hour24.parse(endTimeTheory);
-                                    if (startTime != null && endTime != null) {
-                                        timings = hour12.format(startTime) + " - " + hour12.format(endTime);
-                                    }
-                                } catch (Exception e) {
-                                    e.printStackTrace();
+                        String timings = startTimeTheory + " - " + endTimeTheory;
+                        if (!DateFormat.is24HourFormat(context)) {
+                            try {
+                                Date startTime = hour24.parse(startTimeTheory);
+                                Date endTime = hour24.parse(endTimeTheory);
+                                if (startTime != null && endTime != null) {
+                                    timings = hour12.format(startTime) + " - " + hour12.format(endTime);
                                 }
-                            }
-                            String type = getString(R.string.theory);
-
-                            final LinearLayout card = myPeriod.generateCard(course, venue, timings, type);
-
-                            /*
-                                Adding card to the day view
-                             */
-                            if (j == day) {
-                                card.setAlpha(0);
-                                card.animate().alpha(1);
-
-                                if (dayViews[day].getChildCount() == 0) {
-                                    runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            findViewById(R.id.noData).setVisibility(View.GONE);
-                                        }
-                                    });
-                                }
-
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        dayViews[day].addView(card);
-                                    }
-                                });
-                            } else {
-                                dayViews[j].addView(card);
+                            } catch (Exception e) {
+                                e.printStackTrace();
                             }
                         }
+                        String type = getString(R.string.theory);
+
+                        final LinearLayout card = myPeriod.generateCard(course, venue, timings, type);
 
                         /*
-                            The period TextView for lab
+                            Adding card to the day view
                          */
-                        if (!lab.getString(labIndexes[j]).equals("null")) {
-                            String[] rawPeriod = lab.getString(theoryIndexes[j]).split("-");
+                        if (j == day) {
+                            card.setAlpha(0);
+                            card.animate().alpha(1);
 
-                            String course = rawPeriod[1].trim();
-                            String venue = rawPeriod[rawPeriod.length - 3] + " - " + rawPeriod[rawPeriod.length - 2];
-                            /*
-                                Making a proper string of the timings depending on the system settings
-                             */
-                            String timings = startTimeLab + " - " + endTimeLab;
-                            if (!DateFormat.is24HourFormat(context)) {
-                                try {
-                                    Date startTime = hour24.parse(startTimeLab);
-                                    Date endTime = hour24.parse(endTimeLab);
-                                    if (startTime != null && endTime != null) {
-                                        timings = hour12.format(startTime) + " - " + hour12.format(endTime);
-                                    }
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
+                            if (dayViews[day].getChildCount() == 0) {
+                                runOnUiThread(() -> findViewById(R.id.noData).setVisibility(View.GONE));
                             }
-                            String type = getString(R.string.lab);
 
-                            final LinearLayout card = myPeriod.generateCard(course, venue, timings, type);
+                            runOnUiThread(() -> dayViews[day].addView(card));
+                        } else {
+                            dayViews[j].addView(card);
+                        }
+                    }
 
-                            /*
-                                Adding card to the day view
-                             */
-                            if (j == day) {
-                                card.setAlpha(0);
-                                card.animate().alpha(1);
+                    /*
+                        The period TextView for lab
+                     */
+                    if (!lab.getString(labIndexes[j]).equals("null")) {
+                        String[] rawPeriod = lab.getString(theoryIndexes[j]).split("-");
 
-                                if (dayViews[day].getChildCount() == 0) {
-                                    runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            findViewById(R.id.noData).setVisibility(View.GONE);
-                                        }
-                                    });
+                        String course = rawPeriod[1].trim();
+                        String venue = rawPeriod[rawPeriod.length - 3] + " - " + rawPeriod[rawPeriod.length - 2];
+                        /*
+                            Making a proper string of the timings depending on the system settings
+                         */
+                        String timings = startTimeLab + " - " + endTimeLab;
+                        if (!DateFormat.is24HourFormat(context)) {
+                            try {
+                                Date startTime = hour24.parse(startTimeLab);
+                                Date endTime = hour24.parse(endTimeLab);
+                                if (startTime != null && endTime != null) {
+                                    timings = hour12.format(startTime) + " - " + hour12.format(endTime);
                                 }
-
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        dayViews[day].addView(card);
-                                    }
-                                });
-                            } else {
-                                dayViews[j].addView(card);
+                            } catch (Exception e) {
+                                e.printStackTrace();
                             }
+                        }
+                        String type = getString(R.string.lab);
+
+                        final LinearLayout card = myPeriod.generateCard(course, venue, timings, type);
+
+                        /*
+                            Adding card to the day view
+                         */
+                        if (j == day) {
+                            card.setAlpha(0);
+                            card.animate().alpha(1);
+
+                            if (dayViews[day].getChildCount() == 0) {
+                                runOnUiThread(() -> findViewById(R.id.noData).setVisibility(View.GONE));
+                            }
+
+                            runOnUiThread(() -> dayViews[day].addView(card));
+                        } else {
+                            dayViews[j].addView(card);
                         }
                     }
                 }
-
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        findViewById(R.id.loading).animate().alpha(0);
-                    }
-                });
-
-                theory.close();
-                lab.close();
-                myDatabase.close();
-
-                SharedPreferences sharedPreferences = context.getSharedPreferences("tk.therealsuji.vtopchennai", Context.MODE_PRIVATE);
-                sharedPreferences.edit().remove("newTimetable").apply();
             }
+
+            runOnUiThread(() -> findViewById(R.id.loading).animate().alpha(0));
+
+            theory.close();
+            lab.close();
+            myDatabase.close();
+
+            SharedPreferences sharedPreferences = context.getSharedPreferences("tk.therealsuji.vtopchennai", Context.MODE_PRIVATE);
+            sharedPreferences.edit().remove("newTimetable").apply();
         }).start();
     }
 

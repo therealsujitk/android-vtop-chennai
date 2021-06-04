@@ -13,7 +13,6 @@ import android.os.Environment;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.webkit.CookieManager;
-import android.webkit.DownloadListener;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.HorizontalScrollView;
@@ -99,21 +98,18 @@ public class SpotlightActivity extends AppCompatActivity {
                     download.loadUrl("http://vtopcc.vit.ac.in/vtop/" + downloadLink + "?&x=");
                 }
             });
-            download.setDownloadListener(new DownloadListener() {
-                @Override
-                public void onDownloadStart(String url, String userAgent, String contentDisposition, String mimetype, long contentLength) {
-                    Toast.makeText(SpotlightActivity.this, "Downloading document", Toast.LENGTH_SHORT).show();
+            download.setDownloadListener((url, userAgent, contentDisposition, mimetype, contentLength) -> {
+                Toast.makeText(SpotlightActivity.this, "Downloading document", Toast.LENGTH_SHORT).show();
 
-                    DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
-                    request.allowScanningByMediaScanner();
-                    request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-                    String fileName = contentDisposition.split("filename=")[1];
-                    request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "VTOP Spotlight/" + fileName);
-                    request.setMimeType(mimetype);
-                    request.addRequestHeader("cookie", CookieManager.getInstance().getCookie(url));
-                    DownloadManager downloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
-                    downloadManager.enqueue(request);
-                }
+                DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
+                request.allowScanningByMediaScanner();
+                request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+                String fileName = contentDisposition.split("filename=")[1];
+                request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "VTOP Spotlight/" + fileName);
+                request.setMimeType(mimetype);
+                request.addRequestHeader("cookie", CookieManager.getInstance().getCookie(url));
+                DownloadManager downloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
+                downloadManager.enqueue(request);
             });
         } else {
             download.clearCache(true);
@@ -163,191 +159,157 @@ public class SpotlightActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                SQLiteDatabase myDatabase = context.openOrCreateDatabase("vtop", Context.MODE_PRIVATE, null);
+        new Thread(() -> {
+            SQLiteDatabase myDatabase = context.openOrCreateDatabase("vtop", Context.MODE_PRIVATE, null);
 
-                myDatabase.execSQL("CREATE TABLE IF NOT EXISTS spotlight (id INT(3) PRIMARY KEY, category VARCHAR, announcement VARCHAR, link VARCHAR)");
-                Cursor c = myDatabase.rawQuery("SELECT DISTINCT category FROM spotlight", null);
+            myDatabase.execSQL("CREATE TABLE IF NOT EXISTS spotlight (id INT(3) PRIMARY KEY, category VARCHAR, announcement VARCHAR, link VARCHAR)");
+            Cursor c = myDatabase.rawQuery("SELECT DISTINCT category FROM spotlight", null);
 
-                int categoryIndex = c.getColumnIndex("category");
-                c.moveToFirst();
+            int categoryIndex = c.getColumnIndex("category");
+            c.moveToFirst();
 
-                LayoutGenerator myLayouot = new LayoutGenerator(context);
-                ButtonGenerator myButton = new ButtonGenerator(context);
-                CardGenerator myAnnouncement = new CardGenerator(context, CardGenerator.CARD_SPOTLIGHT);
-                LinkButtonGenerator myLink = new LinkButtonGenerator(context);
+            LayoutGenerator myLayouot = new LayoutGenerator(context);
+            ButtonGenerator myButton = new ButtonGenerator(context);
+            CardGenerator myAnnouncement = new CardGenerator(context, CardGenerator.CARD_SPOTLIGHT);
+            LinkButtonGenerator myLink = new LinkButtonGenerator(context);
 
-                NotificationDotGenerator myNotification = new NotificationDotGenerator(context);
+            NotificationDotGenerator myNotification = new NotificationDotGenerator(context);
 
-                for (int i = 0; i < c.getCount(); ++i, c.moveToNext()) {
+            for (int i = 0; i < c.getCount(); ++i, c.moveToNext()) {
+                if (terminateThread) {
+                    return;
+                }
+
+                if (i == 0) {
+                    runOnUiThread(() -> findViewById(R.id.noData).setVisibility(View.GONE));
+                }
+
+                String categoryTitle = c.getString(categoryIndex);
+
+                /*
+                    Creating the announcements view
+                 */
+                final LinearLayout announcementsView = myLayouot.generateLayout();
+
+                announcementViews.add(announcementsView);    //Storing the view
+
+                Cursor s = myDatabase.rawQuery("SELECT * FROM spotlight WHERE category = '" + categoryTitle + "'", null);
+
+                int idIndex = s.getColumnIndex("id");
+                int announcementIndex = s.getColumnIndex("announcement");
+                int linkIndex = s.getColumnIndex("link");
+
+                s.moveToFirst();
+
+                final ArrayList<String> readAnnouncements = new ArrayList<>();
+
+                for (int j = 0; j < s.getCount(); ++j, s.moveToNext()) {
                     if (terminateThread) {
                         return;
                     }
 
-                    if (i == 0) {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                findViewById(R.id.noData).setVisibility(View.GONE);
-                            }
-                        });
-                    }
+                    String announcement = s.getString(announcementIndex);
+                    final String link = s.getString(linkIndex);
 
-                    String categoryTitle = c.getString(categoryIndex);
+                    final LinearLayout card = myAnnouncement.generateCard(announcement, link);
 
-                    /*
-                        Creating the announcements view
-                     */
-                    final LinearLayout announcementsView = myLayouot.generateLayout();
-
-                    announcementViews.add(announcementsView);    //Storing the view
-
-                    Cursor s = myDatabase.rawQuery("SELECT * FROM spotlight WHERE category = '" + categoryTitle + "'", null);
-
-                    int idIndex = s.getColumnIndex("id");
-                    int announcementIndex = s.getColumnIndex("announcement");
-                    int linkIndex = s.getColumnIndex("link");
-
-                    s.moveToFirst();
-
-                    final ArrayList<String> readAnnouncements = new ArrayList<>();
-
-                    for (int j = 0; j < s.getCount(); ++j, s.moveToNext()) {
-                        if (terminateThread) {
-                            return;
-                        }
-
-                        String announcement = s.getString(announcementIndex);
-                        final String link = s.getString(linkIndex);
-
-                        final LinearLayout card = myAnnouncement.generateCard(announcement, link);
-
-                        if (link.toLowerCase().startsWith("http")) {
-                            card.addView(myLink.generateButton(link, LinkButtonGenerator.LINK_LINK));
-                        } else if (!link.equals("null")) {
-                            LinearLayout linkView = myLink.generateButton(null, LinkButtonGenerator.LINK_DOWNLOAD);
-                            linkView.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    downloadDocument(link);
-                                }
-                            });
-                            card.addView(linkView);
-                        }
-
-                        /*
-                            Adding the block to the announcements layout
-                         */
-                        String id = s.getString(idIndex);
-                        if (newSpotlight.has(id)) {
-                            RelativeLayout container = myNotification.generateNotificationContainer();
-                            container.addView(card);
-
-                            int marginStart = (int) (screenWidth - 30 * pixelDensity);
-                            ImageView notification = myNotification.generateNotificationDot(marginStart, NotificationDotGenerator.NOTIFICATION_DEFAULT);
-                            notification.setPadding(0, (int) (5 * pixelDensity), 0, 0);
-                            container.addView(notification);
-
-                            announcementsView.addView(container);
-                            readAnnouncements.add(id);
-                        } else {
-                            announcementsView.addView(card);
-                        }
+                    if (link.toLowerCase().startsWith("http")) {
+                        card.addView(myLink.generateButton(link, LinkButtonGenerator.LINK_LINK));
+                    } else if (!link.equals("null")) {
+                        LinearLayout linkView = myLink.generateButton(null, LinkButtonGenerator.LINK_DOWNLOAD);
+                        linkView.setOnClickListener(v -> downloadDocument(link));
+                        card.addView(linkView);
                     }
 
                     /*
-                        Creating the category button
+                        Adding the block to the announcements layout
                      */
-                    final TextView category = myButton.generateButton(categoryTitle);
-                    if (i == 0) {
-                        category.setBackground(ContextCompat.getDrawable(context, R.drawable.button_secondary_selected));
+                    String id = s.getString(idIndex);
+                    if (newSpotlight.has(id)) {
+                        RelativeLayout container = myNotification.generateNotificationContainer();
+                        container.addView(card);
 
-                        for (int j = 0; j < readAnnouncements.size(); ++j) {
-                            String id = readAnnouncements.get(j);
-                            if (newSpotlight.has(id)) {
-                                newSpotlight.remove(id);
-                            }
-                        }
-
-                        sharedPreferences.edit().putString("newSpotlight", newSpotlight.toString()).apply();
-                    }
-                    category.setTag(i);
-                    category.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            setAnnouncements(category);
-
-                            for (int j = 0; j < readAnnouncements.size(); ++j) {
-                                String id = readAnnouncements.get(j);
-                                if (newSpotlight.has(id)) {
-                                    newSpotlight.remove(id);
-                                }
-                            }
-
-                            sharedPreferences.edit().putString("newSpotlight", newSpotlight.toString()).apply();
-                        }
-                    });
-                    category.setAlpha(0);
-                    category.animate().alpha(1);
-
-                    categories.add(category);    //Storing the button
-
-                    /*
-                        Adding the button to the HorizontalScrollView
-                     */
-                    if (readAnnouncements.isEmpty()) {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                categoryButtons.addView(category);
-                            }
-                        });
-                    } else {
-                        final RelativeLayout container = myNotification.generateNotificationContainer();
-                        container.addView(category);
-
-                        final ImageView notification = myNotification.generateNotificationDot((int) (3 * pixelDensity), NotificationDotGenerator.NOTIFICATION_DEFAULT);
-                        notification.setPadding(0, (int) (20 * pixelDensity), 0, 0);
+                        int marginStart = (int) (screenWidth - 30 * pixelDensity);
+                        ImageView notification = myNotification.generateNotificationDot(marginStart, NotificationDotGenerator.NOTIFICATION_DEFAULT);
+                        notification.setPadding(0, (int) (5 * pixelDensity), 0, 0);
                         container.addView(notification);
 
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                categoryButtons.addView(container);
-                                notification.animate().scaleX(1).scaleY(1);
-                            }
-                        });
+                        announcementsView.addView(container);
+                        readAnnouncements.add(id);
+                    } else {
+                        announcementsView.addView(card);
                     }
-
-                    if (i == index) {
-                        announcementsView.setAlpha(0);
-                        announcementsView.animate().alpha(1);
-                    }
-
-                    if (i == 0) {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                announcements.addView(announcementsView);
-                            }
-                        });
-                    }
-
-                    s.close();
                 }
 
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        findViewById(R.id.loading).animate().alpha(0);
-                    }
-                });
+                /*
+                    Creating the category button
+                 */
+                final TextView category = myButton.generateButton(categoryTitle);
+                if (i == 0) {
+                    category.setBackground(ContextCompat.getDrawable(context, R.drawable.button_secondary_selected));
 
-                c.close();
-                myDatabase.close();
+                    for (int j = 0; j < readAnnouncements.size(); ++j) {
+                        String id = readAnnouncements.get(j);
+                        if (newSpotlight.has(id)) {
+                            newSpotlight.remove(id);
+                        }
+                    }
+
+                    sharedPreferences.edit().putString("newSpotlight", newSpotlight.toString()).apply();
+                }
+                category.setTag(i);
+                category.setOnClickListener(v -> {
+                    setAnnouncements(category);
+
+                    for (int j = 0; j < readAnnouncements.size(); ++j) {
+                        String id = readAnnouncements.get(j);
+                        if (newSpotlight.has(id)) {
+                            newSpotlight.remove(id);
+                        }
+                    }
+
+                    sharedPreferences.edit().putString("newSpotlight", newSpotlight.toString()).apply();
+                });
+                category.setAlpha(0);
+                category.animate().alpha(1);
+
+                categories.add(category);    //Storing the button
+
+                /*
+                    Adding the button to the HorizontalScrollView
+                 */
+                if (readAnnouncements.isEmpty()) {
+                    runOnUiThread(() -> categoryButtons.addView(category));
+                } else {
+                    final RelativeLayout container = myNotification.generateNotificationContainer();
+                    container.addView(category);
+
+                    final ImageView notification = myNotification.generateNotificationDot((int) (3 * pixelDensity), NotificationDotGenerator.NOTIFICATION_DEFAULT);
+                    notification.setPadding(0, (int) (20 * pixelDensity), 0, 0);
+                    container.addView(notification);
+
+                    runOnUiThread(() -> {
+                        categoryButtons.addView(container);
+                        notification.animate().scaleX(1).scaleY(1);
+                    });
+                }
+
+                if (i == index) {
+                    announcementsView.setAlpha(0);
+                    announcementsView.animate().alpha(1);
+                }
+
+                if (i == 0) {
+                    runOnUiThread(() -> announcements.addView(announcementsView));
+                }
+
+                s.close();
             }
+
+            runOnUiThread(() -> findViewById(R.id.loading).animate().alpha(0));
+
+            c.close();
+            myDatabase.close();
         }).start();
     }
 

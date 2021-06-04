@@ -105,153 +105,135 @@ public class DirectionsActivity extends AppCompatActivity {
 
         locations.addView(locationViews[0]);
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                JSONObject main = new JSONObject();
-                try {
-                    /*
-                        Alpha block is redirected to an anonymous location. It has to be updated.
-                     */
-                    main.put("Academic Block 1", "{\"description\": \"\", \"tag\": \"wWaWFDiuUnrSkv7Q8\"}");
-                    main.put("Academic Block 2", "{\"description\": \"\", \"tag\": \"2DcLPUj6JBU2SD698\"}");
-                    main.put("Administrative Block", "{\"description\": \"\", \"tag\": \"GNYq3VdZytBk42Jp7\"}");
-                    main.put("Alpha Block", "{\"description\": \"Health Centre\", \"tag\": \"hkRzrEu8fHjFKxMX6\"}");
-                    main.put("Central Library", "{\"description\": \"\", \"tag\": \"B61HccC3wuTcepRE6\"}");
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+        new Thread(() -> {
+            JSONObject main = new JSONObject();
+            try {
+                /*
+                    Alpha block is redirected to an anonymous location. It has to be updated.
+                 */
+                main.put("Academic Block 1", "{\"description\": \"\", \"tag\": \"wWaWFDiuUnrSkv7Q8\"}");
+                main.put("Academic Block 2", "{\"description\": \"\", \"tag\": \"2DcLPUj6JBU2SD698\"}");
+                main.put("Administrative Block", "{\"description\": \"\", \"tag\": \"GNYq3VdZytBk42Jp7\"}");
+                main.put("Alpha Block", "{\"description\": \"Health Centre\", \"tag\": \"hkRzrEu8fHjFKxMX6\"}");
+                main.put("Central Library", "{\"description\": \"\", \"tag\": \"B61HccC3wuTcepRE6\"}");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
-                JSONObject hostels = new JSONObject();
-                try {
-                    hostels.put("Hostel A Block", "{\"description\": \"Hostel for Senior Boys\", \"tag\": \"sp6v7XomBw5sZ3cy8\"}");
-                    hostels.put("Hostel B Block", "{\"description\": \"Hostel for Girls & Freshmen Boys\", \"tag\": \"cJvcHPEBYoDymvP88\"}");
-                    hostels.put("Hostel C Block", "{\"description\": \"Hostel for Boys\", \"tag\": \"ZoqkXMuMh3GN3NVH9\"}");
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+            JSONObject hostels = new JSONObject();
+            try {
+                hostels.put("Hostel A Block", "{\"description\": \"Hostel for Senior Boys\", \"tag\": \"sp6v7XomBw5sZ3cy8\"}");
+                hostels.put("Hostel B Block", "{\"description\": \"Hostel for Girls & Freshmen Boys\", \"tag\": \"cJvcHPEBYoDymvP88\"}");
+                hostels.put("Hostel C Block", "{\"description\": \"Hostel for Boys\", \"tag\": \"ZoqkXMuMh3GN3NVH9\"}");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
-                JSONObject food = new JSONObject();
-                try {
-                    food.put("Aavin Milk Parlor", "{\"description\": \"Dairy Store\", \"tag\": \"pWLcc1fBTfnBJDQk6\"}");
-                    food.put("Chai Galli", "{\"description\": \"Café\", \"tag\": \"B3h9nQVADTti6jFZ7\"}");
-                    food.put("Domino's Pizza", "{\"description\": \"Pizza Restaurant\", \"tag\": \"i8WRzayorFQkoDWMA\"}");
-                    food.put("Food Park", "{\"description\": \"Cafeteria\", \"tag\": \"kyietg8dh5nuqeBB6\"}");
-                    food.put("Gazebo", "{\"description\": \"Food Stall\", \"tag\": \"ARvc3dyCW6CoBaEr8\"}");
-                    food.put("Georgia Coffee", "{\"description\": \"Food Stall\", \"tag\": \"MPhfv4hp3mHUXoAN9\"}");
-                    food.put("Gym Khaana", "{\"description\": \"Food Court\", \"tag\": \"V6UpCxxr8cgiuwiR6\"}");
-                    food.put("Lassi House", "{\"description\": \"Beverage Stall\", \"tag\": \"qBZqiFaKddKnxgAW6\"}");
-                    food.put("Quality and Taste", "{\"description\": \"Fast Food Stall\", \"tag\": \"1gditDKn9CaCTma17\"}");
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+            JSONObject food = new JSONObject();
+            try {
+                food.put("Aavin Milk Parlor", "{\"description\": \"Dairy Store\", \"tag\": \"pWLcc1fBTfnBJDQk6\"}");
+                food.put("Chai Galli", "{\"description\": \"Café\", \"tag\": \"B3h9nQVADTti6jFZ7\"}");
+                food.put("Domino's Pizza", "{\"description\": \"Pizza Restaurant\", \"tag\": \"i8WRzayorFQkoDWMA\"}");
+                food.put("Food Park", "{\"description\": \"Cafeteria\", \"tag\": \"kyietg8dh5nuqeBB6\"}");
+                food.put("Gazebo", "{\"description\": \"Food Stall\", \"tag\": \"ARvc3dyCW6CoBaEr8\"}");
+                food.put("Georgia Coffee", "{\"description\": \"Food Stall\", \"tag\": \"MPhfv4hp3mHUXoAN9\"}");
+                food.put("Gym Khaana", "{\"description\": \"Food Court\", \"tag\": \"V6UpCxxr8cgiuwiR6\"}");
+                food.put("Lassi House", "{\"description\": \"Beverage Stall\", \"tag\": \"qBZqiFaKddKnxgAW6\"}");
+                food.put("Quality and Taste", "{\"description\": \"Fast Food Stall\", \"tag\": \"1gditDKn9CaCTma17\"}");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
-                JSONObject atms = new JSONObject();
-                try {
-                    /*
-                        India bank is redirected to an anonymous location. It has to be updated.
-                     */
-                    atms.put("India Bank", "{\"description\": \"Bank & ATM\", \"tag\": \"JbFEbDmR69yxQyn47\"}");
-                    atms.put("Karur Vysya Bank", "{\"description\": \"ATM\", \"tag\": \"zt1XxVx5mizdkEub8\"}");
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+            JSONObject atms = new JSONObject();
+            try {
+                /*
+                    India bank is redirected to an anonymous location. It has to be updated.
+                 */
+                atms.put("India Bank", "{\"description\": \"Bank & ATM\", \"tag\": \"JbFEbDmR69yxQyn47\"}");
+                atms.put("Karur Vysya Bank", "{\"description\": \"ATM\", \"tag\": \"zt1XxVx5mizdkEub8\"}");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
-                JSONObject amenities = new JSONObject();
-                try {
-                    amenities.put("Amphitheatre", "{\"description\": \"\", \"tag\": \"7uWQdMrS5MmFn8Pq8\"}");
-                    amenities.put("Clock Tower", "{\"description\": \"\", \"tag\": \"5Hij99iPGzP3TXrL8\"}");
-                    amenities.put("North Square", "{\"description\": \"Garden\", \"tag\": \"Dfohs4pj3Qg781oH6\"}");
-                    amenities.put("VIT Fun Park", "{\"description\": \"\", \"tag\": \"EaauYydSgWsx9Sfg6\"}");
-                    amenities.put("VIT Pond", "{\"description\": \"\", \"tag\": \"Q52wGN3tFStmSEae8\"}");
-                    amenities.put("V-Mart", "{\"description\": \"Shopping Store\", \"tag\": \"jwru6FH6mmFGTiCq7\"}");
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+            JSONObject amenities = new JSONObject();
+            try {
+                amenities.put("Amphitheatre", "{\"description\": \"\", \"tag\": \"7uWQdMrS5MmFn8Pq8\"}");
+                amenities.put("Clock Tower", "{\"description\": \"\", \"tag\": \"5Hij99iPGzP3TXrL8\"}");
+                amenities.put("North Square", "{\"description\": \"Garden\", \"tag\": \"Dfohs4pj3Qg781oH6\"}");
+                amenities.put("VIT Fun Park", "{\"description\": \"\", \"tag\": \"EaauYydSgWsx9Sfg6\"}");
+                amenities.put("VIT Pond", "{\"description\": \"\", \"tag\": \"Q52wGN3tFStmSEae8\"}");
+                amenities.put("V-Mart", "{\"description\": \"Shopping Store\", \"tag\": \"jwru6FH6mmFGTiCq7\"}");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
-                JSONObject sports = new JSONObject();
-                try {
-                    sports.put("Athletic Track", "{\"description\": \"\", \"tag\": \"i85c3dzewqrdNkox6\"}");
-                    sports.put("Ball Badminton Court", "{\"description\": \"\", \"tag\": \"mGddU7pvrBUJdsSd8\"}");
-                    sports.put("Basketball Court 1", "{\"description\": \"\", \"tag\": \"dPVbXctTszwfUYFR9\"}");
-                    sports.put("Basketball Court 2", "{\"description\": \"\", \"tag\": \"bbamrz4k7xbN4UbD9\"}");
-                    sports.put("Cricket Ground 1", "{\"description\": \"\", \"tag\": \"2N7FzmGQrXwJfcnp8\"}");
-                    sports.put("Cricket Ground 2", "{\"description\": \"\", \"tag\": \"AuH3J7eGcAQ6XmAd7\"}");
-                    sports.put("Cricket Net Practice", "{\"description\": \"\", \"tag\": \"3aWrVX9poiugg7QD9\"}");
-                    sports.put("Football Pitch", "{\"description\": \"\", \"tag\": \"KDjvALnJMNRvEzrk9\"}");
-                    sports.put("Hockey Pitch", "{\"description\": \"\", \"tag\": \"oCuqAmMdxUPHAuf87\"}");
-                    sports.put("Swimming Pool", "{\"description\": \"\", \"tag\": \"agZgCfRwJwjFpS7X6\"}");
-                    sports.put("Tennis Courts", "{\"description\": \"\", \"tag\": \"vFdD9p7rEBGEUBG97\"}");
-                    sports.put("Volley Ball Courts", "{\"description\": \"\", \"tag\": \"yZjhmPEqAx7BnJmeA\"}");
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+            JSONObject sports = new JSONObject();
+            try {
+                sports.put("Athletic Track", "{\"description\": \"\", \"tag\": \"i85c3dzewqrdNkox6\"}");
+                sports.put("Ball Badminton Court", "{\"description\": \"\", \"tag\": \"mGddU7pvrBUJdsSd8\"}");
+                sports.put("Basketball Court 1", "{\"description\": \"\", \"tag\": \"dPVbXctTszwfUYFR9\"}");
+                sports.put("Basketball Court 2", "{\"description\": \"\", \"tag\": \"bbamrz4k7xbN4UbD9\"}");
+                sports.put("Cricket Ground 1", "{\"description\": \"\", \"tag\": \"2N7FzmGQrXwJfcnp8\"}");
+                sports.put("Cricket Ground 2", "{\"description\": \"\", \"tag\": \"AuH3J7eGcAQ6XmAd7\"}");
+                sports.put("Cricket Net Practice", "{\"description\": \"\", \"tag\": \"3aWrVX9poiugg7QD9\"}");
+                sports.put("Football Pitch", "{\"description\": \"\", \"tag\": \"KDjvALnJMNRvEzrk9\"}");
+                sports.put("Hockey Pitch", "{\"description\": \"\", \"tag\": \"oCuqAmMdxUPHAuf87\"}");
+                sports.put("Swimming Pool", "{\"description\": \"\", \"tag\": \"agZgCfRwJwjFpS7X6\"}");
+                sports.put("Tennis Courts", "{\"description\": \"\", \"tag\": \"vFdD9p7rEBGEUBG97\"}");
+                sports.put("Volley Ball Courts", "{\"description\": \"\", \"tag\": \"yZjhmPEqAx7BnJmeA\"}");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
-                JSONObject[] locationData = {main, hostels, food, atms, amenities, sports};
+            JSONObject[] locationData = {main, hostels, food, atms, amenities, sports};
 
-                try {
-                    CardGenerator myDirection = new CardGenerator(context, CardGenerator.CARD_DIRECTION);
-                    LinkButtonGenerator myLink = new LinkButtonGenerator(context);
+            try {
+                CardGenerator myDirection = new CardGenerator(context, CardGenerator.CARD_DIRECTION);
+                LinkButtonGenerator myLink = new LinkButtonGenerator(context);
 
-                    for (int i = 0; i < locationViews.length; ++i) {
+                for (int i = 0; i < locationViews.length; ++i) {
+                    if (terminateThread) {
+                        return;
+                    }
+
+                    Iterator<?> keys = locationData[i].keys();
+
+                    while (keys.hasNext()) {
                         if (terminateThread) {
                             return;
                         }
 
-                        Iterator<?> keys = locationData[i].keys();
+                        String title = (String) keys.next();
 
-                        while (keys.hasNext()) {
-                            if (terminateThread) {
-                                return;
-                            }
+                        JSONObject data = new JSONObject(locationData[i].getString(title));
+                        String description = data.getString("description");
+                        String tag = data.getString("tag");
 
-                            String title = (String) keys.next();
+                        final LinearLayout card = myDirection.generateCard(title, description);
+                        final LinearLayout linkView = myLink.generateButton(null, LinkButtonGenerator.LINK_DIRECTION);
+                        linkView.setTag(tag);
+                        linkView.setOnClickListener(v -> openLocation(linkView));
 
-                            JSONObject data = new JSONObject(locationData[i].getString(title));
-                            String description = data.getString("description");
-                            String tag = data.getString("tag");
+                        card.addView(linkView);
 
-                            final LinearLayout card = myDirection.generateCard(title, description);
-                            final LinearLayout linkView = myLink.generateButton(null, LinkButtonGenerator.LINK_DIRECTION);
-                            linkView.setTag(tag);
-                            linkView.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    openLocation(linkView);
-                                }
-                            });
+                        /*
+                            Adding the card to the view
+                         */
+                        if (i == locationCategory) {
+                            card.setAlpha(0);
+                            card.animate().alpha(1);
 
-                            card.addView(linkView);
-
-                            /*
-                                Adding the card to the view
-                             */
-                            if (i == locationCategory) {
-                                card.setAlpha(0);
-                                card.animate().alpha(1);
-
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        locationViews[locationCategory].addView(card);
-                                    }
-                                });
-                            } else {
-                                locationViews[i].addView(card);
-                            }
+                            runOnUiThread(() -> locationViews[locationCategory].addView(card));
+                        } else {
+                            locationViews[i].addView(card);
                         }
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
                 }
-
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        findViewById(R.id.loading).animate().alpha(0);
-                    }
-                });
+            } catch (Exception e) {
+                e.printStackTrace();
             }
+
+            runOnUiThread(() -> findViewById(R.id.loading).animate().alpha(0));
         }).start();
     }
 

@@ -8,7 +8,6 @@ import android.app.AlarmManager;
 import android.app.Dialog;
 import android.app.PendingIntent;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -276,31 +275,29 @@ public class HomeActivity extends AppCompatActivity {
         startActivity(shareIntent);
     }
 
-    public void openDownload(View view) {
-        if (download != null) {
-            download.dismiss();
-        }
+    public static void expand(final View view) {
+        view.measure(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        final int targetHeight = view.getMeasuredHeight();
 
-        download = new Dialog(this);
-        download.setContentView(R.layout.dialog_download);
-        download.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        download.setCanceledOnTouchOutside(false);
-        download.setOnDismissListener(new DialogInterface.OnDismissListener() {
+        view.getLayoutParams().height = 0;
+        view.setVisibility(View.VISIBLE);
+
+        ValueAnimator anim = ValueAnimator.ofInt(0, targetHeight);
+        anim.setInterpolator(new AccelerateInterpolator());
+        anim.setDuration(500);
+        anim.addUpdateListener(animation -> {
+            LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) view.getLayoutParams();
+            layoutParams.height = (int) (targetHeight * animation.getAnimatedFraction());
+            view.setLayoutParams(layoutParams);
+        });
+        anim.addListener(new AnimatorListenerAdapter() {
             @Override
-            public void onDismiss(DialogInterface dialog) {
-                vtop.terminateDownload();
+            public void onAnimationEnd(Animator animation) {
+                LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) view.getLayoutParams();
+                layoutParams.height = LinearLayout.LayoutParams.WRAP_CONTENT;
             }
         });
-        download.show();
-
-        Window window = download.getWindow();
-        window.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
-
-        vtop.start(download);
-
-        if (refresh != null) {
-            refresh.dismiss();
-        }
+        anim.start();
     }
 
     public void submitCaptcha(View view) {
@@ -461,69 +458,23 @@ public class HomeActivity extends AppCompatActivity {
         window.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
     }
 
-    public void signOut(View view) {
-        sharedPreferences.edit().remove("isSignedIn").apply();
-        startActivity(new Intent(HomeActivity.this, LoginActivity.class));
-        finish();
-
-        /*
-            Clearing all Alarm manager tasks and deleting credentials
-         */
-        new Thread(new Runnable() {
+    public static void compress(final View view) {
+        final int viewHeight = view.getMeasuredHeight();
+        ValueAnimator anim = ValueAnimator.ofInt(viewHeight, 0);
+        anim.setInterpolator(new AccelerateInterpolator());
+        anim.setDuration(200);
+        anim.addUpdateListener(animation -> {
+            LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) view.getLayoutParams();
+            layoutParams.height = (int) (viewHeight * (1 - animation.getAnimatedFraction()));
+            view.setLayoutParams(layoutParams);
+        });
+        anim.addListener(new AnimatorListenerAdapter() {
             @Override
-            public void run() {
-                AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
-                Intent notificationIntent = new Intent(context, NotificationReceiver.class);
-                for (int j = 0; j < sharedPreferences.getInt("alarmCount", 0); ++j) {
-                    PendingIntent pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
-                    alarmManager.cancel(pendingIntent);
-                }
-
-                /*
-                    Remove the encrypted credentials
-                 */
-                encryptedSharedPreferences.edit().remove("username").apply();
-                encryptedSharedPreferences.edit().remove("password").apply();
-
-                /*
-                    Remove any non-encrypted credentials
-                 */
-                sharedPreferences.edit().remove("username").apply();
-                sharedPreferences.edit().remove("password").apply();
-
-                /*
-                    Remove other data to prevent issues in the next sign in
-                 */
-                sharedPreferences.edit().remove("semester").apply();
-                sharedPreferences.edit().remove("newMarks").apply();
-                sharedPreferences.edit().remove("examsCount").apply();
-                sharedPreferences.edit().remove("gradesCount").apply();
-                sharedPreferences.edit().remove("receiptsCount").apply();
-
-                SQLiteDatabase myDatabase = context.openOrCreateDatabase("vtop", Context.MODE_PRIVATE, null);
-                /*
-                    Dropping Messages
-                 */
-                myDatabase.execSQL("DROP TABLE messages");
-
-                /*
-                    Dropping Marks
-                 */
-                myDatabase.execSQL("DROP TABLE marks");
-
-                /*
-                    Dropping Spotlight
-                 */
-                myDatabase.execSQL("DROP TABLE IF EXISTS spotlight");
-
-                /*
-                    Dropping Proctor Messages
-                 */
-                myDatabase.execSQL("DROP TABLE IF EXISTS proctor_messages");
-
-                myDatabase.close();
+            public void onAnimationEnd(Animator animation) {
+                view.setVisibility(View.GONE);
             }
-        }).start();
+        });
+        anim.start();
     }
 
     public void cancelSignOut(View view) {
@@ -550,54 +501,88 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
 
-    public static void expand(final View view) {
-        view.measure(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        final int targetHeight = view.getMeasuredHeight();
+    public void openDownload(View view) {
+        if (download != null) {
+            download.dismiss();
+        }
 
-        view.getLayoutParams().height = 0;
-        view.setVisibility(View.VISIBLE);
+        download = new Dialog(this);
+        download.setContentView(R.layout.dialog_download);
+        download.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        download.setCanceledOnTouchOutside(false);
+        download.setOnDismissListener(dialog -> vtop.terminateDownload());
+        download.show();
 
-        ValueAnimator anim = ValueAnimator.ofInt(0, targetHeight);
-        anim.setInterpolator(new AccelerateInterpolator());
-        anim.setDuration(500);
-        anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) view.getLayoutParams();
-                layoutParams.height = (int) (targetHeight * animation.getAnimatedFraction());
-                view.setLayoutParams(layoutParams);
-            }
-        });
-        anim.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) view.getLayoutParams();
-                layoutParams.height = LinearLayout.LayoutParams.WRAP_CONTENT;
-            }
-        });
-        anim.start();
+        Window window = download.getWindow();
+        window.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+
+        vtop.start(download);
+
+        if (refresh != null) {
+            refresh.dismiss();
+        }
     }
 
-    public static void compress(final View view) {
-        final int viewHeight = view.getMeasuredHeight();
-        ValueAnimator anim = ValueAnimator.ofInt(viewHeight, 0);
-        anim.setInterpolator(new AccelerateInterpolator());
-        anim.setDuration(200);
-        anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) view.getLayoutParams();
-                layoutParams.height = (int) (viewHeight * (1 - animation.getAnimatedFraction()));
-                view.setLayoutParams(layoutParams);
+    public void signOut(View view) {
+        sharedPreferences.edit().remove("isSignedIn").apply();
+        startActivity(new Intent(HomeActivity.this, LoginActivity.class));
+        finish();
+
+        /*
+            Clearing all Alarm manager tasks and deleting credentials
+         */
+        new Thread(() -> {
+            AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
+            Intent notificationIntent = new Intent(context, NotificationReceiver.class);
+            for (int j = 0; j < sharedPreferences.getInt("alarmCount", 0); ++j) {
+                PendingIntent pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
+                alarmManager.cancel(pendingIntent);
             }
-        });
-        anim.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                view.setVisibility(View.GONE);
-            }
-        });
-        anim.start();
+
+            /*
+                Remove the encrypted credentials
+             */
+            encryptedSharedPreferences.edit().remove("username").apply();
+            encryptedSharedPreferences.edit().remove("password").apply();
+
+            /*
+                Remove any non-encrypted credentials
+             */
+            sharedPreferences.edit().remove("username").apply();
+            sharedPreferences.edit().remove("password").apply();
+
+            /*
+                Remove other data to prevent issues in the next sign in
+             */
+            sharedPreferences.edit().remove("semester").apply();
+            sharedPreferences.edit().remove("newMarks").apply();
+            sharedPreferences.edit().remove("examsCount").apply();
+            sharedPreferences.edit().remove("gradesCount").apply();
+            sharedPreferences.edit().remove("receiptsCount").apply();
+
+            SQLiteDatabase myDatabase = context.openOrCreateDatabase("vtop", Context.MODE_PRIVATE, null);
+            /*
+                Dropping Messages
+             */
+            myDatabase.execSQL("DROP TABLE messages");
+
+            /*
+                Dropping Marks
+             */
+            myDatabase.execSQL("DROP TABLE marks");
+
+            /*
+                Dropping Spotlight
+             */
+            myDatabase.execSQL("DROP TABLE IF EXISTS spotlight");
+
+            /*
+                Dropping Proctor Messages
+             */
+            myDatabase.execSQL("DROP TABLE IF EXISTS proctor_messages");
+
+            myDatabase.close();
+        }).start();
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -680,528 +665,474 @@ public class HomeActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                float pixelDensity = context.getResources().getDisplayMetrics().density;
-                /*
-                    The outer block that holds the upcoming or ongoing & upcoming classes
-                 */
-                final LinearLayout outerBlock = new LinearLayout(context);
-                LinearLayout.LayoutParams outerBlockParams = new LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.MATCH_PARENT,
-                        LinearLayout.LayoutParams.WRAP_CONTENT
-                );
-                outerBlock.setLayoutParams(outerBlockParams);
-                outerBlock.setOrientation(LinearLayout.VERTICAL);
-                outerBlock.setVisibility(View.GONE);
+        new Thread(() -> {
+            float pixelDensity = context.getResources().getDisplayMetrics().density;
+            /*
+                The outer block that holds the upcoming or ongoing & upcoming classes
+             */
+            final LinearLayout outerBlock = new LinearLayout(context);
+            LinearLayout.LayoutParams outerBlockParams = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+            );
+            outerBlock.setLayoutParams(outerBlockParams);
+            outerBlock.setOrientation(LinearLayout.VERTICAL);
+            outerBlock.setVisibility(View.GONE);
 
-                Calendar cal = Calendar.getInstance();
-                Calendar calFuture = Calendar.getInstance();
-                calFuture.add(Calendar.MINUTE, 30);
-                int dayCode = cal.get(Calendar.DAY_OF_WEEK);
+            Calendar cal = Calendar.getInstance();
+            Calendar calFuture = Calendar.getInstance();
+            calFuture.add(Calendar.MINUTE, 30);
+            int dayCode = cal.get(Calendar.DAY_OF_WEEK);
 
-                String day;
+            String day;
 
-                if (dayCode == 1) {
-                    day = "sun";
-                } else if (dayCode == 2) {
-                    day = "mon";
-                } else if (dayCode == 3) {
-                    day = "tue";
-                } else if (dayCode == 4) {
-                    day = "wed";
-                } else if (dayCode == 5) {
-                    day = "thu";
-                } else if (dayCode == 6) {
-                    day = "fri";
-                } else {
-                    day = "sat";
+            if (dayCode == 1) {
+                day = "sun";
+            } else if (dayCode == 2) {
+                day = "mon";
+            } else if (dayCode == 3) {
+                day = "tue";
+            } else if (dayCode == 4) {
+                day = "wed";
+            } else if (dayCode == 5) {
+                day = "thu";
+            } else if (dayCode == 6) {
+                day = "fri";
+            } else {
+                day = "sat";
+            }
+
+            SQLiteDatabase myDatabase = context.openOrCreateDatabase("vtop", Context.MODE_PRIVATE, null);
+            myDatabase.execSQL("CREATE TABLE IF NOT EXISTS timetable_theory (id INT(3) PRIMARY KEY, start_time VARCHAR, end_time VARCHAR, mon VARCHAR, tue VARCHAR, wed VARCHAR, thu VARCHAR, fri VARCHAR, sat VARCHAR, sun VARCHAR)");
+            myDatabase.execSQL("CREATE TABLE IF NOT EXISTS timetable_lab (id INT(3) PRIMARY KEY, start_time VARCHAR, end_time VARCHAR, mon VARCHAR, tue VARCHAR, wed VARCHAR, thu VARCHAR, fri VARCHAR, sat VARCHAR, sun VARCHAR)");
+
+            Cursor theory = myDatabase.rawQuery("SELECT start_time, end_time, " + day + " FROM timetable_theory", null);
+            Cursor lab = myDatabase.rawQuery("SELECT start_time, end_time, " + day + " FROM timetable_lab", null);
+
+            int startTheory = theory.getColumnIndex("start_time");
+            int endTheory = theory.getColumnIndex("end_time");
+            int dayTheory = theory.getColumnIndex(day);
+
+            int startLab = lab.getColumnIndex("start_time");
+            int endLab = lab.getColumnIndex("end_time");
+            int dayLab = lab.getColumnIndex(day);
+
+            theory.moveToFirst();
+            lab.moveToFirst();
+
+            boolean flag = false;
+
+            CardGenerator myBlock = new CardGenerator(context, CardGenerator.CARD_HOME);
+
+            for (int i = 0; i < theory.getCount() && i < lab.getCount(); ++i, theory.moveToNext(), lab.moveToNext()) {
+                if (terminateThread) {
+                    return;
                 }
 
-                SQLiteDatabase myDatabase = context.openOrCreateDatabase("vtop", Context.MODE_PRIVATE, null);
-                myDatabase.execSQL("CREATE TABLE IF NOT EXISTS timetable_theory (id INT(3) PRIMARY KEY, start_time VARCHAR, end_time VARCHAR, mon VARCHAR, tue VARCHAR, wed VARCHAR, thu VARCHAR, fri VARCHAR, sat VARCHAR, sun VARCHAR)");
-                myDatabase.execSQL("CREATE TABLE IF NOT EXISTS timetable_lab (id INT(3) PRIMARY KEY, start_time VARCHAR, end_time VARCHAR, mon VARCHAR, tue VARCHAR, wed VARCHAR, thu VARCHAR, fri VARCHAR, sat VARCHAR, sun VARCHAR)");
+                String startTimeTheory = theory.getString(startTheory);
+                String endTimeTheory = theory.getString(endTheory);
+                String startTimeLab = lab.getString(startLab);
+                String endTimeLab = lab.getString(endLab);
 
-                Cursor theory = myDatabase.rawQuery("SELECT start_time, end_time, " + day + " FROM timetable_theory", null);
-                Cursor lab = myDatabase.rawQuery("SELECT start_time, end_time, " + day + " FROM timetable_lab", null);
+                try {
+                    Date currentTime = hour24.parse(hour24.format(cal.getTime()));
+                    Date futureTime = hour24.parse(hour24.format(calFuture.getTime()));
 
-                int startTheory = theory.getColumnIndex("start_time");
-                int endTheory = theory.getColumnIndex("end_time");
-                int dayTheory = theory.getColumnIndex(day);
+                    if (currentTime != null && futureTime != null && !theory.getString(dayTheory).equals("null") && (futureTime.after(hour24.parse(startTimeTheory)) || futureTime.equals(hour24.parse(startTimeTheory))) && currentTime.before(hour24.parse(startTimeTheory))) {
+                        String upcoming1 = getString(R.string.upcoming);
+                        String course = theory.getString(dayTheory).split("-")[1].trim();
 
-                int startLab = lab.getColumnIndex("start_time");
-                int endLab = lab.getColumnIndex("end_time");
-                int dayLab = lab.getColumnIndex(day);
+                        LinearLayout headingBlock = myBlock.generateInnerBlock(upcoming1, course, true, true);
 
-                theory.moveToFirst();
-                lab.moveToFirst();
+                        outerBlock.addView(headingBlock);  // Adding the headingBlock to the outer block
 
-                boolean flag = false;
+                        /*
+                            Making a proper string of the timings
+                         */
+                        String timings = startTimeTheory + " - " + endTimeTheory;
+                        if (!DateFormat.is24HourFormat(context)) {
+                            try {
+                                Date startTime = hour24.parse(startTimeTheory);
+                                Date endTime = hour24.parse(endTimeTheory);
+                                if (startTime != null && endTime != null) {
+                                    timings = hour12.format(startTime) + " - " + hour12.format(endTime);
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        String type = getString(R.string.theory);
 
-                CardGenerator myBlock = new CardGenerator(context, CardGenerator.CARD_HOME);
+                        LinearLayout block = myBlock.generateInnerBlock(timings, type, true, false);
 
-                for (int i = 0; i < theory.getCount() && i < lab.getCount(); ++i, theory.moveToNext(), lab.moveToNext()) {
-                    if (terminateThread) {
-                        return;
+                        outerBlock.addView(block);  // Adding the block to the outer block
+
+                        flag = true;    // Flag is set so terminate the loop when the time comes
                     }
 
-                    String startTimeTheory = theory.getString(startTheory);
-                    String endTimeTheory = theory.getString(endTheory);
-                    String startTimeLab = lab.getString(startLab);
-                    String endTimeLab = lab.getString(endLab);
+                    if (currentTime != null && futureTime != null && !lab.getString(dayLab).equals("null") && (futureTime.after(hour24.parse(startTimeLab)) || futureTime.equals(hour24.parse(startTimeLab))) && currentTime.before(hour24.parse(startTimeLab))) {
+                        String upcoming1 = getString(R.string.upcoming);
+                        String course = lab.getString(dayLab).split("-")[1].trim();
 
-                    try {
-                        Date currentTime = hour24.parse(hour24.format(cal.getTime()));
-                        Date futureTime = hour24.parse(hour24.format(calFuture.getTime()));
+                        LinearLayout headingBlock = myBlock.generateInnerBlock(upcoming1, course, true, true);
 
-                        if (currentTime != null && futureTime != null && !theory.getString(dayTheory).equals("null") && (futureTime.after(hour24.parse(startTimeTheory)) || futureTime.equals(hour24.parse(startTimeTheory))) && currentTime.before(hour24.parse(startTimeTheory))) {
-                            String upcoming = getString(R.string.upcoming);
-                            String course = theory.getString(dayTheory).split("-")[1].trim();
+                        outerBlock.addView(headingBlock);  // Adding the headingBlock to the outer block
 
-                            LinearLayout headingBlock = myBlock.generateInnerBlock(upcoming, course, true, true);
-
-                            outerBlock.addView(headingBlock);  // Adding the headingBlock to the outer block
-
-                            /*
-                                Making a proper string of the timings
-                             */
-                            String timings = startTimeTheory + " - " + endTimeTheory;
-                            if (!DateFormat.is24HourFormat(context)) {
-                                try {
-                                    Date startTime = hour24.parse(startTimeTheory);
-                                    Date endTime = hour24.parse(endTimeTheory);
-                                    if (startTime != null && endTime != null) {
-                                        timings = hour12.format(startTime) + " - " + hour12.format(endTime);
-                                    }
-                                } catch (Exception e) {
-                                    e.printStackTrace();
+                        /*
+                            Making a proper string of the timings
+                         */
+                        String timings = startTimeLab + " - " + endTimeLab;
+                        if (!DateFormat.is24HourFormat(context)) {
+                            try {
+                                Date startTime = hour24.parse(startTimeLab);
+                                Date endTime = hour24.parse(endTimeLab);
+                                if (startTime != null && endTime != null) {
+                                    timings = hour12.format(startTime) + " - " + hour12.format(endTime);
                                 }
+                            } catch (Exception e) {
+                                e.printStackTrace();
                             }
-                            String type = getString(R.string.theory);
-
-                            LinearLayout block = myBlock.generateInnerBlock(timings, type, true, false);
-
-                            outerBlock.addView(block);  // Adding the block to the outer block
-
-                            flag = true;    // Flag is set so terminate the loop when the time comes
                         }
+                        String type = getString(R.string.lab);
 
-                        if (currentTime != null && futureTime != null && !lab.getString(dayLab).equals("null") && (futureTime.after(hour24.parse(startTimeLab)) || futureTime.equals(hour24.parse(startTimeLab))) && currentTime.before(hour24.parse(startTimeLab))) {
-                            String upcoming = getString(R.string.upcoming);
-                            String course = lab.getString(dayLab).split("-")[1].trim();
+                        LinearLayout block = myBlock.generateInnerBlock(timings, type, true, false);
 
-                            LinearLayout headingBlock = myBlock.generateInnerBlock(upcoming, course, true, true);
+                        outerBlock.addView(block);  // Adding the block to the outer block
 
-                            outerBlock.addView(headingBlock);  // Adding the headingBlock to the outer block
-
-                            /*
-                                Making a proper string of the timings
-                             */
-                            String timings = startTimeLab + " - " + endTimeLab;
-                            if (!DateFormat.is24HourFormat(context)) {
-                                try {
-                                    Date startTime = hour24.parse(startTimeLab);
-                                    Date endTime = hour24.parse(endTimeLab);
-                                    if (startTime != null && endTime != null) {
-                                        timings = hour12.format(startTime) + " - " + hour12.format(endTime);
-                                    }
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                            String type = getString(R.string.lab);
-
-                            LinearLayout block = myBlock.generateInnerBlock(timings, type, true, false);
-
-                            outerBlock.addView(block);  // Adding the block to the outer block
-
-                            flag = true;    // Flag is set so terminate the loop when the time comes
-                        }
-
-                        if (flag) {
-                            break;  // If either Upcoming or Ongoing & Upcoming classes are available, the loop can terminate
-                        }
-
-                        if (currentTime != null && !theory.getString(dayTheory).equals("null") && (currentTime.after(hour24.parse(startTimeTheory)) || currentTime.equals(hour24.parse(startTimeTheory))) && currentTime.before(hour24.parse(endTimeTheory))) {
-                            String upcoming = getString(R.string.ongoing);
-                            String course = theory.getString(dayTheory).split("-")[1].trim();
-
-                            LinearLayout headingBlock = myBlock.generateInnerBlock(upcoming, course, true, true);
-
-                            outerBlock.addView(headingBlock);  // Adding the headingBlock to the outer block
-
-                            /*
-                                Making a proper string of the timings
-                             */
-                            String timings = startTimeTheory + " - " + endTimeTheory;
-                            if (!DateFormat.is24HourFormat(context)) {
-                                try {
-                                    Date startTime = hour24.parse(startTimeTheory);
-                                    Date endTime = hour24.parse(endTimeTheory);
-                                    if (startTime != null && endTime != null) {
-                                        timings = hour12.format(startTime) + " - " + hour12.format(endTime);
-                                    }
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                            String type = getString(R.string.theory);
-
-                            LinearLayout block = myBlock.generateInnerBlock(timings, type, true, false);
-
-                            outerBlock.addView(block);  // Adding the block to the outer block
-
-                            flag = true;    // Flag is set so terminate the loop when the time comes
-                        }
-
-                        if (currentTime != null && !lab.getString(dayLab).equals("null") && (currentTime.after(hour24.parse(startTimeLab)) || currentTime.equals(hour24.parse(startTimeLab))) && currentTime.before(hour24.parse(endTimeLab))) {
-                            String upcoming = getString(R.string.ongoing);
-                            String course = lab.getString(dayLab).split("-")[1].trim();
-
-                            LinearLayout headingBlock = myBlock.generateInnerBlock(upcoming, course, true, true);
-
-                            outerBlock.addView(headingBlock);  // Adding the headingBlock to the outer block
-
-                            /*
-                                Making a proper string of the timings
-                             */
-                            String timings = startTimeLab + " - " + endTimeLab;
-                            if (!DateFormat.is24HourFormat(context)) {
-                                try {
-                                    Date startTime = hour24.parse(startTimeLab);
-                                    Date endTime = hour24.parse(endTimeLab);
-                                    if (startTime != null && endTime != null) {
-                                        timings = hour12.format(startTime) + " - " + hour12.format(endTime);
-                                    }
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                            String type = getString(R.string.lab);
-
-                            LinearLayout block = myBlock.generateInnerBlock(timings, type, true, false);
-
-                            outerBlock.addView(block);  // Adding the block to the outer block
-
-                            flag = true;    // Flag is set so terminate the loop when the time comes
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                        flag = true;    // Flag is set so terminate the loop when the time comes
                     }
-                }
 
-                if (outerBlock.getChildCount() > 0) {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            compress(noUpcoming);
-                            upcoming.addView(outerBlock);
-                            expand(outerBlock);
+                    if (flag) {
+                        break;  // If either Upcoming or Ongoing & Upcoming classes are available, the loop can terminate
+                    }
+
+                    if (currentTime != null && !theory.getString(dayTheory).equals("null") && (currentTime.after(hour24.parse(startTimeTheory)) || currentTime.equals(hour24.parse(startTimeTheory))) && currentTime.before(hour24.parse(endTimeTheory))) {
+                        String upcoming1 = getString(R.string.ongoing);
+                        String course = theory.getString(dayTheory).split("-")[1].trim();
+
+                        LinearLayout headingBlock = myBlock.generateInnerBlock(upcoming1, course, true, true);
+
+                        outerBlock.addView(headingBlock);  // Adding the headingBlock to the outer block
+
+                        /*
+                            Making a proper string of the timings
+                         */
+                        String timings = startTimeTheory + " - " + endTimeTheory;
+                        if (!DateFormat.is24HourFormat(context)) {
+                            try {
+                                Date startTime = hour24.parse(startTimeTheory);
+                                Date endTime = hour24.parse(endTimeTheory);
+                                if (startTime != null && endTime != null) {
+                                    timings = hour12.format(startTime) + " - " + hour12.format(endTime);
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
                         }
-                    });
-                }
+                        String type = getString(R.string.theory);
 
-                theory.close();
-                lab.close();
-                myDatabase.close();
+                        LinearLayout block = myBlock.generateInnerBlock(timings, type, true, false);
+
+                        outerBlock.addView(block);  // Adding the block to the outer block
+
+                        flag = true;    // Flag is set so terminate the loop when the time comes
+                    }
+
+                    if (currentTime != null && !lab.getString(dayLab).equals("null") && (currentTime.after(hour24.parse(startTimeLab)) || currentTime.equals(hour24.parse(startTimeLab))) && currentTime.before(hour24.parse(endTimeLab))) {
+                        String upcoming1 = getString(R.string.ongoing);
+                        String course = lab.getString(dayLab).split("-")[1].trim();
+
+                        LinearLayout headingBlock = myBlock.generateInnerBlock(upcoming1, course, true, true);
+
+                        outerBlock.addView(headingBlock);  // Adding the headingBlock to the outer block
+
+                        /*
+                            Making a proper string of the timings
+                         */
+                        String timings = startTimeLab + " - " + endTimeLab;
+                        if (!DateFormat.is24HourFormat(context)) {
+                            try {
+                                Date startTime = hour24.parse(startTimeLab);
+                                Date endTime = hour24.parse(endTimeLab);
+                                if (startTime != null && endTime != null) {
+                                    timings = hour12.format(startTime) + " - " + hour12.format(endTime);
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        String type = getString(R.string.lab);
+
+                        LinearLayout block = myBlock.generateInnerBlock(timings, type, true, false);
+
+                        outerBlock.addView(block);  // Adding the block to the outer block
+
+                        flag = true;    // Flag is set so terminate the loop when the time comes
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            if (outerBlock.getChildCount() > 0) {
+                runOnUiThread(() -> {
+                    compress(noUpcoming);
+                    upcoming.addView(outerBlock);
+                    expand(outerBlock);
+                });
+            }
+
+            theory.close();
+            lab.close();
+            myDatabase.close();
+
+            /*
+                From this point forward, it is to check for unread data
+                to display default or urgent notification dots
+             */
+            NotificationDotGenerator myNotification = new NotificationDotGenerator(context);
+
+            boolean classesFlag = false;
+
+            if (sharedPreferences.getBoolean("newTimetable", false)) {
+                classesFlag = true;
+                final ImageView notification = myNotification.generateNotificationDot((int) (135 * pixelDensity), NotificationDotGenerator.NOTIFICATION_DEFAULT);
+                notification.setPadding(0, (int) (10 * pixelDensity), 0, 0);
+                timetableNotification = View.generateViewId();
+                notification.setId(timetableNotification);
+
+                runOnUiThread(() -> {
+                    ((RelativeLayout) findViewById(R.id.classesLayout)).addView(notification);
+                    notification.animate().scaleX(1).scaleY(1);
+                });
+            }
+
+            if (sharedPreferences.getBoolean("newMessages", false)) {
+                classesFlag = true;
+                final ImageView notification = myNotification.generateNotificationDot((int) (425 * pixelDensity), NotificationDotGenerator.NOTIFICATION_DEFAULT);
+                notification.setPadding(0, (int) (10 * pixelDensity), 0, 0);
+                messagesNotification = View.generateViewId();
+                notification.setId(messagesNotification);
+
+                runOnUiThread(() -> {
+                    ((RelativeLayout) findViewById(R.id.classesLayout)).addView(notification);
+                    notification.animate().scaleX(1).scaleY(1);
+                });
+            }
+
+            if (sharedPreferences.getBoolean("newFaculty", false)) {
+                classesFlag = true;
+                final ImageView notification = myNotification.generateNotificationDot((int) (570 * pixelDensity), NotificationDotGenerator.NOTIFICATION_DEFAULT);
+                notification.setPadding(0, (int) (10 * pixelDensity), 0, 0);
+                facultyNotification = View.generateViewId();
+                notification.setId(facultyNotification);
+
+                runOnUiThread(() -> {
+                    ((RelativeLayout) findViewById(R.id.classesLayout)).addView(notification);
+                    notification.animate().scaleX(1).scaleY(1);
+                });
+            }
+
+            if (sharedPreferences.getBoolean("failedAttendance", false)) {
+                classesFlag = false;
+                final ImageView notification = myNotification.generateNotificationDot((int) (280 * pixelDensity), NotificationDotGenerator.NOTIFICATION_URGENT);
+                notification.setPadding(0, (int) (10 * pixelDensity), 0, 0);
+
+                runOnUiThread(() -> {
+                    ((RelativeLayout) findViewById(R.id.classesLayout)).addView(notification);
+                    notification.animate().scaleX(1).scaleY(1);
+                });
 
                 /*
-                    From this point forward, it is to check for unread data
-                    to display default or urgent notification dots
+                    The classes category notification in red
                  */
-                NotificationDotGenerator myNotification = new NotificationDotGenerator(context);
+                final ImageView notificationClasses = myNotification.generateNotificationDot(0, NotificationDotGenerator.NOTIFICATION_URGENT);
+                notificationClasses.setPadding((int) (10 * pixelDensity), (int) (20 * pixelDensity), 0, 0);
+                classesNotification = View.generateViewId();
+                notificationClasses.setId(classesNotification);
 
-                boolean classesFlag = false;
+                runOnUiThread(() -> {
+                    ((ConstraintLayout) findViewById(R.id.home_constraint)).addView(notificationClasses);
+                    ConstraintLayout.LayoutParams notificationParams = (ConstraintLayout.LayoutParams) notificationClasses.getLayoutParams();
+                    notificationParams.leftToRight = R.id.classesHeading;
+                    notificationParams.topToBottom = R.id.upcoming;
+                    notificationParams.bottomToTop = R.id.classes;
+                    notificationClasses.setLayoutParams(notificationParams);
+                    notificationClasses.animate().scaleX(1).scaleY(1);
+                });
+            }
 
-                if (sharedPreferences.getBoolean("newTimetable", false)) {
-                    classesFlag = true;
-                    final ImageView notification = myNotification.generateNotificationDot((int) (135 * pixelDensity), NotificationDotGenerator.NOTIFICATION_DEFAULT);
-                    notification.setPadding(0, (int) (10 * pixelDensity), 0, 0);
-                    timetableNotification = View.generateViewId();
-                    notification.setId(timetableNotification);
+            /*
+                The classes category notification (except if there's failed attendance)
+             */
+            if (classesFlag) {
+                final ImageView notificationClasses = myNotification.generateNotificationDot(0, NotificationDotGenerator.NOTIFICATION_DEFAULT);
+                notificationClasses.setPadding((int) (10 * pixelDensity), (int) (20 * pixelDensity), 0, 0);
+                classesNotification = View.generateViewId();
+                notificationClasses.setId(classesNotification);
 
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            ((RelativeLayout) findViewById(R.id.classesLayout)).addView(notification);
-                            notification.animate().scaleX(1).scaleY(1);
-                        }
-                    });
-                }
+                runOnUiThread(() -> {
+                    ((ConstraintLayout) findViewById(R.id.home_constraint)).addView(notificationClasses);
+                    ConstraintLayout.LayoutParams notificationParams = (ConstraintLayout.LayoutParams) notificationClasses.getLayoutParams();
+                    notificationParams.leftToRight = R.id.classesHeading;
+                    notificationParams.topToBottom = R.id.upcoming;
+                    notificationParams.bottomToTop = R.id.classes;
+                    notificationClasses.setLayoutParams(notificationParams);
+                    notificationClasses.animate().scaleX(1).scaleY(1);
+                });
+            }
 
-                if (sharedPreferences.getBoolean("newMessages", false)) {
-                    classesFlag = true;
-                    final ImageView notification = myNotification.generateNotificationDot((int) (425 * pixelDensity), NotificationDotGenerator.NOTIFICATION_DEFAULT);
-                    notification.setPadding(0, (int) (10 * pixelDensity), 0, 0);
-                    messagesNotification = View.generateViewId();
-                    notification.setId(messagesNotification);
 
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            ((RelativeLayout) findViewById(R.id.classesLayout)).addView(notification);
-                            notification.animate().scaleX(1).scaleY(1);
-                        }
-                    });
-                }
+            boolean academicsFlag = false;
 
-                if (sharedPreferences.getBoolean("newFaculty", false)) {
-                    classesFlag = true;
-                    final ImageView notification = myNotification.generateNotificationDot((int) (570 * pixelDensity), NotificationDotGenerator.NOTIFICATION_DEFAULT);
-                    notification.setPadding(0, (int) (10 * pixelDensity), 0, 0);
-                    facultyNotification = View.generateViewId();
-                    notification.setId(facultyNotification);
+            if (sharedPreferences.getBoolean("newExams", false)) {
+                academicsFlag = true;
+                final ImageView notification = myNotification.generateNotificationDot((int) (135 * pixelDensity), NotificationDotGenerator.NOTIFICATION_DEFAULT);
+                notification.setPadding(0, (int) (10 * pixelDensity), 0, 0);
+                examsNotification = View.generateViewId();
+                notification.setId(examsNotification);
 
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            ((RelativeLayout) findViewById(R.id.classesLayout)).addView(notification);
-                            notification.animate().scaleX(1).scaleY(1);
-                        }
-                    });
-                }
+                runOnUiThread(() -> {
+                    ((RelativeLayout) findViewById(R.id.academicsLayout)).addView(notification);
+                    notification.animate().scaleX(1).scaleY(1);
+                });
+            }
 
-                if (sharedPreferences.getBoolean("failedAttendance", false)) {
-                    classesFlag = false;
-                    final ImageView notification = myNotification.generateNotificationDot((int) (280 * pixelDensity), NotificationDotGenerator.NOTIFICATION_URGENT);
-                    notification.setPadding(0, (int) (10 * pixelDensity), 0, 0);
+            if (!sharedPreferences.getString("newMarks", "{}").equals("{}")) {
+                academicsFlag = true;
+                final ImageView notification = myNotification.generateNotificationDot((int) (280 * pixelDensity), NotificationDotGenerator.NOTIFICATION_DEFAULT);
+                notification.setPadding(0, (int) (10 * pixelDensity), 0, 0);
+                marksNotification = View.generateViewId();
+                notification.setId(marksNotification);
 
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            ((RelativeLayout) findViewById(R.id.classesLayout)).addView(notification);
-                            notification.animate().scaleX(1).scaleY(1);
-                        }
-                    });
+                runOnUiThread(() -> {
+                    ((RelativeLayout) findViewById(R.id.academicsLayout)).addView(notification);
+                    notification.animate().scaleX(1).scaleY(1);
+                });
+            }
 
-                    /*
-                        The classes category notification in red
-                     */
-                    final ImageView notificationClasses = myNotification.generateNotificationDot(0, NotificationDotGenerator.NOTIFICATION_URGENT);
-                    notificationClasses.setPadding((int) (10 * pixelDensity), (int) (20 * pixelDensity), 0, 0);
-                    classesNotification = View.generateViewId();
-                    notificationClasses.setId(classesNotification);
+            if (sharedPreferences.getBoolean("newGrades", false)) {
+                academicsFlag = true;
+                final ImageView notification = myNotification.generateNotificationDot((int) (425 * pixelDensity), NotificationDotGenerator.NOTIFICATION_DEFAULT);
+                notification.setPadding(0, (int) (10 * pixelDensity), 0, 0);
+                gradesNotification = View.generateViewId();
+                notification.setId(gradesNotification);
 
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            ((ConstraintLayout) findViewById(R.id.home_constraint)).addView(notificationClasses);
-                            ConstraintLayout.LayoutParams notificationParams = (ConstraintLayout.LayoutParams) notificationClasses.getLayoutParams();
-                            notificationParams.leftToRight = R.id.classesHeading;
-                            notificationParams.topToBottom = R.id.upcoming;
-                            notificationParams.bottomToTop = R.id.classes;
-                            notificationClasses.setLayoutParams(notificationParams);
-                            notificationClasses.animate().scaleX(1).scaleY(1);
-                        }
-                    });
-                }
+                runOnUiThread(() -> {
+                    ((RelativeLayout) findViewById(R.id.academicsLayout)).addView(notification);
+                    notification.animate().scaleX(1).scaleY(1);
+                });
+            }
+
+            if (!sharedPreferences.getString("newSpotlight", "{}").equals("{}")) {
+                academicsFlag = true;
+                final ImageView notification = myNotification.generateNotificationDot((int) (570 * pixelDensity), NotificationDotGenerator.NOTIFICATION_DEFAULT);
+                notification.setPadding(0, (int) (10 * pixelDensity), 0, 0);
+                spotlightNotification = View.generateViewId();
+                notification.setId(spotlightNotification);
+
+                runOnUiThread(() -> {
+                    ((RelativeLayout) findViewById(R.id.academicsLayout)).addView(notification);
+                    notification.animate().scaleX(1).scaleY(1);
+                });
+            }
+
+            /*
+                The academics category notification
+             */
+            if (academicsFlag) {
+                final ImageView notificationAcademics = myNotification.generateNotificationDot(0, NotificationDotGenerator.NOTIFICATION_DEFAULT);
+                notificationAcademics.setPadding((int) (10 * pixelDensity), (int) (10 * pixelDensity), 0, 0);
+                academicsNotification = View.generateViewId();
+                notificationAcademics.setId(academicsNotification);
+
+                runOnUiThread(() -> {
+                    ((ConstraintLayout) findViewById(R.id.home_constraint)).addView(notificationAcademics);
+                    ConstraintLayout.LayoutParams notificationParams = (ConstraintLayout.LayoutParams) notificationAcademics.getLayoutParams();
+                    notificationParams.leftToRight = R.id.academicsHeading;
+                    notificationParams.topToBottom = R.id.classes;
+                    notificationParams.bottomToTop = R.id.academics;
+                    notificationAcademics.setLayoutParams(notificationParams);
+                    notificationAcademics.animate().scaleX(1).scaleY(1);
+                });
+            }
+
+
+            boolean campusFlag = false;
+
+            if (sharedPreferences.getBoolean("newProctorMessages", false)) {
+                campusFlag = true;
+                final ImageView notification = myNotification.generateNotificationDot((int) (425 * pixelDensity), NotificationDotGenerator.NOTIFICATION_DEFAULT);
+                notification.setPadding(0, (int) (10 * pixelDensity), 0, 0);
+                proctorMessageNotification = View.generateViewId();
+                notification.setId(proctorMessageNotification);
+
+                runOnUiThread(() -> {
+                    ((RelativeLayout) findViewById(R.id.campusLayout)).addView(notification);
+                    notification.animate().scaleX(1).scaleY(1);
+                });
+            }
+
+            if (sharedPreferences.getBoolean("duePayments", false)) {
+                campusFlag = false;
+                final ImageView notification = myNotification.generateNotificationDot((int) (570 * pixelDensity), NotificationDotGenerator.NOTIFICATION_URGENT);
+                notification.setPadding(0, (int) (10 * pixelDensity), 0, 0);
+                receiptsNotification = View.generateViewId();
+                notification.setId(receiptsNotification);
+
+                runOnUiThread(() -> {
+                    ((RelativeLayout) findViewById(R.id.campusLayout)).addView(notification);
+                    notification.animate().scaleX(1).scaleY(1);
+                });
 
                 /*
-                    The classes category notification (except if there's failed attendance)
+                    The campus category notification in red
                  */
-                if (classesFlag) {
-                    final ImageView notificationClasses = myNotification.generateNotificationDot(0, NotificationDotGenerator.NOTIFICATION_DEFAULT);
-                    notificationClasses.setPadding((int) (10 * pixelDensity), (int) (20 * pixelDensity), 0, 0);
-                    classesNotification = View.generateViewId();
-                    notificationClasses.setId(classesNotification);
+                final ImageView notificationCampus = myNotification.generateNotificationDot(0, NotificationDotGenerator.NOTIFICATION_URGENT);
+                notificationCampus.setPadding((int) (10 * pixelDensity), (int) (10 * pixelDensity), 0, 0);
+                campusNotification = View.generateViewId();
+                notificationCampus.setId(campusNotification);
 
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            ((ConstraintLayout) findViewById(R.id.home_constraint)).addView(notificationClasses);
-                            ConstraintLayout.LayoutParams notificationParams = (ConstraintLayout.LayoutParams) notificationClasses.getLayoutParams();
-                            notificationParams.leftToRight = R.id.classesHeading;
-                            notificationParams.topToBottom = R.id.upcoming;
-                            notificationParams.bottomToTop = R.id.classes;
-                            notificationClasses.setLayoutParams(notificationParams);
-                            notificationClasses.animate().scaleX(1).scaleY(1);
-                        }
-                    });
-                }
+                runOnUiThread(() -> {
+                    ((ConstraintLayout) findViewById(R.id.home_constraint)).addView(notificationCampus);
+                    ConstraintLayout.LayoutParams notificationParams = (ConstraintLayout.LayoutParams) notificationCampus.getLayoutParams();
+                    notificationParams.leftToRight = R.id.campusHeading;
+                    notificationParams.topToBottom = R.id.academics;
+                    notificationParams.bottomToTop = R.id.campus;
+                    notificationCampus.setLayoutParams(notificationParams);
+                    notificationCampus.animate().scaleX(1).scaleY(1);
+                });
+            } else if (sharedPreferences.getBoolean("newReceipts", false)) {
+                campusFlag = true;
+                final ImageView notification = myNotification.generateNotificationDot((int) (570 * pixelDensity), NotificationDotGenerator.NOTIFICATION_DEFAULT);
+                notification.setPadding(0, (int) (10 * pixelDensity), 0, 0);
+                receiptsNotification = View.generateViewId();
+                notification.setId(receiptsNotification);
 
+                runOnUiThread(() -> {
+                    ((RelativeLayout) findViewById(R.id.campusLayout)).addView(notification);
+                    notification.animate().scaleX(1).scaleY(1);
+                });
+            }
 
-                boolean academicsFlag = false;
+            /*
+                The campus category notification
+             */
+            if (campusFlag) {
+                final ImageView notificationCampus = myNotification.generateNotificationDot(0, NotificationDotGenerator.NOTIFICATION_DEFAULT);
+                notificationCampus.setPadding((int) (10 * pixelDensity), (int) (10 * pixelDensity), 0, 0);
+                campusNotification = View.generateViewId();
+                notificationCampus.setId(campusNotification);
 
-                if (sharedPreferences.getBoolean("newExams", false)) {
-                    academicsFlag = true;
-                    final ImageView notification = myNotification.generateNotificationDot((int) (135 * pixelDensity), NotificationDotGenerator.NOTIFICATION_DEFAULT);
-                    notification.setPadding(0, (int) (10 * pixelDensity), 0, 0);
-                    examsNotification = View.generateViewId();
-                    notification.setId(examsNotification);
-
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            ((RelativeLayout) findViewById(R.id.academicsLayout)).addView(notification);
-                            notification.animate().scaleX(1).scaleY(1);
-                        }
-                    });
-                }
-
-                if (!sharedPreferences.getString("newMarks", "{}").equals("{}")) {
-                    academicsFlag = true;
-                    final ImageView notification = myNotification.generateNotificationDot((int) (280 * pixelDensity), NotificationDotGenerator.NOTIFICATION_DEFAULT);
-                    notification.setPadding(0, (int) (10 * pixelDensity), 0, 0);
-                    marksNotification = View.generateViewId();
-                    notification.setId(marksNotification);
-
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            ((RelativeLayout) findViewById(R.id.academicsLayout)).addView(notification);
-                            notification.animate().scaleX(1).scaleY(1);
-                        }
-                    });
-                }
-
-                if (sharedPreferences.getBoolean("newGrades", false)) {
-                    academicsFlag = true;
-                    final ImageView notification = myNotification.generateNotificationDot((int) (425 * pixelDensity), NotificationDotGenerator.NOTIFICATION_DEFAULT);
-                    notification.setPadding(0, (int) (10 * pixelDensity), 0, 0);
-                    gradesNotification = View.generateViewId();
-                    notification.setId(gradesNotification);
-
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            ((RelativeLayout) findViewById(R.id.academicsLayout)).addView(notification);
-                            notification.animate().scaleX(1).scaleY(1);
-                        }
-                    });
-                }
-
-                if (!sharedPreferences.getString("newSpotlight", "{}").equals("{}")) {
-                    academicsFlag = true;
-                    final ImageView notification = myNotification.generateNotificationDot((int) (570 * pixelDensity), NotificationDotGenerator.NOTIFICATION_DEFAULT);
-                    notification.setPadding(0, (int) (10 * pixelDensity), 0, 0);
-                    spotlightNotification = View.generateViewId();
-                    notification.setId(spotlightNotification);
-
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            ((RelativeLayout) findViewById(R.id.academicsLayout)).addView(notification);
-                            notification.animate().scaleX(1).scaleY(1);
-                        }
-                    });
-                }
-
-                /*
-                    The academics category notification
-                 */
-                if (academicsFlag) {
-                    final ImageView notificationAcademics = myNotification.generateNotificationDot(0, NotificationDotGenerator.NOTIFICATION_DEFAULT);
-                    notificationAcademics.setPadding((int) (10 * pixelDensity), (int) (10 * pixelDensity), 0, 0);
-                    academicsNotification = View.generateViewId();
-                    notificationAcademics.setId(academicsNotification);
-
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            ((ConstraintLayout) findViewById(R.id.home_constraint)).addView(notificationAcademics);
-                            ConstraintLayout.LayoutParams notificationParams = (ConstraintLayout.LayoutParams) notificationAcademics.getLayoutParams();
-                            notificationParams.leftToRight = R.id.academicsHeading;
-                            notificationParams.topToBottom = R.id.classes;
-                            notificationParams.bottomToTop = R.id.academics;
-                            notificationAcademics.setLayoutParams(notificationParams);
-                            notificationAcademics.animate().scaleX(1).scaleY(1);
-                        }
-                    });
-                }
-
-
-                boolean campusFlag = false;
-
-                if (sharedPreferences.getBoolean("newProctorMessages", false)) {
-                    campusFlag = true;
-                    final ImageView notification = myNotification.generateNotificationDot((int) (425 * pixelDensity), NotificationDotGenerator.NOTIFICATION_DEFAULT);
-                    notification.setPadding(0, (int) (10 * pixelDensity), 0, 0);
-                    proctorMessageNotification = View.generateViewId();
-                    notification.setId(proctorMessageNotification);
-
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            ((RelativeLayout) findViewById(R.id.campusLayout)).addView(notification);
-                            notification.animate().scaleX(1).scaleY(1);
-                        }
-                    });
-                }
-
-                if (sharedPreferences.getBoolean("duePayments", false)) {
-                    campusFlag = false;
-                    final ImageView notification = myNotification.generateNotificationDot((int) (570 * pixelDensity), NotificationDotGenerator.NOTIFICATION_URGENT);
-                    notification.setPadding(0, (int) (10 * pixelDensity), 0, 0);
-                    receiptsNotification = View.generateViewId();
-                    notification.setId(receiptsNotification);
-
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            ((RelativeLayout) findViewById(R.id.campusLayout)).addView(notification);
-                            notification.animate().scaleX(1).scaleY(1);
-                        }
-                    });
-
-                    /*
-                        The campus category notification in red
-                     */
-                    final ImageView notificationCampus = myNotification.generateNotificationDot(0, NotificationDotGenerator.NOTIFICATION_URGENT);
-                    notificationCampus.setPadding((int) (10 * pixelDensity), (int) (10 * pixelDensity), 0, 0);
-                    campusNotification = View.generateViewId();
-                    notificationCampus.setId(campusNotification);
-
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            ((ConstraintLayout) findViewById(R.id.home_constraint)).addView(notificationCampus);
-                            ConstraintLayout.LayoutParams notificationParams = (ConstraintLayout.LayoutParams) notificationCampus.getLayoutParams();
-                            notificationParams.leftToRight = R.id.campusHeading;
-                            notificationParams.topToBottom = R.id.academics;
-                            notificationParams.bottomToTop = R.id.campus;
-                            notificationCampus.setLayoutParams(notificationParams);
-                            notificationCampus.animate().scaleX(1).scaleY(1);
-                        }
-                    });
-                } else if (sharedPreferences.getBoolean("newReceipts", false)) {
-                    campusFlag = true;
-                    final ImageView notification = myNotification.generateNotificationDot((int) (570 * pixelDensity), NotificationDotGenerator.NOTIFICATION_DEFAULT);
-                    notification.setPadding(0, (int) (10 * pixelDensity), 0, 0);
-                    receiptsNotification = View.generateViewId();
-                    notification.setId(receiptsNotification);
-
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            ((RelativeLayout) findViewById(R.id.campusLayout)).addView(notification);
-                            notification.animate().scaleX(1).scaleY(1);
-                        }
-                    });
-                }
-
-                /*
-                    The campus category notification
-                 */
-                if (campusFlag) {
-                    final ImageView notificationCampus = myNotification.generateNotificationDot(0, NotificationDotGenerator.NOTIFICATION_DEFAULT);
-                    notificationCampus.setPadding((int) (10 * pixelDensity), (int) (10 * pixelDensity), 0, 0);
-                    campusNotification = View.generateViewId();
-                    notificationCampus.setId(campusNotification);
-
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            ((ConstraintLayout) findViewById(R.id.home_constraint)).addView(notificationCampus);
-                            ConstraintLayout.LayoutParams notificationParams = (ConstraintLayout.LayoutParams) notificationCampus.getLayoutParams();
-                            notificationParams.leftToRight = R.id.campusHeading;
-                            notificationParams.topToBottom = R.id.academics;
-                            notificationParams.bottomToTop = R.id.campus;
-                            notificationCampus.setLayoutParams(notificationParams);
-                            notificationCampus.animate().scaleX(1).scaleY(1);
-                        }
-                    });
-                }
+                runOnUiThread(() -> {
+                    ((ConstraintLayout) findViewById(R.id.home_constraint)).addView(notificationCampus);
+                    ConstraintLayout.LayoutParams notificationParams = (ConstraintLayout.LayoutParams) notificationCampus.getLayoutParams();
+                    notificationParams.leftToRight = R.id.campusHeading;
+                    notificationParams.topToBottom = R.id.academics;
+                    notificationParams.bottomToTop = R.id.campus;
+                    notificationCampus.setLayoutParams(notificationParams);
+                    notificationCampus.animate().scaleX(1).scaleY(1);
+                });
             }
         }).start();
 
@@ -1323,11 +1254,7 @@ public class HomeActivity extends AppCompatActivity {
         final ScrollView mScrollView = findViewById(R.id.home_layout);
         final int[] position = savedInstanceState.getIntArray("SCROLL_POSITION");
         if (position != null) {
-            mScrollView.post(new Runnable() {
-                public void run() {
-                    mScrollView.scrollTo(position[0], position[1]);
-                }
-            });
+            mScrollView.post(() -> mScrollView.scrollTo(position[0], position[1]));
         }
     }
 

@@ -3,7 +3,6 @@ package tk.therealsuji.vtopchennai;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -50,12 +49,7 @@ public class LoginActivity extends AppCompatActivity {
         download.setContentView(R.layout.dialog_download);
         download.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         download.setCanceledOnTouchOutside(false);
-        download.setOnDismissListener(new DialogInterface.OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface dialog) {
-                vtop.terminateDownload();
-            }
-        });
+        download.setOnDismissListener(dialog -> vtop.terminateDownload());
         download.show();
 
         Window window = download.getWindow();
@@ -203,66 +197,50 @@ public class LoginActivity extends AppCompatActivity {
         final EditText username = findViewById(R.id.username);
         final EditText password = findViewById(R.id.password);
 
-        username.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View view, boolean b) {
-                if (b) {
-                    username.animate().scaleX(1.07f).scaleY(1.07f).setDuration(200);
-                } else {
-                    username.animate().scaleX(1f).scaleY(1f).setDuration(200);
-                }
+        username.setOnFocusChangeListener((view, b) -> {
+            if (b) {
+                username.animate().scaleX(1.07f).scaleY(1.07f).setDuration(200);
+            } else {
+                username.animate().scaleX(1f).scaleY(1f).setDuration(200);
             }
         });
-        username.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_ENTER) {
-                    password.requestFocus();
-                }
-
-                return false;
+        username.setOnKeyListener((v, keyCode, event) -> {
+            if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_ENTER) {
+                password.requestFocus();
             }
+
+            return false;
         });
 
-        password.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View view, boolean b) {
-                if (b) {
-                    password.animate().scaleX(1.07f).scaleY(1.07f).setDuration(200);
-                } else {
-                    password.animate().scaleX(1f).scaleY(1f).setDuration(200);
-                }
+        password.setOnFocusChangeListener((view, b) -> {
+            if (b) {
+                password.animate().scaleX(1.07f).scaleY(1.07f).setDuration(200);
+            } else {
+                password.animate().scaleX(1f).scaleY(1f).setDuration(200);
             }
         });
-        password.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_ENTER) {
-                    signIn(null);
-                }
-
-                return false;
+        password.setOnKeyListener((v, keyCode, event) -> {
+            if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_ENTER) {
+                signIn(null);
             }
+
+            return false;
         });
 
         final Button signIn = findViewById(R.id.signIn);
-        signIn.setOnTouchListener(new View.OnTouchListener() {
-
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                switch (motionEvent.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        signIn.animate().scaleX(0.93f).scaleY(0.93f).setDuration(50);
-                        signIn.setAlpha(0.85f);
-                        break;
-                    case MotionEvent.ACTION_UP:
-                    case MotionEvent.ACTION_CANCEL:
-                        signIn.animate().scaleX(1f).scaleY(1f).setDuration(50);
-                        signIn.setAlpha(1f);
-                        break;
-                }
-                return false;
+        signIn.setOnTouchListener((view, motionEvent) -> {
+            switch (motionEvent.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    signIn.animate().scaleX(0.93f).scaleY(0.93f).setDuration(50);
+                    signIn.setAlpha(0.85f);
+                    break;
+                case MotionEvent.ACTION_UP:
+                case MotionEvent.ACTION_CANCEL:
+                    signIn.animate().scaleX(1f).scaleY(1f).setDuration(50);
+                    signIn.setAlpha(1f);
+                    break;
             }
+            return false;
         });
 
         /*

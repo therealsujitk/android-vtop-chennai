@@ -26,7 +26,6 @@ import android.view.ViewStub;
 import android.view.animation.AccelerateInterpolator;
 import android.webkit.CookieManager;
 import android.webkit.JavascriptInterface;
-import android.webkit.ValueCallback;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ArrayAdapter;
@@ -266,13 +265,10 @@ public class VTOP {
         ValueAnimator anim = ValueAnimator.ofInt(0, targetHeight);
         anim.setInterpolator(new AccelerateInterpolator());
         anim.setDuration(500);
-        anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) view.getLayoutParams();
-                layoutParams.height = (int) (targetHeight * animation.getAnimatedFraction());
-                view.setLayoutParams(layoutParams);
-            }
+        anim.addUpdateListener(animation -> {
+            RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) view.getLayoutParams();
+            layoutParams.height = (int) (targetHeight * animation.getAnimatedFraction());
+            view.setLayoutParams(layoutParams);
         });
         anim.addListener(new AnimatorListenerAdapter() {
             @Override
@@ -303,13 +299,10 @@ public class VTOP {
                 ValueAnimator anim = ValueAnimator.ofInt(viewHeight, 0);
                 anim.setInterpolator(new AccelerateInterpolator());
                 anim.setDuration(500);
-                anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                    @Override
-                    public void onAnimationUpdate(ValueAnimator animation) {
-                        RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) view.getLayoutParams();
-                        layoutParams.height = (int) (viewHeight * (1 - animation.getAnimatedFraction()));
-                        view.setLayoutParams(layoutParams);
-                    }
+                anim.addUpdateListener(animation1 -> {
+                    RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) view.getLayoutParams();
+                    layoutParams.height = (int) (viewHeight * (1 - animation1.getAnimatedFraction()));
+                    view.setLayoutParams(layoutParams);
                 });
                 anim.addListener(new AnimatorListenerAdapter() {
                     @Override
@@ -409,14 +402,11 @@ public class VTOP {
                 "   }" +
                 "});" +
                 "return successFlag;" +
-                "})();", new ValueCallback<String>() {
-            @Override
-            public void onReceiveValue(String value) {
-                if (value.equals("true")) {
-                    getCaptchaType();
-                } else {
-                    reloadPage();
-                }
+                "})();", value -> {
+            if (value.equals("true")) {
+                getCaptchaType();
+            } else {
+                reloadPage();
             }
         });
     }
@@ -431,20 +421,17 @@ public class VTOP {
 
         webView.evaluateJavascript("(function() {" +
                 "return x == 'local';" +
-                "})();", new ValueCallback<String>() {
-            @Override
-            public void onReceiveValue(String isLocalCaptcha) {
-                /*
-                    isLocalCaptcha will be either true / false
-                    If true, the default captcha is being used else, Google's reCaptcha is being used
-                 */
-                if (isLocalCaptcha.equals("null")) {
-                    error();
-                } else if (isLocalCaptcha.equals("true")) {
-                    getCaptcha();
-                } else {
-                    executeCaptcha();
-                }
+                "})();", isLocalCaptcha -> {
+                    /*
+                        isLocalCaptcha will be either true / false
+                        If true, the default captcha is being used else, Google's reCaptcha is being used
+                     */
+            if (isLocalCaptcha.equals("null")) {
+                error();
+            } else if (isLocalCaptcha.equals("true")) {
+                getCaptcha();
+            } else {
+                executeCaptcha();
             }
         });
     }
@@ -465,37 +452,34 @@ public class VTOP {
                 "       return images[i].src;" +
                 "   }" +
                 "}" +
-                "})();", new ValueCallback<String>() {
-            @Override
-            public void onReceiveValue(String src) {
-                /*
-                    src will look like "data:image/png:base64, ContinuousGibberishText...." (including the quotes)
-                 */
-                if (src.equals("null")) {
-                    Toast.makeText(context, "Sorry, something went wrong while trying to fetch the captcha code. Please try again.", Toast.LENGTH_LONG).show();
-                    reloadPage();
-                } else {
-                    try {
-                        src = src.substring(1, src.length() - 1).split(",")[1].trim();
-                        byte[] decodedString = Base64.decode(src, Base64.DEFAULT);
-                        Bitmap decodedImage = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                "})();", src -> {
+                    /*
+                        src will look like "data:image/png:base64, ContinuousGibberishText...." (including the quotes)
+                     */
+            if (src.equals("null")) {
+                Toast.makeText(context, "Sorry, something went wrong while trying to fetch the captcha code. Please try again.", Toast.LENGTH_LONG).show();
+                reloadPage();
+            } else {
+                try {
+                    src = src.substring(1, src.length() - 1).split(",")[1].trim();
+                    byte[] decodedString = Base64.decode(src, Base64.DEFAULT);
+                    Bitmap decodedImage = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
 
-                        String appearance = sharedPreferences.getString("appearance", "system");
+                    String appearance = sharedPreferences.getString("appearance", "system");
 
-                        setupCaptcha();     // Inflating the captcha layout
+                    setupCaptcha();     // Inflating the captcha layout
 
-                        captcha.setImageBitmap(decodedImage);
-                        if (appearance.equals("dark") || (appearance.equals("system") && (context.getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES)) {
-                            captcha.setColorFilter(new ColorMatrixColorFilter(DARK));
-                        }
-
-                        hideLayouts();
-                        captchaView.setText("");
-                        expand(captchaLayout);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        error();
+                    captcha.setImageBitmap(decodedImage);
+                    if (appearance.equals("dark") || (appearance.equals("system") && (context.getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES)) {
+                        captcha.setColorFilter(new ColorMatrixColorFilter(DARK));
                     }
+
+                    hideLayouts();
+                    captchaView.setText("");
+                    expand(captchaLayout);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    error();
                 }
             }
         });
@@ -530,10 +514,7 @@ public class VTOP {
                 "       clearInterval(executeInterval);" +
                 "   }" +
                 "}, 500);" +
-                "})();", new ValueCallback<String>() {
-            @Override
-            public void onReceiveValue(String value) {
-            }
+                "})();", value -> {
         });
     }
 
@@ -549,54 +530,48 @@ public class VTOP {
             return;
         }
 
-        ((Activity) context).runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                DisplayMetrics displayMetrics = new DisplayMetrics();
-                ((Activity) context).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-                float width = displayMetrics.widthPixels;
-                float scale = (width / pixelDensity - 80) / 300;
+        ((Activity) context).runOnUiThread(() -> {
+            DisplayMetrics displayMetrics = new DisplayMetrics();
+            ((Activity) context).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+            float width = displayMetrics.widthPixels;
+            float scale = (width / pixelDensity - 80) / 300;
 
-                if (scale > 1) {
-                    scale = 1;
+            if (scale > 1) {
+                scale = 1;
+            }
+
+            webView.evaluateJavascript("(function() {" +
+                    "var body = document.getElementsByTagName('body')[0];" +
+                    "body.style.backgroundColor = 'transparent';" +
+                    "var children = body.children;" +
+                    "for (var i = 0; i < children.length - 1; ++i) {" +
+                    "   children[i].style.display = 'none';" +
+                    "}" +
+                    "var captchaInterval = setInterval(function() {" +
+                    "   var children = document.getElementsByTagName('body')[0].children;" +
+                    "   var captcha = children[children.length - 1];" +
+                    "   if (captcha.children[0] != null && captcha.children[1] != null) {" +
+                    "       captcha.children[0].style.display = 'none';" +
+                    "       captcha.children[1].style.transform = 'scale(" + scale + ")';" +
+                    "       captcha.children[1].style.transformOrigin = '0 0';" +
+                    "       clearInterval(captchaInterval);" +
+                    "   }" +
+                    "}, 500);" +
+                    "})();", value -> {
+                ViewGroup webViewParent = (ViewGroup) webView.getParent();
+                if (webViewParent != null) {
+                    webViewParent.removeView(webView);
                 }
 
-                webView.evaluateJavascript("(function() {" +
-                        "var body = document.getElementsByTagName('body')[0];" +
-                        "body.style.backgroundColor = 'transparent';" +
-                        "var children = body.children;" +
-                        "for (var i = 0; i < children.length - 1; ++i) {" +
-                        "   children[i].style.display = 'none';" +
-                        "}" +
-                        "var captchaInterval = setInterval(function() {" +
-                        "   var children = document.getElementsByTagName('body')[0].children;" +
-                        "   var captcha = children[children.length - 1];" +
-                        "   if (captcha.children[0] != null && captcha.children[1] != null) {" +
-                        "       captcha.children[0].style.display = 'none';" +
-                        "       captcha.children[1].style.transform = 'scale(" + scale + ")';" +
-                        "       captcha.children[1].style.transformOrigin = '0 0';" +
-                        "       clearInterval(captchaInterval);" +
-                        "   }" +
-                        "}, 500);" +
-                        "})();", new ValueCallback<String>() {
-                    @Override
-                    public void onReceiveValue(String value) {
-                        ViewGroup webViewParent = (ViewGroup) webView.getParent();
-                        if (webViewParent != null) {
-                            webViewParent.removeView(webView);
-                        }
-
-                        LinearLayout.LayoutParams webViewParams = new LinearLayout.LayoutParams(
-                                LinearLayout.LayoutParams.MATCH_PARENT,
-                                LinearLayout.LayoutParams.MATCH_PARENT
-                        );
-                        webViewParams.setMarginStart((int) (40 * pixelDensity));
-                        webViewParams.setMarginEnd((int) (40 * pixelDensity));
-                        webViewParams.setMargins(0, (int) (40 * pixelDensity), 0, (int) (40 * pixelDensity));
-                        downloadDialog.addContentView(webView, webViewParams);
-                    }
-                });
-            }
+                LinearLayout.LayoutParams webViewParams = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.MATCH_PARENT
+                );
+                webViewParams.setMarginStart((int) (40 * pixelDensity));
+                webViewParams.setMarginEnd((int) (40 * pixelDensity));
+                webViewParams.setMargins(0, (int) (40 * pixelDensity), 0, (int) (40 * pixelDensity));
+                downloadDialog.addContentView(webView, webViewParams);
+            });
         });
     }
 
@@ -609,65 +584,59 @@ public class VTOP {
             return;
         }
 
-        ((Activity) context).runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                ViewGroup webViewParent = (ViewGroup) webView.getParent();
-                if (webViewParent != null) {
-                    webViewParent.removeView(webView);
-                }
-
-                webView.evaluateJavascript("(function() {" +
-                        "var credentials = 'uname=" + username + "&passwd=' + encodeURIComponent('" + password + "') + '&" + captcha + "';" +
-                        "var successFlag = false;" +
-                        "$.ajax({" +
-                        "   type : 'POST'," +
-                        "   url : 'doLogin'," +
-                        "   data : credentials," +
-                        "   async: false," +
-                        "   success : function(response) {" +
-                        "       if(response.search('___INTERNAL___RESPONSE___') == -1) {" +
-                        "               $('#page_outline').html(response);" +
-                        "           if(response.includes('authorizedIDX')) {" +
-                        "               successFlag = true;" +
-                        "           } else if(response.toLowerCase().includes('invalid captcha')) {" +
-                        "               successFlag = 'Invalid Captcha';" +
-                        "           } else if(response.toLowerCase().includes('invalid user id / password')) {" +
-                        "               successFlag = 'Invalid User ID / Password';" +
-                        "           } else if(response.toLowerCase().includes('user id not available')) {" +
-                        "               successFlag = 'Invalid User ID';" +
-                        "           }" +
-                        "       }" +
-                        "   }" +
-                        "});" +
-                        "return successFlag;" +
-                        "})();", new ValueCallback<String>() {
-                    @Override
-                    public void onReceiveValue(String value) {
-                        if (value.equals("true")) {
-                            getSemesters();
-                        } else {
-                            if (!value.equals("false") && !value.equals("null")) {
-                                value = value.substring(1, value.length() - 1);
-                                if (value.equals("Invalid User ID / Password") || value.equals("Invalid User ID")) {
-                                    sharedPreferences.edit().putString("isLoggedIn", "false").apply();
-                                    myDatabase.close();
-                                    downloadDialog.dismiss();
-                                    Toast.makeText(context, value, Toast.LENGTH_LONG).show();
-                                    context.startActivity(new Intent(context, LoginActivity.class));
-                                    ((Activity) context).finish();
-                                } else {
-                                    Toast.makeText(context, value, Toast.LENGTH_LONG).show();
-                                    getCaptchaType();
-                                }
-                            } else {
-                                // We don't want to refresh the page unless a timeout error has been returned
-                                error();
-                            }
-                        }
-                    }
-                });
+        ((Activity) context).runOnUiThread(() -> {
+            ViewGroup webViewParent = (ViewGroup) webView.getParent();
+            if (webViewParent != null) {
+                webViewParent.removeView(webView);
             }
+
+            webView.evaluateJavascript("(function() {" +
+                    "var credentials = 'uname=" + username + "&passwd=' + encodeURIComponent('" + password + "') + '&" + captcha + "';" +
+                    "var successFlag = false;" +
+                    "$.ajax({" +
+                    "   type : 'POST'," +
+                    "   url : 'doLogin'," +
+                    "   data : credentials," +
+                    "   async: false," +
+                    "   success : function(response) {" +
+                    "       if(response.search('___INTERNAL___RESPONSE___') == -1) {" +
+                    "               $('#page_outline').html(response);" +
+                    "           if(response.includes('authorizedIDX')) {" +
+                    "               successFlag = true;" +
+                    "           } else if(response.toLowerCase().includes('invalid captcha')) {" +
+                    "               successFlag = 'Invalid Captcha';" +
+                    "           } else if(response.toLowerCase().includes('invalid user id / password')) {" +
+                    "               successFlag = 'Invalid User ID / Password';" +
+                    "           } else if(response.toLowerCase().includes('user id not available')) {" +
+                    "               successFlag = 'Invalid User ID';" +
+                    "           }" +
+                    "       }" +
+                    "   }" +
+                    "});" +
+                    "return successFlag;" +
+                    "})();", value -> {
+                if (value.equals("true")) {
+                    getSemesters();
+                } else {
+                    if (!value.equals("false") && !value.equals("null")) {
+                        value = value.substring(1, value.length() - 1);
+                        if (value.equals("Invalid User ID / Password") || value.equals("Invalid User ID")) {
+                            sharedPreferences.edit().putString("isLoggedIn", "false").apply();
+                            myDatabase.close();
+                            downloadDialog.dismiss();
+                            Toast.makeText(context, value, Toast.LENGTH_LONG).show();
+                                    context.startActivity(new Intent(context, LoginActivity.class));
+                            ((Activity) context).finish();
+                        } else {
+                            Toast.makeText(context, value, Toast.LENGTH_LONG).show();
+                            getCaptchaType();
+                        }
+                    } else {
+                        // We don't want to refresh the page unless a timeout error has been returned
+                        error();
+                    }
+                }
+            });
         });
     }
 
@@ -703,44 +672,41 @@ public class VTOP {
                 "   }" +
                 "});" +
                 "return obj;" +
-                "})();", new ValueCallback<String>() {
-            @Override
-            public void onReceiveValue(String obj) {
-                /*
-                    obj is in the form of a JSON string like {"0": "Semester 1", "1": "Semester 2", "2": "Semester 3",...}
-                 */
-                if (obj.equals("false") || obj.equals("null")) {
-                    error();
-                } else {
-                    try {
-                        int index = 0;
-                        boolean isIndexStored = false;
-                        String storedSemester = sharedPreferences.getString("semester", "null");
+                "})();", obj -> {
+                    /*
+                        obj is in the form of a JSON string like {"0": "Semester 1", "1": "Semester 2", "2": "Semester 3",...}
+                     */
+            if (obj.equals("false") || obj.equals("null")) {
+                error();
+            } else {
+                try {
+                    int index = 0;
+                    boolean isIndexStored = false;
+                    String storedSemester = sharedPreferences.getString("semester", "null");
 
-                        setupSemester();        // Inflating the semester layout
+                    setupSemester();        // Inflating the semester layout
 
-                        JSONObject myObj = new JSONObject(obj);
-                        List<String> options = new ArrayList<>();
-                        for (int i = 0; i < myObj.length(); ++i) {
-                            String semester = myObj.getString(Integer.toString(i));
-                            options.add(semester);
+                    JSONObject myObj = new JSONObject(obj);
+                    List<String> options = new ArrayList<>();
+                    for (int i = 0; i < myObj.length(); ++i) {
+                        String semester = myObj.getString(Integer.toString(i));
+                        options.add(semester);
 
-                            if (!isIndexStored && semester.toLowerCase().equals(storedSemester)) {
-                                index = i;
-                                isIndexStored = true;
-                            }
+                        if (!isIndexStored && semester.toLowerCase().equals(storedSemester)) {
+                            index = i;
+                            isIndexStored = true;
                         }
-                        ArrayAdapter<String> adapter = new ArrayAdapter<>(context, R.layout.style_spinner_selected, options);
-                        adapter.setDropDownViewResource(R.layout.style_spinner);
-                        selectSemester.setAdapter(adapter);
-                        selectSemester.setSelection(index);
-
-                        hideLayouts();
-                        expand(semesterLayout);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        error();
                     }
+                    ArrayAdapter<String> adapter = new ArrayAdapter<>(context, R.layout.style_spinner_selected, options);
+                    adapter.setDropDownViewResource(R.layout.style_spinner);
+                    selectSemester.setAdapter(adapter);
+                    selectSemester.setSelection(index);
+
+                    hideLayouts();
+                    expand(semesterLayout);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    error();
                 }
             }
         });
@@ -776,15 +742,12 @@ public class VTOP {
                 "   }" +
                 "});" +
                 "return semID;" +
-                "})();", new ValueCallback<String>() {
-            @Override
-            public void onReceiveValue(String semID) {
-                if (semID.equals("null")) {
-                    error();
-                } else {
-                    semesterID = semID.substring(1, semID.length() - 1);
-                    downloadProfile();
-                }
+                "})();", semID -> {
+            if (semID.equals("null")) {
+                error();
+            } else {
+                semesterID = semID.substring(1, semID.length() - 1);
+                downloadProfile();
             }
         });
     }
@@ -835,29 +798,26 @@ public class VTOP {
                 "   }" +
                 "});" +
                 "return obj;" +
-                "})();", new ValueCallback<String>() {
-            @Override
-            public void onReceiveValue(String obj) {
-                /*
-                    obj is in the form of a JSON string like {"name": "JOHN DOE", "register": "20XYZ1987"}
-                 */
-                String temp = obj.substring(1, obj.length() - 1);
-                if (obj.equals("null") || temp.equals("")) {
+                "})();", obj -> {
+                    /*
+                        obj is in the form of a JSON string like {"name": "JOHN DOE", "register": "20XYZ1987"}
+                     */
+            String temp = obj.substring(1, obj.length() - 1);
+            if (obj.equals("null") || temp.equals("")) {
+                error();
+            } else {
+                try {
+                    JSONObject myObj = new JSONObject(obj);
+                    sharedPreferences.edit().putString("name", myObj.getString("name")).apply();
+                    sharedPreferences.edit().putString("id", myObj.getString("id")).apply();
+
+                    lastDownload = 0;
+                    updateProgress();
+
+                    downloadTimetable();
+                } catch (Exception e) {
+                    e.printStackTrace();
                     error();
-                } else {
-                    try {
-                        JSONObject myObj = new JSONObject(obj);
-                        sharedPreferences.edit().putString("name", myObj.getString("name")).apply();
-                        sharedPreferences.edit().putString("id", myObj.getString("id")).apply();
-
-                        lastDownload = 0;
-                        updateProgress();
-
-                        downloadTimetable();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        error();
-                    }
                 }
             }
         });
@@ -976,60 +936,50 @@ public class VTOP {
                 "   }" +
                 "});" +
                 "return obj;" +
-                "})();", new ValueCallback<String>() {
-            @Override
-            public void onReceiveValue(final String obj) {
-                /*
-                    obj is in the form of a JSON string like {"credits": "19", "lab": {"0start": "08:00", "0end": "08:50",...}, "mon": {"0theory": "MAT1001",...}, ...}
-                 */
-                String temp = obj.substring(1, obj.length() - 1);
-                if (obj.equals("null") || temp.equals("")) {
-                    error();
-                } else if (temp.equals("unreleased")) {
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            myDatabase.execSQL("DROP TABLE IF EXISTS timetable_lab");
-                            myDatabase.execSQL("CREATE TABLE timetable_lab (id INTEGER PRIMARY KEY, start_time VARCHAR, end_time VARCHAR, sun VARCHAR, mon VARCHAR, tue VARCHAR, wed VARCHAR, thu VARCHAR, fri VARCHAR, sat VARCHAR)");
+                "})();", obj -> {
+                    /*
+                        obj is in the form of a JSON string like {"credits": "19", "lab": {"0start": "08:00", "0end": "08:50",...}, "mon": {"0theory": "MAT1001",...}, ...}
+                     */
+            String temp = obj.substring(1, obj.length() - 1);
+            if (obj.equals("null") || temp.equals("")) {
+                error();
+            } else if (temp.equals("unreleased")) {
+                new Thread(() -> {
+                    myDatabase.execSQL("DROP TABLE IF EXISTS timetable_lab");
+                    myDatabase.execSQL("CREATE TABLE timetable_lab (id INTEGER PRIMARY KEY, start_time VARCHAR, end_time VARCHAR, sun VARCHAR, mon VARCHAR, tue VARCHAR, wed VARCHAR, thu VARCHAR, fri VARCHAR, sat VARCHAR)");
 
-                            myDatabase.execSQL("DROP TABLE IF EXISTS timetable_theory");
-                            myDatabase.execSQL("CREATE TABLE timetable_theory (id INTEGER PRIMARY KEY, start_time VARCHAR, end_time VARCHAR, sun VARCHAR, mon VARCHAR, tue VARCHAR, wed VARCHAR, thu VARCHAR, fri VARCHAR, sat VARCHAR)");
+                    myDatabase.execSQL("DROP TABLE IF EXISTS timetable_theory");
+                    myDatabase.execSQL("CREATE TABLE timetable_theory (id INTEGER PRIMARY KEY, start_time VARCHAR, end_time VARCHAR, sun VARCHAR, mon VARCHAR, tue VARCHAR, wed VARCHAR, thu VARCHAR, fri VARCHAR, sat VARCHAR)");
 
-                            sharedPreferences.edit().remove("credits").apply();
+                    sharedPreferences.edit().remove("credits").apply();
 
-                            AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
-                            Intent notificationIntent = new Intent(context, NotificationReceiver.class);
-                            for (int j = 0; j < sharedPreferences.getInt("alarmCount", 0); ++j) {
-                                PendingIntent pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
-                                alarmManager.cancel(pendingIntent);
-                            }
+                    AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
+                    Intent notificationIntent = new Intent(context, NotificationReceiver.class);
+                    for (int j = 0; j < sharedPreferences.getInt("alarmCount", 0); ++j) {
+                        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
+                        alarmManager.cancel(pendingIntent);
+                    }
 
-                            sharedPreferences.edit().remove("newTimetable").apply();
-                            sharedPreferences.edit().remove("alarmCount").apply();
+                    sharedPreferences.edit().remove("newTimetable").apply();
+                    sharedPreferences.edit().remove("alarmCount").apply();
 
-                            ((Activity) context).runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    updateProgress();
-                                    downloadFaculty();
-                                }
-                            });
-                        }
-                    }).start();
-                } else {
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                JSONObject myObj = new JSONObject(obj);
-                                String credits = "Credits: " + myObj.getString("credits");
-                                sharedPreferences.edit().putString("credits", credits).apply();
+                    ((Activity) context).runOnUiThread(() -> {
+                        updateProgress();
+                        downloadFaculty();
+                    });
+                }).start();
+            } else {
+                new Thread(() -> {
+                    try {
+                        JSONObject myObj = new JSONObject(obj);
+                        String credits = "Credits: " + myObj.getString("credits");
+                        sharedPreferences.edit().putString("credits", credits).apply();
 
-                                myDatabase.execSQL("DROP TABLE IF EXISTS timetable_lab");
-                                myDatabase.execSQL("CREATE TABLE timetable_lab (id INTEGER PRIMARY KEY, start_time VARCHAR, end_time VARCHAR, sun VARCHAR, mon VARCHAR, tue VARCHAR, wed VARCHAR, thu VARCHAR, fri VARCHAR, sat VARCHAR)");
+                        myDatabase.execSQL("DROP TABLE IF EXISTS timetable_lab");
+                        myDatabase.execSQL("CREATE TABLE timetable_lab (id INTEGER PRIMARY KEY, start_time VARCHAR, end_time VARCHAR, sun VARCHAR, mon VARCHAR, tue VARCHAR, wed VARCHAR, thu VARCHAR, fri VARCHAR, sat VARCHAR)");
 
-                                myDatabase.execSQL("DROP TABLE IF EXISTS timetable_theory");
-                                myDatabase.execSQL("CREATE TABLE timetable_theory (id INTEGER PRIMARY KEY, start_time VARCHAR, end_time VARCHAR, sun VARCHAR, mon VARCHAR, tue VARCHAR, wed VARCHAR, thu VARCHAR, fri VARCHAR, sat VARCHAR)");
+                        myDatabase.execSQL("DROP TABLE IF EXISTS timetable_theory");
+                        myDatabase.execSQL("CREATE TABLE timetable_theory (id INTEGER PRIMARY KEY, start_time VARCHAR, end_time VARCHAR, sun VARCHAR, mon VARCHAR, tue VARCHAR, wed VARCHAR, thu VARCHAR, fri VARCHAR, sat VARCHAR)");
 
                                 JSONObject lab = new JSONObject(myObj.getString("lab"));
                                 JSONObject theory = new JSONObject(myObj.getString("theory"));
@@ -1188,27 +1138,22 @@ public class VTOP {
                                     myDatabase.execSQL("INSERT INTO timetable_theory (start_time, end_time, sun, mon, tue, wed, thu, fri, sat) VALUES ('" + start_time_theory + "', '" + end_time_theory + "', '" + theoryPeriods[0] + "', '" + theoryPeriods[1] + "', '" + theoryPeriods[2] + "', '" + theoryPeriods[3] + "', '" + theoryPeriods[4] + "', '" + theoryPeriods[5] + "', '" + theoryPeriods[6] + "')");
                                 }
 
-                                for (int i = alarmCount; i < sharedPreferences.getInt("alarmCount", 0); ++i) {
-                                    PendingIntent pendingIntent = PendingIntent.getBroadcast(context, i, notificationIntent, 0);
-                                    alarmManager.cancel(pendingIntent);
-                                }
-
-                                sharedPreferences.edit().putInt("alarmCount", alarmCount).apply();
-
-                                ((Activity) context).runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        updateProgress();
-                                        downloadFaculty();
-                                    }
-                                });
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                                error();
-                            }
+                        for (int i = alarmCount; i < sharedPreferences.getInt("alarmCount", 0); ++i) {
+                            PendingIntent pendingIntent = PendingIntent.getBroadcast(context, i, notificationIntent, 0);
+                            alarmManager.cancel(pendingIntent);
                         }
-                    }).start();
-                }
+
+                        sharedPreferences.edit().putInt("alarmCount", alarmCount).apply();
+
+                        ((Activity) context).runOnUiThread(() -> {
+                            updateProgress();
+                            downloadFaculty();
+                        });
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        error();
+                    }
+                }).start();
             }
         });
     }
@@ -1278,70 +1223,55 @@ public class VTOP {
                 "   }" +
                 "});" +
                 "return obj;" +
-                "})();", new ValueCallback<String>() {
-            @Override
-            public void onReceiveValue(final String obj) {
-                /*
-                    obj is in the form of a JSON string like {"0": {"course": "MAT1001", "faculty": "JAMES VERTIGO"},...}
-                 */
-                String temp = obj.substring(1, obj.length() - 1);
-                if (obj.equals("null") || temp.equals("")) {
-                    error();
-                } else if (temp.equals("nothing")) {
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                myDatabase.execSQL("DROP TABLE IF EXISTS faculty");
-                                myDatabase.execSQL("CREATE TABLE faculty (id INTEGER PRIMARY KEY, course VARCHAR, faculty VARCHAR)");
+                "})();", obj -> {
+                    /*
+                        obj is in the form of a JSON string like {"0": {"course": "MAT1001", "faculty": "JAMES VERTIGO"},...}
+                     */
+            String temp = obj.substring(1, obj.length() - 1);
+            if (obj.equals("null") || temp.equals("")) {
+                error();
+            } else if (temp.equals("nothing")) {
+                new Thread(() -> {
+                    try {
+                        myDatabase.execSQL("DROP TABLE IF EXISTS faculty");
+                        myDatabase.execSQL("CREATE TABLE faculty (id INTEGER PRIMARY KEY, course VARCHAR, faculty VARCHAR)");
 
-                                ((Activity) context).runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        updateProgress();
-                                        downloadProctor();
-                                    }
-                                });
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                                error();
-                            }
+                        ((Activity) context).runOnUiThread(() -> {
+                            updateProgress();
+                            downloadProctor();
+                        });
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        error();
+                    }
 
-                            sharedPreferences.edit().remove("newFaculty").apply();
+                    sharedPreferences.edit().remove("newFaculty").apply();
+                }).start();
+            } else {
+                new Thread(() -> {
+                    try {
+                        JSONObject myObj = new JSONObject(obj);
+
+                        myDatabase.execSQL("DROP TABLE IF EXISTS faculty");
+                        myDatabase.execSQL("CREATE TABLE faculty (id INTEGER PRIMARY KEY, course VARCHAR, faculty VARCHAR)");
+
+                        for (int i = 0; i < myObj.length(); ++i) {
+                            JSONObject tempObj = new JSONObject(myObj.getString(Integer.toString(i)));
+                            String course = tempObj.getString("course");
+                            String faculty = tempObj.getString("faculty");
+
+                            myDatabase.execSQL("INSERT INTO faculty (course, faculty) VALUES('" + course + "', '" + faculty + "')");
                         }
-                    }).start();
-                } else {
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                JSONObject myObj = new JSONObject(obj);
 
-                                myDatabase.execSQL("DROP TABLE IF EXISTS faculty");
-                                myDatabase.execSQL("CREATE TABLE faculty (id INTEGER PRIMARY KEY, course VARCHAR, faculty VARCHAR)");
-
-                                for (int i = 0; i < myObj.length(); ++i) {
-                                    JSONObject tempObj = new JSONObject(myObj.getString(Integer.toString(i)));
-                                    String course = tempObj.getString("course");
-                                    String faculty = tempObj.getString("faculty");
-
-                                    myDatabase.execSQL("INSERT INTO faculty (course, faculty) VALUES('" + course + "', '" + faculty + "')");
-                                }
-
-                                ((Activity) context).runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        updateProgress();
-                                        downloadProctor();
-                                    }
-                                });
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                                error();
-                            }
-                        }
-                    }).start();
-                }
+                        ((Activity) context).runOnUiThread(() -> {
+                            updateProgress();
+                            downloadProctor();
+                        });
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        error();
+                    }
+                }).start();
             }
         });
     }
@@ -1392,71 +1322,56 @@ public class VTOP {
                 "}" +
                 "});" +
                 "return obj;" +
-                "})();", new ValueCallback<String>() {
-            @Override
-            public void onReceiveValue(final String obj) {
-                /*
-                    obj is in the form of a JSON string like {"00Faculty Name": "Jack Ryan", "01Email ID": "jack@cia.gov.us",...}
-                 */
-                String temp = obj.substring(1, obj.length() - 1);
-                if (obj.equals("null") || temp.equals("")) {
-                    error();
-                } else if (temp.equals("unavailable")) {
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                myDatabase.execSQL("DROP TABLE IF EXISTS proctor");
-                                myDatabase.execSQL("CREATE TABLE proctor (id INTEGER PRIMARY KEY, column1 VARCHAR, column2 VARCHAR)");
+                "})();", obj -> {
+                    /*
+                        obj is in the form of a JSON string like {"00Faculty Name": "Jack Ryan", "01Email ID": "jack@cia.gov.us",...}
+                     */
+            String temp = obj.substring(1, obj.length() - 1);
+            if (obj.equals("null") || temp.equals("")) {
+                error();
+            } else if (temp.equals("unavailable")) {
+                new Thread(() -> {
+                    try {
+                        myDatabase.execSQL("DROP TABLE IF EXISTS proctor");
+                        myDatabase.execSQL("CREATE TABLE proctor (id INTEGER PRIMARY KEY, column1 VARCHAR, column2 VARCHAR)");
 
-                                ((Activity) context).runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        updateProgress();
-                                        downloadDeanHOD();
-                                    }
-                                });
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                                error();
-                            }
+                        ((Activity) context).runOnUiThread(() -> {
+                            updateProgress();
+                            downloadDeanHOD();
+                        });
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        error();
+                    }
+                }).start();
+            } else {
+                new Thread(() -> {
+                    try {
+                        JSONObject myObj = new JSONObject(obj);
+
+                        myDatabase.execSQL("DROP TABLE IF EXISTS proctor");
+                        myDatabase.execSQL("CREATE TABLE proctor (id INTEGER PRIMARY KEY, column1 VARCHAR, column2 VARCHAR)");
+
+                        Iterator<?> keys = myObj.keys();
+
+                        while (keys.hasNext()) {
+                            String key = (String) keys.next();
+                            String value = myObj.getString(key);
+
+                            key = key.substring(2);
+
+                            myDatabase.execSQL("INSERT INTO proctor (column1, column2) VALUES('" + key + "', '" + value + "')");
                         }
-                    }).start();
-                } else {
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                JSONObject myObj = new JSONObject(obj);
 
-                                myDatabase.execSQL("DROP TABLE IF EXISTS proctor");
-                                myDatabase.execSQL("CREATE TABLE proctor (id INTEGER PRIMARY KEY, column1 VARCHAR, column2 VARCHAR)");
-
-                                Iterator<?> keys = myObj.keys();
-
-                                while (keys.hasNext()) {
-                                    String key = (String) keys.next();
-                                    String value = myObj.getString(key);
-
-                                    key = key.substring(2);
-
-                                    myDatabase.execSQL("INSERT INTO proctor (column1, column2) VALUES('" + key + "', '" + value + "')");
-                                }
-
-                                ((Activity) context).runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        updateProgress();
-                                        downloadDeanHOD();
-                                    }
-                                });
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                                error();
-                            }
-                        }
-                    }).start();
-                }
+                        ((Activity) context).runOnUiThread(() -> {
+                            updateProgress();
+                            downloadDeanHOD();
+                        });
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        error();
+                    }
+                }).start();
             }
         });
     }
@@ -1553,53 +1468,43 @@ public class VTOP {
                 "}" +
                 "});" +
                 "return obj;" +
-                "})();", new ValueCallback<String>() {
-            @Override
-            public void onReceiveValue(final String obj) {
-                /*
-                    obj is in the form of a JSON string like {"dean": {"00Faculty Name": "Jack Ryan", "01Email ID": "jack@cia.gov.us",...}, "hod: {"00Faculty Name": "Jimmy Fallon", "01Email ID": "jimmy@tonight.us",...}"}
-                 */
-                String temp = obj.substring(1, obj.length() - 1);
-                if (obj.equals("null") || temp.equals("")) {
-                    error();
-                } else if (temp.equals("unavailable")) {
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                myDatabase.execSQL("DROP TABLE IF EXISTS dean");
-                                myDatabase.execSQL("CREATE TABLE dean (id INTEGER PRIMARY KEY, column1 VARCHAR, column2 VARCHAR)");
+                "})();", obj -> {
+                    /*
+                        obj is in the form of a JSON string like {"dean": {"00Faculty Name": "Jack Ryan", "01Email ID": "jack@cia.gov.us",...}, "hod: {"00Faculty Name": "Jimmy Fallon", "01Email ID": "jimmy@tonight.us",...}"}
+                     */
+            String temp = obj.substring(1, obj.length() - 1);
+            if (obj.equals("null") || temp.equals("")) {
+                error();
+            } else if (temp.equals("unavailable")) {
+                new Thread(() -> {
+                    try {
+                        myDatabase.execSQL("DROP TABLE IF EXISTS dean");
+                        myDatabase.execSQL("CREATE TABLE dean (id INTEGER PRIMARY KEY, column1 VARCHAR, column2 VARCHAR)");
 
-                                myDatabase.execSQL("DROP TABLE IF EXISTS hod");
-                                myDatabase.execSQL("CREATE TABLE hod (id INTEGER PRIMARY KEY, column1 VARCHAR, column2 VARCHAR)");
+                        myDatabase.execSQL("DROP TABLE IF EXISTS hod");
+                        myDatabase.execSQL("CREATE TABLE hod (id INTEGER PRIMARY KEY, column1 VARCHAR, column2 VARCHAR)");
 
-                                ((Activity) context).runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        updateProgress();
-                                        downloadAttendance();
-                                    }
-                                });
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                                error();
-                            }
-                        }
-                    }).start();
-                } else {
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                JSONObject myObj = new JSONObject(obj);
-                                JSONObject dean = new JSONObject(myObj.getString("dean"));
-                                JSONObject hod = new JSONObject(myObj.getString("hod"));
+                        ((Activity) context).runOnUiThread(() -> {
+                            updateProgress();
+                            downloadAttendance();
+                        });
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        error();
+                    }
+                }).start();
+            } else {
+                new Thread(() -> {
+                    try {
+                        JSONObject myObj = new JSONObject(obj);
+                        JSONObject dean = new JSONObject(myObj.getString("dean"));
+                        JSONObject hod = new JSONObject(myObj.getString("hod"));
 
-                                myDatabase.execSQL("DROP TABLE IF EXISTS dean");
-                                myDatabase.execSQL("CREATE TABLE dean (id INTEGER PRIMARY KEY, column1 VARCHAR, column2 VARCHAR)");
+                        myDatabase.execSQL("DROP TABLE IF EXISTS dean");
+                        myDatabase.execSQL("CREATE TABLE dean (id INTEGER PRIMARY KEY, column1 VARCHAR, column2 VARCHAR)");
 
-                                myDatabase.execSQL("DROP TABLE IF EXISTS hod");
-                                myDatabase.execSQL("CREATE TABLE hod (id INTEGER PRIMARY KEY, column1 VARCHAR, column2 VARCHAR)");
+                        myDatabase.execSQL("DROP TABLE IF EXISTS hod");
+                        myDatabase.execSQL("CREATE TABLE hod (id INTEGER PRIMARY KEY, column1 VARCHAR, column2 VARCHAR)");
 
                                 Iterator<?> keys = dean.keys();
 
@@ -1614,29 +1519,24 @@ public class VTOP {
 
                                 keys = hod.keys();
 
-                                while (keys.hasNext()) {
-                                    String key = (String) keys.next();
-                                    String value = hod.getString(key);
+                        while (keys.hasNext()) {
+                            String key = (String) keys.next();
+                            String value = hod.getString(key);
 
-                                    key = key.substring(2);
+                            key = key.substring(2);
 
-                                    myDatabase.execSQL("INSERT INTO hod (column1, column2) VALUES('" + key + "', '" + value + "')");
-                                }
-
-                                ((Activity) context).runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        updateProgress();
-                                        downloadAttendance();
-                                    }
-                                });
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                                error();
-                            }
+                            myDatabase.execSQL("INSERT INTO hod (column1, column2) VALUES('" + key + "', '" + value + "')");
                         }
-                    }).start();
-                }
+
+                        ((Activity) context).runOnUiThread(() -> {
+                            updateProgress();
+                            downloadAttendance();
+                        });
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        error();
+                    }
+                }).start();
             }
         });
     }
@@ -1719,78 +1619,63 @@ public class VTOP {
                 "   }" +
                 "});" +
                 "return obj;" +
-                "})();", new ValueCallback<String>() {
-            @Override
-            public void onReceiveValue(final String obj) {
-                /*
-                    obj is in the form of a JSON string like {"0": {"course": "MAT1001", "type": "Embedded Theory",...},...}
-                 */
-                String temp = obj.substring(1, obj.length() - 1);
-                if (obj.equals("null") || temp.equals("")) {
-                    error();
-                } else if (temp.equals("unavailable")) {
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                myDatabase.execSQL("DROP TABLE IF EXISTS attendance");
-                                myDatabase.execSQL("CREATE TABLE attendance (id INTEGER PRIMARY KEY, course VARCHAR, type VARCHAR, attended VARCHAR, total VARCHAR, percent VARCHAR)");
+                "})();", obj -> {
+                    /*
+                        obj is in the form of a JSON string like {"0": {"course": "MAT1001", "type": "Embedded Theory",...},...}
+                     */
+            String temp = obj.substring(1, obj.length() - 1);
+            if (obj.equals("null") || temp.equals("")) {
+                error();
+            } else if (temp.equals("unavailable")) {
+                new Thread(() -> {
+                    try {
+                        myDatabase.execSQL("DROP TABLE IF EXISTS attendance");
+                        myDatabase.execSQL("CREATE TABLE attendance (id INTEGER PRIMARY KEY, course VARCHAR, type VARCHAR, attended VARCHAR, total VARCHAR, percent VARCHAR)");
 
-                                ((Activity) context).runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        updateProgress();
-                                        downloadExams();
-                                    }
-                                });
-                            } catch (Exception e) {
-                                error();
-                            }
+                        ((Activity) context).runOnUiThread(() -> {
+                            updateProgress();
+                            downloadExams();
+                        });
+                    } catch (Exception e) {
+                        error();
+                    }
 
-                            sharedPreferences.edit().remove("failedAttendance").apply();
-                        }
-                    }).start();
-                } else {
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                JSONObject myObj = new JSONObject(obj);
+                    sharedPreferences.edit().remove("failedAttendance").apply();
+                }).start();
+            } else {
+                new Thread(() -> {
+                    try {
+                        JSONObject myObj = new JSONObject(obj);
 
-                                myDatabase.execSQL("DROP TABLE IF EXISTS attendance");
-                                myDatabase.execSQL("CREATE TABLE attendance (id INTEGER PRIMARY KEY, course VARCHAR, type VARCHAR, attended VARCHAR, total VARCHAR, percent VARCHAR)");
+                        myDatabase.execSQL("DROP TABLE IF EXISTS attendance");
+                        myDatabase.execSQL("CREATE TABLE attendance (id INTEGER PRIMARY KEY, course VARCHAR, type VARCHAR, attended VARCHAR, total VARCHAR, percent VARCHAR)");
 
-                                sharedPreferences.edit().remove("failedAttendance").apply();
+                        sharedPreferences.edit().remove("failedAttendance").apply();
 
-                                for (int i = 0; i < myObj.length(); ++i) {
-                                    JSONObject tempObj = new JSONObject(myObj.getString(Integer.toString(i)));
+                        for (int i = 0; i < myObj.length(); ++i) {
+                            JSONObject tempObj = new JSONObject(myObj.getString(Integer.toString(i)));
                                     String course = tempObj.getString("course");
                                     String type = tempObj.getString("type");
                                     String attended = tempObj.getString("attended");
-                                    String total = tempObj.getString("total");
-                                    String percent = tempObj.getString("percent");
+                            String total = tempObj.getString("total");
+                            String percent = tempObj.getString("percent");
 
-                                    myDatabase.execSQL("INSERT INTO attendance (course, type, attended, total, percent) VALUES('" + course + "', '" + type + "', '" + attended + "', '" + total + "', '" + percent + "')");
+                            myDatabase.execSQL("INSERT INTO attendance (course, type, attended, total, percent) VALUES('" + course + "', '" + type + "', '" + attended + "', '" + total + "', '" + percent + "')");
 
-                                    if (Integer.parseInt(percent) <= 75) {
-                                        sharedPreferences.edit().putBoolean("failedAttendance", true).apply();
-                                    }
-                                }
-
-                                ((Activity) context).runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        updateProgress();
-                                        downloadExams();
-                                    }
-                                });
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                                error();
+                            if (Integer.parseInt(percent) <= 75) {
+                                sharedPreferences.edit().putBoolean("failedAttendance", true).apply();
                             }
                         }
-                    }).start();
-                }
+
+                        ((Activity) context).runOnUiThread(() -> {
+                            updateProgress();
+                            downloadExams();
+                        });
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        error();
+                    }
+                }).start();
             }
         });
     }
@@ -1916,53 +1801,43 @@ public class VTOP {
                 "   }" +
                 "});" +
                 "return obj;" +
-                "})();", new ValueCallback<String>() {
-            @Override
-            public void onReceiveValue(final String obj) {
-                /*
-                    obj is in the form of a JSON string like {"Mid Term": {"course": "MAT1001", "date": "04-Jan-1976",...},...}
-                 */
-                String temp = obj.substring(1, obj.length() - 1);
-                if (obj.equals("null") || temp.equals("")) {
-                    error();
-                } else if (temp.equals("nothing")) {
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                myDatabase.execSQL("DROP TABLE IF EXISTS exams");
-                                myDatabase.execSQL("CREATE TABLE exams (id INTEGER PRIMARY KEY, exam VARCHAR, course VARCHAR, title VARCHAR, slot VARCHAR, date VARCHAR, reporting VARCHAR, start_time VARCHAR, end_time VARCHAR, venue VARCHAR, location VARCHAR, seat VARCHAR)");
+                "})();", obj -> {
+                    /*
+                        obj is in the form of a JSON string like {"Mid Term": {"course": "MAT1001", "date": "04-Jan-1976",...},...}
+                     */
+            String temp = obj.substring(1, obj.length() - 1);
+            if (obj.equals("null") || temp.equals("")) {
+                error();
+            } else if (temp.equals("nothing")) {
+                new Thread(() -> {
+                    try {
+                        myDatabase.execSQL("DROP TABLE IF EXISTS exams");
+                        myDatabase.execSQL("CREATE TABLE exams (id INTEGER PRIMARY KEY, exam VARCHAR, course VARCHAR, title VARCHAR, slot VARCHAR, date VARCHAR, reporting VARCHAR, start_time VARCHAR, end_time VARCHAR, venue VARCHAR, location VARCHAR, seat VARCHAR)");
 
-                                ((Activity) context).runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        updateProgress();
-                                        downloadMarks();
-                                    }
-                                });
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                                error();
-                            }
+                        ((Activity) context).runOnUiThread(() -> {
+                            updateProgress();
+                            downloadMarks();
+                        });
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        error();
+                    }
 
-                            sharedPreferences.edit().remove("newExams").apply();
-                            sharedPreferences.edit().remove("examsCount").apply();
-                        }
-                    }).start();
-                } else {
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                JSONObject myObj = new JSONObject(obj);
+                    sharedPreferences.edit().remove("newExams").apply();
+                    sharedPreferences.edit().remove("examsCount").apply();
+                }).start();
+            } else {
+                new Thread(() -> {
+                    try {
+                        JSONObject myObj = new JSONObject(obj);
 
-                                myDatabase.execSQL("DROP TABLE IF EXISTS exams");
-                                myDatabase.execSQL("CREATE TABLE exams (id INTEGER PRIMARY KEY, exam VARCHAR, course VARCHAR, title VARCHAR, slot VARCHAR, date VARCHAR, reporting VARCHAR, start_time VARCHAR, end_time VARCHAR, venue VARCHAR, location VARCHAR, seat VARCHAR)");
+                        myDatabase.execSQL("DROP TABLE IF EXISTS exams");
+                        myDatabase.execSQL("CREATE TABLE exams (id INTEGER PRIMARY KEY, exam VARCHAR, course VARCHAR, title VARCHAR, slot VARCHAR, date VARCHAR, reporting VARCHAR, start_time VARCHAR, end_time VARCHAR, venue VARCHAR, location VARCHAR, seat VARCHAR)");
 
-                                SimpleDateFormat hour24 = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
-                                SimpleDateFormat hour12 = new SimpleDateFormat("h:mm a", Locale.ENGLISH);
+                        SimpleDateFormat hour24 = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
+                        SimpleDateFormat hour12 = new SimpleDateFormat("h:mm a", Locale.ENGLISH);
 
-                                Iterator<?> keys = myObj.keys();
+                        Iterator<?> keys = myObj.keys();
 
                                 while (keys.hasNext()) {
                                     String exam = (String) keys.next();
@@ -2010,26 +1885,21 @@ public class VTOP {
                                     }
                                 }
 
-                                int objLength = myObj.length();
-                                if (objLength != sharedPreferences.getInt("examsCount", 0)) {
-                                    sharedPreferences.edit().putBoolean("newExams", true).apply();
-                                    sharedPreferences.edit().putInt("examsCount", objLength).apply();
-                                }
-
-                                ((Activity) context).runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        updateProgress();
-                                        downloadMarks();
-                                    }
-                                });
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                                error();
-                            }
+                        int objLength = myObj.length();
+                        if (objLength != sharedPreferences.getInt("examsCount", 0)) {
+                            sharedPreferences.edit().putBoolean("newExams", true).apply();
+                            sharedPreferences.edit().putInt("examsCount", objLength).apply();
                         }
-                    }).start();
-                }
+
+                        ((Activity) context).runOnUiThread(() -> {
+                            updateProgress();
+                            downloadMarks();
+                        });
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        error();
+                    }
+                }).start();
             }
         });
     }
@@ -2141,52 +2011,42 @@ public class VTOP {
                 "   }" +
                 "});" +
                 "return obj;" +
-                "})();", new ValueCallback<String>() {
-            @Override
-            public void onReceiveValue(final String obj) {
-                /*
-                    obj is in the form of a JSON string like {"0": {"course": "MAT1001", "score": "48",...},...}
-                 */
-                String temp = obj.substring(1, obj.length() - 1);
-                if (obj.equals("null") || temp.equals("")) {
-                    error();
-                } else if (temp.equals("nothing")) {
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                myDatabase.execSQL("DROP TABLE IF EXISTS marks");
-                                myDatabase.execSQL("CREATE TABLE marks (id INTEGER PRIMARY KEY, course VARCHAR, type VARCHAR, title VARCHAR, score VARCHAR, status VARCHAR, weightage VARCHAR, average VARCHAR, posted VARCHAR)");
+                "})();", obj -> {
+                    /*
+                        obj is in the form of a JSON string like {"0": {"course": "MAT1001", "score": "48",...},...}
+                     */
+            String temp = obj.substring(1, obj.length() - 1);
+            if (obj.equals("null") || temp.equals("")) {
+                error();
+            } else if (temp.equals("nothing")) {
+                new Thread(() -> {
+                    try {
+                        myDatabase.execSQL("DROP TABLE IF EXISTS marks");
+                        myDatabase.execSQL("CREATE TABLE marks (id INTEGER PRIMARY KEY, course VARCHAR, type VARCHAR, title VARCHAR, score VARCHAR, status VARCHAR, weightage VARCHAR, average VARCHAR, posted VARCHAR)");
 
-                                ((Activity) context).runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        updateProgress();
-                                        downloadGrades();
-                                    }
-                                });
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                                error();
-                            }
+                        ((Activity) context).runOnUiThread(() -> {
+                            updateProgress();
+                            downloadGrades();
+                        });
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        error();
+                    }
 
-                            sharedPreferences.edit().remove("newMarks").apply();
-                        }
-                    }).start();
-                } else {
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                JSONObject myObj = new JSONObject(obj);
+                    sharedPreferences.edit().remove("newMarks").apply();
+                }).start();
+            } else {
+                new Thread(() -> {
+                    try {
+                        JSONObject myObj = new JSONObject(obj);
 
-                                myDatabase.execSQL("CREATE TABLE IF NOT EXISTS marks (id INTEGER PRIMARY KEY, course VARCHAR, type VARCHAR, title VARCHAR, score VARCHAR, status VARCHAR, weightage VARCHAR, average VARCHAR, posted VARCHAR)");
-                                myDatabase.execSQL("DROP TABLE IF EXISTS marks_new");
-                                myDatabase.execSQL("CREATE TABLE marks_new (id INTEGER PRIMARY KEY, course VARCHAR, type VARCHAR, title VARCHAR, score VARCHAR, status VARCHAR, weightage VARCHAR, average VARCHAR, posted VARCHAR)");
+                        myDatabase.execSQL("CREATE TABLE IF NOT EXISTS marks (id INTEGER PRIMARY KEY, course VARCHAR, type VARCHAR, title VARCHAR, score VARCHAR, status VARCHAR, weightage VARCHAR, average VARCHAR, posted VARCHAR)");
+                        myDatabase.execSQL("DROP TABLE IF EXISTS marks_new");
+                        myDatabase.execSQL("CREATE TABLE marks_new (id INTEGER PRIMARY KEY, course VARCHAR, type VARCHAR, title VARCHAR, score VARCHAR, status VARCHAR, weightage VARCHAR, average VARCHAR, posted VARCHAR)");
 
-                                for (int i = 0; i < myObj.length(); ++i) {
-                                    JSONObject tempObj = new JSONObject(myObj.getString(Integer.toString(i)));
-                                    String course = tempObj.getString("course");
+                        for (int i = 0; i < myObj.length(); ++i) {
+                            JSONObject tempObj = new JSONObject(myObj.getString(Integer.toString(i)));
+                            String course = tempObj.getString("course");
                                     String type = tempObj.getString("type");
                                     String title = tempObj.getString("title").toUpperCase();
                                     String score = tempObj.getString("scored") + " / " + tempObj.getString("max");
@@ -2253,27 +2113,22 @@ public class VTOP {
                                     newMarks.put(id, true);
                                 }
 
-                                add.close();
+                        add.close();
 
-                                myDatabase.execSQL("DROP TABLE IF EXISTS marks");
-                                myDatabase.execSQL("ALTER TABLE marks_new RENAME TO marks");
+                        myDatabase.execSQL("DROP TABLE IF EXISTS marks");
+                        myDatabase.execSQL("ALTER TABLE marks_new RENAME TO marks");
 
-                                sharedPreferences.edit().putString("newMarks", newMarks.toString()).apply();
+                        sharedPreferences.edit().putString("newMarks", newMarks.toString()).apply();
 
-                                ((Activity) context).runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        updateProgress();
-                                        downloadGrades();
-                                    }
-                                });
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                                error();
-                            }
-                        }
-                    }).start();
-                }
+                        ((Activity) context).runOnUiThread(() -> {
+                            updateProgress();
+                            downloadGrades();
+                        });
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        error();
+                    }
+                }).start();
             }
         });
     }
@@ -2371,62 +2226,52 @@ public class VTOP {
                 "   }" +
                 "});" +
                 "return obj;" +
-                "})();", new ValueCallback<String>() {
-            @Override
-            public void onReceiveValue(final String obj) {
-                /*
-                    obj is in the form of a JSON string like {"0": {"course": "MAT1001", "type": "Embedded Theory",...},..., "gpa": "9.6"}
-                 */
-                final String temp = obj.substring(1, obj.length() - 1);
-                if (obj.equals("null") || temp.equals("")) {
-                    error();
-                } else if (temp.equals("nothing")) {
+                "})();", obj -> {
                     /*
-                        Dropping and recreating an empty table
+                        obj is in the form of a JSON string like {"0": {"course": "MAT1001", "type": "Embedded Theory",...},..., "gpa": "9.6"}
                      */
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                myDatabase.execSQL("DROP TABLE IF EXISTS grades");
-                                myDatabase.execSQL("CREATE TABLE grades (id INTEGER PRIMARY KEY, course VARCHAR, type VARCHAR, grade_type VARCHAR, total VARCHAR, grade VARCHAR)");
+            final String temp = obj.substring(1, obj.length() - 1);
+            if (obj.equals("null") || temp.equals("")) {
+                error();
+            } else if (temp.equals("nothing")) {
+                        /*
+                            Dropping and recreating an empty table
+                         */
+                new Thread(() -> {
+                    try {
+                        myDatabase.execSQL("DROP TABLE IF EXISTS grades");
+                        myDatabase.execSQL("CREATE TABLE grades (id INTEGER PRIMARY KEY, course VARCHAR, type VARCHAR, grade_type VARCHAR, total VARCHAR, grade VARCHAR)");
 
-                                ((Activity) context).runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        updateProgress();
-                                        downloadGradeHistory();
-                                    }
-                                });
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                                Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
-                                isOpened = false;
-                                reloadPage();
-                            }
+                        ((Activity) context).runOnUiThread(() -> {
+                            updateProgress();
+                            downloadGradeHistory();
+                        });
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
+                        isOpened = false;
+                        reloadPage();
+                    }
 
-                            sharedPreferences.edit().remove("newGrades").apply();
-                            sharedPreferences.edit().remove("gradesCount").apply();
-                            sharedPreferences.edit().remove("gpa").apply();
-                        }
-                    }).start();
-                } else {
-                    /*
-                        Dropping, recreating and adding grades
-                     */
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                myDatabase.execSQL("DROP TABLE IF EXISTS grades");
-                                myDatabase.execSQL("CREATE TABLE grades (id INTEGER PRIMARY KEY, course VARCHAR, type VARCHAR, grade_type VARCHAR, total VARCHAR, grade VARCHAR)");
+                    sharedPreferences.edit().remove("newGrades").apply();
+                    sharedPreferences.edit().remove("gradesCount").apply();
+                    sharedPreferences.edit().remove("gpa").apply();
+                }).start();
+            } else {
+                        /*
+                            Dropping, recreating and adding grades
+                         */
+                new Thread(() -> {
+                    try {
+                        myDatabase.execSQL("DROP TABLE IF EXISTS grades");
+                        myDatabase.execSQL("CREATE TABLE grades (id INTEGER PRIMARY KEY, course VARCHAR, type VARCHAR, grade_type VARCHAR, total VARCHAR, grade VARCHAR)");
 
-                                JSONObject myObj = new JSONObject(obj);
+                        JSONObject myObj = new JSONObject(obj);
 
-                                int i;
-                                for (i = 0; i < myObj.length() - 1; ++i) {
-                                    JSONObject tempObj = new JSONObject(myObj.getString(String.valueOf(i)));
-                                    String course = tempObj.getString("course");
+                        int i;
+                        for (i = 0; i < myObj.length() - 1; ++i) {
+                            JSONObject tempObj = new JSONObject(myObj.getString(String.valueOf(i)));
+                            String course = tempObj.getString("course");
                                     String type = tempObj.getString("type");
                                     String gradeType = tempObj.getString("gradetype");
                                     String total = tempObj.getString("total") + " / 100";
@@ -2439,30 +2284,25 @@ public class VTOP {
                                     }
 
                                     myDatabase.execSQL("INSERT INTO grades (course, type, grade_type, total, grade) VALUES('" + course + "', '" + type + "', '" + gradeType + "', '" + total + "', '" + grade + "')");
-                                }
-
-                                if (i != sharedPreferences.getInt("gradesCount", 0)) {
-                                    sharedPreferences.edit().putBoolean("newGrades", true).apply();
-                                    sharedPreferences.edit().putInt("gradesCount", i).apply();
-                                }
-
-                                String gpa = myObj.getString("gpa");
-                                sharedPreferences.edit().putString("gpa", gpa).apply();
-
-                                ((Activity) context).runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        updateProgress();
-                                        downloadGradeHistory();
-                                    }
-                                });
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                                error();
-                            }
                         }
-                    }).start();
-                }
+
+                        if (i != sharedPreferences.getInt("gradesCount", 0)) {
+                            sharedPreferences.edit().putBoolean("newGrades", true).apply();
+                            sharedPreferences.edit().putInt("gradesCount", i).apply();
+                        }
+
+                        String gpa = myObj.getString("gpa");
+                        sharedPreferences.edit().putString("gpa", gpa).apply();
+
+                        ((Activity) context).runOnUiThread(() -> {
+                            updateProgress();
+                            downloadGradeHistory();
+                        });
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        error();
+                    }
+                }).start();
             }
         });
     }
@@ -2608,29 +2448,25 @@ public class VTOP {
                 "   }" +
                 "});" +
                 "return obj;" +
-                "})();", new ValueCallback<String>() {
-            @Override
-            public void onReceiveValue(final String obj) {
-                /*
-                    obj is in the form of a JSON string like {"effective": "{course: "MAT1011", ...}", "curriculum": "{"type": "Program Core", ...}, ...}
-                 */
-                String temp = obj.substring(1, obj.length() - 1);
-                if (obj.equals("null") || temp.equals("")) {
-                    error();
-                } else {
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                JSONObject myObj = new JSONObject(obj);
+                "})();", obj -> {
+                    /*
+                        obj is in the form of a JSON string like {"effective": "{course: "MAT1011", ...}", "curriculum": "{"type": "Program Core", ...}, ...}
+                     */
+            String temp = obj.substring(1, obj.length() - 1);
+            if (obj.equals("null") || temp.equals("")) {
+                error();
+            } else {
+                new Thread(() -> {
+                    try {
+                        JSONObject myObj = new JSONObject(obj);
 
-                                myDatabase.execSQL("DROP TABLE IF EXISTS grades_effective");
-                                myDatabase.execSQL("CREATE TABLE grades_effective (id INTEGER PRIMARY KEY, course VARCHAR, title VARCHAR, credits VARCHAR, grade VARCHAR)");
+                        myDatabase.execSQL("DROP TABLE IF EXISTS grades_effective");
+                        myDatabase.execSQL("CREATE TABLE grades_effective (id INTEGER PRIMARY KEY, course VARCHAR, title VARCHAR, credits VARCHAR, grade VARCHAR)");
 
                                 /*
                                     Storing the effective grades
                                  */
-                                JSONObject effective = new JSONObject(myObj.getString("effective"));
+                        JSONObject effective = new JSONObject(myObj.getString("effective"));
 
                                 for (int i = 0; i < effective.length() / 4; ++i) {
                                     String course = effective.getString("course" + i);
@@ -2707,19 +2543,14 @@ public class VTOP {
                                     myDatabase.execSQL("INSERT INTO grades_summary (column1, column2) VALUES('" + key + "', '" + value + "')");
                                 }
 
-                                ((Activity) context).runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        updateProgress();
-                                        downloadMessages();
-                                    }
-                                });
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }).start();
-                }
+                        ((Activity) context).runOnUiThread(() -> {
+                            updateProgress();
+                            downloadMessages();
+                        });
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }).start();
             }
         });
     }
@@ -2767,60 +2598,50 @@ public class VTOP {
                 "   }" +
                 "});" +
                 "return obj;" +
-                "})();", new ValueCallback<String>() {
-            @Override
-            public void onReceiveValue(final String obj) {
-                /*
-                    obj is in the form of a JSON string like {"0": {"course": "MAT1001", "type": "Embedded Theory", "message": "All of you have failed!"}}
-                 */
-                final String temp = obj.substring(1, obj.length() - 1);
-                if (obj.equals("null") || temp.equals("{}")) {
-                    error();
-                } else if (temp.equals("nothing")) {
+                "})();", obj -> {
                     /*
-                        Dropping and recreating an empty table
+                        obj is in the form of a JSON string like {"0": {"course": "MAT1001", "type": "Embedded Theory", "message": "All of you have failed!"}}
                      */
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                myDatabase.execSQL("DROP TABLE IF EXISTS messages");
-                                myDatabase.execSQL("CREATE TABLE messages (id INTEGER PRIMARY KEY, course VARCHAR, type VARCHAR, message VARCHAR)");
+            final String temp = obj.substring(1, obj.length() - 1);
+            if (obj.equals("null") || temp.equals("{}")) {
+                error();
+            } else if (temp.equals("nothing")) {
+                        /*
+                            Dropping and recreating an empty table
+                         */
+                new Thread(() -> {
+                    try {
+                        myDatabase.execSQL("DROP TABLE IF EXISTS messages");
+                        myDatabase.execSQL("CREATE TABLE messages (id INTEGER PRIMARY KEY, course VARCHAR, type VARCHAR, message VARCHAR)");
 
-                                ((Activity) context).runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        updateProgress();
-                                        downloadProctorMessages();
-                                    }
-                                });
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                                Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
-                                isOpened = false;
-                                reloadPage();
-                            }
+                        ((Activity) context).runOnUiThread(() -> {
+                            updateProgress();
+                            downloadProctorMessages();
+                        });
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
+                        isOpened = false;
+                        reloadPage();
+                    }
 
-                            sharedPreferences.edit().remove("newMessages").apply();
-                        }
-                    }).start();
-                } else {
-                    /*
-                        Dropping, recreating and adding messages
-                     */
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                myDatabase.execSQL("CREATE TABLE IF NOT EXISTS messages (id INTEGER PRIMARY KEY, course VARCHAR, type VARCHAR, message VARCHAR)");
-                                myDatabase.execSQL("DROP TABLE IF EXISTS messages_new");
-                                myDatabase.execSQL("CREATE TABLE messages_new (id INTEGER PRIMARY KEY, course VARCHAR, type VARCHAR, message VARCHAR)");
+                    sharedPreferences.edit().remove("newMessages").apply();
+                }).start();
+            } else {
+                        /*
+                            Dropping, recreating and adding messages
+                         */
+                new Thread(() -> {
+                    try {
+                        myDatabase.execSQL("CREATE TABLE IF NOT EXISTS messages (id INTEGER PRIMARY KEY, course VARCHAR, type VARCHAR, message VARCHAR)");
+                        myDatabase.execSQL("DROP TABLE IF EXISTS messages_new");
+                        myDatabase.execSQL("CREATE TABLE messages_new (id INTEGER PRIMARY KEY, course VARCHAR, type VARCHAR, message VARCHAR)");
 
-                                JSONObject myObj = new JSONObject(obj);
+                        JSONObject myObj = new JSONObject(obj);
 
-                                for (int i = 0; i < myObj.length(); ++i) {
-                                    JSONObject tempObj = new JSONObject(myObj.getString(Integer.toString(i)));
-                                    String course = tempObj.getString("course");
+                        for (int i = 0; i < myObj.length(); ++i) {
+                            JSONObject tempObj = new JSONObject(myObj.getString(Integer.toString(i)));
+                            String course = tempObj.getString("course");
                                     String type = tempObj.getString("type");
                                     String message = tempObj.getString("message");
 
@@ -2832,29 +2653,24 @@ public class VTOP {
                                  */
                                 Cursor newSpotlight = myDatabase.rawQuery("SELECT id FROM messages_new WHERE message NOT IN (SELECT message FROM messages)", null);
 
-                                if (newSpotlight.getCount() > 0) {
-                                    sharedPreferences.edit().putBoolean("newMessages", true).apply();
-                                }
-
-                                newSpotlight.close();
-
-                                myDatabase.execSQL("DROP TABLE messages");
-                                myDatabase.execSQL("ALTER TABLE messages_new RENAME TO messages");
-
-                                ((Activity) context).runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        updateProgress();
-                                        downloadProctorMessages();
-                                    }
-                                });
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                                error();
-                            }
+                        if (newSpotlight.getCount() > 0) {
+                            sharedPreferences.edit().putBoolean("newMessages", true).apply();
                         }
-                    }).start();
-                }
+
+                        newSpotlight.close();
+
+                        myDatabase.execSQL("DROP TABLE messages");
+                        myDatabase.execSQL("ALTER TABLE messages_new RENAME TO messages");
+
+                        ((Activity) context).runOnUiThread(() -> {
+                            updateProgress();
+                            downloadProctorMessages();
+                        });
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        error();
+                    }
+                }).start();
             }
         });
     }
@@ -2891,72 +2707,57 @@ public class VTOP {
                 "   }" +
                 "});" +
                 "return successFlag;" +
-                "})();", new ValueCallback<String>() {
-            @Override
-            public void onReceiveValue(String value) {
-                /*
-                    obj is in the form of a JSON string that is yet to be created
-                 */
-                String temp = value.substring(1, value.length() - 1);
-                if (value.equals("true")) {
+                "})();", value -> {
                     /*
-                        Dropping and recreating an empty table
+                        obj is in the form of a JSON string that is yet to be created
                      */
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                myDatabase.execSQL("DROP TABLE IF EXISTS proctor_messages");
-                                myDatabase.execSQL("CREATE TABLE proctor_messages (id INTEGER PRIMARY KEY, time VARCHAR, message VARCHAR)");
+            String temp = value.substring(1, value.length() - 1);
+            if (value.equals("true")) {
+                        /*
+                            Dropping and recreating an empty table
+                         */
+                new Thread(() -> {
+                    try {
+                        myDatabase.execSQL("DROP TABLE IF EXISTS proctor_messages");
+                        myDatabase.execSQL("CREATE TABLE proctor_messages (id INTEGER PRIMARY KEY, time VARCHAR, message VARCHAR)");
 
-                                ((Activity) context).runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        updateProgress();
-                                        downloadSpotlight();
-                                    }
-                                });
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                                Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
-                                isOpened = false;
-                                reloadPage();
-                            }
+                        ((Activity) context).runOnUiThread(() -> {
+                            updateProgress();
+                            downloadSpotlight();
+                        });
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
+                        isOpened = false;
+                        reloadPage();
+                    }
 
-                            sharedPreferences.edit().remove("newProctorMessages").apply();
-                        }
-                    }).start();
-                } else if (temp.equals("new")) {
-                    /*
-                        Dropping, recreating and adding new proctor messages
-                     */
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                myDatabase.execSQL("DROP TABLE IF EXISTS proctor_messages");
-                                myDatabase.execSQL("CREATE TABLE proctor_messages (id INTEGER PRIMARY KEY, time VARCHAR, message VARCHAR)");
+                    sharedPreferences.edit().remove("newProctorMessages").apply();
+                }).start();
+            } else if (temp.equals("new")) {
+                        /*
+                            Dropping, recreating and adding new proctor messages
+                         */
+                new Thread(() -> {
+                    try {
+                        myDatabase.execSQL("DROP TABLE IF EXISTS proctor_messages");
+                        myDatabase.execSQL("CREATE TABLE proctor_messages (id INTEGER PRIMARY KEY, time VARCHAR, message VARCHAR)");
 
-                                myDatabase.execSQL("INSERT INTO proctor_messages (time, message) VALUES('null', 'null')"); //To be changed with the actual announcements
+                        myDatabase.execSQL("INSERT INTO proctor_messages (time, message) VALUES('null', 'null')"); //To be changed with the actual announcements
 
-                                ((Activity) context).runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        updateProgress();
-                                        downloadSpotlight();
-                                    }
-                                });
+                        ((Activity) context).runOnUiThread(() -> {
+                            updateProgress();
+                            downloadSpotlight();
+                        });
 
-                                sharedPreferences.edit().putBoolean("newProctorMessages", true).apply();
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                                error();
-                            }
-                        }
-                    }).start();
-                } else {
-                    error();
-                }
+                        sharedPreferences.edit().putBoolean("newProctorMessages", true).apply();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        error();
+                    }
+                }).start();
+            } else {
+                error();
             }
         });
     }
@@ -3021,58 +2822,48 @@ public class VTOP {
                 "   }" +
                 "});" +
                 "return obj;" +
-                "})();", new ValueCallback<String>() {
-            @Override
-            public void onReceiveValue(final String obj) {
-                /*
-                    obj is in the form of a JSON string like {"Academics": {"announcement": "In lieu of COVID-19, campus will remain shut for eternity.", "link": "null"},...}
-                 */
-                String temp = obj.substring(1, obj.length() - 1);
-                if (obj.equals("null") || temp.equals("")) {
-                    error();
-                } else if (temp.equals("nothing")) {
+                "})();", obj -> {
                     /*
-                        Dropping and recreating an empty table
+                        obj is in the form of a JSON string like {"Academics": {"announcement": "In lieu of COVID-19, campus will remain shut for eternity.", "link": "null"},...}
                      */
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                myDatabase.execSQL("DROP TABLE IF EXISTS spotlight");
-                                myDatabase.execSQL("CREATE TABLE spotlight (id INTEGER PRIMARY KEY, category VARCHAR, announcement VARCHAR, link VARCHAR)");
+            String temp = obj.substring(1, obj.length() - 1);
+            if (obj.equals("null") || temp.equals("")) {
+                error();
+            } else if (temp.equals("nothing")) {
+                        /*
+                            Dropping and recreating an empty table
+                         */
+                new Thread(() -> {
+                    try {
+                        myDatabase.execSQL("DROP TABLE IF EXISTS spotlight");
+                        myDatabase.execSQL("CREATE TABLE spotlight (id INTEGER PRIMARY KEY, category VARCHAR, announcement VARCHAR, link VARCHAR)");
 
-                                ((Activity) context).runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        updateProgress();
-                                        downloadReceipts();
-                                    }
-                                });
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                                error();
-                            }
+                        ((Activity) context).runOnUiThread(() -> {
+                            updateProgress();
+                            downloadReceipts();
+                        });
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        error();
+                    }
 
-                            sharedPreferences.edit().remove("newSpotlight").apply();
-                        }
-                    }).start();
-                } else {
-                    /*
-                        Dropping, recreating and adding announcements
-                     */
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                JSONObject myObj = new JSONObject(obj);
+                    sharedPreferences.edit().remove("newSpotlight").apply();
+                }).start();
+            } else {
+                        /*
+                            Dropping, recreating and adding announcements
+                         */
+                new Thread(() -> {
+                    try {
+                        JSONObject myObj = new JSONObject(obj);
 
-                                myDatabase.execSQL("CREATE TABLE IF NOT EXISTS spotlight (id INTEGER PRIMARY KEY, category VARCHAR, announcement VARCHAR, link VARCHAR)");
-                                myDatabase.execSQL("DROP TABLE IF EXISTS spotlight_new");
-                                myDatabase.execSQL("CREATE TABLE spotlight_new (id INTEGER PRIMARY KEY, category VARCHAR, announcement VARCHAR, link VARCHAR)");
+                        myDatabase.execSQL("CREATE TABLE IF NOT EXISTS spotlight (id INTEGER PRIMARY KEY, category VARCHAR, announcement VARCHAR, link VARCHAR)");
+                        myDatabase.execSQL("DROP TABLE IF EXISTS spotlight_new");
+                        myDatabase.execSQL("CREATE TABLE spotlight_new (id INTEGER PRIMARY KEY, category VARCHAR, announcement VARCHAR, link VARCHAR)");
 
-                                Iterator<?> keys = myObj.keys();
+                        Iterator<?> keys = myObj.keys();
 
-                                while (keys.hasNext()) {
+                        while (keys.hasNext()) {
                                     String category = (String) keys.next();
                                     JSONObject tempObj = new JSONObject(myObj.getString(category));
 
@@ -3139,27 +2930,22 @@ public class VTOP {
                                     newSpotlight.put(id, true);
                                 }
 
-                                add.close();
+                        add.close();
 
-                                myDatabase.execSQL("DROP TABLE spotlight");
-                                myDatabase.execSQL("ALTER TABLE spotlight_new RENAME TO spotlight");
+                        myDatabase.execSQL("DROP TABLE spotlight");
+                        myDatabase.execSQL("ALTER TABLE spotlight_new RENAME TO spotlight");
 
-                                sharedPreferences.edit().putString("newSpotlight", newSpotlight.toString()).apply();
+                        sharedPreferences.edit().putString("newSpotlight", newSpotlight.toString()).apply();
 
-                                ((Activity) context).runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        updateProgress();
-                                        downloadReceipts();
-                                    }
-                                });
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                                error();
-                            }
-                        }
-                    }).start();
-                }
+                        ((Activity) context).runOnUiThread(() -> {
+                            updateProgress();
+                            downloadReceipts();
+                        });
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        error();
+                    }
+                }).start();
             }
         });
     }
@@ -3224,54 +3010,45 @@ public class VTOP {
                 "   }" +
                 "});" +
                 "return obj;" +
-                "})();", new ValueCallback<String>() {
-            @Override
-            public void onReceiveValue(final String obj) {
-                /*
-                    obj is in the form of a JSON string like {"0": {"amount": "1000000", "date": "04-JAN-1976", "receipt": "17085"},...}
-                 */
-                String temp = obj.substring(1, obj.length() - 1);
-                if (obj.equals("null") || temp.equals("")) {
-                    error();
-                } else {
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                JSONObject myObj = new JSONObject(obj);
+                "})();", obj -> {
+                    /*
+                        obj is in the form of a JSON string like {"0": {"amount": "1000000", "date": "04-JAN-1976", "receipt": "17085"},...}
+                     */
+            String temp = obj.substring(1, obj.length() - 1);
+            if (obj.equals("null") || temp.equals("")) {
+                error();
+            } else {
+                new Thread(() -> {
+                    try {
+                        JSONObject myObj = new JSONObject(obj);
 
-                                myDatabase.execSQL("DROP TABLE IF EXISTS receipts");
-                                myDatabase.execSQL("CREATE TABLE receipts (id INTEGER PRIMARY KEY, receipt VARCHAR, date VARCHAR, amount VARCHAR)");
+                        myDatabase.execSQL("DROP TABLE IF EXISTS receipts");
+                        myDatabase.execSQL("CREATE TABLE receipts (id INTEGER PRIMARY KEY, receipt VARCHAR, date VARCHAR, amount VARCHAR)");
 
-                                int i;
-                                for (i = 0; i < myObj.length(); ++i) {
-                                    JSONObject tempObj = new JSONObject(myObj.getString(Integer.toString(i)));
-                                    String receipt = tempObj.getString("receipt");
+                        int i;
+                        for (i = 0; i < myObj.length(); ++i) {
+                            JSONObject tempObj = new JSONObject(myObj.getString(Integer.toString(i)));
+                            String receipt = tempObj.getString("receipt");
                                     String date = tempObj.getString("date").toUpperCase();
-                                    String amount = tempObj.getString("amount");
+                            String amount = tempObj.getString("amount");
 
-                                    myDatabase.execSQL("INSERT INTO receipts (receipt, date, amount) VALUES('" + receipt + "', '" + date + "', '" + amount + "')");
-                                }
-
-                                if (i != sharedPreferences.getInt("receiptsCount", 0)) {
-                                    sharedPreferences.edit().putBoolean("newReceipts", true).apply();
-                                    sharedPreferences.edit().putInt("receiptsCount", i).apply();
-                                }
-
-                                ((Activity) context).runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        updateProgress();
-                                        checkDues();
-                                    }
-                                });
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                                error();
-                            }
+                            myDatabase.execSQL("INSERT INTO receipts (receipt, date, amount) VALUES('" + receipt + "', '" + date + "', '" + amount + "')");
                         }
-                    }).start();
-                }
+
+                        if (i != sharedPreferences.getInt("receiptsCount", 0)) {
+                            sharedPreferences.edit().putBoolean("newReceipts", true).apply();
+                            sharedPreferences.edit().putInt("receiptsCount", i).apply();
+                        }
+
+                        ((Activity) context).runOnUiThread(() -> {
+                            updateProgress();
+                            checkDues();
+                        });
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        error();
+                    }
+                }).start();
             }
         });
     }
@@ -3302,17 +3079,14 @@ public class VTOP {
                 "   }" +
                 "});" +
                 "return duePayments;" +
-                "})();", new ValueCallback<String>() {
-            @Override
-            public void onReceiveValue(final String duePayments) {
-                if (duePayments.equals("true")) {
-                    sharedPreferences.edit().putBoolean("duePayments", true).apply();
-                } else {
-                    sharedPreferences.edit().remove("duePayments").apply();
-                }
-
-                finishUp();
+                "})();", duePayments -> {
+            if (duePayments.equals("true")) {
+                sharedPreferences.edit().putBoolean("duePayments", true).apply();
+            } else {
+                sharedPreferences.edit().remove("duePayments").apply();
             }
+
+            finishUp();
         });
     }
 
@@ -3352,12 +3126,9 @@ public class VTOP {
             return;
         }
 
-        ((Activity) context).runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
-                reloadPage();
-            }
+        ((Activity) context).runOnUiThread(() -> {
+            Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
+            reloadPage();
         });
     }
 

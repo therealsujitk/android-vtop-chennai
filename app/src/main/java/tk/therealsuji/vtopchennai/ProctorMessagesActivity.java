@@ -27,42 +27,31 @@ public class ProctorMessagesActivity extends AppCompatActivity {
 
         final Context context = this;
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                SQLiteDatabase myDatabase = context.openOrCreateDatabase("vtop", Context.MODE_PRIVATE, null);
+        new Thread(() -> {
+            SQLiteDatabase myDatabase = context.openOrCreateDatabase("vtop", Context.MODE_PRIVATE, null);
 
-                myDatabase.execSQL("CREATE TABLE IF NOT EXISTS proctor_messages (id INTEGER PRIMARY KEY, time VARCHAR, message VARCHAR)");
-                Cursor c = myDatabase.rawQuery("SELECT * FROM proctor_messages", null);
+            myDatabase.execSQL("CREATE TABLE IF NOT EXISTS proctor_messages (id INTEGER PRIMARY KEY, time VARCHAR, message VARCHAR)");
+            Cursor c = myDatabase.rawQuery("SELECT * FROM proctor_messages", null);
 
-                int timeIndex = c.getColumnIndex("time");
-                c.moveToFirst();
+            int timeIndex = c.getColumnIndex("time");
+            c.moveToFirst();
 
-                for (int i = 0; i < c.getCount(); ++i, c.moveToNext()) {
-                    if (c.getString(timeIndex).equals("null")) {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                findViewById(R.id.noData).setVisibility(View.INVISIBLE);
-                                findViewById(R.id.newData).setVisibility(View.VISIBLE);
-                            }
-                        });
-                    }
+            for (int i = 0; i < c.getCount(); ++i, c.moveToNext()) {
+                if (c.getString(timeIndex).equals("null")) {
+                    runOnUiThread(() -> {
+                        findViewById(R.id.noData).setVisibility(View.INVISIBLE);
+                        findViewById(R.id.newData).setVisibility(View.VISIBLE);
+                    });
                 }
-
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        findViewById(R.id.loading).animate().alpha(0);
-                    }
-                });
-
-                c.close();
-                myDatabase.close();
-
-                SharedPreferences sharedPreferences = context.getSharedPreferences("tk.therealsuji.vtopchennai", Context.MODE_PRIVATE);
-                sharedPreferences.edit().remove("newProctorMessages").apply();
             }
+
+            runOnUiThread(() -> findViewById(R.id.loading).animate().alpha(0));
+
+            c.close();
+            myDatabase.close();
+
+            SharedPreferences sharedPreferences = context.getSharedPreferences("tk.therealsuji.vtopchennai", Context.MODE_PRIVATE);
+            sharedPreferences.edit().remove("newProctorMessages").apply();
         }).start();
 
         TextView myLink = findViewById(R.id.newData);

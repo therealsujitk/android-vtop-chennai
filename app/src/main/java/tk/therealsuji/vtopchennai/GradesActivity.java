@@ -32,83 +32,60 @@ public class GradesActivity extends AppCompatActivity {
         final Context context = this;
         final LinearLayout grades = findViewById(R.id.grades);
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                SQLiteDatabase myDatabase = context.openOrCreateDatabase("vtop", Context.MODE_PRIVATE, null);
+        new Thread(() -> {
+            SQLiteDatabase myDatabase = context.openOrCreateDatabase("vtop", Context.MODE_PRIVATE, null);
 
-                myDatabase.execSQL("CREATE TABLE IF NOT EXISTS grades (id INTEGER PRIMARY KEY, course VARCHAR, type VARCHAR, grade_type VARCHAR, total VARCHAR, grade VARCHAR)");
-                Cursor c = myDatabase.rawQuery("SELECT * FROM grades", null);
+            myDatabase.execSQL("CREATE TABLE IF NOT EXISTS grades (id INTEGER PRIMARY KEY, course VARCHAR, type VARCHAR, grade_type VARCHAR, total VARCHAR, grade VARCHAR)");
+            Cursor c = myDatabase.rawQuery("SELECT * FROM grades", null);
 
-                int courseIndex = c.getColumnIndex("course");
-                int typeIndex = c.getColumnIndex("type");
-                int gradeTypeIndex = c.getColumnIndex("grade_type");
-                int totalIndex = c.getColumnIndex("total");
-                int gradeIndex = c.getColumnIndex("grade");
-                c.moveToFirst();
+            int courseIndex = c.getColumnIndex("course");
+            int typeIndex = c.getColumnIndex("type");
+            int gradeTypeIndex = c.getColumnIndex("grade_type");
+            int totalIndex = c.getColumnIndex("total");
+            int gradeIndex = c.getColumnIndex("grade");
+            c.moveToFirst();
 
-                CardGenerator myGrade = new CardGenerator(context, CardGenerator.CARD_GRADE);
+            CardGenerator myGrade = new CardGenerator(context, CardGenerator.CARD_GRADE);
 
-                int i;
-                for (i = 0; i < c.getCount(); ++i, c.moveToNext()) {
-                    if (terminateThread) {
-                        return;
-                    }
-
-                    if (i == 0) {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                findViewById(R.id.noData).setVisibility(View.INVISIBLE);
-                            }
-                        });
-                    }
-
-                    String course = c.getString(courseIndex);
-                    String type = c.getString(typeIndex);
-                    String gradeType = c.getString(gradeTypeIndex);
-                    String total = c.getString(totalIndex);
-                    String grade = c.getString(gradeIndex);
-
-                    final LinearLayout card = myGrade.generateCard(course, type, gradeType, total, grade);
-                    card.setAlpha(0);
-                    card.animate().alpha(1);
-
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            grades.addView(card);
-                        }
-                    });
+            int i;
+            for (i = 0; i < c.getCount(); ++i, c.moveToNext()) {
+                if (terminateThread) {
+                    return;
                 }
 
-                SharedPreferences sharedPreferences = context.getSharedPreferences("tk.therealsuji.vtopchennai", Context.MODE_PRIVATE);
-                if (i > 0) {
-                    String gpa = sharedPreferences.getString("gpa", "0.0");
-                    final LinearLayout card = new CardGenerator(context, CardGenerator.CARD_GPA).generateCard("Your GPA", gpa);
-                    card.setAlpha(0);
-                    card.animate().alpha(1);
-
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            grades.addView(card);
-                        }
-                    });
+                if (i == 0) {
+                    runOnUiThread(() -> findViewById(R.id.noData).setVisibility(View.INVISIBLE));
                 }
 
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        findViewById(R.id.loading).animate().alpha(0);
-                    }
-                });
+                String course = c.getString(courseIndex);
+                String type = c.getString(typeIndex);
+                String gradeType = c.getString(gradeTypeIndex);
+                String total = c.getString(totalIndex);
+                String grade = c.getString(gradeIndex);
 
-                c.close();
-                myDatabase.close();
+                final LinearLayout card = myGrade.generateCard(course, type, gradeType, total, grade);
+                card.setAlpha(0);
+                card.animate().alpha(1);
 
-                sharedPreferences.edit().remove("newGrades").apply();
+                runOnUiThread(() -> grades.addView(card));
             }
+
+            SharedPreferences sharedPreferences = context.getSharedPreferences("tk.therealsuji.vtopchennai", Context.MODE_PRIVATE);
+            if (i > 0) {
+                String gpa = sharedPreferences.getString("gpa", "0.0");
+                final LinearLayout card = new CardGenerator(context, CardGenerator.CARD_GPA).generateCard("Your GPA", gpa);
+                card.setAlpha(0);
+                card.animate().alpha(1);
+
+                runOnUiThread(() -> grades.addView(card));
+            }
+
+            runOnUiThread(() -> findViewById(R.id.loading).animate().alpha(0));
+
+            c.close();
+            myDatabase.close();
+
+            sharedPreferences.edit().remove("newGrades").apply();
         }).start();
     }
 

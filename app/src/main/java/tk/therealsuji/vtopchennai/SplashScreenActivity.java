@@ -43,31 +43,28 @@ public class SplashScreenActivity extends AppCompatActivity {
         /*
             Get the latest version code
          */
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                StringBuilder sb = new StringBuilder();
-                try {
-                    URL url = new URL("https://vtopchennai.therealsuji.tk/latest");
-                    HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
-                    InputStream in = httpURLConnection.getInputStream();
-                    InputStreamReader reader = new InputStreamReader(in);
-                    int data = reader.read();
+        new Thread(() -> {
+            StringBuilder sb = new StringBuilder();
+            try {
+                URL url = new URL("https://vtopchennai.therealsuji.tk/latest");
+                HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+                InputStream in = httpURLConnection.getInputStream();
+                InputStreamReader reader = new InputStreamReader(in);
+                int data = reader.read();
 
-                    while (data != -1) {
-                        char current = (char) data;
-                        sb.append(current);
-                        data = reader.read();
-                    }
-
-                    String result = sb.toString();
-                    if (result.startsWith("<span")) {
-                        int latest = Integer.parseInt(result.substring(27, result.length() - 7));
-                        sharedPreferences.edit().putInt("latest", latest).apply();
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
+                while (data != -1) {
+                    char current = (char) data;
+                    sb.append(current);
+                    data = reader.read();
                 }
+
+                String result = sb.toString();
+                if (result.startsWith("<span")) {
+                    int latest = Integer.parseInt(result.substring(27, result.length() - 7));
+                    sharedPreferences.edit().putInt("latest", latest).apply();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }).start();
 

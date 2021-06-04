@@ -90,185 +90,156 @@ public class MarksActivity extends AppCompatActivity {
         buttons.clear();
         markViews.clear();
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                SQLiteDatabase myDatabase = context.openOrCreateDatabase("vtop", Context.MODE_PRIVATE, null);
+        new Thread(() -> {
+            SQLiteDatabase myDatabase = context.openOrCreateDatabase("vtop", Context.MODE_PRIVATE, null);
 
-                myDatabase.execSQL("CREATE TABLE IF NOT EXISTS marks (id INT(3) PRIMARY KEY, course VARCHAR, type VARCHAR, title VARCHAR, score VARCHAR, status VARCHAR, weightage VARCHAR, average VARCHAR, posted VARCHAR)");
-                Cursor c = myDatabase.rawQuery("SELECT course FROM marks GROUP BY course", null);
+            myDatabase.execSQL("CREATE TABLE IF NOT EXISTS marks (id INT(3) PRIMARY KEY, course VARCHAR, type VARCHAR, title VARCHAR, score VARCHAR, status VARCHAR, weightage VARCHAR, average VARCHAR, posted VARCHAR)");
+            Cursor c = myDatabase.rawQuery("SELECT course FROM marks GROUP BY course", null);
 
-                int courseIndex = c.getColumnIndex("course");
-                c.moveToFirst();
+            int courseIndex = c.getColumnIndex("course");
+            c.moveToFirst();
 
-                LayoutGenerator myLayout = new LayoutGenerator(context);
-                ButtonGenerator myButton = new ButtonGenerator(context);
-                CardGenerator myMark = new CardGenerator(context, CardGenerator.CARD_MARK);
+            LayoutGenerator myLayout = new LayoutGenerator(context);
+            ButtonGenerator myButton = new ButtonGenerator(context);
+            CardGenerator myMark = new CardGenerator(context, CardGenerator.CARD_MARK);
 
-                NotificationDotGenerator myNotification = new NotificationDotGenerator(context);
+            NotificationDotGenerator myNotification = new NotificationDotGenerator(context);
 
-                for (int i = 0; i < c.getCount(); ++i, c.moveToNext()) {
+            for (int i = 0; i < c.getCount(); ++i, c.moveToNext()) {
+                if (terminateThread) {
+                    return;
+                }
+
+                if (i == 0) {
+                    runOnUiThread(() -> findViewById(R.id.noData).setVisibility(View.GONE));
+                }
+
+                String course = c.getString(courseIndex);
+
+                /*
+                    Creating a the mark view
+                 */
+                final LinearLayout markView = myLayout.generateLayout();
+
+                markViews.add(markView);    //Storing the view
+
+                Cursor s = myDatabase.rawQuery("SELECT * FROM marks WHERE course = '" + course + "' ORDER BY type DESC, title", null);
+
+                int idIndex = s.getColumnIndex("id");
+                int titleIndex = s.getColumnIndex("title");
+                int typeIndex = s.getColumnIndex("type");
+                int scoreIndex = s.getColumnIndex("score");
+                int statusIndex = s.getColumnIndex("status");
+                int weightageIndex = s.getColumnIndex("weightage");
+                int averageIndex = s.getColumnIndex("average");
+
+                s.moveToFirst();
+
+                final ArrayList<String> readMarks = new ArrayList<>();
+
+                for (int j = 0; j < s.getCount(); ++j, s.moveToNext()) {
                     if (terminateThread) {
                         return;
                     }
 
-                    if (i == 0) {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                findViewById(R.id.noData).setVisibility(View.GONE);
-                            }
-                        });
-                    }
+                    String title = s.getString(titleIndex);
+                    String type = s.getString(typeIndex);
+                    String score = s.getString(scoreIndex);
+                    String weightage = s.getString(weightageIndex);
+                    String average = s.getString(averageIndex);
+                    String status = s.getString(statusIndex);
 
-                    String course = c.getString(courseIndex);
+                    final LinearLayout card = myMark.generateCard(title, type, score, weightage, average, status);
 
                     /*
-                        Creating a the mark view
+                        Adding the card / container to the view
                      */
-                    final LinearLayout markView = myLayout.generateLayout();
+                    String id = s.getString(idIndex);
+                    if (newMarks.has(id)) {
+                        RelativeLayout container = myNotification.generateNotificationContainer();
+                        container.addView(card);
 
-                    markViews.add(markView);    //Storing the view
-
-                    Cursor s = myDatabase.rawQuery("SELECT * FROM marks WHERE course = '" + course + "' ORDER BY type DESC, title", null);
-
-                    int idIndex = s.getColumnIndex("id");
-                    int titleIndex = s.getColumnIndex("title");
-                    int typeIndex = s.getColumnIndex("type");
-                    int scoreIndex = s.getColumnIndex("score");
-                    int statusIndex = s.getColumnIndex("status");
-                    int weightageIndex = s.getColumnIndex("weightage");
-                    int averageIndex = s.getColumnIndex("average");
-
-                    s.moveToFirst();
-
-                    final ArrayList<String> readMarks = new ArrayList<>();
-
-                    for (int j = 0; j < s.getCount(); ++j, s.moveToNext()) {
-                        if (terminateThread) {
-                            return;
-                        }
-
-                        String title = s.getString(titleIndex);
-                        String type = s.getString(typeIndex);
-                        String score = s.getString(scoreIndex);
-                        String weightage = s.getString(weightageIndex);
-                        String average = s.getString(averageIndex);
-                        String status = s.getString(statusIndex);
-
-                        final LinearLayout card = myMark.generateCard(title, type, score, weightage, average, status);
-
-                        /*
-                            Adding the card / container to the view
-                         */
-                        String id = s.getString(idIndex);
-                        if (newMarks.has(id)) {
-                            RelativeLayout container = myNotification.generateNotificationContainer();
-                            container.addView(card);
-
-                            int marginStart = (int) (screenWidth - 30 * pixelDensity);
-                            ImageView notification = myNotification.generateNotificationDot(marginStart, NotificationDotGenerator.NOTIFICATION_DEFAULT);
-                            notification.setPadding(0, (int) (5 * pixelDensity), 0, 0);
-                            container.addView(notification);
-
-                            markView.addView(container);
-                            readMarks.add(id);
-                        } else {
-                            markView.addView(card);
-                        }
-                    }
-
-                    /*
-                        Creating the course button
-                     */
-                    final TextView markButton = myButton.generateButton(course);
-                    if (i == 0) {
-                        markButton.setBackground(ContextCompat.getDrawable(context, R.drawable.button_secondary_selected));
-
-                        for (int j = 0; j < readMarks.size(); ++j) {
-                            String id = readMarks.get(j);
-                            if (newMarks.has(id)) {
-                                newMarks.remove(id);
-                            }
-                        }
-
-                        sharedPreferences.edit().putString("newMarks", newMarks.toString()).apply();
-                    }
-                    markButton.setTag(i);
-                    markButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            setMarks(markButton);
-
-                            for (int i = 0; i < readMarks.size(); ++i) {
-                                String id = readMarks.get(i);
-                                if (newMarks.has(id)) {
-                                    newMarks.remove(id);
-                                }
-                            }
-
-                            sharedPreferences.edit().putString("newMarks", newMarks.toString()).apply();
-                        }
-                    });
-                    markButton.setAlpha(0);
-                    markButton.animate().alpha(1);
-
-                    buttons.add(markButton);    //Storing the button
-
-                    /*
-                        Adding the button to the HorizontalScrollView
-                     */
-                    if (readMarks.isEmpty()) {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                markButtons.addView(markButton);
-                            }
-                        });
-                    } else {
-                        final RelativeLayout container = myNotification.generateNotificationContainer();
-                        container.addView(markButton);
-
-                        final ImageView notification = myNotification.generateNotificationDot((int) (3 * pixelDensity), NotificationDotGenerator.NOTIFICATION_DEFAULT);
-                        notification.setPadding(0, (int) (20 * pixelDensity), 0, 0);
+                        int marginStart = (int) (screenWidth - 30 * pixelDensity);
+                        ImageView notification = myNotification.generateNotificationDot(marginStart, NotificationDotGenerator.NOTIFICATION_DEFAULT);
+                        notification.setPadding(0, (int) (5 * pixelDensity), 0, 0);
                         container.addView(notification);
 
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                markButtons.addView(container);
-                                notification.animate().scaleX(1).scaleY(1);
-                            }
-                        });
+                        markView.addView(container);
+                        readMarks.add(id);
+                    } else {
+                        markView.addView(card);
                     }
-
-                    if (i == index) {
-                        markView.setAlpha(0);
-                        markView.animate().alpha(1);
-                    }
-
-                    if (i == 0) {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                marks.addView(markView);
-                            }
-                        });
-                    }
-
-                    s.close();
                 }
 
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        findViewById(R.id.loading).animate().alpha(0);
-                    }
-                });
+                /*
+                    Creating the course button
+                 */
+                final TextView markButton = myButton.generateButton(course);
+                if (i == 0) {
+                    markButton.setBackground(ContextCompat.getDrawable(context, R.drawable.button_secondary_selected));
 
-                c.close();
-                myDatabase.close();
+                    for (int j = 0; j < readMarks.size(); ++j) {
+                        String id = readMarks.get(j);
+                        if (newMarks.has(id)) {
+                            newMarks.remove(id);
+                        }
+                    }
+
+                    sharedPreferences.edit().putString("newMarks", newMarks.toString()).apply();
+                }
+                markButton.setTag(i);
+                markButton.setOnClickListener(v -> {
+                    setMarks(markButton);
+
+                    for (int i1 = 0; i1 < readMarks.size(); ++i1) {
+                        String id = readMarks.get(i1);
+                        if (newMarks.has(id)) {
+                            newMarks.remove(id);
+                        }
+                    }
+
+                    sharedPreferences.edit().putString("newMarks", newMarks.toString()).apply();
+                });
+                markButton.setAlpha(0);
+                markButton.animate().alpha(1);
+
+                buttons.add(markButton);    //Storing the button
+
+                /*
+                    Adding the button to the HorizontalScrollView
+                 */
+                if (readMarks.isEmpty()) {
+                    runOnUiThread(() -> markButtons.addView(markButton));
+                } else {
+                    final RelativeLayout container = myNotification.generateNotificationContainer();
+                    container.addView(markButton);
+
+                    final ImageView notification = myNotification.generateNotificationDot((int) (3 * pixelDensity), NotificationDotGenerator.NOTIFICATION_DEFAULT);
+                    notification.setPadding(0, (int) (20 * pixelDensity), 0, 0);
+                    container.addView(notification);
+
+                    runOnUiThread(() -> {
+                        markButtons.addView(container);
+                        notification.animate().scaleX(1).scaleY(1);
+                    });
+                }
+
+                if (i == index) {
+                    markView.setAlpha(0);
+                    markView.animate().alpha(1);
+                }
+
+                if (i == 0) {
+                    runOnUiThread(() -> marks.addView(markView));
+                }
+
+                s.close();
             }
+
+            runOnUiThread(() -> findViewById(R.id.loading).animate().alpha(0));
+
+            c.close();
+            myDatabase.close();
         }).start();
     }
 
@@ -293,185 +264,156 @@ public class MarksActivity extends AppCompatActivity {
         buttons.clear();
         markViews.clear();
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                SQLiteDatabase myDatabase = context.openOrCreateDatabase("vtop", Context.MODE_PRIVATE, null);
+        new Thread(() -> {
+            SQLiteDatabase myDatabase = context.openOrCreateDatabase("vtop", Context.MODE_PRIVATE, null);
 
-                myDatabase.execSQL("CREATE TABLE IF NOT EXISTS marks (id INT(3) PRIMARY KEY, course VARCHAR, type VARCHAR, title VARCHAR, score VARCHAR, status VARCHAR, weightage VARCHAR, average VARCHAR, posted VARCHAR)");
-                Cursor c = myDatabase.rawQuery("SELECT title FROM marks GROUP BY title", null);
+            myDatabase.execSQL("CREATE TABLE IF NOT EXISTS marks (id INT(3) PRIMARY KEY, course VARCHAR, type VARCHAR, title VARCHAR, score VARCHAR, status VARCHAR, weightage VARCHAR, average VARCHAR, posted VARCHAR)");
+            Cursor c = myDatabase.rawQuery("SELECT title FROM marks GROUP BY title", null);
 
-                int titleIndex = c.getColumnIndex("title");
-                c.moveToFirst();
+            int titleIndex = c.getColumnIndex("title");
+            c.moveToFirst();
 
-                LayoutGenerator myLayout = new LayoutGenerator(context);
-                ButtonGenerator myButton = new ButtonGenerator(context);
-                CardGenerator myMark = new CardGenerator(context, CardGenerator.CARD_MARK);
+            LayoutGenerator myLayout = new LayoutGenerator(context);
+            ButtonGenerator myButton = new ButtonGenerator(context);
+            CardGenerator myMark = new CardGenerator(context, CardGenerator.CARD_MARK);
 
-                NotificationDotGenerator myNotification = new NotificationDotGenerator(context);
+            NotificationDotGenerator myNotification = new NotificationDotGenerator(context);
 
-                for (int i = 0; i < c.getCount(); ++i, c.moveToNext()) {
+            for (int i = 0; i < c.getCount(); ++i, c.moveToNext()) {
+                if (terminateThread) {
+                    return;
+                }
+
+                if (i == 0) {
+                    runOnUiThread(() -> findViewById(R.id.noData).setVisibility(View.GONE));
+                }
+
+                String markTitle = c.getString(titleIndex);
+
+                /*
+                    Creating a the mark view
+                 */
+                final LinearLayout markView = myLayout.generateLayout();
+
+                markViews.add(markView);    //Storing the view
+
+                Cursor s = myDatabase.rawQuery("SELECT * FROM marks WHERE title = '" + markTitle + "' ORDER BY course, type DESC", null);
+
+                int idIndex = s.getColumnIndex("id");
+                int courseIndex = s.getColumnIndex("course");
+                int typeIndex = s.getColumnIndex("type");
+                int scoreIndex = s.getColumnIndex("score");
+                int statusIndex = s.getColumnIndex("status");
+                int weightageIndex = s.getColumnIndex("weightage");
+                int averageIndex = s.getColumnIndex("average");
+
+                s.moveToFirst();
+
+                final ArrayList<String> readMarks = new ArrayList<>();
+
+                for (int j = 0; j < s.getCount(); ++j, s.moveToNext()) {
                     if (terminateThread) {
                         return;
                     }
 
-                    if (i == 0) {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                findViewById(R.id.noData).setVisibility(View.GONE);
-                            }
-                        });
-                    }
+                    String course = s.getString(courseIndex);
+                    String type = s.getString(typeIndex);
+                    String score = s.getString(scoreIndex);
+                    String weightage = s.getString(weightageIndex);
+                    String average = s.getString(averageIndex);
+                    String status = s.getString(statusIndex);
 
-                    String markTitle = c.getString(titleIndex);
+                    final LinearLayout card = myMark.generateCard(course, type, score, weightage, average, status);
 
                     /*
-                        Creating a the mark view
+                        Adding the card / container to the view
                      */
-                    final LinearLayout markView = myLayout.generateLayout();
+                    String id = s.getString(idIndex);
+                    if (newMarks.has(id)) {
+                        RelativeLayout container = myNotification.generateNotificationContainer();
+                        container.addView(card);
 
-                    markViews.add(markView);    //Storing the view
-
-                    Cursor s = myDatabase.rawQuery("SELECT * FROM marks WHERE title = '" + markTitle + "' ORDER BY course, type DESC", null);
-
-                    int idIndex = s.getColumnIndex("id");
-                    int courseIndex = s.getColumnIndex("course");
-                    int typeIndex = s.getColumnIndex("type");
-                    int scoreIndex = s.getColumnIndex("score");
-                    int statusIndex = s.getColumnIndex("status");
-                    int weightageIndex = s.getColumnIndex("weightage");
-                    int averageIndex = s.getColumnIndex("average");
-
-                    s.moveToFirst();
-
-                    final ArrayList<String> readMarks = new ArrayList<>();
-
-                    for (int j = 0; j < s.getCount(); ++j, s.moveToNext()) {
-                        if (terminateThread) {
-                            return;
-                        }
-
-                        String course = s.getString(courseIndex);
-                        String type = s.getString(typeIndex);
-                        String score = s.getString(scoreIndex);
-                        String weightage = s.getString(weightageIndex);
-                        String average = s.getString(averageIndex);
-                        String status = s.getString(statusIndex);
-
-                        final LinearLayout card = myMark.generateCard(course, type, score, weightage, average, status);
-
-                        /*
-                            Adding the card / container to the view
-                         */
-                        String id = s.getString(idIndex);
-                        if (newMarks.has(id)) {
-                            RelativeLayout container = myNotification.generateNotificationContainer();
-                            container.addView(card);
-
-                            int marginStart = (int) (screenWidth - 30 * pixelDensity);
-                            ImageView notification = myNotification.generateNotificationDot(marginStart, NotificationDotGenerator.NOTIFICATION_DEFAULT);
-                            notification.setPadding(0, (int) (5 * pixelDensity), 0, 0);
-                            container.addView(notification);
-
-                            markView.addView(container);
-                            readMarks.add(id);
-                        } else {
-                            markView.addView(card);
-                        }
-                    }
-
-                    /*
-                        Creating the markTitle button
-                     */
-                    final TextView markButton = myButton.generateButton(markTitle);
-                    if (i == 0) {
-                        markButton.setBackground(ContextCompat.getDrawable(context, R.drawable.button_secondary_selected));
-
-                        for (int j = 0; j < readMarks.size(); ++j) {
-                            String id = readMarks.get(j);
-                            if (newMarks.has(id)) {
-                                newMarks.remove(id);
-                            }
-                        }
-
-                        sharedPreferences.edit().putString("newMarks", newMarks.toString()).apply();
-                    }
-                    markButton.setTag(i);
-                    markButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            setMarks(markButton);
-
-                            for (int i = 0; i < readMarks.size(); ++i) {
-                                String id = readMarks.get(i);
-                                if (newMarks.has(id)) {
-                                    newMarks.remove(id);
-                                }
-                            }
-
-                            sharedPreferences.edit().putString("newMarks", newMarks.toString()).apply();
-                        }
-                    });
-                    markButton.setAlpha(0);
-                    markButton.animate().alpha(1);
-
-                    buttons.add(markButton);    //Storing the button
-
-                    /*
-                        Adding the button to the HorizontalScrollView
-                     */
-                    if (readMarks.isEmpty()) {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                markButtons.addView(markButton);
-                            }
-                        });
-                    } else {
-                        final RelativeLayout container = myNotification.generateNotificationContainer();
-                        container.addView(markButton);
-
-                        final ImageView notification = myNotification.generateNotificationDot((int) (3 * pixelDensity), NotificationDotGenerator.NOTIFICATION_DEFAULT);
-                        notification.setPadding(0, (int) (20 * pixelDensity), 0, 0);
+                        int marginStart = (int) (screenWidth - 30 * pixelDensity);
+                        ImageView notification = myNotification.generateNotificationDot(marginStart, NotificationDotGenerator.NOTIFICATION_DEFAULT);
+                        notification.setPadding(0, (int) (5 * pixelDensity), 0, 0);
                         container.addView(notification);
 
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                markButtons.addView(container);
-                                notification.animate().scaleX(1).scaleY(1);
-                            }
-                        });
+                        markView.addView(container);
+                        readMarks.add(id);
+                    } else {
+                        markView.addView(card);
                     }
-
-                    if (i == index) {
-                        markView.setAlpha(0);
-                        markView.animate().alpha(1);
-                    }
-
-                    if (i == 0) {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                marks.addView(markView);
-                            }
-                        });
-                    }
-
-                    s.close();
                 }
 
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        findViewById(R.id.loading).animate().alpha(0);
-                    }
-                });
+                /*
+                    Creating the markTitle button
+                 */
+                final TextView markButton = myButton.generateButton(markTitle);
+                if (i == 0) {
+                    markButton.setBackground(ContextCompat.getDrawable(context, R.drawable.button_secondary_selected));
 
-                c.close();
-                myDatabase.close();
+                    for (int j = 0; j < readMarks.size(); ++j) {
+                        String id = readMarks.get(j);
+                        if (newMarks.has(id)) {
+                            newMarks.remove(id);
+                        }
+                    }
+
+                    sharedPreferences.edit().putString("newMarks", newMarks.toString()).apply();
+                }
+                markButton.setTag(i);
+                markButton.setOnClickListener(v -> {
+                    setMarks(markButton);
+
+                    for (int i1 = 0; i1 < readMarks.size(); ++i1) {
+                        String id = readMarks.get(i1);
+                        if (newMarks.has(id)) {
+                            newMarks.remove(id);
+                        }
+                    }
+
+                    sharedPreferences.edit().putString("newMarks", newMarks.toString()).apply();
+                });
+                markButton.setAlpha(0);
+                markButton.animate().alpha(1);
+
+                buttons.add(markButton);    //Storing the button
+
+                /*
+                    Adding the button to the HorizontalScrollView
+                 */
+                if (readMarks.isEmpty()) {
+                    runOnUiThread(() -> markButtons.addView(markButton));
+                } else {
+                    final RelativeLayout container = myNotification.generateNotificationContainer();
+                    container.addView(markButton);
+
+                    final ImageView notification = myNotification.generateNotificationDot((int) (3 * pixelDensity), NotificationDotGenerator.NOTIFICATION_DEFAULT);
+                    notification.setPadding(0, (int) (20 * pixelDensity), 0, 0);
+                    container.addView(notification);
+
+                    runOnUiThread(() -> {
+                        markButtons.addView(container);
+                        notification.animate().scaleX(1).scaleY(1);
+                    });
+                }
+
+                if (i == index) {
+                    markView.setAlpha(0);
+                    markView.animate().alpha(1);
+                }
+
+                if (i == 0) {
+                    runOnUiThread(() -> marks.addView(markView));
+                }
+
+                s.close();
             }
+
+            runOnUiThread(() -> findViewById(R.id.loading).animate().alpha(0));
+
+            c.close();
+            myDatabase.close();
         }).start();
     }
 

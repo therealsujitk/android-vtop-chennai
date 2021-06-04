@@ -18,24 +18,21 @@ public class CampusMapActivity extends AppCompatActivity {
 
         final ImageView campusMap = findViewById(R.id.campus_map);
 
-        campusMap.post(new Runnable() {
-            @Override
-            public void run() {
-                float originalHeight = campusMap.getHeight();
-                float originalWidth = campusMap.getWidth();
+        campusMap.post(() -> {
+            float originalHeight = campusMap.getHeight();
+            float originalWidth = campusMap.getWidth();
 
-                LinearLayout campusMapContainer = findViewById(R.id.campus_map_container);
-                float newHeight = campusMapContainer.getHeight();
-                int newWidth = (int) (originalWidth * (newHeight / originalHeight));
+            LinearLayout campusMapContainer = findViewById(R.id.campus_map_container);
+            float newHeight = campusMapContainer.getHeight();
+            int newWidth = (int) (originalWidth * (newHeight / originalHeight));
 
-                LinearLayout.LayoutParams imageParams = new LinearLayout.LayoutParams(
-                        newWidth,
-                        LinearLayout.LayoutParams.MATCH_PARENT
-                );
-                campusMap.setLayoutParams(imageParams);
+            LinearLayout.LayoutParams imageParams = new LinearLayout.LayoutParams(
+                    newWidth,
+                    LinearLayout.LayoutParams.MATCH_PARENT
+            );
+            campusMap.setLayoutParams(imageParams);
 
-                campusMap.animate().alpha(1);
-            }
+            campusMap.animate().alpha(1);
         });
     }
 }

@@ -86,170 +86,153 @@ public class StaffActivity extends AppCompatActivity {
 
         staff.addView(staffViews[0]);
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                SQLiteDatabase myDatabase = context.openOrCreateDatabase("vtop", Context.MODE_PRIVATE, null);
+        new Thread(() -> {
+            SQLiteDatabase myDatabase = context.openOrCreateDatabase("vtop", Context.MODE_PRIVATE, null);
 
-                /*
-                    Proctor
-                 */
-                myDatabase.execSQL("CREATE TABLE IF NOT EXISTS proctor (id INT(3) PRIMARY KEY, column1 VARCHAR, column2 VARCHAR)");
-                Cursor c = myDatabase.rawQuery("SELECT * FROM proctor", null);
+            /*
+                Proctor
+             */
+            myDatabase.execSQL("CREATE TABLE IF NOT EXISTS proctor (id INT(3) PRIMARY KEY, column1 VARCHAR, column2 VARCHAR)");
+            Cursor c = myDatabase.rawQuery("SELECT * FROM proctor", null);
 
-                CardGenerator myStaff = new CardGenerator(context, CardGenerator.CARD_STAFF);
+            CardGenerator myStaff = new CardGenerator(context, CardGenerator.CARD_STAFF);
 
-                if (c.getCount() > 0) {
-                    int column1Index = c.getColumnIndex("column1");
-                    int column2Index = c.getColumnIndex("column2");
-                    c.moveToFirst();
+            if (c.getCount() > 0) {
+                int column1Index = c.getColumnIndex("column1");
+                int column2Index = c.getColumnIndex("column2");
+                c.moveToFirst();
 
-                    for (int i = 0; i < c.getCount(); ++i, c.moveToNext()) {
-                        if (terminateThread) {
-                            return;
-                        }
+                for (int i = 0; i < c.getCount(); ++i, c.moveToNext()) {
+                    if (terminateThread) {
+                        return;
+                    }
 
-                        String key = c.getString(column1Index);
-                        final String value = c.getString(column2Index);
+                    String key = c.getString(column1Index);
+                    final String value = c.getString(column2Index);
 
-                        if (key.equals("") || value.equals("")) {
-                            continue;
-                        }
+                    if (key.equals("") || value.equals("")) {
+                        continue;
+                    }
 
-                        final LinearLayout card = myStaff.generateCard(key, value);
+                    final LinearLayout card = myStaff.generateCard(key, value);
 
-                        /*
-                            Adding the card to the view
-                         */
-                        if (staffID == 0) {
-                            card.setAlpha(0);
-                            card.animate().alpha(1);
+                    /*
+                        Adding the card to the view
+                     */
+                    if (staffID == 0) {
+                        card.setAlpha(0);
+                        card.animate().alpha(1);
 
-                            final LinearLayout proctorView = staffViews[0];
-                            final int index = i;
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    proctorView.addView(card);
-                                    if (index <= 1) {
-                                        findViewById(R.id.noData).setVisibility(View.GONE);
-                                    }
-                                }
-                            });
-                        } else {
-                            staffViews[0].addView(card);
-                        }
+                        final LinearLayout proctorView = staffViews[0];
+                        final int index = i;
+                        runOnUiThread(() -> {
+                            proctorView.addView(card);
+                            if (index <= 1) {
+                                findViewById(R.id.noData).setVisibility(View.GONE);
+                            }
+                        });
+                    } else {
+                        staffViews[0].addView(card);
                     }
                 }
-
-                /*
-                    Dean
-                 */
-                myDatabase.execSQL("CREATE TABLE IF NOT EXISTS dean (id INT(3) PRIMARY KEY, column1 VARCHAR, column2 VARCHAR)");
-                c = myDatabase.rawQuery("SELECT * FROM dean", null);
-
-                if (c.getCount() > 0) {
-                    int column1Index = c.getColumnIndex("column1");
-                    int column2Index = c.getColumnIndex("column2");
-                    c.moveToFirst();
-
-                    for (int i = 0; i < c.getCount(); ++i, c.moveToNext()) {
-                        if (terminateThread) {
-                            return;
-                        }
-
-                        String key = c.getString(column1Index);
-                        final String value = c.getString(column2Index);
-
-                        if (key.equals("") || value.equals("")) {
-                            continue;
-                        }
-
-                        final LinearLayout card = myStaff.generateCard(key, value);
-
-                        /*
-                            Adding the card to the view
-                         */
-                        if (staffID == 1) {
-                            card.setAlpha(0);
-                            card.animate().alpha(1);
-
-                            final LinearLayout deanView = staffViews[1];
-                            final int index = i;
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    deanView.addView(card);
-                                    if (index <= 1) {
-                                        findViewById(R.id.noData).setVisibility(View.GONE);
-                                    }
-                                }
-                            });
-                        } else {
-                            staffViews[1].addView(card);
-                        }
-                    }
-                }
-
-                /*
-                    HOD
-                 */
-                myDatabase.execSQL("CREATE TABLE IF NOT EXISTS hod (id INT(3) PRIMARY KEY, column1 VARCHAR, column2 VARCHAR)");
-                c = myDatabase.rawQuery("SELECT * FROM hod", null);
-
-                if (c.getCount() > 0) {
-                    int column1Index = c.getColumnIndex("column1");
-                    int column2Index = c.getColumnIndex("column2");
-                    c.moveToFirst();
-
-                    for (int i = 0; i < c.getCount(); ++i, c.moveToNext()) {
-                        if (terminateThread) {
-                            return;
-                        }
-
-                        String key = c.getString(column1Index);
-                        final String value = c.getString(column2Index);
-
-                        if (key.equals("") || value.equals("")) {
-                            continue;
-                        }
-
-                        final LinearLayout card = myStaff.generateCard(key, value);
-
-                        /*
-                            Adding the card to the view
-                         */
-                        if (staffID == 2) {
-                            card.setAlpha(0);
-                            card.animate().alpha(1);
-
-                            final LinearLayout hodView = staffViews[2];
-                            final int index = i;
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    hodView.addView(card);
-                                    if (index <= 1) {
-                                        findViewById(R.id.noData).setVisibility(View.GONE);
-                                    }
-                                }
-                            });
-                        } else {
-                            staffViews[2].addView(card);
-                        }
-                    }
-                }
-
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        findViewById(R.id.loading).animate().alpha(0);
-                    }
-                });
-
-                c.close();
-                myDatabase.close();
             }
+
+            /*
+                Dean
+             */
+            myDatabase.execSQL("CREATE TABLE IF NOT EXISTS dean (id INT(3) PRIMARY KEY, column1 VARCHAR, column2 VARCHAR)");
+            c = myDatabase.rawQuery("SELECT * FROM dean", null);
+
+            if (c.getCount() > 0) {
+                int column1Index = c.getColumnIndex("column1");
+                int column2Index = c.getColumnIndex("column2");
+                c.moveToFirst();
+
+                for (int i = 0; i < c.getCount(); ++i, c.moveToNext()) {
+                    if (terminateThread) {
+                        return;
+                    }
+
+                    String key = c.getString(column1Index);
+                    final String value = c.getString(column2Index);
+
+                    if (key.equals("") || value.equals("")) {
+                        continue;
+                    }
+
+                    final LinearLayout card = myStaff.generateCard(key, value);
+
+                    /*
+                        Adding the card to the view
+                     */
+                    if (staffID == 1) {
+                        card.setAlpha(0);
+                        card.animate().alpha(1);
+
+                        final LinearLayout deanView = staffViews[1];
+                        final int index = i;
+                        runOnUiThread(() -> {
+                            deanView.addView(card);
+                            if (index <= 1) {
+                                findViewById(R.id.noData).setVisibility(View.GONE);
+                            }
+                        });
+                    } else {
+                        staffViews[1].addView(card);
+                    }
+                }
+            }
+
+            /*
+                HOD
+             */
+            myDatabase.execSQL("CREATE TABLE IF NOT EXISTS hod (id INT(3) PRIMARY KEY, column1 VARCHAR, column2 VARCHAR)");
+            c = myDatabase.rawQuery("SELECT * FROM hod", null);
+
+            if (c.getCount() > 0) {
+                int column1Index = c.getColumnIndex("column1");
+                int column2Index = c.getColumnIndex("column2");
+                c.moveToFirst();
+
+                for (int i = 0; i < c.getCount(); ++i, c.moveToNext()) {
+                    if (terminateThread) {
+                        return;
+                    }
+
+                    String key = c.getString(column1Index);
+                    final String value = c.getString(column2Index);
+
+                    if (key.equals("") || value.equals("")) {
+                        continue;
+                    }
+
+                    final LinearLayout card = myStaff.generateCard(key, value);
+
+                    /*
+                        Adding the card to the view
+                     */
+                    if (staffID == 2) {
+                        card.setAlpha(0);
+                        card.animate().alpha(1);
+
+                        final LinearLayout hodView = staffViews[2];
+                        final int index = i;
+                        runOnUiThread(() -> {
+                            hodView.addView(card);
+                            if (index <= 1) {
+                                findViewById(R.id.noData).setVisibility(View.GONE);
+                            }
+                        });
+                    } else {
+                        staffViews[2].addView(card);
+                    }
+                }
+            }
+
+            runOnUiThread(() -> findViewById(R.id.loading).animate().alpha(0));
+
+            c.close();
+            myDatabase.close();
         }).start();
     }
 

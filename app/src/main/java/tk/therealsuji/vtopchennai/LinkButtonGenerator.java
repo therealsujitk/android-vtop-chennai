@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.view.Gravity;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
@@ -47,13 +46,10 @@ public class LinkButtonGenerator {
         ImageView imageView = new ImageView(context);
 
         if (linkType == LINK_CALL) {
-            linkButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(Intent.ACTION_DIAL);
-                    intent.setData(Uri.parse("tel:" + link));
-                    context.startActivity(intent);
-                }
+            linkButton.setOnClickListener(v -> {
+                Intent intent = new Intent(Intent.ACTION_DIAL);
+                intent.setData(Uri.parse("tel:" + link));
+                context.startActivity(intent);
             });
 
             imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_phone));
@@ -62,23 +58,17 @@ public class LinkButtonGenerator {
         } else if (linkType == LINK_DOWNLOAD) {
             imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_download));
         } else if (linkType == LINK_EMAIL) {
-            linkButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(Intent.ACTION_SENDTO);
-                    intent.setData(Uri.parse("mailto:" + link));
-                    context.startActivity(intent);
-                }
+            linkButton.setOnClickListener(v -> {
+                Intent intent = new Intent(Intent.ACTION_SENDTO);
+                intent.setData(Uri.parse("mailto:" + link));
+                context.startActivity(intent);
             });
 
             imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_email));
         } else if (linkType == LINK_LINK) {
-            linkButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(link));
-                    context.startActivity(browserIntent);
-                }
+            linkButton.setOnClickListener(v -> {
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(link));
+                context.startActivity(browserIntent);
             });
 
             imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_link));
