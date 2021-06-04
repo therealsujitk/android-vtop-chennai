@@ -233,9 +233,7 @@ public class HomeActivity extends AppCompatActivity {
                 return;
             }
 
-            if (!sharedPreferences.getBoolean("newReceipts", false)) {
-                findViewById(campusNotification).animate().scaleX(0).scaleY(0);
-            }
+            findViewById(campusNotification).animate().scaleX(0).scaleY(0);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -249,11 +247,11 @@ public class HomeActivity extends AppCompatActivity {
         }
 
         try {
-            findViewById(receiptsNotification).animate().scaleX(0).scaleY(0);
-
             if (sharedPreferences.getBoolean("duePayments", false)) {
                 return;
             }
+
+            findViewById(receiptsNotification).animate().scaleX(0).scaleY(0);
 
             if (!sharedPreferences.getBoolean("newProctorMessages", false)) {
                 findViewById(campusNotification).animate().scaleX(0).scaleY(0);

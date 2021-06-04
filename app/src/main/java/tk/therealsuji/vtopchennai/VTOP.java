@@ -3294,13 +3294,10 @@ public class VTOP {
                 "   async: false," +
                 "   success: function(response) {" +
                 "       var doc = new DOMParser().parseFromString(response, 'text/html');" +
-                "       if (doc.getElementsByTagName('font')[0]) {" +
-                "           var text = doc.getElementsByTagName('font')[0].innerText.toLowerCase();" +
-                "           if (text.includes('no') && text.includes('payment') && text.includes('dues')) {" +
-                "               duePayments = false;" +
-                "           } else {" +
-                "               duePayments = true;" +
-                "           }" +
+                "       if (doc.getElementsByTagName('font')[0]) {" +   // Contains the text "No Payment Dues"
+                "           duePayments = false;" +
+                "       } else {" +
+                "           duePayments = true;" +
                 "       }" +
                 "   }" +
                 "});" +
