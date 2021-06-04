@@ -102,7 +102,7 @@ public class VTOP {
 
                 if (!isOpened) {
                     if (counter >= 60) {    // If it has tried to open the sign in page for over 60 times and failed, something is wrong
-                        Toast.makeText(context, "Sorry, we had some trouble connecting to the server. Please try again later.", Toast.LENGTH_LONG).show();
+                        Toast.makeText(context, "Error 101. We had some trouble connecting to the server. Please try again later.", Toast.LENGTH_LONG).show();
                         myDatabase.close();
                         downloadDialog.dismiss();
                         return;
@@ -148,7 +148,7 @@ public class VTOP {
         }
 
         if (encryptedSharedPreferences == null) {
-            Toast.makeText(context, "Sorry, something went wrong. Please try again later.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "Error 001. Please try again later.", Toast.LENGTH_SHORT).show();
             downloadDialog.dismiss();
             return;
         }
@@ -375,6 +375,9 @@ public class VTOP {
         webView.loadUrl("http://vtopcc.vit.ac.in/vtop");
     }
 
+    /*
+        Function to terminate the download process
+     */
     public void terminateDownload() {
         terminateDownload = true;
     }
@@ -427,7 +430,7 @@ public class VTOP {
                 If true, the default captcha is being used else, Google's reCaptcha is being used
              */
             if (isLocalCaptcha.equals("null")) {
-                error();
+                error(102);
             } else if (isLocalCaptcha.equals("true")) {
                 getCaptcha();
             } else {
@@ -457,7 +460,7 @@ public class VTOP {
                 src will look like "data:image/png:base64, ContinuousGibberishText...." (including the quotes)
              */
             if (src.equals("null")) {
-                Toast.makeText(context, "Sorry, something went wrong while trying to fetch the captcha code. Please try again.", Toast.LENGTH_LONG).show();
+                Toast.makeText(context, "Error 103. Something went wrong while trying to fetch the captcha code. Please try again.", Toast.LENGTH_LONG).show();
                 reloadPage();
             } else {
                 try {
@@ -479,7 +482,7 @@ public class VTOP {
                     expand(captchaLayout);
                 } catch (Exception e) {
                     e.printStackTrace();
-                    error();
+                    error(104);
                 }
             }
         });
@@ -633,7 +636,7 @@ public class VTOP {
                         }
                     } else {
                         // We don't want to refresh the page unless a timeout error has been returned
-                        error();
+                        error(201);
                     }
                 }
             });
@@ -677,7 +680,7 @@ public class VTOP {
                 obj is in the form of a JSON string like {"0": "Semester 1", "1": "Semester 2", "2": "Semester 3",...}
              */
             if (obj.equals("false") || obj.equals("null")) {
-                error();
+                error(301);
             } else {
                 try {
                     int index = 0;
@@ -706,7 +709,7 @@ public class VTOP {
                     expand(semesterLayout);
                 } catch (Exception e) {
                     e.printStackTrace();
-                    error();
+                    error(302);
                 }
             }
         });
@@ -744,7 +747,7 @@ public class VTOP {
                 "return semID;" +
                 "})();", semID -> {
             if (semID.equals("null")) {
-                error();
+                error(303);
             } else {
                 semesterID = semID.substring(1, semID.length() - 1);
                 downloadProfile();
@@ -804,7 +807,7 @@ public class VTOP {
              */
             String temp = obj.substring(1, obj.length() - 1);
             if (obj.equals("null") || temp.equals("")) {
-                error();
+                error(401);
             } else {
                 try {
                     JSONObject myObj = new JSONObject(obj);
@@ -817,7 +820,7 @@ public class VTOP {
                     downloadTimetable();
                 } catch (Exception e) {
                     e.printStackTrace();
-                    error();
+                    error(402);
                 }
             }
         });
@@ -942,7 +945,7 @@ public class VTOP {
              */
             String temp = obj.substring(1, obj.length() - 1);
             if (obj.equals("null") || temp.equals("")) {
-                error();
+                error(501);
             } else if (temp.equals("unreleased")) {
                 new Thread(() -> {
                     myDatabase.execSQL("DROP TABLE IF EXISTS timetable_lab");
@@ -1151,7 +1154,7 @@ public class VTOP {
                         });
                     } catch (Exception e) {
                         e.printStackTrace();
-                        error();
+                        error(502);
                     }
                 }).start();
             }
@@ -1229,21 +1232,16 @@ public class VTOP {
              */
             String temp = obj.substring(1, obj.length() - 1);
             if (obj.equals("null") || temp.equals("")) {
-                error();
+                error(601);
             } else if (temp.equals("nothing")) {
                 new Thread(() -> {
-                    try {
-                        myDatabase.execSQL("DROP TABLE IF EXISTS faculty");
-                        myDatabase.execSQL("CREATE TABLE faculty (id INTEGER PRIMARY KEY, course VARCHAR, faculty VARCHAR)");
+                    myDatabase.execSQL("DROP TABLE IF EXISTS faculty");
+                    myDatabase.execSQL("CREATE TABLE faculty (id INTEGER PRIMARY KEY, course VARCHAR, faculty VARCHAR)");
 
-                        ((Activity) context).runOnUiThread(() -> {
-                            updateProgress();
-                            downloadProctor();
-                        });
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        error();
-                    }
+                    ((Activity) context).runOnUiThread(() -> {
+                        updateProgress();
+                        downloadProctor();
+                    });
 
                     sharedPreferences.edit().remove("newFaculty").apply();
                 }).start();
@@ -1269,7 +1267,7 @@ public class VTOP {
                         });
                     } catch (Exception e) {
                         e.printStackTrace();
-                        error();
+                        error(602);
                     }
                 }).start();
             }
@@ -1328,21 +1326,16 @@ public class VTOP {
              */
             String temp = obj.substring(1, obj.length() - 1);
             if (obj.equals("null") || temp.equals("")) {
-                error();
+                error(701);
             } else if (temp.equals("unavailable")) {
                 new Thread(() -> {
-                    try {
-                        myDatabase.execSQL("DROP TABLE IF EXISTS proctor");
-                        myDatabase.execSQL("CREATE TABLE proctor (id INTEGER PRIMARY KEY, column1 VARCHAR, column2 VARCHAR)");
+                    myDatabase.execSQL("DROP TABLE IF EXISTS proctor");
+                    myDatabase.execSQL("CREATE TABLE proctor (id INTEGER PRIMARY KEY, column1 VARCHAR, column2 VARCHAR)");
 
-                        ((Activity) context).runOnUiThread(() -> {
-                            updateProgress();
-                            downloadDeanHOD();
-                        });
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        error();
-                    }
+                    ((Activity) context).runOnUiThread(() -> {
+                        updateProgress();
+                        downloadDeanHOD();
+                    });
                 }).start();
             } else {
                 new Thread(() -> {
@@ -1369,7 +1362,7 @@ public class VTOP {
                         });
                     } catch (Exception e) {
                         e.printStackTrace();
-                        error();
+                        error(702);
                     }
                 }).start();
             }
@@ -1474,24 +1467,19 @@ public class VTOP {
              */
             String temp = obj.substring(1, obj.length() - 1);
             if (obj.equals("null") || temp.equals("")) {
-                error();
+                error(703);
             } else if (temp.equals("unavailable")) {
                 new Thread(() -> {
-                    try {
-                        myDatabase.execSQL("DROP TABLE IF EXISTS dean");
-                        myDatabase.execSQL("CREATE TABLE dean (id INTEGER PRIMARY KEY, column1 VARCHAR, column2 VARCHAR)");
+                    myDatabase.execSQL("DROP TABLE IF EXISTS dean");
+                    myDatabase.execSQL("CREATE TABLE dean (id INTEGER PRIMARY KEY, column1 VARCHAR, column2 VARCHAR)");
 
-                        myDatabase.execSQL("DROP TABLE IF EXISTS hod");
-                        myDatabase.execSQL("CREATE TABLE hod (id INTEGER PRIMARY KEY, column1 VARCHAR, column2 VARCHAR)");
+                    myDatabase.execSQL("DROP TABLE IF EXISTS hod");
+                    myDatabase.execSQL("CREATE TABLE hod (id INTEGER PRIMARY KEY, column1 VARCHAR, column2 VARCHAR)");
 
-                        ((Activity) context).runOnUiThread(() -> {
-                            updateProgress();
-                            downloadAttendance();
-                        });
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        error();
-                    }
+                    ((Activity) context).runOnUiThread(() -> {
+                        updateProgress();
+                        downloadAttendance();
+                    });
                 }).start();
             } else {
                 new Thread(() -> {
@@ -1534,7 +1522,7 @@ public class VTOP {
                         });
                     } catch (Exception e) {
                         e.printStackTrace();
-                        error();
+                        error(704);
                     }
                 }).start();
             }
@@ -1625,20 +1613,16 @@ public class VTOP {
              */
             String temp = obj.substring(1, obj.length() - 1);
             if (obj.equals("null") || temp.equals("")) {
-                error();
+                error(801);
             } else if (temp.equals("unavailable")) {
                 new Thread(() -> {
-                    try {
-                        myDatabase.execSQL("DROP TABLE IF EXISTS attendance");
-                        myDatabase.execSQL("CREATE TABLE attendance (id INTEGER PRIMARY KEY, course VARCHAR, type VARCHAR, attended VARCHAR, total VARCHAR, percent VARCHAR)");
+                    myDatabase.execSQL("DROP TABLE IF EXISTS attendance");
+                    myDatabase.execSQL("CREATE TABLE attendance (id INTEGER PRIMARY KEY, course VARCHAR, type VARCHAR, attended VARCHAR, total VARCHAR, percent VARCHAR)");
 
-                        ((Activity) context).runOnUiThread(() -> {
-                            updateProgress();
-                            downloadExams();
-                        });
-                    } catch (Exception e) {
-                        error();
-                    }
+                    ((Activity) context).runOnUiThread(() -> {
+                        updateProgress();
+                        downloadExams();
+                    });
 
                     sharedPreferences.edit().remove("failedAttendance").apply();
                 }).start();
@@ -1673,7 +1657,7 @@ public class VTOP {
                         });
                     } catch (Exception e) {
                         e.printStackTrace();
-                        error();
+                        error(802);
                     }
                 }).start();
             }
@@ -1807,21 +1791,16 @@ public class VTOP {
              */
             String temp = obj.substring(1, obj.length() - 1);
             if (obj.equals("null") || temp.equals("")) {
-                error();
+                error(901);
             } else if (temp.equals("nothing")) {
                 new Thread(() -> {
-                    try {
-                        myDatabase.execSQL("DROP TABLE IF EXISTS exams");
-                        myDatabase.execSQL("CREATE TABLE exams (id INTEGER PRIMARY KEY, exam VARCHAR, course VARCHAR, title VARCHAR, slot VARCHAR, date VARCHAR, reporting VARCHAR, start_time VARCHAR, end_time VARCHAR, venue VARCHAR, location VARCHAR, seat VARCHAR)");
+                    myDatabase.execSQL("DROP TABLE IF EXISTS exams");
+                    myDatabase.execSQL("CREATE TABLE exams (id INTEGER PRIMARY KEY, exam VARCHAR, course VARCHAR, title VARCHAR, slot VARCHAR, date VARCHAR, reporting VARCHAR, start_time VARCHAR, end_time VARCHAR, venue VARCHAR, location VARCHAR, seat VARCHAR)");
 
-                        ((Activity) context).runOnUiThread(() -> {
-                            updateProgress();
-                            downloadMarks();
-                        });
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        error();
-                    }
+                    ((Activity) context).runOnUiThread(() -> {
+                        updateProgress();
+                        downloadMarks();
+                    });
 
                     sharedPreferences.edit().remove("newExams").apply();
                     sharedPreferences.edit().remove("examsCount").apply();
@@ -1897,7 +1876,7 @@ public class VTOP {
                         });
                     } catch (Exception e) {
                         e.printStackTrace();
-                        error();
+                        error(902);
                     }
                 }).start();
             }
@@ -2017,21 +1996,16 @@ public class VTOP {
              */
             String temp = obj.substring(1, obj.length() - 1);
             if (obj.equals("null") || temp.equals("")) {
-                error();
+                error(1001);
             } else if (temp.equals("nothing")) {
                 new Thread(() -> {
-                    try {
-                        myDatabase.execSQL("DROP TABLE IF EXISTS marks");
-                        myDatabase.execSQL("CREATE TABLE marks (id INTEGER PRIMARY KEY, course VARCHAR, type VARCHAR, title VARCHAR, score VARCHAR, status VARCHAR, weightage VARCHAR, average VARCHAR, posted VARCHAR)");
+                    myDatabase.execSQL("DROP TABLE IF EXISTS marks");
+                    myDatabase.execSQL("CREATE TABLE marks (id INTEGER PRIMARY KEY, course VARCHAR, type VARCHAR, title VARCHAR, score VARCHAR, status VARCHAR, weightage VARCHAR, average VARCHAR, posted VARCHAR)");
 
-                        ((Activity) context).runOnUiThread(() -> {
-                            updateProgress();
-                            downloadGrades();
-                        });
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        error();
-                    }
+                    ((Activity) context).runOnUiThread(() -> {
+                        updateProgress();
+                        downloadGrades();
+                    });
 
                     sharedPreferences.edit().remove("newMarks").apply();
                 }).start();
@@ -2126,7 +2100,7 @@ public class VTOP {
                         });
                     } catch (Exception e) {
                         e.printStackTrace();
-                        error();
+                        error(1002);
                     }
                 }).start();
             }
@@ -2232,26 +2206,19 @@ public class VTOP {
              */
             final String temp = obj.substring(1, obj.length() - 1);
             if (obj.equals("null") || temp.equals("")) {
-                error();
+                error(1101);
             } else if (temp.equals("nothing")) {
                 /*
                     Dropping and recreating an empty table
                  */
                 new Thread(() -> {
-                    try {
-                        myDatabase.execSQL("DROP TABLE IF EXISTS grades");
-                        myDatabase.execSQL("CREATE TABLE grades (id INTEGER PRIMARY KEY, course VARCHAR, type VARCHAR, grade_type VARCHAR, total VARCHAR, grade VARCHAR)");
+                    myDatabase.execSQL("DROP TABLE IF EXISTS grades");
+                    myDatabase.execSQL("CREATE TABLE grades (id INTEGER PRIMARY KEY, course VARCHAR, type VARCHAR, grade_type VARCHAR, total VARCHAR, grade VARCHAR)");
 
-                        ((Activity) context).runOnUiThread(() -> {
-                            updateProgress();
-                            downloadGradeHistory();
-                        });
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
-                        isOpened = false;
-                        reloadPage();
-                    }
+                    ((Activity) context).runOnUiThread(() -> {
+                        updateProgress();
+                        downloadGradeHistory();
+                    });
 
                     sharedPreferences.edit().remove("newGrades").apply();
                     sharedPreferences.edit().remove("gradesCount").apply();
@@ -2300,7 +2267,7 @@ public class VTOP {
                         });
                     } catch (Exception e) {
                         e.printStackTrace();
-                        error();
+                        error(1102);
                     }
                 }).start();
             }
@@ -2454,7 +2421,7 @@ public class VTOP {
              */
             String temp = obj.substring(1, obj.length() - 1);
             if (obj.equals("null") || temp.equals("")) {
-                error();
+                error(1103);
             } else {
                 new Thread(() -> {
                     try {
@@ -2549,6 +2516,7 @@ public class VTOP {
                         });
                     } catch (Exception e) {
                         e.printStackTrace();
+                        error(1104);
                     }
                 }).start();
             }
@@ -2604,26 +2572,19 @@ public class VTOP {
              */
             final String temp = obj.substring(1, obj.length() - 1);
             if (obj.equals("null") || temp.equals("{}")) {
-                error();
+                error(1201);
             } else if (temp.equals("nothing")) {
                 /*
                     Dropping and recreating an empty table
                  */
                 new Thread(() -> {
-                    try {
-                        myDatabase.execSQL("DROP TABLE IF EXISTS messages");
-                        myDatabase.execSQL("CREATE TABLE messages (id INTEGER PRIMARY KEY, course VARCHAR, type VARCHAR, message VARCHAR)");
+                    myDatabase.execSQL("DROP TABLE IF EXISTS messages");
+                    myDatabase.execSQL("CREATE TABLE messages (id INTEGER PRIMARY KEY, course VARCHAR, type VARCHAR, message VARCHAR)");
 
-                        ((Activity) context).runOnUiThread(() -> {
-                            updateProgress();
-                            downloadProctorMessages();
-                        });
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
-                        isOpened = false;
-                        reloadPage();
-                    }
+                    ((Activity) context).runOnUiThread(() -> {
+                        updateProgress();
+                        downloadProctorMessages();
+                    });
 
                     sharedPreferences.edit().remove("newMessages").apply();
                 }).start();
@@ -2668,7 +2629,7 @@ public class VTOP {
                         });
                     } catch (Exception e) {
                         e.printStackTrace();
-                        error();
+                        error(1202);
                     }
                 }).start();
             }
@@ -2717,20 +2678,13 @@ public class VTOP {
                     Dropping and recreating an empty table
                  */
                 new Thread(() -> {
-                    try {
-                        myDatabase.execSQL("DROP TABLE IF EXISTS proctor_messages");
-                        myDatabase.execSQL("CREATE TABLE proctor_messages (id INTEGER PRIMARY KEY, time VARCHAR, message VARCHAR)");
+                    myDatabase.execSQL("DROP TABLE IF EXISTS proctor_messages");
+                    myDatabase.execSQL("CREATE TABLE proctor_messages (id INTEGER PRIMARY KEY, time VARCHAR, message VARCHAR)");
 
-                        ((Activity) context).runOnUiThread(() -> {
-                            updateProgress();
-                            downloadSpotlight();
-                        });
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
-                        isOpened = false;
-                        reloadPage();
-                    }
+                    ((Activity) context).runOnUiThread(() -> {
+                        updateProgress();
+                        downloadSpotlight();
+                    });
 
                     sharedPreferences.edit().remove("newProctorMessages").apply();
                 }).start();
@@ -2753,11 +2707,11 @@ public class VTOP {
                         sharedPreferences.edit().putBoolean("newProctorMessages", true).apply();
                     } catch (Exception e) {
                         e.printStackTrace();
-                        error();
+                        error(1203);
                     }
                 }).start();
             } else {
-                error();
+                error(1203);
             }
         });
     }
@@ -2828,24 +2782,19 @@ public class VTOP {
              */
             String temp = obj.substring(1, obj.length() - 1);
             if (obj.equals("null") || temp.equals("")) {
-                error();
+                error(1301);
             } else if (temp.equals("nothing")) {
                 /*
                     Dropping and recreating an empty table
                  */
                 new Thread(() -> {
-                    try {
-                        myDatabase.execSQL("DROP TABLE IF EXISTS spotlight");
-                        myDatabase.execSQL("CREATE TABLE spotlight (id INTEGER PRIMARY KEY, category VARCHAR, announcement VARCHAR, link VARCHAR)");
+                    myDatabase.execSQL("DROP TABLE IF EXISTS spotlight");
+                    myDatabase.execSQL("CREATE TABLE spotlight (id INTEGER PRIMARY KEY, category VARCHAR, announcement VARCHAR, link VARCHAR)");
 
-                        ((Activity) context).runOnUiThread(() -> {
-                            updateProgress();
-                            downloadReceipts();
-                        });
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        error();
-                    }
+                    ((Activity) context).runOnUiThread(() -> {
+                        updateProgress();
+                        downloadReceipts();
+                    });
 
                     sharedPreferences.edit().remove("newSpotlight").apply();
                 }).start();
@@ -2943,7 +2892,7 @@ public class VTOP {
                         });
                     } catch (Exception e) {
                         e.printStackTrace();
-                        error();
+                        error(1302);
                     }
                 }).start();
             }
@@ -3016,7 +2965,7 @@ public class VTOP {
              */
             String temp = obj.substring(1, obj.length() - 1);
             if (obj.equals("null") || temp.equals("")) {
-                error();
+                error(1401);
             } else {
                 new Thread(() -> {
                     try {
@@ -3046,7 +2995,7 @@ public class VTOP {
                         });
                     } catch (Exception e) {
                         e.printStackTrace();
-                        error();
+                        error(1402);
                     }
                 }).start();
             }
@@ -3121,13 +3070,16 @@ public class VTOP {
         ((Activity) context).finish();
     }
 
-    public void error() {
+    /*
+        Function to display an error message
+     */
+    public void error(final int errorCode) {
         if (terminateDownload) {
             return;
         }
 
         ((Activity) context).runOnUiThread(() -> {
-            Toast.makeText(context, "Sorry, something went wrong. Please try again.", Toast.LENGTH_LONG).show();
+            Toast.makeText(context, "Error " + errorCode + ". Please try again.", Toast.LENGTH_LONG).show();
             reloadPage();
         });
     }
@@ -3140,3 +3092,59 @@ public class VTOP {
         return lastDownload;
     }
 }
+
+/*
+ *  Error Codes
+ *
+ *  Error 001   Failed to fetch encrypted credentials
+ *
+ *  Error 101   Failed to connect to the server
+ *  Error 102   Failed to get captcha type (local / public)
+ *  Error 103   Failed to get captcha image
+ *  Error 104   Could not display captcha image
+ *
+ *  Error 201   Unknown error during login (Possibly timeout)
+ *
+ *  Error 301   Failed to fetch semesters
+ *  Error 302   Failed to display semesters
+ *  Error 303   Failed to fetch semester ID
+ *
+ *  Error 401   Failed to download the profile data
+ *  Error 402   Failed to store the profile data
+ *
+ *  Error 501   Failed to download the timetable
+ *  Error 502   Failed to store the timetable
+ *
+ *  Error 601   Failed to download the faculty info
+ *  Error 602   Failed to store the faculty info
+ *
+ *  Error 701   Failed to download the proctor info
+ *  Error 702   Failed to store the proctor info
+ *  Error 703   Failed to download the hod & dean info
+ *  Error 704   Failed to store the hod & dean info
+ *
+ *  Error 801   Failed to download the attendance
+ *  Error 802   Failed to store the attendance
+ *
+ *  Error 901   Failed to download the exam schedule
+ *  Error 902   Failed to store the exam schedule
+ *
+ *  Error 1001  Failed to download the marks
+ *  Error 1002  Failed to store the marks
+ *
+ *  Error 1101  Failed to download the grades
+ *  Error 1102  Failed to store the grades
+ *  Error 1103  Failed to download the grade history
+ *  Error 1104  Failed to store the grade history
+ *
+ *  Error 1201  Failed to download the class messages
+ *  Error 1202  Failed to store the class messages
+ *  Error 1203  Unknown error downloading / storing the proctor messages
+ *
+ *  Error 1301  Failed to download the spotlight
+ *  Error 1302  Failed to store the spotlight
+ *
+ *  Error 1401  Failed to download the receipts
+ *  Error 1402  Failed to store the receipts
+ *
+ */
