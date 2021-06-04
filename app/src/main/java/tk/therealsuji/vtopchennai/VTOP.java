@@ -422,10 +422,10 @@ public class VTOP {
         webView.evaluateJavascript("(function() {" +
                 "return x == 'local';" +
                 "})();", isLocalCaptcha -> {
-                    /*
-                        isLocalCaptcha will be either true / false
-                        If true, the default captcha is being used else, Google's reCaptcha is being used
-                     */
+            /*
+                isLocalCaptcha will be either true / false
+                If true, the default captcha is being used else, Google's reCaptcha is being used
+             */
             if (isLocalCaptcha.equals("null")) {
                 error();
             } else if (isLocalCaptcha.equals("true")) {
@@ -453,9 +453,9 @@ public class VTOP {
                 "   }" +
                 "}" +
                 "})();", src -> {
-                    /*
-                        src will look like "data:image/png:base64, ContinuousGibberishText...." (including the quotes)
-                     */
+            /*
+                src will look like "data:image/png:base64, ContinuousGibberishText...." (including the quotes)
+             */
             if (src.equals("null")) {
                 Toast.makeText(context, "Sorry, something went wrong while trying to fetch the captcha code. Please try again.", Toast.LENGTH_LONG).show();
                 reloadPage();
@@ -625,7 +625,7 @@ public class VTOP {
                             myDatabase.close();
                             downloadDialog.dismiss();
                             Toast.makeText(context, value, Toast.LENGTH_LONG).show();
-                                    context.startActivity(new Intent(context, LoginActivity.class));
+                            context.startActivity(new Intent(context, LoginActivity.class));
                             ((Activity) context).finish();
                         } else {
                             Toast.makeText(context, value, Toast.LENGTH_LONG).show();
@@ -673,9 +673,9 @@ public class VTOP {
                 "});" +
                 "return obj;" +
                 "})();", obj -> {
-                    /*
-                        obj is in the form of a JSON string like {"0": "Semester 1", "1": "Semester 2", "2": "Semester 3",...}
-                     */
+            /*
+                obj is in the form of a JSON string like {"0": "Semester 1", "1": "Semester 2", "2": "Semester 3",...}
+             */
             if (obj.equals("false") || obj.equals("null")) {
                 error();
             } else {
@@ -799,9 +799,9 @@ public class VTOP {
                 "});" +
                 "return obj;" +
                 "})();", obj -> {
-                    /*
-                        obj is in the form of a JSON string like {"name": "JOHN DOE", "register": "20XYZ1987"}
-                     */
+            /*
+                obj is in the form of a JSON string like {"name": "JOHN DOE", "register": "20XYZ1987"}
+             */
             String temp = obj.substring(1, obj.length() - 1);
             if (obj.equals("null") || temp.equals("")) {
                 error();
@@ -937,9 +937,9 @@ public class VTOP {
                 "});" +
                 "return obj;" +
                 "})();", obj -> {
-                    /*
-                        obj is in the form of a JSON string like {"credits": "19", "lab": {"0start": "08:00", "0end": "08:50",...}, "mon": {"0theory": "MAT1001",...}, ...}
-                     */
+            /*
+                obj is in the form of a JSON string like {"credits": "19", "lab": {"0start": "08:00", "0end": "08:50",...}, "mon": {"0theory": "MAT1001",...}, ...}
+             */
             String temp = obj.substring(1, obj.length() - 1);
             if (obj.equals("null") || temp.equals("")) {
                 error();
@@ -981,162 +981,162 @@ public class VTOP {
                         myDatabase.execSQL("DROP TABLE IF EXISTS timetable_theory");
                         myDatabase.execSQL("CREATE TABLE timetable_theory (id INTEGER PRIMARY KEY, start_time VARCHAR, end_time VARCHAR, sun VARCHAR, mon VARCHAR, tue VARCHAR, wed VARCHAR, thu VARCHAR, fri VARCHAR, sat VARCHAR)");
 
-                                JSONObject lab = new JSONObject(myObj.getString("lab"));
-                                JSONObject theory = new JSONObject(myObj.getString("theory"));
-                                JSONObject mon = new JSONObject(myObj.getString("mon"));
-                                JSONObject tue = new JSONObject(myObj.getString("tue"));
-                                JSONObject wed = new JSONObject(myObj.getString("wed"));
-                                JSONObject thu = new JSONObject(myObj.getString("thu"));
-                                JSONObject fri = new JSONObject(myObj.getString("fri"));
-                                JSONObject sat = new JSONObject(myObj.getString("sat"));
-                                JSONObject sun = new JSONObject(myObj.getString("sun"));
+                        JSONObject lab = new JSONObject(myObj.getString("lab"));
+                        JSONObject theory = new JSONObject(myObj.getString("theory"));
+                        JSONObject mon = new JSONObject(myObj.getString("mon"));
+                        JSONObject tue = new JSONObject(myObj.getString("tue"));
+                        JSONObject wed = new JSONObject(myObj.getString("wed"));
+                        JSONObject thu = new JSONObject(myObj.getString("thu"));
+                        JSONObject fri = new JSONObject(myObj.getString("fri"));
+                        JSONObject sat = new JSONObject(myObj.getString("sat"));
+                        JSONObject sun = new JSONObject(myObj.getString("sun"));
 
-                                /*
-                                    This 12 hour check is because the genius developers at VIT decided it
-                                    would be a great idea to use both 12 hour and 24 hour formats together
-                                    because, who even cares...
-                                 */
-                                SimpleDateFormat hour24 = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
-                                SimpleDateFormat hour12 = new SimpleDateFormat("h:mm a", Locale.ENGLISH);
+                        /*
+                            This 12 hour check is because the genius developers at VIT decided it
+                            would be a great idea to use both 12 hour and 24 hour formats together
+                            because, who even cares...
+                         */
+                        SimpleDateFormat hour24 = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
+                        SimpleDateFormat hour12 = new SimpleDateFormat("h:mm a", Locale.ENGLISH);
 
-                                Calendar c = Calendar.getInstance();
-                                AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
-                                Intent notificationIntent = new Intent(context, NotificationReceiver.class);
-                                SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy HH:mm", Locale.ENGLISH);
-                                SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
-                                Date today = dateFormat.parse(dateFormat.format(c.getTime()));
-                                Date now = hour24.parse(hour24.format(c.getTime()));
-                                int day = c.get(Calendar.DAY_OF_WEEK) - 1;
+                        Calendar c = Calendar.getInstance();
+                        AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
+                        Intent notificationIntent = new Intent(context, NotificationReceiver.class);
+                        SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy HH:mm", Locale.ENGLISH);
+                        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
+                        Date today = dateFormat.parse(dateFormat.format(c.getTime()));
+                        Date now = hour24.parse(hour24.format(c.getTime()));
+                        int day = c.get(Calendar.DAY_OF_WEEK) - 1;
 
-                                JSONObject[] days = {sun, mon, tue, wed, thu, fri, sat};
+                        JSONObject[] days = {sun, mon, tue, wed, thu, fri, sat};
 
-                                int alarmCount = 0;
+                        int alarmCount = 0;
 
-                                for (int i = 0; i < lab.length() / 2 && i < theory.length() / 2; ++i) {
-                                    String start_time_lab = lab.getString(i + "start");
-                                    if (start_time_lab.toLowerCase().equals("lunch")) {
-                                        continue;
-                                    }
-                                    String end_time_lab = lab.getString(i + "end");
-                                    String start_time_theory = theory.getString(i + "start");
-                                    String end_time_theory = theory.getString(i + "end");
+                        for (int i = 0; i < lab.length() / 2 && i < theory.length() / 2; ++i) {
+                            String start_time_lab = lab.getString(i + "start");
+                            if (start_time_lab.toLowerCase().equals("lunch")) {
+                                continue;
+                            }
+                            String end_time_lab = lab.getString(i + "end");
+                            String start_time_theory = theory.getString(i + "start");
+                            String end_time_theory = theory.getString(i + "end");
 
-                                    /*
-                                        Formatting the time in-case it is given in 12-hour format
-                                     */
-                                    String[] times = {start_time_lab, end_time_lab, start_time_theory, end_time_theory};
-                                    for (int j = 0; j < times.length; ++j) {
-                                        try {
-                                            Date time = hour24.parse(times[j]);
-                                            Date hourStart = hour24.parse("08:00");
+                            /*
+                                Formatting the time in-case it is given in 12-hour format
+                             */
+                            String[] times = {start_time_lab, end_time_lab, start_time_theory, end_time_theory};
+                            for (int j = 0; j < times.length; ++j) {
+                                try {
+                                    Date time = hour24.parse(times[j]);
+                                    Date hourStart = hour24.parse("08:00");
 
-                                            if (time != null && time.before(hourStart)) {
-                                                time = hour12.parse(times[j] + " PM");
-                                                if (time != null) {
-                                                    times[j] = hour24.format(time);
-                                                }
-                                            }
-                                        } catch (Exception e) {
-                                            e.printStackTrace();
+                                    if (time != null && time.before(hourStart)) {
+                                        time = hour12.parse(times[j] + " PM");
+                                        if (time != null) {
+                                            times[j] = hour24.format(time);
                                         }
                                     }
-
-                                    start_time_lab = times[0];
-                                    end_time_lab = times[1];
-                                    start_time_theory = times[2];
-                                    end_time_theory = times[3];
-
-                                    /*
-                                        Inserting the periods
-                                     */
-                                    String[] labPeriods = new String[7];
-                                    String[] theoryPeriods = new String[7];
-
-                                    for (int j = 0; j < 7; ++j) {
-                                        labPeriods[j] = "null";
-                                        /*
-                                            Inserting Lab Periods
-                                         */
-                                        if (days[j].has(i + "lab")) {
-                                            labPeriods[j] = days[j].getString(i + "lab");
-
-                                            if (j == day) {
-                                                Date current = hour24.parse(start_time_lab);
-                                                assert current != null;
-                                                if (current.after(now) || current.equals(now)) {
-                                                    assert today != null;
-                                                    c.setTime(today);
-                                                } else {
-                                                    assert today != null;
-                                                    c.setTime(today);
-                                                    c.add(Calendar.DATE, 7);
-                                                }
-                                            } else if (j > day) {
-                                                assert today != null;
-                                                c.setTime(today);
-                                                c.add(Calendar.DATE, j - day);
-                                            } else {
-                                                assert today != null;
-                                                c.setTime(today);
-                                                c.add(Calendar.DATE, 7 - day + j);
-                                            }
-
-                                            Date date = df.parse(dateFormat.format(c.getTime()) + " " + start_time_lab);
-
-                                            assert date != null;
-                                            c.setTime(date);
-                                            PendingIntent pendingIntent = PendingIntent.getBroadcast(context, alarmCount++, notificationIntent, 0);
-                                            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
-
-                                            c.add(Calendar.MINUTE, -30);
-                                            pendingIntent = PendingIntent.getBroadcast(context, alarmCount++, notificationIntent, 0);
-                                            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
-                                        }
-
-                                        theoryPeriods[j] = "null";
-                                        /*
-                                            Inserting Theory periods
-                                         */
-                                        if (days[j].has(i + "theory")) {
-                                            theoryPeriods[j] = days[j].getString(i + "theory");
-
-                                            if (j == day) {
-                                                Date current = hour24.parse(start_time_theory);
-                                                assert current != null;
-                                                if (current.after(now) || current.equals(now)) {
-                                                    assert today != null;
-                                                    c.setTime(today);
-                                                } else {
-                                                    assert today != null;
-                                                    c.setTime(today);
-                                                    c.add(Calendar.DATE, 7);
-                                                }
-                                            } else if (j > day) {
-                                                assert today != null;
-                                                c.setTime(today);
-                                                c.add(Calendar.DATE, j - day);
-                                            } else {
-                                                assert today != null;
-                                                c.setTime(today);
-                                                c.add(Calendar.DATE, 7 - day + j);
-                                            }
-
-                                            Date date = df.parse(dateFormat.format(c.getTime()) + " " + start_time_theory);
-
-                                            assert date != null;
-                                            c.setTime(date);
-                                            PendingIntent pendingIntent = PendingIntent.getBroadcast(context, alarmCount++, notificationIntent, 0);
-                                            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
-
-                                            c.add(Calendar.MINUTE, -30);
-                                            pendingIntent = PendingIntent.getBroadcast(context, alarmCount++, notificationIntent, 0);
-                                            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
-                                        }
-                                    }
-
-                                    myDatabase.execSQL("INSERT INTO timetable_lab (start_time, end_time, sun, mon, tue, wed, thu, fri, sat) VALUES ('" + start_time_lab + "', '" + end_time_lab + "', '" + labPeriods[0] + "', '" + labPeriods[1] + "', '" + labPeriods[2] + "', '" + labPeriods[3] + "', '" + labPeriods[4] + "', '" + labPeriods[5] + "', '" + labPeriods[6] + "')");
-                                    myDatabase.execSQL("INSERT INTO timetable_theory (start_time, end_time, sun, mon, tue, wed, thu, fri, sat) VALUES ('" + start_time_theory + "', '" + end_time_theory + "', '" + theoryPeriods[0] + "', '" + theoryPeriods[1] + "', '" + theoryPeriods[2] + "', '" + theoryPeriods[3] + "', '" + theoryPeriods[4] + "', '" + theoryPeriods[5] + "', '" + theoryPeriods[6] + "')");
+                                } catch (Exception e) {
+                                    e.printStackTrace();
                                 }
+                            }
+
+                            start_time_lab = times[0];
+                            end_time_lab = times[1];
+                            start_time_theory = times[2];
+                            end_time_theory = times[3];
+
+                            /*
+                                Inserting periods
+                             */
+                            String[] labPeriods = new String[7];
+                            String[] theoryPeriods = new String[7];
+
+                            for (int j = 0; j < 7; ++j) {
+                                labPeriods[j] = "null";
+                                /*
+                                    Inserting Lab Periods
+                                 */
+                                if (days[j].has(i + "lab")) {
+                                    labPeriods[j] = days[j].getString(i + "lab");
+
+                                    if (j == day) {
+                                        Date current = hour24.parse(start_time_lab);
+                                        assert current != null;
+                                        if (current.after(now) || current.equals(now)) {
+                                            assert today != null;
+                                            c.setTime(today);
+                                        } else {
+                                            assert today != null;
+                                            c.setTime(today);
+                                            c.add(Calendar.DATE, 7);
+                                        }
+                                    } else if (j > day) {
+                                        assert today != null;
+                                        c.setTime(today);
+                                        c.add(Calendar.DATE, j - day);
+                                    } else {
+                                        assert today != null;
+                                        c.setTime(today);
+                                        c.add(Calendar.DATE, 7 - day + j);
+                                    }
+
+                                    Date date = df.parse(dateFormat.format(c.getTime()) + " " + start_time_lab);
+
+                                    assert date != null;
+                                    c.setTime(date);
+                                    PendingIntent pendingIntent = PendingIntent.getBroadcast(context, alarmCount++, notificationIntent, 0);
+                                    alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
+
+                                    c.add(Calendar.MINUTE, -30);
+                                    pendingIntent = PendingIntent.getBroadcast(context, alarmCount++, notificationIntent, 0);
+                                    alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
+                                }
+
+                                theoryPeriods[j] = "null";
+                                /*
+                                    Inserting Theory periods
+                                 */
+                                if (days[j].has(i + "theory")) {
+                                    theoryPeriods[j] = days[j].getString(i + "theory");
+
+                                    if (j == day) {
+                                        Date current = hour24.parse(start_time_theory);
+                                        assert current != null;
+                                        if (current.after(now) || current.equals(now)) {
+                                            assert today != null;
+                                            c.setTime(today);
+                                        } else {
+                                            assert today != null;
+                                            c.setTime(today);
+                                            c.add(Calendar.DATE, 7);
+                                        }
+                                    } else if (j > day) {
+                                        assert today != null;
+                                        c.setTime(today);
+                                        c.add(Calendar.DATE, j - day);
+                                    } else {
+                                        assert today != null;
+                                        c.setTime(today);
+                                        c.add(Calendar.DATE, 7 - day + j);
+                                    }
+
+                                    Date date = df.parse(dateFormat.format(c.getTime()) + " " + start_time_theory);
+
+                                    assert date != null;
+                                    c.setTime(date);
+                                    PendingIntent pendingIntent = PendingIntent.getBroadcast(context, alarmCount++, notificationIntent, 0);
+                                    alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
+
+                                    c.add(Calendar.MINUTE, -30);
+                                    pendingIntent = PendingIntent.getBroadcast(context, alarmCount++, notificationIntent, 0);
+                                    alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
+                                }
+                            }
+
+                            myDatabase.execSQL("INSERT INTO timetable_lab (start_time, end_time, sun, mon, tue, wed, thu, fri, sat) VALUES ('" + start_time_lab + "', '" + end_time_lab + "', '" + labPeriods[0] + "', '" + labPeriods[1] + "', '" + labPeriods[2] + "', '" + labPeriods[3] + "', '" + labPeriods[4] + "', '" + labPeriods[5] + "', '" + labPeriods[6] + "')");
+                            myDatabase.execSQL("INSERT INTO timetable_theory (start_time, end_time, sun, mon, tue, wed, thu, fri, sat) VALUES ('" + start_time_theory + "', '" + end_time_theory + "', '" + theoryPeriods[0] + "', '" + theoryPeriods[1] + "', '" + theoryPeriods[2] + "', '" + theoryPeriods[3] + "', '" + theoryPeriods[4] + "', '" + theoryPeriods[5] + "', '" + theoryPeriods[6] + "')");
+                        }
 
                         for (int i = alarmCount; i < sharedPreferences.getInt("alarmCount", 0); ++i) {
                             PendingIntent pendingIntent = PendingIntent.getBroadcast(context, i, notificationIntent, 0);
@@ -1224,9 +1224,9 @@ public class VTOP {
                 "});" +
                 "return obj;" +
                 "})();", obj -> {
-                    /*
-                        obj is in the form of a JSON string like {"0": {"course": "MAT1001", "faculty": "JAMES VERTIGO"},...}
-                     */
+            /*
+                obj is in the form of a JSON string like {"0": {"course": "MAT1001", "faculty": "JAMES VERTIGO"},...}
+             */
             String temp = obj.substring(1, obj.length() - 1);
             if (obj.equals("null") || temp.equals("")) {
                 error();
@@ -1323,9 +1323,9 @@ public class VTOP {
                 "});" +
                 "return obj;" +
                 "})();", obj -> {
-                    /*
-                        obj is in the form of a JSON string like {"00Faculty Name": "Jack Ryan", "01Email ID": "jack@cia.gov.us",...}
-                     */
+            /*
+                obj is in the form of a JSON string like {"00Faculty Name": "Jack Ryan", "01Email ID": "jack@cia.gov.us",...}
+             */
             String temp = obj.substring(1, obj.length() - 1);
             if (obj.equals("null") || temp.equals("")) {
                 error();
@@ -1469,9 +1469,9 @@ public class VTOP {
                 "});" +
                 "return obj;" +
                 "})();", obj -> {
-                    /*
-                        obj is in the form of a JSON string like {"dean": {"00Faculty Name": "Jack Ryan", "01Email ID": "jack@cia.gov.us",...}, "hod: {"00Faculty Name": "Jimmy Fallon", "01Email ID": "jimmy@tonight.us",...}"}
-                     */
+            /*
+                obj is in the form of a JSON string like {"dean": {"00Faculty Name": "Jack Ryan", "01Email ID": "jack@cia.gov.us",...}, "hod: {"00Faculty Name": "Jimmy Fallon", "01Email ID": "jimmy@tonight.us",...}"}
+             */
             String temp = obj.substring(1, obj.length() - 1);
             if (obj.equals("null") || temp.equals("")) {
                 error();
@@ -1506,18 +1506,18 @@ public class VTOP {
                         myDatabase.execSQL("DROP TABLE IF EXISTS hod");
                         myDatabase.execSQL("CREATE TABLE hod (id INTEGER PRIMARY KEY, column1 VARCHAR, column2 VARCHAR)");
 
-                                Iterator<?> keys = dean.keys();
+                        Iterator<?> keys = dean.keys();
 
-                                while (keys.hasNext()) {
-                                    String key = (String) keys.next();
-                                    String value = dean.getString(key);
+                        while (keys.hasNext()) {
+                            String key = (String) keys.next();
+                            String value = dean.getString(key);
 
-                                    key = key.substring(2);
+                            key = key.substring(2);
 
-                                    myDatabase.execSQL("INSERT INTO dean (column1, column2) VALUES('" + key + "', '" + value + "')");
-                                }
+                            myDatabase.execSQL("INSERT INTO dean (column1, column2) VALUES('" + key + "', '" + value + "')");
+                        }
 
-                                keys = hod.keys();
+                        keys = hod.keys();
 
                         while (keys.hasNext()) {
                             String key = (String) keys.next();
@@ -1620,9 +1620,9 @@ public class VTOP {
                 "});" +
                 "return obj;" +
                 "})();", obj -> {
-                    /*
-                        obj is in the form of a JSON string like {"0": {"course": "MAT1001", "type": "Embedded Theory",...},...}
-                     */
+            /*
+                obj is in the form of a JSON string like {"0": {"course": "MAT1001", "type": "Embedded Theory",...},...}
+             */
             String temp = obj.substring(1, obj.length() - 1);
             if (obj.equals("null") || temp.equals("")) {
                 error();
@@ -1654,9 +1654,9 @@ public class VTOP {
 
                         for (int i = 0; i < myObj.length(); ++i) {
                             JSONObject tempObj = new JSONObject(myObj.getString(Integer.toString(i)));
-                                    String course = tempObj.getString("course");
-                                    String type = tempObj.getString("type");
-                                    String attended = tempObj.getString("attended");
+                            String course = tempObj.getString("course");
+                            String type = tempObj.getString("type");
+                            String attended = tempObj.getString("attended");
                             String total = tempObj.getString("total");
                             String percent = tempObj.getString("percent");
 
@@ -1802,9 +1802,9 @@ public class VTOP {
                 "});" +
                 "return obj;" +
                 "})();", obj -> {
-                    /*
-                        obj is in the form of a JSON string like {"Mid Term": {"course": "MAT1001", "date": "04-Jan-1976",...},...}
-                     */
+            /*
+                obj is in the form of a JSON string like {"Mid Term": {"course": "MAT1001", "date": "04-Jan-1976",...},...}
+             */
             String temp = obj.substring(1, obj.length() - 1);
             if (obj.equals("null") || temp.equals("")) {
                 error();
@@ -1839,51 +1839,51 @@ public class VTOP {
 
                         Iterator<?> keys = myObj.keys();
 
-                                while (keys.hasNext()) {
-                                    String exam = (String) keys.next();
-                                    JSONObject schedule = new JSONObject(myObj.getString(exam));
+                        while (keys.hasNext()) {
+                            String exam = (String) keys.next();
+                            JSONObject schedule = new JSONObject(myObj.getString(exam));
 
-                                    for (int i = 0; i < schedule.length() / 9; ++i) {
-                                        String course = schedule.getString("course" + i);
-                                        String title = schedule.getString("title" + i);
-                                        String slot = schedule.getString("slot" + i);
-                                        String date = schedule.getString("date" + i);
-                                        String reporting = schedule.getString("reporting" + i);
-                                        String startTime = schedule.getString("start" + i);
-                                        String endTime = schedule.getString("end" + i);
-                                        String venue = schedule.getString("venue" + i);
-                                        String location = schedule.getString("location" + i);
-                                        String seat = schedule.getString("seat" + i);
+                            for (int i = 0; i < schedule.length() / 9; ++i) {
+                                String course = schedule.getString("course" + i);
+                                String title = schedule.getString("title" + i);
+                                String slot = schedule.getString("slot" + i);
+                                String date = schedule.getString("date" + i);
+                                String reporting = schedule.getString("reporting" + i);
+                                String startTime = schedule.getString("start" + i);
+                                String endTime = schedule.getString("end" + i);
+                                String venue = schedule.getString("venue" + i);
+                                String location = schedule.getString("location" + i);
+                                String seat = schedule.getString("seat" + i);
 
-                                        venue = venue.replace("-", " - ").trim();
-                                        slot = slot.replace("+", " + ");
+                                venue = venue.replace("-", " - ").trim();
+                                slot = slot.replace("+", " + ");
 
-                                        /*
-                                            Converting to 24 hour format if necessary
-                                         */
-                                        try {
-                                            Date reportingTime = hour12.parse(reporting);
-                                            Date startTimeDate = hour12.parse(startTime);
-                                            Date endTimeDate = hour12.parse(endTime);
+                                /*
+                                    Converting to 24 hour format if necessary
+                                 */
+                                try {
+                                    Date reportingTime = hour12.parse(reporting);
+                                    Date startTimeDate = hour12.parse(startTime);
+                                    Date endTimeDate = hour12.parse(endTime);
 
-                                            if (reportingTime != null) {
-                                                reporting = hour24.format(reportingTime);
-                                            }
-
-                                            if (startTimeDate != null) {
-                                                startTime = hour24.format(startTimeDate);
-                                            }
-
-                                            if (endTimeDate != null) {
-                                                endTime = hour24.format(endTimeDate);
-                                            }
-                                        } catch (Exception e) {
-                                            e.printStackTrace();
-                                        }
-
-                                        myDatabase.execSQL("INSERT INTO exams (exam, course, title, slot, date, reporting, start_time, end_time, venue, location, seat) VALUES ('" + exam.toUpperCase() + "', '" + course + "', '" + title + "', '" + slot + "', '" + date + "', '" + reporting + "', '" + startTime + "', '" + endTime + "', '" + venue + "', '" + location + "', '" + seat + "')");
+                                    if (reportingTime != null) {
+                                        reporting = hour24.format(reportingTime);
                                     }
+
+                                    if (startTimeDate != null) {
+                                        startTime = hour24.format(startTimeDate);
+                                    }
+
+                                    if (endTimeDate != null) {
+                                        endTime = hour24.format(endTimeDate);
+                                    }
+                                } catch (Exception e) {
+                                    e.printStackTrace();
                                 }
+
+                                myDatabase.execSQL("INSERT INTO exams (exam, course, title, slot, date, reporting, start_time, end_time, venue, location, seat) VALUES ('" + exam.toUpperCase() + "', '" + course + "', '" + title + "', '" + slot + "', '" + date + "', '" + reporting + "', '" + startTime + "', '" + endTime + "', '" + venue + "', '" + location + "', '" + seat + "')");
+                            }
+                        }
 
                         int objLength = myObj.length();
                         if (objLength != sharedPreferences.getInt("examsCount", 0)) {
@@ -2012,9 +2012,9 @@ public class VTOP {
                 "});" +
                 "return obj;" +
                 "})();", obj -> {
-                    /*
-                        obj is in the form of a JSON string like {"0": {"course": "MAT1001", "score": "48",...},...}
-                     */
+            /*
+                obj is in the form of a JSON string like {"0": {"course": "MAT1001", "score": "48",...},...}
+             */
             String temp = obj.substring(1, obj.length() - 1);
             if (obj.equals("null") || temp.equals("")) {
                 error();
@@ -2047,71 +2047,71 @@ public class VTOP {
                         for (int i = 0; i < myObj.length(); ++i) {
                             JSONObject tempObj = new JSONObject(myObj.getString(Integer.toString(i)));
                             String course = tempObj.getString("course");
-                                    String type = tempObj.getString("type");
-                                    String title = tempObj.getString("title").toUpperCase();
-                                    String score = tempObj.getString("scored") + " / " + tempObj.getString("max");
-                                    String status = tempObj.getString("status");
-                                    String weightage = tempObj.getString("weightage") + " / " + tempObj.getString("percent");
-                                    String average = tempObj.getString("average");
-                                    String posted = tempObj.getString("posted");
+                            String type = tempObj.getString("type");
+                            String title = tempObj.getString("title").toUpperCase();
+                            String score = tempObj.getString("scored") + " / " + tempObj.getString("max");
+                            String status = tempObj.getString("status");
+                            String weightage = tempObj.getString("weightage") + " / " + tempObj.getString("percent");
+                            String average = tempObj.getString("average");
+                            String posted = tempObj.getString("posted");
 
-                                    myDatabase.execSQL("INSERT INTO marks_new (course, type, title, score, status, weightage, average, posted) VALUES('" + course + "', '" + type + "', '" + title + "', '" + score + "', '" + status + "', '" + weightage + "', '" + average + "', '" + posted + "')");
+                            myDatabase.execSQL("INSERT INTO marks_new (course, type, title, score, status, weightage, average, posted) VALUES('" + course + "', '" + type + "', '" + title + "', '" + score + "', '" + status + "', '" + weightage + "', '" + average + "', '" + posted + "')");
+                        }
+
+                        /*
+                            Removing any marks if they were deleted for some reason
+                         */
+                        Cursor delete = myDatabase.rawQuery("SELECT id FROM marks WHERE (course, title, type) NOT IN (SELECT course, title, type FROM marks_new)", null);
+
+                        int deleteIndex = delete.getColumnIndex("id");
+                        delete.moveToFirst();
+
+                        String newMarksString = sharedPreferences.getString("newMarks", "{}");
+                        JSONObject newMarks = new JSONObject(newMarksString);
+
+                        if (!newMarksString.equals("{}")) {
+                            for (int i = 0; i < delete.getCount(); ++i, delete.moveToNext()) {
+                                String id = delete.getString(deleteIndex);
+
+                                if (newMarks.has(id)) {
+                                    newMarks.remove(id);
                                 }
+                            }
+                        }
 
-                                /*
-                                    Removing any marks if they were deleted for some reason
-                                 */
-                                Cursor delete = myDatabase.rawQuery("SELECT id FROM marks WHERE (course, title, type) NOT IN (SELECT course, title, type FROM marks_new)", null);
+                        delete.close();
 
-                                int deleteIndex = delete.getColumnIndex("id");
-                                delete.moveToFirst();
+                        /*
+                            Updating IDs if they have changed
+                         */
+                        Iterator<?> keys = newMarks.keys();
 
-                                String newMarksString = sharedPreferences.getString("newMarks", "{}");
-                                JSONObject newMarks = new JSONObject(newMarksString);
+                        while (keys.hasNext()) {
+                            String oldID = (String) keys.next();
+                            Cursor update = myDatabase.rawQuery("SELECT id FROM marks_new WHERE (course, title, type) IN (SELECT course, title, type FROM marks WHERE id = " + oldID + ")", null);
+                            update.moveToFirst();
+                            String newID = update.getString(update.getColumnIndex("id"));
 
-                                if (!newMarksString.equals("{}")) {
-                                    for (int i = 0; i < delete.getCount(); ++i, delete.moveToNext()) {
-                                        String id = delete.getString(deleteIndex);
+                            if (!oldID.equals(newID)) {
+                                newMarks.remove(oldID);
+                                newMarks.put(newID, true);
+                            }
 
-                                        if (newMarks.has(id)) {
-                                            newMarks.remove(id);
-                                        }
-                                    }
-                                }
+                            update.close();
+                        }
 
-                                delete.close();
+                        /*
+                            Adding the newly downloaded marks
+                         */
+                        Cursor add = myDatabase.rawQuery("SELECT id FROM marks_new WHERE (course, title, type) NOT IN (SELECT course, title, type FROM marks)", null);
 
-                                /*
-                                    Updating IDs if they have changed
-                                 */
-                                Iterator<?> keys = newMarks.keys();
+                        int addIndex = add.getColumnIndex("id");
+                        add.moveToFirst();
 
-                                while (keys.hasNext()) {
-                                    String oldID = (String) keys.next();
-                                    Cursor update = myDatabase.rawQuery("SELECT id FROM marks_new WHERE (course, title, type) IN (SELECT course, title, type FROM marks WHERE id = " + oldID + ")", null);
-                                    update.moveToFirst();
-                                    String newID = update.getString(update.getColumnIndex("id"));
-
-                                    if (!oldID.equals(newID)) {
-                                        newMarks.remove(oldID);
-                                        newMarks.put(newID, true);
-                                    }
-
-                                    update.close();
-                                }
-
-                                /*
-                                    Adding the newly downloaded marks
-                                 */
-                                Cursor add = myDatabase.rawQuery("SELECT id FROM marks_new WHERE (course, title, type) NOT IN (SELECT course, title, type FROM marks)", null);
-
-                                int addIndex = add.getColumnIndex("id");
-                                add.moveToFirst();
-
-                                for (int i = 0; i < add.getCount(); ++i, add.moveToNext()) {
-                                    String id = add.getString(addIndex);
-                                    newMarks.put(id, true);
-                                }
+                        for (int i = 0; i < add.getCount(); ++i, add.moveToNext()) {
+                            String id = add.getString(addIndex);
+                            newMarks.put(id, true);
+                        }
 
                         add.close();
 
@@ -2227,16 +2227,16 @@ public class VTOP {
                 "});" +
                 "return obj;" +
                 "})();", obj -> {
-                    /*
-                        obj is in the form of a JSON string like {"0": {"course": "MAT1001", "type": "Embedded Theory",...},..., "gpa": "9.6"}
-                     */
+            /*
+                obj is in the form of a JSON string like {"0": {"course": "MAT1001", "type": "Embedded Theory",...},..., "gpa": "9.6"}
+             */
             final String temp = obj.substring(1, obj.length() - 1);
             if (obj.equals("null") || temp.equals("")) {
                 error();
             } else if (temp.equals("nothing")) {
-                        /*
-                            Dropping and recreating an empty table
-                         */
+                /*
+                    Dropping and recreating an empty table
+                 */
                 new Thread(() -> {
                     try {
                         myDatabase.execSQL("DROP TABLE IF EXISTS grades");
@@ -2258,9 +2258,9 @@ public class VTOP {
                     sharedPreferences.edit().remove("gpa").apply();
                 }).start();
             } else {
-                        /*
-                            Dropping, recreating and adding grades
-                         */
+                /*
+                    Dropping, recreating and adding grades
+                 */
                 new Thread(() -> {
                     try {
                         myDatabase.execSQL("DROP TABLE IF EXISTS grades");
@@ -2272,18 +2272,18 @@ public class VTOP {
                         for (i = 0; i < myObj.length() - 1; ++i) {
                             JSONObject tempObj = new JSONObject(myObj.getString(String.valueOf(i)));
                             String course = tempObj.getString("course");
-                                    String type = tempObj.getString("type");
-                                    String gradeType = tempObj.getString("gradetype");
-                                    String total = tempObj.getString("total") + " / 100";
-                                    String grade = tempObj.getString("grade");
+                            String type = tempObj.getString("type");
+                            String gradeType = tempObj.getString("gradetype");
+                            String total = tempObj.getString("total") + " / 100";
+                            String grade = tempObj.getString("grade");
 
-                                    if (gradeType.toLowerCase().equals("ag")) {
-                                        gradeType = "Absolute";
-                                    } else if (gradeType.toLowerCase().equals("rg")) {
-                                        gradeType = "Relative";
-                                    }
+                            if (gradeType.toLowerCase().equals("ag")) {
+                                gradeType = "Absolute";
+                            } else if (gradeType.toLowerCase().equals("rg")) {
+                                gradeType = "Relative";
+                            }
 
-                                    myDatabase.execSQL("INSERT INTO grades (course, type, grade_type, total, grade) VALUES('" + course + "', '" + type + "', '" + gradeType + "', '" + total + "', '" + grade + "')");
+                            myDatabase.execSQL("INSERT INTO grades (course, type, grade_type, total, grade) VALUES('" + course + "', '" + type + "', '" + gradeType + "', '" + total + "', '" + grade + "')");
                         }
 
                         if (i != sharedPreferences.getInt("gradesCount", 0)) {
@@ -2449,9 +2449,9 @@ public class VTOP {
                 "});" +
                 "return obj;" +
                 "})();", obj -> {
-                    /*
-                        obj is in the form of a JSON string like {"effective": "{course: "MAT1011", ...}", "curriculum": "{"type": "Program Core", ...}, ...}
-                     */
+            /*
+                obj is in the form of a JSON string like {"effective": "{course: "MAT1011", ...}", "curriculum": "{"type": "Program Core", ...}, ...}
+             */
             String temp = obj.substring(1, obj.length() - 1);
             if (obj.equals("null") || temp.equals("")) {
                 error();
@@ -2463,85 +2463,85 @@ public class VTOP {
                         myDatabase.execSQL("DROP TABLE IF EXISTS grades_effective");
                         myDatabase.execSQL("CREATE TABLE grades_effective (id INTEGER PRIMARY KEY, course VARCHAR, title VARCHAR, credits VARCHAR, grade VARCHAR)");
 
-                                /*
-                                    Storing the effective grades
-                                 */
+                        /*
+                            Storing the effective grades
+                         */
                         JSONObject effective = new JSONObject(myObj.getString("effective"));
 
-                                for (int i = 0; i < effective.length() / 4; ++i) {
-                                    String course = effective.getString("course" + i);
-                                    String title = effective.getString("title" + i);
-                                    String credits = effective.getString("credits" + i);
-                                    String grade = effective.getString("grade" + i);
+                        for (int i = 0; i < effective.length() / 4; ++i) {
+                            String course = effective.getString("course" + i);
+                            String title = effective.getString("title" + i);
+                            String credits = effective.getString("credits" + i);
+                            String grade = effective.getString("grade" + i);
 
-                                    myDatabase.execSQL("INSERT INTO grades_effective (course, title, credits, grade) VALUES('" + course + "', '" + title + "', '" + credits + "', '" + grade + "')");
-                                }
+                            myDatabase.execSQL("INSERT INTO grades_effective (course, title, credits, grade) VALUES('" + course + "', '" + title + "', '" + credits + "', '" + grade + "')");
+                        }
 
-                                myDatabase.execSQL("DROP TABLE IF EXISTS grades_curriculum");
-                                myDatabase.execSQL("CREATE TABLE grades_curriculum (id INTEGER PRIMARY KEY, type VARCHAR, credits VARCHAR)");
+                        myDatabase.execSQL("DROP TABLE IF EXISTS grades_curriculum");
+                        myDatabase.execSQL("CREATE TABLE grades_curriculum (id INTEGER PRIMARY KEY, type VARCHAR, credits VARCHAR)");
 
-                                /*
-                                    Storing the curriculum details
-                                 */
-                                JSONObject curriculum = new JSONObject(myObj.getString("curriculum"));
+                        /*
+                            Storing the curriculum details
+                         */
+                        JSONObject curriculum = new JSONObject(myObj.getString("curriculum"));
 
-                                for (int i = 0; i < curriculum.length() / 3; ++i) {
-                                    String type = curriculum.getString("type" + i);
-                                    String required = curriculum.getString("required" + i);
-                                    String earned = curriculum.getString("earned" + i);
+                        for (int i = 0; i < curriculum.length() / 3; ++i) {
+                            String type = curriculum.getString("type" + i);
+                            String required = curriculum.getString("required" + i);
+                            String earned = curriculum.getString("earned" + i);
 
-                                    if (required.equals("-")) {
-                                        required = "0";
-                                    }
+                            if (required.equals("-")) {
+                                required = "0";
+                            }
 
-                                    if (earned.equals("")) {
-                                        earned = "0";
-                                    }
+                            if (earned.equals("")) {
+                                earned = "0";
+                            }
 
-                                    String credits = earned + " / " + required;
+                            String credits = earned + " / " + required;
 
-                                    myDatabase.execSQL("INSERT INTO grades_curriculum (type, credits) VALUES('" + type + "', '" + credits + "')");
-                                }
+                            myDatabase.execSQL("INSERT INTO grades_curriculum (type, credits) VALUES('" + type + "', '" + credits + "')");
+                        }
 
-                                myDatabase.execSQL("DROP TABLE IF EXISTS grades_basket");
-                                myDatabase.execSQL("CREATE TABLE grades_basket (id INTEGER PRIMARY KEY, title VARCHAR, credits VARCHAR)");
+                        myDatabase.execSQL("DROP TABLE IF EXISTS grades_basket");
+                        myDatabase.execSQL("CREATE TABLE grades_basket (id INTEGER PRIMARY KEY, title VARCHAR, credits VARCHAR)");
 
-                                /*
-                                    Storing the basket grades
-                                 */
-                                JSONObject basket = new JSONObject(myObj.getString("basket"));
+                        /*
+                            Storing the basket grades
+                         */
+                        JSONObject basket = new JSONObject(myObj.getString("basket"));
 
-                                for (int i = 0; i < basket.length() / 3; ++i) {
-                                    String title = basket.getString("title" + i);
-                                    String credits = basket.getString("earned" + i) + " / " + basket.getString("required" + i);
+                        for (int i = 0; i < basket.length() / 3; ++i) {
+                            String title = basket.getString("title" + i);
+                            String credits = basket.getString("earned" + i) + " / " + basket.getString("required" + i);
 
-                                    myDatabase.execSQL("INSERT INTO grades_basket (title, credits) VALUES('" + title + "', '" + credits + "')");
-                                }
+                            myDatabase.execSQL("INSERT INTO grades_basket (title, credits) VALUES('" + title + "', '" + credits + "')");
+                        }
 
-                                myDatabase.execSQL("DROP TABLE IF EXISTS grades_summary");
-                                myDatabase.execSQL("CREATE TABLE grades_summary (id INTEGER PRIMARY KEY, column1 VARCHAR, column2 VARCHAR)");
+                        myDatabase.execSQL("DROP TABLE IF EXISTS grades_summary");
+                        myDatabase.execSQL("CREATE TABLE grades_summary (id INTEGER PRIMARY KEY, column1 VARCHAR, column2 VARCHAR)");
 
-                                /*
-                                    Storing the summary
-                                 */
-                                JSONObject summary = new JSONObject(myObj.getString("summary"));
+                        /*
+                            Storing the summary
+                         */
+                        JSONObject summary = new JSONObject(myObj.getString("summary"));
 
-                                Iterator<?> keys = summary.keys();
+                        Iterator<?> keys = summary.keys();
 
-                                while (keys.hasNext()) {
-                                    String key = (String) keys.next();
-                                    String value = summary.getString(key);
+                        while (keys.hasNext()) {
+                            String key = (String) keys.next();
+                            String value = summary.getString(key);
 
-                                    key = key.substring(2);
+                            key = key.substring(2);
 
-                                    if (key.toLowerCase().contains("cgpa")) {
-                                        key = "Overall CGPA";
-                                    } else if (key.toLowerCase().contains("grades")) {
-                                        key = "Number of " + key;
-                                    }
+                            if (key.toLowerCase().contains("cgpa")) {
+                                key = "Overall CGPA";
+                            } else if (key.toLowerCase().contains("grades")) {
+                                key = "Number of " + key;
+                            }
 
-                                    myDatabase.execSQL("INSERT INTO grades_summary (column1, column2) VALUES('" + key + "', '" + value + "')");
-                                }
+                            myDatabase.execSQL("INSERT INTO grades_summary (column1, column2) VALUES('" + key + "', '" + value + "')");
+                        }
 
                         ((Activity) context).runOnUiThread(() -> {
                             updateProgress();
@@ -2599,16 +2599,16 @@ public class VTOP {
                 "});" +
                 "return obj;" +
                 "})();", obj -> {
-                    /*
-                        obj is in the form of a JSON string like {"0": {"course": "MAT1001", "type": "Embedded Theory", "message": "All of you have failed!"}}
-                     */
+            /*
+                obj is in the form of a JSON string like {"0": {"course": "MAT1001", "type": "Embedded Theory", "message": "All of you have failed!"}}
+             */
             final String temp = obj.substring(1, obj.length() - 1);
             if (obj.equals("null") || temp.equals("{}")) {
                 error();
             } else if (temp.equals("nothing")) {
-                        /*
-                            Dropping and recreating an empty table
-                         */
+                /*
+                    Dropping and recreating an empty table
+                 */
                 new Thread(() -> {
                     try {
                         myDatabase.execSQL("DROP TABLE IF EXISTS messages");
@@ -2628,9 +2628,9 @@ public class VTOP {
                     sharedPreferences.edit().remove("newMessages").apply();
                 }).start();
             } else {
-                        /*
-                            Dropping, recreating and adding messages
-                         */
+                /*
+                    Dropping, recreating and adding messages
+                 */
                 new Thread(() -> {
                     try {
                         myDatabase.execSQL("CREATE TABLE IF NOT EXISTS messages (id INTEGER PRIMARY KEY, course VARCHAR, type VARCHAR, message VARCHAR)");
@@ -2642,16 +2642,16 @@ public class VTOP {
                         for (int i = 0; i < myObj.length(); ++i) {
                             JSONObject tempObj = new JSONObject(myObj.getString(Integer.toString(i)));
                             String course = tempObj.getString("course");
-                                    String type = tempObj.getString("type");
-                                    String message = tempObj.getString("message");
+                            String type = tempObj.getString("type");
+                            String message = tempObj.getString("message");
 
-                                    myDatabase.execSQL("INSERT INTO messages_new (course, type, message) VALUES('" + course + "', '" + type + "', '" + message + "')");
-                                }
+                            myDatabase.execSQL("INSERT INTO messages_new (course, type, message) VALUES('" + course + "', '" + type + "', '" + message + "')");
+                        }
 
-                                /*
-                                    Checking for messages that haven't been downloaded before
-                                 */
-                                Cursor newSpotlight = myDatabase.rawQuery("SELECT id FROM messages_new WHERE message NOT IN (SELECT message FROM messages)", null);
+                        /*
+                            Checking for messages that haven't been downloaded before
+                         */
+                        Cursor newSpotlight = myDatabase.rawQuery("SELECT id FROM messages_new WHERE message NOT IN (SELECT message FROM messages)", null);
 
                         if (newSpotlight.getCount() > 0) {
                             sharedPreferences.edit().putBoolean("newMessages", true).apply();
@@ -2708,14 +2708,14 @@ public class VTOP {
                 "});" +
                 "return successFlag;" +
                 "})();", value -> {
-                    /*
-                        obj is in the form of a JSON string that is yet to be created
-                     */
+            /*
+                obj is in the form of a JSON string that is yet to be created
+             */
             String temp = value.substring(1, value.length() - 1);
             if (value.equals("true")) {
-                        /*
-                            Dropping and recreating an empty table
-                         */
+                /*
+                    Dropping and recreating an empty table
+                 */
                 new Thread(() -> {
                     try {
                         myDatabase.execSQL("DROP TABLE IF EXISTS proctor_messages");
@@ -2735,9 +2735,9 @@ public class VTOP {
                     sharedPreferences.edit().remove("newProctorMessages").apply();
                 }).start();
             } else if (temp.equals("new")) {
-                        /*
-                            Dropping, recreating and adding new proctor messages
-                         */
+                /*
+                    Dropping, recreating and adding new proctor messages
+                 */
                 new Thread(() -> {
                     try {
                         myDatabase.execSQL("DROP TABLE IF EXISTS proctor_messages");
@@ -2823,16 +2823,16 @@ public class VTOP {
                 "});" +
                 "return obj;" +
                 "})();", obj -> {
-                    /*
-                        obj is in the form of a JSON string like {"Academics": {"announcement": "In lieu of COVID-19, campus will remain shut for eternity.", "link": "null"},...}
-                     */
+            /*
+                obj is in the form of a JSON string like {"Academics": {"announcement": "In lieu of COVID-19, campus will remain shut for eternity.", "link": "null"},...}
+             */
             String temp = obj.substring(1, obj.length() - 1);
             if (obj.equals("null") || temp.equals("")) {
                 error();
             } else if (temp.equals("nothing")) {
-                        /*
-                            Dropping and recreating an empty table
-                         */
+                /*
+                    Dropping and recreating an empty table
+                 */
                 new Thread(() -> {
                     try {
                         myDatabase.execSQL("DROP TABLE IF EXISTS spotlight");
@@ -2850,9 +2850,9 @@ public class VTOP {
                     sharedPreferences.edit().remove("newSpotlight").apply();
                 }).start();
             } else {
-                        /*
-                            Dropping, recreating and adding announcements
-                         */
+                /*
+                    Dropping, recreating and adding announcements
+                 */
                 new Thread(() -> {
                     try {
                         JSONObject myObj = new JSONObject(obj);
@@ -2864,71 +2864,71 @@ public class VTOP {
                         Iterator<?> keys = myObj.keys();
 
                         while (keys.hasNext()) {
-                                    String category = (String) keys.next();
-                                    JSONObject tempObj = new JSONObject(myObj.getString(category));
+                            String category = (String) keys.next();
+                            JSONObject tempObj = new JSONObject(myObj.getString(category));
 
-                                    for (int i = 0; i < tempObj.length() / 2; ++i) {
-                                        String announcement = tempObj.getString(i + "announcement");
-                                        String link = tempObj.getString(i + "link");
+                            for (int i = 0; i < tempObj.length() / 2; ++i) {
+                                String announcement = tempObj.getString(i + "announcement");
+                                String link = tempObj.getString(i + "link");
 
-                                        myDatabase.execSQL("INSERT INTO spotlight_new (category, announcement, link) VALUES('" + category + "', '" + announcement + "', '" + link + "')");
-                                    }
+                                myDatabase.execSQL("INSERT INTO spotlight_new (category, announcement, link) VALUES('" + category + "', '" + announcement + "', '" + link + "')");
+                            }
+                        }
+
+                        /*
+                            Removing any announcements if they were deleted on the portal
+                         */
+                        Cursor delete = myDatabase.rawQuery("SELECT id FROM spotlight WHERE announcement NOT IN (SELECT announcement FROM spotlight_new)", null);
+
+                        int deleteIndex = delete.getColumnIndex("id");
+                        delete.moveToFirst();
+
+                        String newSpotlightString = sharedPreferences.getString("newSpotlight", "{}");
+                        JSONObject newSpotlight = new JSONObject(newSpotlightString);
+
+                        if (!newSpotlightString.equals("{}")) {
+                            for (int i = 0; i < delete.getCount(); ++i, delete.moveToNext()) {
+                                String id = delete.getString(deleteIndex);
+
+                                if (newSpotlight.has(id)) {
+                                    newSpotlight.remove(id);
                                 }
+                            }
+                        }
 
-                                /*
-                                    Removing any announcements if they were deleted on the portal
-                                 */
-                                Cursor delete = myDatabase.rawQuery("SELECT id FROM spotlight WHERE announcement NOT IN (SELECT announcement FROM spotlight_new)", null);
+                        delete.close();
 
-                                int deleteIndex = delete.getColumnIndex("id");
-                                delete.moveToFirst();
+                        /*
+                            Updating any announcements IDs that have been changed in the new table
+                         */
+                        keys = newSpotlight.keys();
 
-                                String newSpotlightString = sharedPreferences.getString("newSpotlight", "{}");
-                                JSONObject newSpotlight = new JSONObject(newSpotlightString);
+                        while (keys.hasNext()) {
+                            String oldID = (String) keys.next();
+                            Cursor update = myDatabase.rawQuery("SELECT id FROM spotlight_new WHERE announcement IN (SELECT announcement FROM spotlight WHERE id = " + oldID + ")", null);
+                            update.moveToFirst();
+                            String newID = update.getString(update.getColumnIndex("id"));
 
-                                if (!newSpotlightString.equals("{}")) {
-                                    for (int i = 0; i < delete.getCount(); ++i, delete.moveToNext()) {
-                                        String id = delete.getString(deleteIndex);
+                            if (!oldID.equals(newID)) {
+                                newSpotlight.remove(oldID);
+                                newSpotlight.put(newID, true);
+                            }
 
-                                        if (newSpotlight.has(id)) {
-                                            newSpotlight.remove(id);
-                                        }
-                                    }
-                                }
+                            update.close();
+                        }
 
-                                delete.close();
+                        /*
+                            Adding the new announcements
+                         */
+                        Cursor add = myDatabase.rawQuery("SELECT id FROM spotlight_new WHERE announcement NOT IN (SELECT announcement FROM spotlight)", null);
 
-                                /*
-                                    Updating any announcements IDs that have been changed in the new table
-                                 */
-                                keys = newSpotlight.keys();
+                        int addIndex = add.getColumnIndex("id");
+                        add.moveToFirst();
 
-                                while (keys.hasNext()) {
-                                    String oldID = (String) keys.next();
-                                    Cursor update = myDatabase.rawQuery("SELECT id FROM spotlight_new WHERE announcement IN (SELECT announcement FROM spotlight WHERE id = " + oldID + ")", null);
-                                    update.moveToFirst();
-                                    String newID = update.getString(update.getColumnIndex("id"));
-
-                                    if (!oldID.equals(newID)) {
-                                        newSpotlight.remove(oldID);
-                                        newSpotlight.put(newID, true);
-                                    }
-
-                                    update.close();
-                                }
-
-                                /*
-                                    Adding the new announcements
-                                 */
-                                Cursor add = myDatabase.rawQuery("SELECT id FROM spotlight_new WHERE announcement NOT IN (SELECT announcement FROM spotlight)", null);
-
-                                int addIndex = add.getColumnIndex("id");
-                                add.moveToFirst();
-
-                                for (int i = 0; i < add.getCount(); ++i, add.moveToNext()) {
-                                    String id = add.getString(addIndex);
-                                    newSpotlight.put(id, true);
-                                }
+                        for (int i = 0; i < add.getCount(); ++i, add.moveToNext()) {
+                            String id = add.getString(addIndex);
+                            newSpotlight.put(id, true);
+                        }
 
                         add.close();
 
@@ -3011,9 +3011,9 @@ public class VTOP {
                 "});" +
                 "return obj;" +
                 "})();", obj -> {
-                    /*
-                        obj is in the form of a JSON string like {"0": {"amount": "1000000", "date": "04-JAN-1976", "receipt": "17085"},...}
-                     */
+            /*
+                obj is in the form of a JSON string like {"0": {"amount": "1000000", "date": "04-JAN-1976", "receipt": "17085"},...}
+             */
             String temp = obj.substring(1, obj.length() - 1);
             if (obj.equals("null") || temp.equals("")) {
                 error();
@@ -3029,7 +3029,7 @@ public class VTOP {
                         for (i = 0; i < myObj.length(); ++i) {
                             JSONObject tempObj = new JSONObject(myObj.getString(Integer.toString(i)));
                             String receipt = tempObj.getString("receipt");
-                                    String date = tempObj.getString("date").toUpperCase();
+                            String date = tempObj.getString("date").toUpperCase();
                             String amount = tempObj.getString("amount");
 
                             myDatabase.execSQL("INSERT INTO receipts (receipt, date, amount) VALUES('" + receipt + "', '" + date + "', '" + amount + "')");
