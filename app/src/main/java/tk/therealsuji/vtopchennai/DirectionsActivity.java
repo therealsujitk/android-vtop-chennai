@@ -109,7 +109,7 @@ public class DirectionsActivity extends AppCompatActivity {
             JSONObject main = new JSONObject();
             try {
                 /*
-                    Alpha block is redirected to an anonymous location. It has to be updated.
+                    TODO: Alpha block is redirected to an anonymous location. It has to be updated.
                  */
                 main.put("Academic Block 1", "{\"description\": \"\", \"tag\": \"wWaWFDiuUnrSkv7Q8\"}");
                 main.put("Academic Block 2", "{\"description\": \"\", \"tag\": \"2DcLPUj6JBU2SD698\"}");
@@ -147,7 +147,7 @@ public class DirectionsActivity extends AppCompatActivity {
             JSONObject atms = new JSONObject();
             try {
                 /*
-                    India bank is redirected to an anonymous location. It has to be updated.
+                    TODO: India bank is redirected to an anonymous location. It has to be updated.
                  */
                 atms.put("India Bank", "{\"description\": \"Bank & ATM\", \"tag\": \"JbFEbDmR69yxQyn47\"}");
                 atms.put("Karur Vysya Bank", "{\"description\": \"ATM\", \"tag\": \"zt1XxVx5mizdkEub8\"}");

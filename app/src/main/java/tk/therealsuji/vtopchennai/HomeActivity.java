@@ -661,8 +661,7 @@ public class HomeActivity extends AppCompatActivity {
             if (newSpotlight) {
                 sharedPreferences.edit().remove("newSpotlight").apply();
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception ignored) {
         }
 
         new Thread(() -> {

@@ -201,6 +201,29 @@ public class VTOP {
     }
 
     /*
+        Function to reload the page using javascript in case of an error.
+        If something goes wrong, it'll log out and ask for the captcha again.
+     */
+    private void reloadPage() {
+        if (terminateDownload) {
+            return;
+        }
+
+        isOpened = false;
+        isInProgress = false;
+
+        if (loading.getVisibility() == View.INVISIBLE) {
+            hideLayouts();
+            loading.setVisibility(View.VISIBLE);
+        }
+
+        webView.clearCache(true);
+        webView.clearHistory();
+        CookieManager.getInstance().removeAllCookies(null);
+        webView.loadUrl("http://vtopcc.vit.ac.in/vtop");
+    }
+
+    /*
         Setup the Captcha Layout
      */
     private void setupCaptcha() {
@@ -339,50 +362,6 @@ public class VTOP {
     }
 
     /*
-        Function to update the progress of the download. If more data needs to be downloaded,
-        the max value can simply be updated here (SHOULD ALSO BE UPDATED IN dialog_download.xml)
-     */
-    private void updateProgress() {
-        if (terminateDownload) {
-            return;
-        }
-
-        progressBar.setProgress(++lastDownload, true);
-        String progress = lastDownload + " / 14";
-        progressText.setText(progress);
-    }
-
-    /*
-        Function to reload the page using javascript in case of an error.
-        If something goes wrong, it'll log out and ask for the captcha again.
-     */
-    private void reloadPage() {
-        if (terminateDownload) {
-            return;
-        }
-
-        isOpened = false;
-        isInProgress = false;
-
-        if (loading.getVisibility() == View.INVISIBLE) {
-            hideLayouts();
-            loading.setVisibility(View.VISIBLE);
-        }
-
-        webView.clearCache(true);
-        webView.clearHistory();
-        CookieManager.getInstance().removeAllCookies(null);
-        webView.loadUrl("http://vtopcc.vit.ac.in/vtop");
-    }
-
-    /*
-        Function to terminate the download process
-     */
-    public void terminateDownload() {
-        terminateDownload = true;
-    }
-
-    /*
         Function to open the sign in page
      */
     private void openSignIn() {
@@ -415,7 +394,7 @@ public class VTOP {
     }
 
     /*
-        Function to get the type of captcha
+        Function to get the type of captcha (Default Captcha / Google reCaptcha)
      */
     private void getCaptchaType() {
         if (terminateDownload) {
@@ -440,8 +419,8 @@ public class VTOP {
     }
 
     /*
+        For Default Captcha
         Function to get the captcha from the portal's sign in page and load it into the ImageView
-        This is for the local captcha (the default captcha)
      */
     private void getCaptcha() {
         if (terminateDownload) {
@@ -489,8 +468,8 @@ public class VTOP {
     }
 
     /*
-        Function to override the default onSubmit function
-        and execute the captcha
+        For Google reCaptcha
+        Function to override the default onSubmit function and execute the captcha
      */
     private void executeCaptcha() {
         if (terminateDownload) {
@@ -499,8 +478,7 @@ public class VTOP {
 
         /*
             This will display the webView,
-            however the user  won't see anything
-            other than the Captcha Challenge (If it shows up)
+            however the user won't see anything other than the Captcha Challenge (If it needs to be solved)
          */
         renderCaptcha();
 
@@ -522,8 +500,8 @@ public class VTOP {
     }
 
     /*
-        Function to display Google's reCaptcha (hiding everything else)
-        to the user if it needs to be solved
+        For Google reCaptcha
+        Function to hide all elements and display only the Google reCaptcha (If it needs to be solved)
         TODO: There is still a minor design issue if the captcha has to be resubmitted by the user,
               also I'm not very comfortable using setInterval() here.
      */
@@ -3071,6 +3049,35 @@ public class VTOP {
     }
 
     /*
+        Function to update the progress of the download. If more data needs to be downloaded,
+        the max value can simply be updated here (SHOULD ALSO BE UPDATED IN dialog_download.xml)
+     */
+    private void updateProgress() {
+        if (terminateDownload) {
+            return;
+        }
+
+        progressBar.setProgress(++lastDownload, true);
+        String progress = lastDownload + " / 14";
+        progressText.setText(progress);
+    }
+
+    /*
+        Get the last successful download so that it can continue from
+        where it left off instead of starting all over
+     */
+    public int getLastDownload() {
+        return lastDownload;
+    }
+
+    /*
+        Function to terminate the download process
+     */
+    public void terminateDownload() {
+        terminateDownload = true;
+    }
+
+    /*
         Function to display an error message
      */
     public void error(final int errorCode) {
@@ -3083,14 +3090,6 @@ public class VTOP {
             reloadPage();
         });
     }
-
-    /*
-        Get the last successful download so that it can continue from
-        where it left off instead of starting from the first
-     */
-    public int getLastDownload() {
-        return lastDownload;
-    }
 }
 
 /*
@@ -3101,7 +3100,7 @@ public class VTOP {
  *  Error 101   Failed to connect to the server
  *  Error 102   Failed to get captcha type (local / public)
  *  Error 103   Failed to get captcha image
- *  Error 104   Could not display captcha image
+ *  Error 104   Failed to display captcha image
  *
  *  Error 201   Unknown error during login (Possibly timeout)
  *
@@ -3109,42 +3108,42 @@ public class VTOP {
  *  Error 302   Failed to display semesters
  *  Error 303   Failed to fetch semester ID
  *
- *  Error 401   Failed to download the profile data
- *  Error 402   Failed to store the profile data
+ *  Error 401   Failed to download profile data
+ *  Error 402   Error while storing profile data
  *
- *  Error 501   Failed to download the timetable
- *  Error 502   Failed to store the timetable
+ *  Error 501   Failed to download timetable
+ *  Error 502   Error while storing timetable
  *
- *  Error 601   Failed to download the faculty info
- *  Error 602   Failed to store the faculty info
+ *  Error 601   Failed to download faculty info
+ *  Error 602   Error while storing faculty info
  *
- *  Error 701   Failed to download the proctor info
- *  Error 702   Failed to store the proctor info
- *  Error 703   Failed to download the hod & dean info
- *  Error 704   Failed to store the hod & dean info
+ *  Error 701   Failed to download proctor info
+ *  Error 702   Error while storing proctor info
+ *  Error 703   Failed to download hod & dean info
+ *  Error 704   Error while storing hod & dean info
  *
- *  Error 801   Failed to download the attendance
- *  Error 802   Failed to store the attendance
+ *  Error 801   Failed to download attendance
+ *  Error 802   Error while storing attendance
  *
  *  Error 901   Failed to download the exam schedule
  *  Error 902   Failed to store the exam schedule
  *
- *  Error 1001  Failed to download the marks
- *  Error 1002  Failed to store the marks
+ *  Error 1001  Failed to download marks
+ *  Error 1002  Error while storing marks & updating unread marks
  *
- *  Error 1101  Failed to download the grades
- *  Error 1102  Failed to store the grades
- *  Error 1103  Failed to download the grade history
- *  Error 1104  Failed to store the grade history
+ *  Error 1101  Failed to download grades
+ *  Error 1102  Error while storing grades
+ *  Error 1103  Failed to download grade history
+ *  Error 1104  Error while storing grade history
  *
- *  Error 1201  Failed to download the class messages
- *  Error 1202  Failed to store the class messages
- *  Error 1203  Unknown error downloading / storing the proctor messages
+ *  Error 1201  Failed to download class messages
+ *  Error 1202  Error while storing class messages
+ *  Error 1203  Unknown error downloading / storing proctor messages
  *
- *  Error 1301  Failed to download the spotlight
- *  Error 1302  Failed to store the spotlight
+ *  Error 1301  Failed to download spotlight
+ *  Error 1302  Error while storing spotlight & updating unread announcements
  *
- *  Error 1401  Failed to download the receipts
- *  Error 1402  Failed to store the receipts
+ *  Error 1401  Failed to download receipts
+ *  Error 1402  Error while storing receipts
  *
  */
