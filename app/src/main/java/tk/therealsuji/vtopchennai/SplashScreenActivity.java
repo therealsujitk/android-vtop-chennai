@@ -62,8 +62,7 @@ public class SplashScreenActivity extends AppCompatActivity {
                 JSONObject about = new JSONObject(result);
                 int latest = about.getInt("version-code");
                 sharedPreferences.edit().putInt("latest", latest).apply();
-            } catch (Exception e) {
-                e.printStackTrace();
+            } catch (Exception ignored) {
             }
         }).start();
 

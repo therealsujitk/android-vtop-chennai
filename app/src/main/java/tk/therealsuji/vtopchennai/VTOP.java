@@ -95,6 +95,7 @@ public class VTOP {
         webView.getSettings().setJavaScriptEnabled(true);
         webView.getSettings().setUserAgentString("Mozilla/5.0 (Linux; Android 10) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.99 Mobile Safari/537.36");
         webView.setWebViewClient(new WebViewClient() {
+            @Override
             public void onPageFinished(WebView view, String url) {
                 if (terminateDownload) {
                     return;
@@ -1017,8 +1018,7 @@ public class VTOP {
                                             times[j] = hour24.format(time);
                                         }
                                     }
-                                } catch (Exception e) {
-                                    e.printStackTrace();
+                                } catch (Exception ignored) {
                                 }
                             }
 
@@ -1044,6 +1044,7 @@ public class VTOP {
                                     if (j == day) {
                                         Date current = hour24.parse(start_time_lab);
                                         assert current != null;
+
                                         if (current.after(now) || current.equals(now)) {
                                             assert today != null;
                                             c.setTime(today);
@@ -1084,6 +1085,7 @@ public class VTOP {
                                     if (j == day) {
                                         Date current = hour24.parse(start_time_theory);
                                         assert current != null;
+
                                         if (current.after(now) || current.equals(now)) {
                                             assert today != null;
                                             c.setTime(today);
@@ -1818,24 +1820,35 @@ public class VTOP {
                                 /*
                                     Converting to 24 hour format if necessary
                                  */
+
+                                // Reporting Time
                                 try {
                                     Date reportingTime = hour12.parse(reporting);
-                                    Date startTimeDate = hour12.parse(startTime);
-                                    Date endTimeDate = hour12.parse(endTime);
 
                                     if (reportingTime != null) {
                                         reporting = hour24.format(reportingTime);
                                     }
+                                } catch (Exception ignored) {
+                                }
+
+                                // Start Time
+                                try {
+                                    Date startTimeDate = hour12.parse(startTime);
 
                                     if (startTimeDate != null) {
                                         startTime = hour24.format(startTimeDate);
                                     }
+                                } catch (Exception ignored) {
+                                }
+
+                                // End Time
+                                try {
+                                    Date endTimeDate = hour12.parse(endTime);
 
                                     if (endTimeDate != null) {
                                         endTime = hour24.format(endTimeDate);
                                     }
-                                } catch (Exception e) {
-                                    e.printStackTrace();
+                                } catch (Exception ignored) {
                                 }
 
                                 myDatabase.execSQL("INSERT INTO exams (exam, course, title, slot, date, reporting, start_time, end_time, venue, location, seat) VALUES ('" + exam.toUpperCase() + "', '" + course + "', '" + title + "', '" + slot + "', '" + date + "', '" + reporting + "', '" + startTime + "', '" + endTime + "', '" + venue + "', '" + location + "', '" + seat + "')");
