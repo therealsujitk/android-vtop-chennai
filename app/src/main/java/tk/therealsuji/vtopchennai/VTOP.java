@@ -25,8 +25,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
 import android.view.animation.AccelerateInterpolator;
+import android.webkit.ConsoleMessage;
 import android.webkit.CookieManager;
 import android.webkit.JavascriptInterface;
+import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ArrayAdapter;
@@ -122,6 +124,22 @@ public class VTOP {
                 }
             }
         });
+        webView.setWebChromeClient(new WebChromeClient() {
+            @Override
+            public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
+                int lineNumber = consoleMessage.lineNumber();
+                String message = consoleMessage.message();
+                String source = consoleMessage.sourceId();
+                String messageLevel = consoleMessage.messageLevel().toString().toLowerCase();
+
+                if (messageLevel.equals("log")) {
+                    return super.onConsoleMessage(consoleMessage);
+                }
+
+                errorLog.append("<code class=\"").append(messageLevel).append("\">[INFO:CONSOLE(").append(lineNumber).append(")] ").append("\"").append(message).append("\", source: ").append(source).append("</code>\n");
+                return super.onConsoleMessage(consoleMessage);
+            }
+        });
         webView.addJavascriptInterface(this, "Android");
     }
 
@@ -133,7 +151,6 @@ public class VTOP {
         counter = 0;                    // If the counter has turned to 60, it won't allow future downloads unless it has been reset
 
         this.downloadDialog = downloadDialog;
-        errorLog = new StringBuilder();
 
         /*
             Getting the saved credentials
@@ -220,6 +237,7 @@ public class VTOP {
 
         isOpened = false;
         isInProgress = false;
+        errorLog = new StringBuilder();
 
         if (loading.getVisibility() == View.INVISIBLE) {
             hideLayouts();
@@ -3089,13 +3107,15 @@ public class VTOP {
         }
 
         if (error != null) {
-            errorLog.append(error);
+            errorLog.append("<code class=\"error\">").append(error).append("</code>");
         }
 
-        String errorType = "--------------- Error " + errorCode + " ---------------\n";
-        errorLog.insert(0, errorType);
+        String errorComment = "<code class=\"comment\">-------------------- Error " + errorCode + " -------------------";
+        if (errorCode < 1000) errorComment = errorComment + "-";
+        errorComment = errorComment + "</code>\n";
+        errorLog.insert(0, errorComment);
 
-        addDeviceInfo();
+        errorLog.append("\n").append(getAdditionalInfo());
 
         logError(Integer.toString(errorCode), errorLog.toString());
 
@@ -3119,21 +3139,45 @@ public class VTOP {
     /*
         Function to add device info to the error log
      */
-    private void addDeviceInfo() {
+    private String getAdditionalInfo() {
+        StringBuilder additionalInfo = new StringBuilder();
+
+        String buildType = BuildConfig.BUILD_TYPE;
+        String versionName = BuildConfig.VERSION_NAME;
+        int versionCode = BuildConfig.VERSION_CODE;
+
+        Calendar c = Calendar.getInstance();
+        SimpleDateFormat ts = new SimpleDateFormat("d-MMM-yyyy HH:mm:ss", Locale.ENGLISH);
+        String timestamp = ts.format(c.getTime());
+
         String deviceModal = Build.MODEL;
         String androidVersion = Build.VERSION.RELEASE;
         int androidSDK = Build.VERSION.SDK_INT;
 
-        errorLog.append("--------------- Device Info ---------------\n");
-        errorLog.append("Device Modal\t\t: ").append(deviceModal).append("\n");
-        errorLog.append("Android Version\t\t: ").append(androidVersion).append(" (SDK ").append(androidSDK).append(")\n");
-        errorLog.append("Default User Agent\t: ").append(webViewUserAgent).append("\n");
+        additionalInfo.append("<code class=\"comment\">----------------- Additional Info -----------------</code>\n");
+        additionalInfo.append("<code>");
+        additionalInfo.append("App Version         : ").append(versionName).append(" (").append(versionCode).append(") - ").append(buildType).append("\n");
+        additionalInfo.append("Error Timestamp     : ").append(timestamp).append("\n");
+        additionalInfo.append("Device Modal        : ").append(deviceModal).append("\n");
+        additionalInfo.append("Android Version     : ").append(androidVersion).append(" (SDK ").append(androidSDK).append(")\n");
+        additionalInfo.append("Default User Agent  : ").append(webViewUserAgent).append("</code>\n");
+
+        return additionalInfo.toString();
     }
 
     /*
         Function to store the error log
      */
     private void logError(final String errorCode, final String error) {
+        new Thread(() -> {
+            myDatabase.execSQL("CREATE TABLE IF NOT EXISTS error_logs (id INTEGER PRIMARY KEY, error_code VARCHAR, date VARCHAR, error VARCHAR)");
+
+            Calendar c = Calendar.getInstance();
+            SimpleDateFormat df = new SimpleDateFormat("d-MMM-yyyy", Locale.ENGLISH);
+            String date = df.format(c.getTime()).toUpperCase();
+
+            myDatabase.execSQL("INSERT INTO error_logs (error_code, date, error) VALUES('" + errorCode + "', '" + date + "', '" + error.replaceAll("'", "''") + "')");
+        }).start();
     }
 }
 
