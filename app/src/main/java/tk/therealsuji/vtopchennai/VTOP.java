@@ -136,7 +136,8 @@ public class VTOP {
                     return super.onConsoleMessage(consoleMessage);
                 }
 
-                errorLog.append("<code class=\"").append(messageLevel).append("\">[INFO:CONSOLE(").append(lineNumber).append(")] ").append("\"").append(message).append("\", source: ").append(source).append("</code>\n");
+//                errorLog.append("<code class=\"").append(messageLevel).append("\">[INFO:CONSOLE(").append(lineNumber).append(")] ").append("\"").append(message).append("\", source: ").append(source).append("</code>\n");
+                errorLog.append(messageLevel.toUpperCase()).append(":[INFO:CONSOLE(").append(lineNumber).append(")] ").append("\"").append(message).append("\", source: ").append(source).append("\n");
                 return super.onConsoleMessage(consoleMessage);
             }
         });
@@ -3107,12 +3108,15 @@ public class VTOP {
         }
 
         if (error != null) {
-            errorLog.append("<code class=\"error\">").append(error).append("</code>");
+//            errorLog.append("<code class=\"error\">").append(error).append("</code>");
+            errorLog.append(error.replaceAll("at ", "    at "));
         }
 
-        String errorComment = "<code class=\"comment\">-------------------- Error " + errorCode + " -------------------";
+//        String errorComment = "<code class=\"comment\">-------------------- Error " + errorCode + " -------------------";
+        String errorComment = "-------------------- Error " + errorCode + " -------------------";
         if (errorCode < 1000) errorComment = errorComment + "-";
-        errorComment = errorComment + "</code>\n";
+//        errorComment = errorComment + "</code>\n";
+        errorComment = errorComment + "\n";
         errorLog.insert(0, errorComment);
 
         errorLog.append("\n").append(getAdditionalInfo());
@@ -3147,20 +3151,22 @@ public class VTOP {
         int versionCode = BuildConfig.VERSION_CODE;
 
         Calendar c = Calendar.getInstance();
-        SimpleDateFormat ts = new SimpleDateFormat("d-MMM-yyyy HH:mm:ss", Locale.ENGLISH);
+        SimpleDateFormat ts = new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss", Locale.ENGLISH);
         String timestamp = ts.format(c.getTime());
 
         String deviceModal = Build.MODEL;
         String androidVersion = Build.VERSION.RELEASE;
         int androidSDK = Build.VERSION.SDK_INT;
 
-        additionalInfo.append("<code class=\"comment\">----------------- Additional Info -----------------</code>\n");
-        additionalInfo.append("<code>");
+//        additionalInfo.append("<code class=\"comment\">----------------- Additional Info -----------------</code>\n");
+//        additionalInfo.append("<code>");
+        additionalInfo.append("----------------- Additional Info -----------------\n");
         additionalInfo.append("App Version         : ").append(versionName).append(" (").append(versionCode).append(") - ").append(buildType).append("\n");
         additionalInfo.append("Error Timestamp     : ").append(timestamp).append("\n");
         additionalInfo.append("Device Modal        : ").append(deviceModal).append("\n");
         additionalInfo.append("Android Version     : ").append(androidVersion).append(" (SDK ").append(androidSDK).append(")\n");
-        additionalInfo.append("Default User Agent  : ").append(webViewUserAgent).append("</code>\n");
+        additionalInfo.append("Default User Agent  : ").append(webViewUserAgent);
+//        additionalInfo.append("</code>");
 
         return additionalInfo.toString();
     }
@@ -3173,7 +3179,7 @@ public class VTOP {
             myDatabase.execSQL("CREATE TABLE IF NOT EXISTS error_logs (id INTEGER PRIMARY KEY, error_code VARCHAR, date VARCHAR, error VARCHAR)");
 
             Calendar c = Calendar.getInstance();
-            SimpleDateFormat df = new SimpleDateFormat("d-MMM-yyyy", Locale.ENGLISH);
+            SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH);
             String date = df.format(c.getTime()).toUpperCase();
 
             myDatabase.execSQL("INSERT INTO error_logs (error_code, date, error) VALUES('" + errorCode + "', '" + date + "', '" + error.replaceAll("'", "''") + "')");

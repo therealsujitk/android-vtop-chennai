@@ -260,6 +260,10 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
 
+    public void openReportBug(View view) {
+        startActivity(new Intent(this, ReportBugActivity.class));
+    }
+
     /*
         The following functions are to open the activities in the "Application" category
      */

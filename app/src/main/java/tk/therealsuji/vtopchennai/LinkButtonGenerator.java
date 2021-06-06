@@ -17,6 +17,8 @@ public class LinkButtonGenerator {
     static int LINK_DOWNLOAD = 2;
     static int LINK_EMAIL = 3;
     static int LINK_LINK = 4;
+    static int LINK_REPORT = 5;
+
     Context context;
     float pixelDensity;
 
@@ -72,6 +74,8 @@ public class LinkButtonGenerator {
             });
 
             imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_link));
+        } else if (linkType == LINK_REPORT) {
+            imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_send));
         }
 
         linkButton.addView(imageView);
