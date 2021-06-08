@@ -568,25 +568,27 @@ public class HomeActivity extends AppCompatActivity {
              */
             sharedPreferences.edit().remove("semester").apply();
             sharedPreferences.edit().remove("newMarks").apply();
+            sharedPreferences.edit().remove("newSpotlight").apply();
             sharedPreferences.edit().remove("examsCount").apply();
             sharedPreferences.edit().remove("gradesCount").apply();
             sharedPreferences.edit().remove("receiptsCount").apply();
 
             SQLiteDatabase myDatabase = context.openOrCreateDatabase("vtop", Context.MODE_PRIVATE, null);
-            /*
-                Dropping Messages
-             */
-            myDatabase.execSQL("DROP TABLE messages");
 
             /*
                 Dropping Marks
              */
-            myDatabase.execSQL("DROP TABLE marks");
+            myDatabase.execSQL("DROP TABLE IF EXISTS marks");
 
             /*
                 Dropping Spotlight
              */
             myDatabase.execSQL("DROP TABLE IF EXISTS spotlight");
+
+            /*
+                Dropping Messages
+             */
+            myDatabase.execSQL("DROP TABLE IF EXISTS messages");
 
             /*
                 Dropping Proctor Messages
@@ -1149,7 +1151,6 @@ public class HomeActivity extends AppCompatActivity {
             /*
                 Checking if the report bug button should be visible
              */
-            ErrorHandler errorHandler = new ErrorHandler(context, null);
             if (ErrorHandler.isPreRelease) {
                 LinearLayout reportBug = new LinearLayout(context);
                 LinearLayout.LayoutParams reportBugParams = new LinearLayout.LayoutParams(
