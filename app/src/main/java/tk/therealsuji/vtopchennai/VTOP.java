@@ -135,7 +135,7 @@ public class VTOP {
                     }
 
 //                  errorHandler.append("<code class=\"").append(messageLevel).append("\">[INFO:CONSOLE(").append(lineNumber).append(")] ").append("\"").append(message).append("\", source: ").append(source).append("</code>\n");
-                    errorHandler.append(messageLevel.toUpperCase()).append(":[INFO:CONSOLE(").append(lineNumber).append(")] ").append("\"").append(message).append("\", source: ").append(source).append("\n");
+                    errorHandler.append(messageLevel.toUpperCase()).append(":CONSOLE(").append(lineNumber).append(")] ").append("\"").append(message).append("\", source: ").append(source).append("\n");
                     return super.onConsoleMessage(consoleMessage);
                 }
             });
@@ -176,7 +176,7 @@ public class VTOP {
                 errorHandler.appendStackTrace(e);
             }
 
-            error(1);
+            errorHandler.error("001");
             downloadDialog.dismiss();
             return;
         }
@@ -3089,7 +3089,7 @@ public class VTOP {
                 sharedPreferences.edit().remove("duePayments").apply();
 
                 if (duePayments.equals("null")) {
-                    errorHandler.error(String.valueOf(1403));
+                    errorHandler.error("1403");
                 }
             }
 
@@ -3164,14 +3164,7 @@ public class VTOP {
             return;
         }
 
-        StringBuilder errorString = new StringBuilder();
-        errorString.append(errorCode);
-
-        if (errorCode < 10) {
-            errorString.insert(0, "00");
-        }
-
-        errorHandler.error(errorString.toString());
+        errorHandler.error(String.valueOf(errorCode));
 
         ((Activity) context).runOnUiThread(() -> {
             counter = 0;
