@@ -1,7 +1,9 @@
 package tk.therealsuji.vtopchennai;
 
 import android.animation.Animator;
+import android.animation.AnimatorInflater;
 import android.animation.AnimatorListenerAdapter;
+import android.animation.StateListAnimator;
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.app.AlarmManager;
@@ -10,14 +12,17 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.text.method.LinkMovementMethod;
+import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
 import android.view.animation.AccelerateInterpolator;
@@ -36,6 +41,9 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.res.ResourcesCompat;
+import androidx.core.widget.ImageViewCompat;
 import androidx.security.crypto.EncryptedSharedPreferences;
 import androidx.security.crypto.MasterKey;
 
@@ -1135,6 +1143,61 @@ public class HomeActivity extends AppCompatActivity {
                     notificationParams.bottomToTop = R.id.campus;
                     notificationCampus.setLayoutParams(notificationParams);
                     notificationCampus.animate().scaleX(1).scaleY(1);
+                });
+            }
+
+            /*
+                Checking if the report bug button should be visible
+             */
+            ErrorHandler errorHandler = new ErrorHandler(context, null);
+            if (errorHandler.isPreRelease()) {
+                LinearLayout reportBug = new LinearLayout(context);
+                LinearLayout.LayoutParams reportBugParams = new LinearLayout.LayoutParams(
+                        (int) (125 * pixelDensity),
+                        (int) (125 * pixelDensity)
+                );
+                reportBugParams.setMarginStart((int) (10 * pixelDensity));
+                reportBugParams.setMargins(0, (int) (10 * pixelDensity), 0, (int) (10 * pixelDensity));
+                reportBugParams.setMarginEnd((int) (10 * pixelDensity));
+                reportBug.setLayoutParams(reportBugParams);
+                reportBug.setBackground(ContextCompat.getDrawable(context, R.drawable.button_card));
+                reportBug.setClickable(true);
+                reportBug.setFocusable(true);
+                reportBug.setGravity(Gravity.CENTER_VERTICAL);
+                reportBug.setOrientation(LinearLayout.VERTICAL);
+                reportBug.setOnClickListener(this::openReportBug);
+
+                StateListAnimator elevation = AnimatorInflater.loadStateListAnimator(context, R.animator.item_elevation);
+                reportBug.setStateListAnimator(elevation);
+
+                ImageView icon = new ImageView(context);
+                LinearLayout.LayoutParams iconParams = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT
+                );
+                icon.setLayoutParams(iconParams);
+                icon.setContentDescription(getString(R.string.report_bug_description));
+                icon.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_report_bug));
+                ImageViewCompat.setImageTintList(icon, ColorStateList.valueOf(getColor(R.color.colorPrimary)));
+
+                TextView title = new TextView(context);
+                LinearLayout.LayoutParams textParams = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT
+                );
+                textParams.setMargins(0, (int) (2 * pixelDensity), 0, 0);
+                title.setLayoutParams(textParams);
+                title.setText(R.string.report_bug);
+                title.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                title.setTextColor(getColor(R.color.colorPrimary));
+                title.setTypeface(ResourcesCompat.getFont(context, R.font.rubik), Typeface.BOLD);
+
+                reportBug.addView(icon);
+                reportBug.addView(title);
+
+                runOnUiThread(() -> {
+                    LinearLayout appButtons = findViewById(R.id.appButtons);
+                    appButtons.addView(reportBug, appButtons.getChildCount() - 1);
                 });
             }
         }).start();

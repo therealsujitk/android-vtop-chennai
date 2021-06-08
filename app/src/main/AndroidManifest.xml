@@ -196,6 +196,12 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ReportBugActivity" />
+
+            <intent-filter>
+                <action android:name="tk.therealsuji.vtopchennai.LAUNCH_REPORT_BUG" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
         </activity>
 
         <meta-data

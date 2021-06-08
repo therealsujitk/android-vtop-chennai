@@ -18,6 +18,9 @@ public class NotificationHelper extends ContextWrapper {
     public static final String CHANNEL_ID_ONGOING = "ongoing";
     public static final String CHANNEL_NAME_ONGOING = "Ongoing Classes";
 
+    public static final String CHANNEL_ID_ERROR_LOG = "error";
+    public static final String CHANNEL_NAME_ERROR_LOG = "Error Logs";
+
     private NotificationManager manager;
 
     public NotificationHelper(Context base) {
@@ -35,6 +38,12 @@ public class NotificationHelper extends ContextWrapper {
             ongoing.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
 
             getManager().createNotificationChannel(ongoing);
+
+            NotificationChannel error = new NotificationChannel(CHANNEL_ID_ERROR_LOG, CHANNEL_NAME_ERROR_LOG, NotificationManager.IMPORTANCE_HIGH);
+            ongoing.enableVibration(true);
+            ongoing.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
+
+            getManager().createNotificationChannel(error);
         }
     }
 
@@ -68,5 +77,17 @@ public class NotificationHelper extends ContextWrapper {
                 .setSmallIcon(R.drawable.ic_timetable)
                 .setColor(getColor(R.color.colorPrimary))
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
+    }
+
+    public NotificationCompat.Builder notifyError(Context context, String message) {
+        PendingIntent contentIntent = PendingIntent.getActivity(context, 0, new Intent("tk.therealsuji.vtopchennai.LAUNCH_REPORT_BUG"), 0);
+
+        return new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID_ERROR_LOG)
+                .setContentTitle("Logging successful!")
+                .setContentText(message)
+                .setContentIntent(contentIntent)
+                .setSmallIcon(R.drawable.ic_report_bug)
+                .setColor(getColor(R.color.colorPrimary))
+                .setVisibility(NotificationCompat.VISIBILITY_PRIVATE);
     }
 }

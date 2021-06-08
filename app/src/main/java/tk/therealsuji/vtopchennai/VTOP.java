@@ -18,7 +18,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.ColorMatrixColorFilter;
-import android.os.Build;
 import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.view.View;
@@ -46,8 +45,6 @@ import androidx.security.crypto.MasterKey;
 
 import org.json.JSONObject;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -90,8 +87,7 @@ public class VTOP {
     public boolean isInProgress;
     boolean isOpened, isCaptchaInflated, isSemesterInflated, isProgressInflated, terminateDownload;
 
-    StringBuilder errorLog;
-    String webViewUserAgent;
+    ErrorHandler errorHandler;
 
     @SuppressLint("SetJavaScriptEnabled")
     public VTOP(final Context context) {
@@ -101,7 +97,7 @@ public class VTOP {
         webView.setHorizontalScrollBarEnabled(false);
         webView.setVerticalScrollBarEnabled(false);
         webView.getSettings().setJavaScriptEnabled(true);
-        webViewUserAgent = webView.getSettings().getUserAgentString();
+        errorHandler = new ErrorHandler(this.context, webView.getSettings().getUserAgentString());
         webView.getSettings().setUserAgentString("Mozilla/5.0 (Linux; Android 10) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.99 Mobile Safari/537.36");
         webView.setWebViewClient(new WebViewClient() {
             @Override
@@ -112,7 +108,7 @@ public class VTOP {
 
                 if (!isOpened) {
                     if (counter >= 60) {    // If it has tried to open the sign in page for over 60 times and failed, something is wrong
-                        Toast.makeText(context, "Error 101. We had some trouble connecting to the server. Please try again later.", Toast.LENGTH_LONG).show();
+                        Toast.makeText(context, "Error 101, we had some trouble connecting to the server. Please try again later.", Toast.LENGTH_LONG).show();
                         myDatabase.close();
                         downloadDialog.dismiss();
                         return;
@@ -124,23 +120,28 @@ public class VTOP {
                 }
             }
         });
-        webView.setWebChromeClient(new WebChromeClient() {
-            @Override
-            public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
-                int lineNumber = consoleMessage.lineNumber();
-                String message = consoleMessage.message();
-                String source = consoleMessage.sourceId();
-                String messageLevel = consoleMessage.messageLevel().toString().toLowerCase();
 
-                if (messageLevel.equals("log")) {
+        if (errorHandler.isPreRelease()) {
+            webView.setWebChromeClient(new WebChromeClient() {
+                @Override
+                public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
+                    int lineNumber = consoleMessage.lineNumber();
+                    String message = consoleMessage.message();
+                    String source = consoleMessage.sourceId();
+                    String messageLevel = consoleMessage.messageLevel().toString().toLowerCase();
+
+                    if (messageLevel.equals("log")) {
+                        return super.onConsoleMessage(consoleMessage);
+                    }
+
+//                  errorHandler.append("<code class=\"").append(messageLevel).append("\">[INFO:CONSOLE(").append(lineNumber).append(")] ").append("\"").append(message).append("\", source: ").append(source).append("</code>\n");
+                    errorHandler.append(messageLevel.toUpperCase()).append(":[INFO:CONSOLE(").append(lineNumber).append(")] ").append("\"").append(message).append("\", source: ").append(source).append("\n");
                     return super.onConsoleMessage(consoleMessage);
                 }
+            });
+        }
 
-//                errorLog.append("<code class=\"").append(messageLevel).append("\">[INFO:CONSOLE(").append(lineNumber).append(")] ").append("\"").append(message).append("\", source: ").append(source).append("</code>\n");
-                errorLog.append(messageLevel.toUpperCase()).append(":[INFO:CONSOLE(").append(lineNumber).append(")] ").append("\"").append(message).append("\", source: ").append(source).append("\n");
-                return super.onConsoleMessage(consoleMessage);
-            }
-        });
+
         webView.addJavascriptInterface(this, "Android");
     }
 
@@ -171,11 +172,11 @@ public class VTOP {
                     EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
             );
         } catch (Exception e) {
-            Toast.makeText(context, "Error 001. Please try again later.", Toast.LENGTH_SHORT).show();
-            errorLog.append("--------------- Error 001 ---------------\n");
-            errorLog.append(buildStackTrace(e));
-            errorLog.append("\n");
-            logError("001", errorLog.toString());
+            if (errorHandler.isPreRelease()) {
+                errorHandler.appendStackTrace(e);
+            }
+
+            error(1);
             downloadDialog.dismiss();
             return;
         }
@@ -238,7 +239,6 @@ public class VTOP {
 
         isOpened = false;
         isInProgress = false;
-        errorLog = new StringBuilder();
 
         if (loading.getVisibility() == View.INVISIBLE) {
             hideLayouts();
@@ -437,7 +437,7 @@ public class VTOP {
                 If true, the default captcha is being used else, Google's reCaptcha is being used
              */
             if (isLocalCaptcha.equals("null")) {
-                error(102, null);
+                error(102);
             } else if (isLocalCaptcha.equals("true")) {
                 getCaptcha();
             } else {
@@ -467,7 +467,7 @@ public class VTOP {
                 src will look like "data:image/png:base64, ContinuousGibberishText...." (including the quotes)
              */
             if (src.equals("null")) {
-                error(103, null);
+                error(103);
             } else {
                 try {
                     src = src.substring(1, src.length() - 1).split(",")[1].trim();
@@ -487,7 +487,11 @@ public class VTOP {
                     captchaView.setText("");
                     expand(captchaLayout);
                 } catch (Exception e) {
-                    error(104, buildStackTrace(e));
+                    if (errorHandler.isPreRelease()) {
+                        errorHandler.appendStackTrace(e);
+                    }
+
+                    error(104);
                 }
             }
         });
@@ -640,7 +644,7 @@ public class VTOP {
                         }
                     } else {
                         // We don't want to refresh the page unless a timeout error has been returned
-                        error(201, null);
+                        error(201);
                     }
                 }
             });
@@ -684,7 +688,7 @@ public class VTOP {
                 obj is in the form of a JSON string like {"0": "Semester 1", "1": "Semester 2", "2": "Semester 3",...}
              */
             if (obj.equals("false") || obj.equals("null")) {
-                error(301, null);
+                error(301);
             } else {
                 try {
                     int index = 0;
@@ -712,7 +716,11 @@ public class VTOP {
                     hideLayouts();
                     expand(semesterLayout);
                 } catch (Exception e) {
-                    error(302, buildStackTrace(e));
+                    if (errorHandler.isPreRelease()) {
+                        errorHandler.appendStackTrace(e);
+                    }
+
+                    error(302);
                 }
             }
         });
@@ -750,7 +758,7 @@ public class VTOP {
                 "return semID;" +
                 "})();", semID -> {
             if (semID.equals("null")) {
-                error(303, null);
+                error(303);
             } else {
                 semesterID = semID.substring(1, semID.length() - 1);
                 downloadProfile();
@@ -810,7 +818,7 @@ public class VTOP {
              */
             String temp = obj.substring(1, obj.length() - 1);
             if (obj.equals("null") || temp.equals("")) {
-                error(401, null);
+                error(401);
             } else {
                 try {
                     JSONObject myObj = new JSONObject(obj);
@@ -822,7 +830,11 @@ public class VTOP {
 
                     downloadTimetable();
                 } catch (Exception e) {
-                    error(402, buildStackTrace(e));
+                    if (errorHandler.isPreRelease()) {
+                        errorHandler.appendStackTrace(e);
+                    }
+
+                    error(402);
                 }
             }
         });
@@ -947,7 +959,7 @@ public class VTOP {
              */
             String temp = obj.substring(1, obj.length() - 1);
             if (obj.equals("null") || temp.equals("")) {
-                error(501, null);
+                error(501);
             } else if (temp.equals("unreleased")) {
                 new Thread(() -> {
                     myDatabase.execSQL("DROP TABLE IF EXISTS timetable_lab");
@@ -1156,7 +1168,11 @@ public class VTOP {
                             downloadFaculty();
                         });
                     } catch (Exception e) {
-                        error(502, buildStackTrace(e));
+                        if (errorHandler.isPreRelease()) {
+                            errorHandler.appendStackTrace(e);
+                        }
+
+                        error(502);
                     }
                 }).start();
             }
@@ -1234,7 +1250,7 @@ public class VTOP {
              */
             String temp = obj.substring(1, obj.length() - 1);
             if (obj.equals("null") || temp.equals("")) {
-                error(601, null);
+                error(601);
             } else if (temp.equals("nothing")) {
                 new Thread(() -> {
                     myDatabase.execSQL("DROP TABLE IF EXISTS faculty");
@@ -1268,7 +1284,11 @@ public class VTOP {
                             downloadProctor();
                         });
                     } catch (Exception e) {
-                        error(602, buildStackTrace(e));
+                        if (errorHandler.isPreRelease()) {
+                            errorHandler.appendStackTrace(e);
+                        }
+
+                        error(602);
                     }
                 }).start();
             }
@@ -1327,7 +1347,7 @@ public class VTOP {
              */
             String temp = obj.substring(1, obj.length() - 1);
             if (obj.equals("null") || temp.equals("")) {
-                error(701, null);
+                error(701);
             } else if (temp.equals("unavailable")) {
                 new Thread(() -> {
                     myDatabase.execSQL("DROP TABLE IF EXISTS proctor");
@@ -1362,7 +1382,11 @@ public class VTOP {
                             downloadDeanHOD();
                         });
                     } catch (Exception e) {
-                        error(702, buildStackTrace(e));
+                        if (errorHandler.isPreRelease()) {
+                            errorHandler.appendStackTrace(e);
+                        }
+
+                        error(702);
                     }
                 }).start();
             }
@@ -1467,7 +1491,7 @@ public class VTOP {
              */
             String temp = obj.substring(1, obj.length() - 1);
             if (obj.equals("null") || temp.equals("")) {
-                error(703, null);
+                error(703);
             } else if (temp.equals("unavailable")) {
                 new Thread(() -> {
                     myDatabase.execSQL("DROP TABLE IF EXISTS dean");
@@ -1521,7 +1545,11 @@ public class VTOP {
                             downloadAttendance();
                         });
                     } catch (Exception e) {
-                        error(704, buildStackTrace(e));
+                        if (errorHandler.isPreRelease()) {
+                            errorHandler.appendStackTrace(e);
+                        }
+
+                        error(704);
                     }
                 }).start();
             }
@@ -1612,7 +1640,7 @@ public class VTOP {
              */
             String temp = obj.substring(1, obj.length() - 1);
             if (obj.equals("null") || temp.equals("")) {
-                error(801, null);
+                error(801);
             } else if (temp.equals("unavailable")) {
                 new Thread(() -> {
                     myDatabase.execSQL("DROP TABLE IF EXISTS attendance");
@@ -1655,7 +1683,11 @@ public class VTOP {
                             downloadExams();
                         });
                     } catch (Exception e) {
-                        error(802, buildStackTrace(e));
+                        if (errorHandler.isPreRelease()) {
+                            errorHandler.appendStackTrace(e);
+                        }
+
+                        error(802);
                     }
                 }).start();
             }
@@ -1789,7 +1821,7 @@ public class VTOP {
              */
             String temp = obj.substring(1, obj.length() - 1);
             if (obj.equals("null") || temp.equals("")) {
-                error(901, null);
+                error(901);
             } else if (temp.equals("nothing")) {
                 new Thread(() -> {
                     myDatabase.execSQL("DROP TABLE IF EXISTS exams");
@@ -1884,7 +1916,11 @@ public class VTOP {
                             downloadMarks();
                         });
                     } catch (Exception e) {
-                        error(902, buildStackTrace(e));
+                        if (errorHandler.isPreRelease()) {
+                            errorHandler.appendStackTrace(e);
+                        }
+
+                        error(902);
                     }
                 }).start();
             }
@@ -2004,7 +2040,7 @@ public class VTOP {
              */
             String temp = obj.substring(1, obj.length() - 1);
             if (obj.equals("null") || temp.equals("")) {
-                error(1001, null);
+                error(1001);
             } else if (temp.equals("nothing")) {
                 new Thread(() -> {
                     myDatabase.execSQL("DROP TABLE IF EXISTS marks");
@@ -2107,7 +2143,11 @@ public class VTOP {
                             downloadGrades();
                         });
                     } catch (Exception e) {
-                        error(1002, buildStackTrace(e));
+                        if (errorHandler.isPreRelease()) {
+                            errorHandler.appendStackTrace(e);
+                        }
+
+                        error(1002);
                     }
                 }).start();
             }
@@ -2213,7 +2253,7 @@ public class VTOP {
              */
             final String temp = obj.substring(1, obj.length() - 1);
             if (obj.equals("null") || temp.equals("")) {
-                error(1101, null);
+                error(1101);
             } else if (temp.equals("nothing")) {
                 /*
                     Dropping and recreating an empty table
@@ -2273,7 +2313,11 @@ public class VTOP {
                             downloadGradeHistory();
                         });
                     } catch (Exception e) {
-                        error(1102, buildStackTrace(e));
+                        if (errorHandler.isPreRelease()) {
+                            errorHandler.appendStackTrace(e);
+                        }
+
+                        error(1102);
                     }
                 }).start();
             }
@@ -2427,7 +2471,7 @@ public class VTOP {
              */
             String temp = obj.substring(1, obj.length() - 1);
             if (obj.equals("null") || temp.equals("")) {
-                error(1103, null);
+                error(1103);
             } else {
                 new Thread(() -> {
                     try {
@@ -2521,7 +2565,11 @@ public class VTOP {
                             downloadMessages();
                         });
                     } catch (Exception e) {
-                        error(1104, buildStackTrace(e));
+                        if (errorHandler.isPreRelease()) {
+                            errorHandler.appendStackTrace(e);
+                        }
+
+                        error(1104);
                     }
                 }).start();
             }
@@ -2577,7 +2625,7 @@ public class VTOP {
              */
             final String temp = obj.substring(1, obj.length() - 1);
             if (obj.equals("null") || temp.equals("{}")) {
-                error(1201, null);
+                error(1201);
             } else if (temp.equals("nothing")) {
                 /*
                     Dropping and recreating an empty table
@@ -2617,13 +2665,13 @@ public class VTOP {
                         /*
                             Checking for messages that haven't been downloaded before
                          */
-                        Cursor newSpotlight = myDatabase.rawQuery("SELECT id FROM messages_new WHERE message NOT IN (SELECT message FROM messages)", null);
+                        Cursor newMessages = myDatabase.rawQuery("SELECT id FROM messages_new WHERE message NOT IN (SELECT message FROM messages)", null);
 
-                        if (newSpotlight.getCount() > 0) {
+                        if (newMessages.getCount() > 0) {
                             sharedPreferences.edit().putBoolean("newMessages", true).apply();
                         }
 
-                        newSpotlight.close();
+                        newMessages.close();
 
                         myDatabase.execSQL("DROP TABLE messages");
                         myDatabase.execSQL("ALTER TABLE messages_new RENAME TO messages");
@@ -2633,7 +2681,11 @@ public class VTOP {
                             downloadProctorMessages();
                         });
                     } catch (Exception e) {
-                        error(1202, buildStackTrace(e));
+                        if (errorHandler.isPreRelease()) {
+                            errorHandler.appendStackTrace(e);
+                        }
+
+                        error(1202);
                     }
                 }).start();
             }
@@ -2710,11 +2762,15 @@ public class VTOP {
 
                         sharedPreferences.edit().putBoolean("newProctorMessages", true).apply();
                     } catch (Exception e) {
-                        error(1203, buildStackTrace(e));
+                        if (errorHandler.isPreRelease()) {
+                            errorHandler.appendStackTrace(e);
+                        }
+
+                        error(1204);
                     }
                 }).start();
             } else {
-                error(1203, null);
+                error(1203);
             }
         });
     }
@@ -2785,7 +2841,7 @@ public class VTOP {
              */
             String temp = obj.substring(1, obj.length() - 1);
             if (obj.equals("null") || temp.equals("")) {
-                error(1301, null);
+                error(1301);
             } else if (temp.equals("nothing")) {
                 /*
                     Dropping and recreating an empty table
@@ -2894,7 +2950,11 @@ public class VTOP {
                             downloadReceipts();
                         });
                     } catch (Exception e) {
-                        error(1302, buildStackTrace(e));
+                        if (errorHandler.isPreRelease()) {
+                            errorHandler.appendStackTrace(e);
+                        }
+
+                        error(1302);
                     }
                 }).start();
             }
@@ -2967,7 +3027,7 @@ public class VTOP {
              */
             String temp = obj.substring(1, obj.length() - 1);
             if (obj.equals("null") || temp.equals("")) {
-                error(1401, null);
+                error(1401);
             } else {
                 new Thread(() -> {
                     try {
@@ -2977,7 +3037,7 @@ public class VTOP {
                         myDatabase.execSQL("CREATE TABLE receipts (id INTEGER PRIMARY KEY, receipt VARCHAR, date VARCHAR, amount VARCHAR)");
 
                         int i;
-                        for (i = 0; i < myObj.length(); ++i) {
+                        for (i = 0; i < myObj.length() + 1; ++i) {
                             JSONObject tempObj = new JSONObject(myObj.getString(Integer.toString(i)));
                             String receipt = tempObj.getString("receipt");
                             String date = tempObj.getString("date").toUpperCase();
@@ -2996,7 +3056,11 @@ public class VTOP {
                             checkDues();
                         });
                     } catch (Exception e) {
-                        error(1402, buildStackTrace(e));
+                        if (errorHandler.isPreRelease()) {
+                            errorHandler.appendStackTrace(e);
+                        }
+
+                        error(1402);
                     }
                 }).start();
             }
@@ -3102,143 +3166,23 @@ public class VTOP {
     /*
         Function to display an error message
      */
-    public void error(final int errorCode, final String error) {
+    public void error(final int errorCode) {
         if (terminateDownload) {
             return;
         }
 
-        if (error != null) {
-//            errorLog.append("<code class=\"error\">").append(error).append("</code>");
-            errorLog.append(error.replaceAll("at ", "    at "));
+        StringBuilder errorString = new StringBuilder();
+        errorString.append(errorCode);
+
+        if (errorCode < 10) {
+            errorString.insert(0, "00");
         }
 
-//        String errorComment = "<code class=\"comment\">-------------------- Error " + errorCode + " -------------------";
-        String errorComment = "-------------------- Error " + errorCode + " -------------------";
-        if (errorCode < 1000) errorComment = errorComment + "-";
-//        errorComment = errorComment + "</code>\n";
-        errorComment = errorComment + "\n";
-        errorLog.insert(0, errorComment);
-
-        errorLog.append("\n").append(getAdditionalInfo());
-
-        logError(Integer.toString(errorCode), errorLog.toString());
+        errorHandler.error(errorString.toString());
 
         ((Activity) context).runOnUiThread(() -> {
-            Toast.makeText(context, "Error " + errorCode + ", please try again.", Toast.LENGTH_LONG).show();
-            errorLog = null;
             counter = 0;
             reloadPage();
         });
     }
-
-    /*
-        Function to build stack trace
-     */
-    private String buildStackTrace(Exception e) {
-        StringWriter errors = new StringWriter();
-        e.printStackTrace(new PrintWriter(errors));
-        return errors.toString();
-    }
-
-    /*
-        Function to add device info to the error log
-     */
-    private String getAdditionalInfo() {
-        StringBuilder additionalInfo = new StringBuilder();
-
-        String buildType = BuildConfig.BUILD_TYPE;
-        String versionName = BuildConfig.VERSION_NAME;
-        int versionCode = BuildConfig.VERSION_CODE;
-
-        Calendar c = Calendar.getInstance();
-        SimpleDateFormat ts = new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss", Locale.ENGLISH);
-        String timestamp = ts.format(c.getTime());
-
-        String deviceModal = Build.MODEL;
-        String androidVersion = Build.VERSION.RELEASE;
-        int androidSDK = Build.VERSION.SDK_INT;
-
-//        additionalInfo.append("<code class=\"comment\">----------------- Additional Info -----------------</code>\n");
-//        additionalInfo.append("<code>");
-        additionalInfo.append("----------------- Additional Info -----------------\n");
-        additionalInfo.append("App Version         : ").append(versionName).append(" (").append(versionCode).append(") - ").append(buildType).append("\n");
-        additionalInfo.append("Error Timestamp     : ").append(timestamp).append("\n");
-        additionalInfo.append("Device Modal        : ").append(deviceModal).append("\n");
-        additionalInfo.append("Android Version     : ").append(androidVersion).append(" (SDK ").append(androidSDK).append(")\n");
-        additionalInfo.append("Default User Agent  : ").append(webViewUserAgent);
-//        additionalInfo.append("</code>");
-
-        return additionalInfo.toString();
-    }
-
-    /*
-        Function to store the error log
-     */
-    private void logError(final String errorCode, final String error) {
-        new Thread(() -> {
-            myDatabase.execSQL("CREATE TABLE IF NOT EXISTS error_logs (id INTEGER PRIMARY KEY, error_code VARCHAR, date VARCHAR, error VARCHAR)");
-
-            Calendar c = Calendar.getInstance();
-            SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH);
-            String date = df.format(c.getTime()).toUpperCase();
-
-            myDatabase.execSQL("INSERT INTO error_logs (error_code, date, error) VALUES('" + errorCode + "', '" + date + "', '" + error.replaceAll("'", "''") + "')");
-        }).start();
-    }
 }
-
-/*
- *  Error Codes
- *
- *  Error 001   Failed to fetch encrypted credentials
- *
- *  Error 101   Failed to connect to the server
- *  Error 102   Failed to get captcha type (local / public)
- *  Error 103   Failed to get captcha image
- *  Error 104   Failed to display captcha image
- *
- *  Error 201   Unknown error during login (Possibly timeout)
- *
- *  Error 301   Failed to fetch semesters
- *  Error 302   Failed to display semesters
- *  Error 303   Failed to fetch semester ID
- *
- *  Error 401   Failed to download profile data
- *  Error 402   Error while storing profile data
- *
- *  Error 501   Failed to download timetable
- *  Error 502   Error while storing timetable
- *
- *  Error 601   Failed to download faculty info
- *  Error 602   Error while storing faculty info
- *
- *  Error 701   Failed to download proctor info
- *  Error 702   Error while storing proctor info
- *  Error 703   Failed to download hod & dean info
- *  Error 704   Error while storing hod & dean info
- *
- *  Error 801   Failed to download attendance
- *  Error 802   Error while storing attendance
- *
- *  Error 901   Failed to download the exam schedule
- *  Error 902   Failed to store the exam schedule
- *
- *  Error 1001  Failed to download marks
- *  Error 1002  Error while storing marks & updating unread marks
- *
- *  Error 1101  Failed to download grades
- *  Error 1102  Error while storing grades
- *  Error 1103  Failed to download grade history
- *  Error 1104  Error while storing grade history
- *
- *  Error 1201  Failed to download class messages
- *  Error 1202  Error while storing class messages
- *  Error 1203  Unknown error downloading / storing proctor messages
- *
- *  Error 1301  Failed to download spotlight
- *  Error 1302  Error while storing spotlight & updating unread announcements
- *
- *  Error 1401  Failed to download receipts
- *  Error 1402  Error while storing receipts
- *
- */

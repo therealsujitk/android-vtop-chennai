@@ -2,12 +2,10 @@ package tk.therealsuji.vtopchennai;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -18,56 +16,13 @@ import android.widget.LinearLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-
 public class ReportBugActivity extends AppCompatActivity {
     LinearLayout logs;
     Dialog clear;
     Context context;
+    ErrorHandler errorHandler;
 
     boolean terminateThread;
-
-    public void sendLog(String errorCode, String error) throws UnsupportedEncodingException {
-//        String style = "<style>" +
-//                "    pre {" +
-//                "        background: #282b2e;" +
-//                "        color: #a9b7c6;" +
-//                "        padding: 15px;" +
-//                "        border-radius: 7px;" +
-//                "        overflow: auto;" +
-//                "    }" +
-//                "" +
-//                "    code.comment {" +
-//                "        color: #808080;" +
-//                "    }" +
-//                "" +
-//                "    code.error {" +
-//                "        color: #cc7832;" +
-//                "    }" +
-//                "" +
-//                "    code.warning {" +
-//                "        color: #ffc66d;" +
-//                "    }" +
-//                "    " +
-//                "    code.debug {" +
-//                "        color: #6897bb;" +
-//                "    }" +
-//                "    " +
-//                "    code.tip {" +
-//                "        color: #6a8759;" +
-//                "    }" +
-//                "</style>";
-//
-//        String html = style + "<pre>" + error + "</pre>";
-
-        Intent intent = new Intent(Intent.ACTION_SENDTO);
-        intent.setData(Uri.parse("mailto:me@therealsuji.tk" +
-                "?subject=VTOP Chennai - Bug Report (" + errorCode + ")" +
-                "&body=" + URLEncoder.encode(error, String.valueOf(StandardCharsets.UTF_8)).replaceAll("\\+", " ").replaceAll("%5Cn", "\n")));
-        startActivity(intent);
-    }
 
     public void clearLogs(View view) {
         clear.dismiss();
@@ -76,9 +31,7 @@ public class ReportBugActivity extends AppCompatActivity {
         loading.setAlpha(1);
 
         new Thread(() -> {
-            SQLiteDatabase myDatabase = context.openOrCreateDatabase("vtop", Context.MODE_PRIVATE, null);
-            myDatabase.execSQL("DELETE FROM error_logs");
-            myDatabase.close();
+            errorHandler.clearLogs();
             runOnUiThread(() -> {
                 logs.removeAllViews();
                 findViewById(R.id.noLogs).setVisibility(View.VISIBLE);
@@ -108,6 +61,7 @@ public class ReportBugActivity extends AppCompatActivity {
 
         logs = findViewById(R.id.logs);
         context = this;
+        errorHandler = new ErrorHandler(this, null);
 
         new Thread(() -> {
             SQLiteDatabase myDatabase = context.openOrCreateDatabase("vtop", Context.MODE_PRIVATE, null);
@@ -139,10 +93,7 @@ public class ReportBugActivity extends AppCompatActivity {
                 final LinearLayout linkView = myLink.generateButton(null, LinkButtonGenerator.LINK_REPORT);
                 linkView.setTag(error);
                 linkView.setOnClickListener(v -> {
-                    try {
-                        sendLog(errorCode, error);
-                    } catch (UnsupportedEncodingException ignored) {
-                    }
+                    errorHandler.sendLog(errorCode, error);
                 });
 
                 card.addView(linkView);

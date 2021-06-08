@@ -44,7 +44,7 @@
             android:background="@drawable/button_tertiary"
             android:onClick="clearLogs"
             android:padding="10dp"
-            android:text="@string/delete"
+            android:text="@string/clear"
             android:textAllCaps="true"
             android:textColor="@color/colorPrimary"
             android:textSize="14sp" />
