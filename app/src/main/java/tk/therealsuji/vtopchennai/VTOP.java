@@ -981,7 +981,7 @@ public class VTOP {
 
                     ((Activity) context).runOnUiThread(() -> {
                         updateProgress();
-                        downloadFaculty();
+                        downloadCourses();
                     });
                 }).start();
             } else {
@@ -1164,7 +1164,7 @@ public class VTOP {
 
                         ((Activity) context).runOnUiThread(() -> {
                             updateProgress();
-                            downloadFaculty();
+                            downloadCourses();
                         });
                     } catch (Exception e) {
                         if (ErrorHandler.isPreRelease) {
@@ -1179,9 +1179,9 @@ public class VTOP {
     }
 
     /*
-        Function to store the faculty info from the timetable page in the SQLite database.
+        Function to store the course info from the timetable page in the SQLite database.
      */
-    public void downloadFaculty() {
+    public void downloadCourses() {
         if (terminateDownload) {
             return;
         }
@@ -1215,7 +1215,7 @@ public class VTOP {
                 "            correction = 1;" +      // +1 is a correction due to an extra 'td' element at the top
                 "        }" +
                 "        var heads = division.getElementsByTagName('th');" +
-                "        var courseIndex, facultyIndex, flag = 0;" +
+                "        var courseIndex, slotIndex, facultyIndex, flag = 0;" +
                 "        var columns = heads.length;" +
                 "        for(var i = 0; i < columns; ++i) {" +
                 "           var heading = heads[i].innerText.toLowerCase();" +
@@ -1223,21 +1223,27 @@ public class VTOP {
                 "               courseIndex = i + correction;" +
                 "               ++flag;" +
                 "           }" +
+                "           if(heading.includes('slot') && heading.includes('venue')) {" +
+                "               slotIndex = i + correction;" +
+                "               ++flag;" +
+                "           }" +
                 "           if(heading.includes('faculty') && heading.includes('details')) {" +
                 "               facultyIndex = i + correction;" +
                 "               ++flag;" +
                 "           }" +
-                "           if(flag >= 2) {" +
+                "           if(flag >= 3) {" +
                 "               break;" +
                 "           }" +
                 "        }" +
                 "        var cells = division.getElementsByTagName('td');" +
-                "        for(var i = 0; courseIndex < cells.length && facultyIndex < cells.length; ++i) {" +
+                "        for(var i = 0; courseIndex < cells.length && slotIndex < cells.length && facultyIndex < cells.length; ++i) {" +
                 "            var temp = {};" +
                 "            temp['course'] = cells[courseIndex].innerText.trim();" +
+                "            temp['slot'] = cells[slotIndex].innerText.trim();" +
                 "            temp['faculty'] = cells[facultyIndex].innerText.trim();" +
                 "            obj[i] = temp;" +
                 "            courseIndex += columns;" +
+                "            slotIndex += columns;" +
                 "            facultyIndex += columns;" +
                 "        }" +
                 "    }" +
@@ -1251,31 +1257,52 @@ public class VTOP {
                 error(601);
             } else if (obj.equals("false")) {
                 new Thread(() -> {
-                    myDatabase.execSQL("DROP TABLE IF EXISTS faculty");
-                    myDatabase.execSQL("CREATE TABLE faculty (id INTEGER PRIMARY KEY, course VARCHAR, faculty VARCHAR)");
+                    myDatabase.execSQL("DROP TABLE IF EXISTS faculty"); // Old data
+                    myDatabase.execSQL("DROP TABLE IF EXISTS courses");
+                    myDatabase.execSQL("CREATE TABLE courses (id INTEGER PRIMARY KEY, course_code VARCHAR, course VARCHAR, course_type VARCHAR, slot , venue VARCHAR, faculty VARCHAR, school VARCHAR)");
 
                     ((Activity) context).runOnUiThread(() -> {
                         updateProgress();
                         downloadProctor();
                     });
 
-                    sharedPreferences.edit().remove("newFaculty").apply();
+                    sharedPreferences.edit().remove("newFaculty").apply();  // Old data
+                    sharedPreferences.edit().remove("newCourses").apply();
                 }).start();
             } else {
                 new Thread(() -> {
                     try {
                         JSONObject myObj = new JSONObject(obj);
 
-                        myDatabase.execSQL("DROP TABLE IF EXISTS faculty");
-                        myDatabase.execSQL("CREATE TABLE faculty (id INTEGER PRIMARY KEY, course VARCHAR, faculty VARCHAR)");
+                        myDatabase.execSQL("DROP TABLE IF EXISTS faculty"); // Old data
+                        myDatabase.execSQL("DROP TABLE IF EXISTS courses");
+                        myDatabase.execSQL("CREATE TABLE courses (id INTEGER PRIMARY KEY, course_code VARCHAR, course VARCHAR, course_type VARCHAR, slot , venue VARCHAR, faculty VARCHAR, school VARCHAR)");
 
                         for (int i = 0; i < myObj.length(); ++i) {
                             JSONObject tempObj = new JSONObject(myObj.getString(Integer.toString(i)));
-                            String course = tempObj.getString("course");
-                            String faculty = tempObj.getString("faculty");
+                            String[] courseString = tempObj.getString("course").split("-");
+                            String[] slotString = tempObj.getString("slot").split("-");
+                            String[] facultyString = tempObj.getString("faculty").split("-");
 
-                            myDatabase.execSQL("INSERT INTO faculty (course, faculty) VALUES('" + course + "', '" + faculty + "')");
+                            String courseCode = courseString[0].trim();
+                            String course = courseString[1].trim();
+                            String courseType = courseString[courseString.length - 1].trim();
+
+                            if (courseType.contains("(")) {
+                                course = course.substring(0, course.indexOf("("));
+                                courseType = courseType.substring(courseType.indexOf("(") + 1, courseType.indexOf(")")).trim();
+                            }
+
+                            String slot = slotString[0].trim().replaceAll("\\+", " + ");
+                            String venue = slotString[slotString.length - 2].trim() + " + " + slotString[slotString.length - 1].trim();
+
+                            String faculty = facultyString[0].trim();
+                            String school = facultyString[1].trim();
+
+                            myDatabase.execSQL("INSERT INTO courses (course_code, course, course_type, slot, venue, faculty, school) VALUES('" + courseCode + "','" + course + "', '" + courseType + "','" + slot + "', '" + venue + "','" + faculty + "','" + school + "')");
                         }
+
+                        sharedPreferences.edit().remove("newFaculty").apply();  // Old data
 
                         ((Activity) context).runOnUiThread(() -> {
                             updateProgress();
