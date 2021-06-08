@@ -256,7 +256,7 @@
                     android:clickable="true"
                     android:focusable="true"
                     android:gravity="center_vertical"
-                    android:onClick="openFaculty"
+                    android:onClick="openCourses"
                     android:orientation="vertical"
                     android:stateListAnimator="@animator/item_elevation">
 
@@ -264,8 +264,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:clickable="false"
-                        android:contentDescription="@string/faculty_description"
-                        app:srcCompat="@drawable/ic_faculty"
+                        android:contentDescription="@string/courses_description"
+                        app:srcCompat="@drawable/ic_courses"
                         app:tint="@color/colorPrimary" />
 
                     <TextView
@@ -273,7 +273,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
                         android:clickable="false"
-                        android:text="@string/faculty"
+                        android:text="@string/courses"
                         android:textAlignment="center"
                         android:textColor="@color/colorPrimary"
                         android:textStyle="bold" />

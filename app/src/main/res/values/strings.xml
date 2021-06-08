@@ -26,7 +26,7 @@
     <string name="select">Select</string>
     <string name="downloading_profile">Downloading Profile</string>
     <string name="downloading_timetable">Downloading Timetable</string>
-    <string name="downloading_faculty">Downloading Faculty Info</string>
+    <string name="downloading_courses">Downloading Course Info</string>
     <string name="downloading_staff">Downloading Staff Info</string>
     <string name="downloading_attendance">Downloading Attendance</string>
     <string name="downloading_exams">Downloading Exam Schedule</string>
@@ -65,8 +65,8 @@
     <string name="attendance_description">Icon for the attendance button.</string>
     <string name="messages">Messages</string>
     <string name="messages_description">Icon for the messages button.</string>
-    <string name="faculty">Faculty</string>
-    <string name="faculty_description">Icon for the faculty button.</string>
+    <string name="courses">Courses</string>
+    <string name="courses_description">Icon for the courses button.</string>
 
     <string name="academics">Academics</string>
     <string name="exams">Exams</string>

@@ -12,13 +12,13 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.Objects;
 
-public class FacultyActivity extends AppCompatActivity {
+public class CoursesActivity extends AppCompatActivity {
     boolean terminateThread;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_faculty);
+        setContentView(R.layout.activity_courses);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
         final Context context = this;

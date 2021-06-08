@@ -54,7 +54,7 @@ import java.util.Date;
 import java.util.Locale;
 
 public class HomeActivity extends AppCompatActivity {
-    int classesNotification, timetableNotification, messagesNotification, facultyNotification;
+    int classesNotification, timetableNotification, messagesNotification, coursesNotification;
     int academicsNotification, examsNotification, marksNotification, gradesNotification, spotlightNotification;
     int campusNotification, proctorMessageNotification, receiptsNotification;
     SharedPreferences sharedPreferences, encryptedSharedPreferences;
@@ -116,15 +116,15 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
 
-    public void openFaculty(View view) {
-        startActivity(new Intent(this, FacultyActivity.class));
+    public void openCourses(View view) {
+        startActivity(new Intent(this, CoursesActivity.class));
 
-        if (facultyNotification == -1) {
+        if (coursesNotification == -1) {
             return;
         }
 
         try {
-            findViewById(facultyNotification).animate().scaleX(0).scaleY(0);
+            findViewById(coursesNotification).animate().scaleX(0).scaleY(0);
 
             if (sharedPreferences.getBoolean("failedAttendance", false)) {
                 return;
@@ -642,7 +642,7 @@ public class HomeActivity extends AppCompatActivity {
         classesNotification = -1;
         timetableNotification = -1;
         messagesNotification = -1;
-        facultyNotification = -1;
+        coursesNotification = -1;
 
         academicsNotification = -1;
         examsNotification = -1;
@@ -933,12 +933,12 @@ public class HomeActivity extends AppCompatActivity {
                 });
             }
 
-            if (sharedPreferences.getBoolean("newFaculty", false)) {
+            if (sharedPreferences.getBoolean("newCourses", false)) {
                 classesFlag = true;
                 final ImageView notification = myNotification.generateNotificationDot((int) (570 * pixelDensity), NotificationDotGenerator.NOTIFICATION_DEFAULT);
                 notification.setPadding(0, (int) (10 * pixelDensity), 0, 0);
-                facultyNotification = View.generateViewId();
-                notification.setId(facultyNotification);
+                coursesNotification = View.generateViewId();
+                notification.setId(coursesNotification);
 
                 runOnUiThread(() -> {
                     ((RelativeLayout) findViewById(R.id.classesLayout)).addView(notification);

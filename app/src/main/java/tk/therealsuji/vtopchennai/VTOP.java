@@ -1188,7 +1188,7 @@ public class VTOP {
 
         setupProgress();    // Inflating the progress layout if it hasn't been inflated yet
 
-        downloading.setText(context.getString(R.string.downloading_faculty));
+        downloading.setText(context.getString(R.string.downloading_courses));
         if (progressLayout.getVisibility() == View.GONE) {
             hideLayouts();
             expand(progressLayout);
