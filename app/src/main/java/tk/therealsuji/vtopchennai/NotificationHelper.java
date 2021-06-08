@@ -39,11 +39,13 @@ public class NotificationHelper extends ContextWrapper {
 
             getManager().createNotificationChannel(ongoing);
 
-            NotificationChannel error = new NotificationChannel(CHANNEL_ID_ERROR_LOG, CHANNEL_NAME_ERROR_LOG, NotificationManager.IMPORTANCE_HIGH);
-            ongoing.enableVibration(true);
-            ongoing.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
+            if (ErrorHandler.isPreRelease) {
+                NotificationChannel error = new NotificationChannel(CHANNEL_ID_ERROR_LOG, CHANNEL_NAME_ERROR_LOG, NotificationManager.IMPORTANCE_HIGH);
+                ongoing.enableVibration(true);
+                ongoing.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
 
-            getManager().createNotificationChannel(error);
+                getManager().createNotificationChannel(error);
+            }
         }
     }
 

@@ -19,7 +19,7 @@ import java.util.Calendar;
 import java.util.Locale;
 
 public class ErrorHandler {
-    private final boolean isPreRelease;
+    public static boolean isPreRelease = BuildConfig.BUILD_TYPE.toLowerCase().equals("debug") || BuildConfig.VERSION_NAME.toLowerCase().contains("beta");
     Context context;
     SQLiteDatabase myDatabase;
     String userAgent;
@@ -28,7 +28,6 @@ public class ErrorHandler {
     public ErrorHandler(Context context, String userAgent) {
         this.context = context;
         this.userAgent = userAgent;
-        this.isPreRelease = BuildConfig.BUILD_TYPE.toLowerCase().equals("debug") || BuildConfig.VERSION_NAME.toLowerCase().contains("beta");
 
         if (isPreRelease) {
             this.errorLog = new StringBuilder();
@@ -136,13 +135,6 @@ public class ErrorHandler {
             NotificationCompat.Builder n = notificationHelper.notifyError(context, "Error " + errorCode + " has been logged successfully.");
             notificationHelper.getManager().notify(3, n.build());
         }).start();
-    }
-
-    /*
-        Return if the application is a pre-release
-     */
-    public boolean isPreRelease() {
-        return isPreRelease;
     }
 
     /*

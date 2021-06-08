@@ -121,7 +121,7 @@ public class VTOP {
             }
         });
 
-        if (errorHandler.isPreRelease()) {
+        if (ErrorHandler.isPreRelease) {
             webView.setWebChromeClient(new WebChromeClient() {
                 @Override
                 public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
@@ -172,7 +172,7 @@ public class VTOP {
                     EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
             );
         } catch (Exception e) {
-            if (errorHandler.isPreRelease()) {
+            if (ErrorHandler.isPreRelease) {
                 errorHandler.appendStackTrace(e);
             }
 
@@ -487,7 +487,7 @@ public class VTOP {
                     captchaView.setText("");
                     expand(captchaLayout);
                 } catch (Exception e) {
-                    if (errorHandler.isPreRelease()) {
+                    if (ErrorHandler.isPreRelease) {
                         errorHandler.appendStackTrace(e);
                     }
 
@@ -716,7 +716,7 @@ public class VTOP {
                     hideLayouts();
                     expand(semesterLayout);
                 } catch (Exception e) {
-                    if (errorHandler.isPreRelease()) {
+                    if (ErrorHandler.isPreRelease) {
                         errorHandler.appendStackTrace(e);
                     }
 
@@ -830,7 +830,7 @@ public class VTOP {
 
                     downloadTimetable();
                 } catch (Exception e) {
-                    if (errorHandler.isPreRelease()) {
+                    if (ErrorHandler.isPreRelease) {
                         errorHandler.appendStackTrace(e);
                     }
 
@@ -1168,7 +1168,7 @@ public class VTOP {
                             downloadFaculty();
                         });
                     } catch (Exception e) {
-                        if (errorHandler.isPreRelease()) {
+                        if (ErrorHandler.isPreRelease) {
                             errorHandler.appendStackTrace(e);
                         }
 
@@ -1284,7 +1284,7 @@ public class VTOP {
                             downloadProctor();
                         });
                     } catch (Exception e) {
-                        if (errorHandler.isPreRelease()) {
+                        if (ErrorHandler.isPreRelease) {
                             errorHandler.appendStackTrace(e);
                         }
 
@@ -1382,7 +1382,7 @@ public class VTOP {
                             downloadDeanHOD();
                         });
                     } catch (Exception e) {
-                        if (errorHandler.isPreRelease()) {
+                        if (ErrorHandler.isPreRelease) {
                             errorHandler.appendStackTrace(e);
                         }
 
@@ -1545,7 +1545,7 @@ public class VTOP {
                             downloadAttendance();
                         });
                     } catch (Exception e) {
-                        if (errorHandler.isPreRelease()) {
+                        if (ErrorHandler.isPreRelease) {
                             errorHandler.appendStackTrace(e);
                         }
 
@@ -1683,7 +1683,7 @@ public class VTOP {
                             downloadExams();
                         });
                     } catch (Exception e) {
-                        if (errorHandler.isPreRelease()) {
+                        if (ErrorHandler.isPreRelease) {
                             errorHandler.appendStackTrace(e);
                         }
 
@@ -1916,7 +1916,7 @@ public class VTOP {
                             downloadMarks();
                         });
                     } catch (Exception e) {
-                        if (errorHandler.isPreRelease()) {
+                        if (ErrorHandler.isPreRelease) {
                             errorHandler.appendStackTrace(e);
                         }
 
@@ -2143,7 +2143,7 @@ public class VTOP {
                             downloadGrades();
                         });
                     } catch (Exception e) {
-                        if (errorHandler.isPreRelease()) {
+                        if (ErrorHandler.isPreRelease) {
                             errorHandler.appendStackTrace(e);
                         }
 
@@ -2313,7 +2313,7 @@ public class VTOP {
                             downloadGradeHistory();
                         });
                     } catch (Exception e) {
-                        if (errorHandler.isPreRelease()) {
+                        if (ErrorHandler.isPreRelease) {
                             errorHandler.appendStackTrace(e);
                         }
 
@@ -2565,7 +2565,7 @@ public class VTOP {
                             downloadMessages();
                         });
                     } catch (Exception e) {
-                        if (errorHandler.isPreRelease()) {
+                        if (ErrorHandler.isPreRelease) {
                             errorHandler.appendStackTrace(e);
                         }
 
@@ -2681,7 +2681,7 @@ public class VTOP {
                             downloadProctorMessages();
                         });
                     } catch (Exception e) {
-                        if (errorHandler.isPreRelease()) {
+                        if (ErrorHandler.isPreRelease) {
                             errorHandler.appendStackTrace(e);
                         }
 
@@ -2762,7 +2762,7 @@ public class VTOP {
 
                         sharedPreferences.edit().putBoolean("newProctorMessages", true).apply();
                     } catch (Exception e) {
-                        if (errorHandler.isPreRelease()) {
+                        if (ErrorHandler.isPreRelease) {
                             errorHandler.appendStackTrace(e);
                         }
 
@@ -2950,7 +2950,7 @@ public class VTOP {
                             downloadReceipts();
                         });
                     } catch (Exception e) {
-                        if (errorHandler.isPreRelease()) {
+                        if (ErrorHandler.isPreRelease) {
                             errorHandler.appendStackTrace(e);
                         }
 
@@ -3056,7 +3056,7 @@ public class VTOP {
                             checkDues();
                         });
                     } catch (Exception e) {
-                        if (errorHandler.isPreRelease()) {
+                        if (ErrorHandler.isPreRelease) {
                             errorHandler.appendStackTrace(e);
                         }
 

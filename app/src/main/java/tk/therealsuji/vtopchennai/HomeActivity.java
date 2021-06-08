@@ -1150,7 +1150,7 @@ public class HomeActivity extends AppCompatActivity {
                 Checking if the report bug button should be visible
              */
             ErrorHandler errorHandler = new ErrorHandler(context, null);
-            if (errorHandler.isPreRelease()) {
+            if (ErrorHandler.isPreRelease) {
                 LinearLayout reportBug = new LinearLayout(context);
                 LinearLayout.LayoutParams reportBugParams = new LinearLayout.LayoutParams(
                         (int) (125 * pixelDensity),
