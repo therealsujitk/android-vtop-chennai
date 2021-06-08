@@ -603,14 +603,14 @@ public class VTOP {
 
             webView.evaluateJavascript("(function() {" +
                     "var credentials = 'uname=" + username + "&passwd=' + encodeURIComponent('" + password + "') + '&" + captcha + "';" +
-                    "var successFlag = false;" +
+                    "var successFlag;" +
                     "$.ajax({" +
                     "    type : 'POST'," +
                     "    url : 'doLogin'," +
                     "    data : credentials," +
                     "    async: false," +
                     "    success : function(response) {" +
-                    "        if(response.search('___INTERNAL___RESPONSE___') == -1) {" +
+                    "            if(response.search('___INTERNAL___RESPONSE___') == -1) {" +
                     "                $('#page_outline').html(response);" +
                     "            if(response.includes('authorizedIDX')) {" +
                     "                successFlag = true;" +
@@ -629,12 +629,13 @@ public class VTOP {
                 if (value.equals("true")) {
                     getSemesters();
                 } else {
-                    if (!value.equals("false") && !value.equals("null")) {
+                    if (!value.equals("null")) {
                         value = value.substring(1, value.length() - 1);
                         if (value.equals("Invalid User ID / Password") || value.equals("Invalid User ID")) {
                             sharedPreferences.edit().putString("isLoggedIn", "false").apply();
                             myDatabase.close();
                             downloadDialog.dismiss();
+
                             Toast.makeText(context, value, Toast.LENGTH_LONG).show();
                             context.startActivity(new Intent(context, LoginActivity.class));
                             ((Activity) context).finish();
@@ -661,7 +662,7 @@ public class VTOP {
 
         webView.evaluateJavascript("(function() {" +
                 "var data = 'verifyMenu=true&winImage=' + $('#winImage').val() + '&authorizedID=' + $('#authorizedIDX').val() + '&nocache=@(new Date().getTime())';" +
-                "var obj = false;" +
+                "var obj;" +
                 "$.ajax({" +
                 "    type: 'POST'," +
                 "    url : 'academics/common/StudentTimeTable'," +
@@ -687,7 +688,7 @@ public class VTOP {
             /*
                 obj is in the form of a JSON string like {"0": "Semester 1", "1": "Semester 2", "2": "Semester 3",...}
              */
-            if (obj.equals("false") || obj.equals("null")) {
+            if (obj.equals("null")) {
                 error(301);
             } else {
                 try {
@@ -816,8 +817,7 @@ public class VTOP {
             /*
                 obj is in the form of a JSON string like {"name": "JOHN DOE", "register": "20XYZ1987"}
              */
-            String temp = obj.substring(1, obj.length() - 1);
-            if (obj.equals("null") || temp.equals("")) {
+            if (obj.equals("null")) {
                 error(401);
             } else {
                 try {
@@ -870,7 +870,7 @@ public class VTOP {
                 "        var spans = doc.getElementById('getStudentDetails').getElementsByTagName('span');" +
                 "        var credits = '0';" +
                 "        if(spans[0].innerText.toLowerCase().includes('no record(s) found')) {" +
-                "           obj = 'unreleased';" +
+                "           obj = false;" +
                 "           return;" +
                 "        }" +
                 "        for(var i = spans.length-1; i > 0; --i) {" +
@@ -957,10 +957,9 @@ public class VTOP {
             /*
                 obj is in the form of a JSON string like {"credits": "19", "lab": {"0start": "08:00", "0end": "08:50",...}, "mon": {"0theory": "MAT1001",...}, ...}
              */
-            String temp = obj.substring(1, obj.length() - 1);
-            if (obj.equals("null") || temp.equals("")) {
+            if (obj.equals("null")) {
                 error(501);
-            } else if (temp.equals("unreleased")) {
+            } else if (obj.equals("false")) {
                 new Thread(() -> {
                     myDatabase.execSQL("DROP TABLE IF EXISTS timetable_lab");
                     myDatabase.execSQL("CREATE TABLE timetable_lab (id INTEGER PRIMARY KEY, start_time VARCHAR, end_time VARCHAR, sun VARCHAR, mon VARCHAR, tue VARCHAR, wed VARCHAR, thu VARCHAR, fri VARCHAR, sat VARCHAR)");
@@ -1207,12 +1206,12 @@ public class VTOP {
                 "    success : function(response) {" +
                 "        var doc = new DOMParser().parseFromString(response, 'text/html');" +
                 "        if (!doc.getElementById('studentDetailsList')) {" +
-                "            obj = 'nothing';" +
+                "            obj = false;" +
                 "            return;" +
                 "        }" +
                 "        var division = doc.getElementById('studentDetailsList').getElementsByTagName('table')[0]; " +
                 "        var correction = 0;" +
-                "        if (division.getElementsByTagName('tr')[0].getElementsByTagName('td')[0] != null) {" +
+                "        if (typeof division.getElementsByTagName('tr')[0].getElementsByTagName('td')[0] != 'undefined') {" +
                 "            correction = 1;" +      // +1 is a correction due to an extra 'td' element at the top
                 "        }" +
                 "        var heads = division.getElementsByTagName('th');" +
@@ -1248,10 +1247,9 @@ public class VTOP {
             /*
                 obj is in the form of a JSON string like {"0": {"course": "MAT1001", "faculty": "JAMES VERTIGO"},...}
              */
-            String temp = obj.substring(1, obj.length() - 1);
-            if (obj.equals("null") || temp.equals("")) {
+            if (obj.equals("null")) {
                 error(601);
-            } else if (temp.equals("nothing")) {
+            } else if (obj.equals("false")) {
                 new Thread(() -> {
                     myDatabase.execSQL("DROP TABLE IF EXISTS faculty");
                     myDatabase.execSQL("CREATE TABLE faculty (id INTEGER PRIMARY KEY, course VARCHAR, faculty VARCHAR)");
@@ -1322,7 +1320,7 @@ public class VTOP {
                 "    success: function(response) {" +
                 "        var doc = new DOMParser().parseFromString(response, 'text/html');" +
                 "        if(!doc.getElementById('showDetails').getElementsByTagName('td')) {" +
-                "        obj = 'unavailable';" +
+                "        obj = false;" +
                 "        return;" +
                 "    }" +
                 "    var cells = doc.getElementById('showDetails').getElementsByTagName('td');" +
@@ -1345,10 +1343,9 @@ public class VTOP {
             /*
                 obj is in the form of a JSON string like {"00Faculty Name": "Jack Ryan", "01Email ID": "jack@cia.gov.us",...}
              */
-            String temp = obj.substring(1, obj.length() - 1);
-            if (obj.equals("null") || temp.equals("")) {
+            if (obj.equals("null")) {
                 error(701);
-            } else if (temp.equals("unavailable")) {
+            } else if (obj.equals("false")) {
                 new Thread(() -> {
                     myDatabase.execSQL("DROP TABLE IF EXISTS proctor");
                     myDatabase.execSQL("CREATE TABLE proctor (id INTEGER PRIMARY KEY, column1 VARCHAR, column2 VARCHAR)");
@@ -1419,7 +1416,7 @@ public class VTOP {
                 "    success: function(response) {" +
                 "        var doc = new DOMParser().parseFromString(response, 'text/html');" +
                 "        if(!doc.getElementsByTagName('table')[0]) {" +
-                "            obj = 'unavailable';" +
+                "            obj = false;" +
                 "            return;" +
                 "        }" +
                 "        var tables = doc.getElementsByTagName('table');" +
@@ -1489,10 +1486,9 @@ public class VTOP {
             /*
                 obj is in the form of a JSON string like {"dean": {"00Faculty Name": "Jack Ryan", "01Email ID": "jack@cia.gov.us",...}, "hod: {"00Faculty Name": "Jimmy Fallon", "01Email ID": "jimmy@tonight.us",...}"}
              */
-            String temp = obj.substring(1, obj.length() - 1);
-            if (obj.equals("null") || temp.equals("")) {
+            if (obj.equals("null")) {
                 error(703);
-            } else if (temp.equals("unavailable")) {
+            } else if (obj.equals("false")) {
                 new Thread(() -> {
                     myDatabase.execSQL("DROP TABLE IF EXISTS dean");
                     myDatabase.execSQL("CREATE TABLE dean (id INTEGER PRIMARY KEY, column1 VARCHAR, column2 VARCHAR)");
@@ -1584,7 +1580,7 @@ public class VTOP {
                 "        var doc = new DOMParser().parseFromString(response, 'text/html');" +
                 "        var division = doc.getElementById('getStudentDetails');" +
                 "        if(division.getElementsByTagName('td').length == 1) {" +
-                "            obj = 'unavailable';" +
+                "            obj = false;" +
                 "        } else {" +
                 "            var heads = division.getElementsByTagName('th');" +
                 "            var courseIndex, typeIndex, attendedIndex, totalIndex, percentIndex, flag = 0;" +
@@ -1638,10 +1634,9 @@ public class VTOP {
             /*
                 obj is in the form of a JSON string like {"0": {"course": "MAT1001", "type": "Embedded Theory",...},...}
              */
-            String temp = obj.substring(1, obj.length() - 1);
-            if (obj.equals("null") || temp.equals("")) {
+            if (obj.equals("null")) {
                 error(801);
-            } else if (temp.equals("unavailable")) {
+            } else if (obj.equals("false")) {
                 new Thread(() -> {
                     myDatabase.execSQL("DROP TABLE IF EXISTS attendance");
                     myDatabase.execSQL("CREATE TABLE attendance (id INTEGER PRIMARY KEY, course VARCHAR, type VARCHAR, attended VARCHAR, total VARCHAR, percent VARCHAR)");
@@ -1719,8 +1714,8 @@ public class VTOP {
                 "    data : data," +
                 "    async: false," +
                 "    success: function(response) {" +
-                "        if(response.toLowerCase().includes('not') && response.toLowerCase().includes('found')) {" +
-                "            obj = 'nothing';" +
+                "        if(response.toLowerCase().includes('not found')) {" +
+                "            obj = false;" +
                 "        } else {" +
                 "            var doc = new DOMParser().parseFromString(response, 'text/html');" +
                 "            var courseIndex, titleIndex, slotIndex, dateIndex, reportingIndex, timingIndex, venueIndex, locationIndex, seatIndex, flag = 0;" +
@@ -1819,10 +1814,9 @@ public class VTOP {
             /*
                 obj is in the form of a JSON string like {"Mid Term": {"course": "MAT1001", "date": "04-Jan-1976",...},...}
              */
-            String temp = obj.substring(1, obj.length() - 1);
-            if (obj.equals("null") || temp.equals("")) {
+            if (obj.equals("null")) {
                 error(901);
-            } else if (temp.equals("nothing")) {
+            } else if (obj.equals("false")) {
                 new Thread(() -> {
                     myDatabase.execSQL("DROP TABLE IF EXISTS exams");
                     myDatabase.execSQL("CREATE TABLE exams (id INTEGER PRIMARY KEY, exam VARCHAR, course VARCHAR, title VARCHAR, slot VARCHAR, date VARCHAR, reporting VARCHAR, start_time VARCHAR, end_time VARCHAR, venue VARCHAR, location VARCHAR, seat VARCHAR)");
@@ -1952,8 +1946,8 @@ public class VTOP {
                 "    data : data," +
                 "    async: false," +
                 "    success: function(response) {" +
-                "        if(response.toLowerCase().includes('no') && response.toLowerCase().includes('found')) {" +
-                "            obj = 'nothing';" +
+                "        if(response.toLowerCase().includes('no data found')) {" +
+                "            obj = false;" +
                 "        } else {" +
                 "            var doc = new DOMParser().parseFromString(response, 'text/html');" +
                 "            var rows = doc.getElementById('fixedTableContainer').getElementsByTagName('tr');" +
@@ -2038,10 +2032,9 @@ public class VTOP {
             /*
                 obj is in the form of a JSON string like {"0": {"course": "MAT1001", "score": "48",...},...}
              */
-            String temp = obj.substring(1, obj.length() - 1);
-            if (obj.equals("null") || temp.equals("")) {
+            if (obj.equals("null")) {
                 error(1001);
-            } else if (temp.equals("nothing")) {
+            } else if (obj.equals("false")) {
                 new Thread(() -> {
                     myDatabase.execSQL("DROP TABLE IF EXISTS marks");
                     myDatabase.execSQL("CREATE TABLE marks (id INTEGER PRIMARY KEY, course VARCHAR, type VARCHAR, title VARCHAR, score VARCHAR, status VARCHAR, weightage VARCHAR, average VARCHAR, posted VARCHAR)");
@@ -2179,7 +2172,7 @@ public class VTOP {
                 "    async: false," +
                 "    success: function(response) {" +
                 "        if(response.toLowerCase().includes('no records')) {" +
-                "            obj = 'nothing';" +
+                "            obj = false;" +
                 "        } else {" +
                 "            var doc = new DOMParser().parseFromString(response, 'text/html');" +
                 "            var courseIndex, typeIndex, gradeTypeIndex, totalIndex, gradeIndex;" +
@@ -2251,10 +2244,9 @@ public class VTOP {
             /*
                 obj is in the form of a JSON string like {"0": {"course": "MAT1001", "type": "Embedded Theory",...},..., "gpa": "9.6"}
              */
-            final String temp = obj.substring(1, obj.length() - 1);
-            if (obj.equals("null") || temp.equals("")) {
+            if (obj.equals("null")) {
                 error(1101);
-            } else if (temp.equals("nothing")) {
+            } else if (obj.equals("false")) {
                 /*
                     Dropping and recreating an empty table
                  */
@@ -2469,8 +2461,7 @@ public class VTOP {
             /*
                 obj is in the form of a JSON string like {"effective": "{course: "MAT1011", ...}", "curriculum": "{"type": "Program Core", ...}, ...}
              */
-            String temp = obj.substring(1, obj.length() - 1);
-            if (obj.equals("null") || temp.equals("")) {
+            if (obj.equals("null")) {
                 error(1103);
             } else {
                 new Thread(() -> {
@@ -2602,7 +2593,7 @@ public class VTOP {
                 "    async: false," +
                 "    success: function(response) {" +
                 "        if(response.toLowerCase().includes('no messages')) {" +
-                "            obj = 'nothing';" +
+                "            obj = false;" +
                 "        } else {" +
                 "            var doc = new DOMParser().parseFromString(response, 'text/html');" +
                 "            var messages = doc.getElementsByTagName('a');" +
@@ -2623,10 +2614,9 @@ public class VTOP {
             /*
                 obj is in the form of a JSON string like {"0": {"course": "MAT1001", "type": "Embedded Theory", "message": "All of you have failed!"}}
              */
-            final String temp = obj.substring(1, obj.length() - 1);
-            if (obj.equals("null") || temp.equals("{}")) {
+            if (obj.equals("null")) {
                 error(1201);
-            } else if (temp.equals("nothing")) {
+            } else if (obj.equals("false")) {
                 /*
                     Dropping and recreating an empty table
                  */
@@ -2802,7 +2792,7 @@ public class VTOP {
                 "    success: function(response) {" +
                 "        var doc = new DOMParser().parseFromString(response, 'text/html');" +
                 "        if(!doc.getElementsByClassName('box-info')) {" +
-                "            obj = 'nothing';" +
+                "            obj = false;" +
                 "        } else {" +
                 "            var modals = doc.getElementsByClassName('modal-content');" +
                 "            for(var i = 0; i < modals.length; ++i) {" +
@@ -2839,10 +2829,9 @@ public class VTOP {
             /*
                 obj is in the form of a JSON string like {"Academics": {"announcement": "In lieu of COVID-19, campus will remain shut for eternity.", "link": "null"},...}
              */
-            String temp = obj.substring(1, obj.length() - 1);
-            if (obj.equals("null") || temp.equals("")) {
+            if (obj.equals("null")) {
                 error(1301);
-            } else if (temp.equals("nothing")) {
+            } else if (obj.equals("false")) {
                 /*
                     Dropping and recreating an empty table
                  */
@@ -3025,8 +3014,7 @@ public class VTOP {
             /*
                 obj is in the form of a JSON string like {"0": {"amount": "1000000", "date": "04-JAN-1976", "receipt": "17085"},...}
              */
-            String temp = obj.substring(1, obj.length() - 1);
-            if (obj.equals("null") || temp.equals("")) {
+            if (obj.equals("null")) {
                 error(1401);
             } else {
                 new Thread(() -> {
@@ -3084,8 +3072,7 @@ public class VTOP {
                 "    data : data," +
                 "    async: false," +
                 "    success: function(response) {" +
-                "        response = response.toLowerCase();" +
-                "        if (response.includes('pay') && response.includes('now')) {" +
+                "        if (response.toLowerCase().includes('pay now')) {" +
                 "            duePayments = true;" +
                 "        } else {" +
                 "            duePayments = false;" +
