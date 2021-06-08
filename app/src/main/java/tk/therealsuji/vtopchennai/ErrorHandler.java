@@ -246,5 +246,6 @@ public class ErrorHandler {
  *
  *  Error 1401  Failed to download receipts
  *  Error 1402  Error while storing receipts
+ *  Error 1403  Error while checking for payment dues
  *
  */

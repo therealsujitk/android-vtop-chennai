@@ -3037,7 +3037,7 @@ public class VTOP {
                         myDatabase.execSQL("CREATE TABLE receipts (id INTEGER PRIMARY KEY, receipt VARCHAR, date VARCHAR, amount VARCHAR)");
 
                         int i;
-                        for (i = 0; i < myObj.length() + 1; ++i) {
+                        for (i = 0; i < myObj.length(); ++i) {
                             JSONObject tempObj = new JSONObject(myObj.getString(Integer.toString(i)));
                             String receipt = tempObj.getString("receipt");
                             String date = tempObj.getString("date").toUpperCase();
@@ -3084,11 +3084,11 @@ public class VTOP {
                 "    data : data," +
                 "    async: false," +
                 "    success: function(response) {" +
-                "        var doc = new DOMParser().parseFromString(response, 'text/html');" +
-                "        if (doc.getElementsByTagName('font')[0]) {" +   // Contains the text "No Payment Dues"
-                "            duePayments = false;" +
-                "        } else {" +
+                "        response = response.toLowerCase();" +
+                "        if (response.includes('pay') && response.includes('now')) {" +
                 "            duePayments = true;" +
+                "        } else {" +
+                "            duePayments = false;" +
                 "        }" +
                 "    }" +
                 "});" +
@@ -3098,6 +3098,10 @@ public class VTOP {
                 sharedPreferences.edit().putBoolean("duePayments", true).apply();
             } else {
                 sharedPreferences.edit().remove("duePayments").apply();
+
+                if (duePayments.equals("null")) {
+                    errorHandler.error(String.valueOf(1403));
+                }
             }
 
             finishUp();
