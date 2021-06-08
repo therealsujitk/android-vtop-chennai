@@ -2095,7 +2095,8 @@ public class VTOP {
                         /*
                             Updating IDs if they have changed
                          */
-                        Iterator<?> keys = newMarks.keys();
+                        JSONObject tempMarks = new JSONObject(newMarks.toString());
+                        Iterator<?> keys = tempMarks.keys();
 
                         while (keys.hasNext()) {
                             String oldID = (String) keys.next();
@@ -2898,7 +2899,8 @@ public class VTOP {
                         /*
                             Updating any announcements IDs that have been changed in the new table
                          */
-                        keys = newSpotlight.keys();
+                        JSONObject tempSpotlight = new JSONObject(newSpotlight.toString());
+                        keys = tempSpotlight.keys();
 
                         while (keys.hasNext()) {
                             String oldID = (String) keys.next();
