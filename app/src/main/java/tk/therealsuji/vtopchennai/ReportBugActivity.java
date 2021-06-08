@@ -92,9 +92,7 @@ public class ReportBugActivity extends AppCompatActivity {
                 final LinearLayout card = myLog.generateCard(errorCode, date);
                 final LinearLayout linkView = myLink.generateButton(null, LinkButtonGenerator.LINK_REPORT);
                 linkView.setTag(error);
-                linkView.setOnClickListener(v -> {
-                    errorHandler.sendLog(errorCode, error);
-                });
+                linkView.setOnClickListener(v -> errorHandler.sendLog(errorCode, error));
 
                 card.addView(linkView);
                 card.setAlpha(0);
