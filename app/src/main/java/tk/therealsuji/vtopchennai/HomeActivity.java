@@ -334,7 +334,7 @@ public class HomeActivity extends AppCompatActivity {
 
         if (!sharedPreferences.getString("semester", "null").equals(semester)) {
             sharedPreferences.edit().putBoolean("newTimetable", true).apply();
-            sharedPreferences.edit().putBoolean("newFaculty", true).apply();
+            sharedPreferences.edit().putBoolean("newCourses", true).apply();
 
             sharedPreferences.edit().remove("newExams").apply();
             sharedPreferences.edit().remove("examsCount").apply();
@@ -355,7 +355,7 @@ public class HomeActivity extends AppCompatActivity {
                 vtop.downloadTimetable();
                 break;
             case 2:
-                vtop.downloadFaculty();
+                vtop.downloadCourses();
                 break;
             case 3:
                 vtop.downloadProctor();
