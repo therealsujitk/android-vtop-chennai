@@ -32,8 +32,7 @@ public class LoginActivity extends AppCompatActivity {
         hideKeyboard(this.getCurrentFocus());
 
         if (download != null) {
-            download.dismiss();
-            download = null;
+            return;
         }
 
         EditText usernameView = findViewById(R.id.username);
@@ -49,7 +48,10 @@ public class LoginActivity extends AppCompatActivity {
         download.setContentView(R.layout.dialog_download);
         download.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         download.setCanceledOnTouchOutside(false);
-        download.setOnDismissListener(dialog -> vtop.terminateDownload());
+        download.setOnDismissListener(dialog -> {
+            vtop.terminateDownload();
+            download = null;
+        });
         download.show();
 
         Window window = download.getWindow();
@@ -65,7 +67,12 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void submitCaptcha(View view) {
+        if (vtop.isVerifyingCaptcha) {
+            return;
+        }
+
         hideKeyboard(download.getCurrentFocus());
+        vtop.isVerifyingCaptcha = true;
         vtop.compress();
 
         EditText captchaView = download.findViewById(R.id.captcha);

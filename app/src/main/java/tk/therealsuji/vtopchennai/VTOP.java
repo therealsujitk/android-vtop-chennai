@@ -86,10 +86,9 @@ public class VTOP {
     SharedPreferences sharedPreferences;
     SQLiteDatabase myDatabase;
     TextView downloading, progressText;
-    int counter, lastDownload, loadingHeight;
+    int counter, lastDownload;
     float pixelDensity;
-    public boolean isInProgress;
-    boolean isOpened, isCaptchaInflated, isSemesterInflated, isProgressInflated, isCompressing, terminateDownload;
+    boolean isOpened, isCaptchaInflated, isSemesterInflated, isProgressInflated, isCompressing, terminateDownload, isInProgress, isVerifyingCaptcha;
 
     ErrorHandler errorHandler;
 
@@ -189,8 +188,6 @@ public class VTOP {
         password = encryptedSharedPreferences.getString("password", null);
 
         loading = downloadDialog.findViewById(R.id.loading);
-        loading.measure(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        loadingHeight = loading.getMeasuredHeight();
 
         captchaStub = downloadDialog.findViewById(R.id.captchaStub);
         semesterStub = downloadDialog.findViewById(R.id.semesterStub);
@@ -320,13 +317,13 @@ public class VTOP {
         view.measure(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         final int targetHeight = view.getMeasuredHeight();
 
-        view.getLayoutParams().height = loadingHeight;
+        view.getLayoutParams().height = 0;
         view.setVisibility(View.INVISIBLE);
         view.setAlpha(0);
 
-        ValueAnimator expand = ValueAnimator.ofInt(loadingHeight, targetHeight);
+        ValueAnimator expand = ValueAnimator.ofInt(0, targetHeight);
         expand.setInterpolator(new AccelerateInterpolator());
-        expand.setDuration(500);
+        expand.setDuration(300);
         expand.addUpdateListener(animation -> {
             RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) view.getLayoutParams();
             layoutParams.height = (int) (targetHeight * animation.getAnimatedFraction());
@@ -364,9 +361,9 @@ public class VTOP {
             @Override
             public void onAnimationEnd(Animator animation) {
                 final int viewHeight = view.getMeasuredHeight();
-                ValueAnimator compress = ValueAnimator.ofInt(viewHeight, loadingHeight);
+                ValueAnimator compress = ValueAnimator.ofInt(viewHeight, 0);
                 compress.setInterpolator(new AccelerateInterpolator());
-                compress.setDuration(500);
+                compress.setDuration(300);
                 compress.addUpdateListener(animation1 -> {
                     RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) view.getLayoutParams();
                     layoutParams.height = (int) (viewHeight * (1 - animation1.getAnimatedFraction()));
@@ -445,6 +442,8 @@ public class VTOP {
         if (terminateDownload) {
             return;
         }
+
+        isVerifyingCaptcha = false;
 
         webView.evaluateJavascript("(function() {" +
                 "return x == 'local';" +
@@ -658,8 +657,10 @@ public class VTOP {
                         myDatabase.close();
                         downloadDialog.dismiss();
 
-                        context.startActivity(new Intent(context, LoginActivity.class));
-                        ((Activity) context).finish();
+                        if (!((Activity) context).getLocalClassName().equals("LoginActivity")) {
+                            context.startActivity(new Intent(context, LoginActivity.class));
+                            ((Activity) context).finish();
+                        }
                     }
 
                     Toast.makeText(context, value, Toast.LENGTH_LONG).show();

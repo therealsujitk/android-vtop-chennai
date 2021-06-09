@@ -69,11 +69,11 @@ public class ReportBugActivity extends AppCompatActivity {
 
         new Thread(() -> {
             SQLiteDatabase myDatabase = context.openOrCreateDatabase("vtop", Context.MODE_PRIVATE, null);
-            myDatabase.execSQL("CREATE TABLE IF NOT EXISTS error_logs (id INTEGER PRIMARY KEY, error_code VARCHAR, date VARCHAR, error VARCHAR)");
+            myDatabase.execSQL("CREATE TABLE IF NOT EXISTS error_logs (id INTEGER PRIMARY KEY, error_code VARCHAR, timestamp VARCHAR, error VARCHAR)");
             Cursor c = myDatabase.rawQuery("SELECT * FROM error_logs ORDER BY id DESC", null);
 
             int errorCodeIndex = c.getColumnIndex("error_code");
-            int dateIndex = c.getColumnIndex("date");
+            int timestampIndex = c.getColumnIndex("timestamp");
             int errorIndex = c.getColumnIndex("error");
             c.moveToFirst();
 
@@ -90,7 +90,7 @@ public class ReportBugActivity extends AppCompatActivity {
                 }
 
                 String errorCode = "Error " + c.getString(errorCodeIndex);
-                String date = c.getString(dateIndex);
+                String date = c.getString(timestampIndex);
                 String error = c.getString(errorIndex);
 
                 final LinearLayout card = myLog.generateCard(errorCode, date);

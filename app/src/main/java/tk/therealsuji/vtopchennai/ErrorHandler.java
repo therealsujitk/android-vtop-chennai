@@ -62,9 +62,13 @@ public class ErrorHandler {
             errorComment = errorComment + "\n";
             errorLog.insert(0, errorComment);
 
-            append("\n").append(getAdditionalInfo());
+            Calendar c = Calendar.getInstance();
+            SimpleDateFormat ts = new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss", Locale.ENGLISH);
+            String timestamp = ts.format(c.getTime()).toUpperCase();
 
-            logError(errorCode, errorLog.toString());
+            append("\n").append(getAdditionalInfo(timestamp));
+
+            logError(errorCode, errorLog.toString(), timestamp);
         }
 
         ((Activity) context).runOnUiThread(() -> {
@@ -88,16 +92,12 @@ public class ErrorHandler {
     /*
         Function to add device info to the error log
      */
-    private String getAdditionalInfo() {
+    private String getAdditionalInfo(String timestamp) {
         StringBuilder additionalInfo = new StringBuilder();
 
         String buildType = BuildConfig.BUILD_TYPE;
         String versionName = BuildConfig.VERSION_NAME;
         int versionCode = BuildConfig.VERSION_CODE;
-
-        Calendar c = Calendar.getInstance();
-        SimpleDateFormat ts = new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss", Locale.ENGLISH);
-        String timestamp = ts.format(c.getTime());
 
         String deviceModal = Build.MODEL;
         String androidVersion = Build.VERSION.RELEASE;
@@ -121,15 +121,11 @@ public class ErrorHandler {
     /*
         Function to store the error log
      */
-    private void logError(final String errorCode, final String error) {
+    private void logError(String errorCode, String error, String timestamp) {
         new Thread(() -> {
-            myDatabase.execSQL("CREATE TABLE IF NOT EXISTS error_logs (id INTEGER PRIMARY KEY, error_code VARCHAR, date VARCHAR, error VARCHAR)");
+            myDatabase.execSQL("CREATE TABLE IF NOT EXISTS error_logs (id INTEGER PRIMARY KEY, error_code VARCHAR, timestamp VARCHAR, error VARCHAR)");
 
-            Calendar c = Calendar.getInstance();
-            SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH);
-            String date = df.format(c.getTime()).toUpperCase();
-
-            myDatabase.execSQL("INSERT INTO error_logs (error_code, date, error) VALUES('" + errorCode + "', '" + date + "', '" + error.replaceAll("'", "''") + "')");
+            myDatabase.execSQL("INSERT INTO error_logs (error_code, timestamp, error) VALUES('" + errorCode + "', '" + timestamp + "', '" + error.replaceAll("'", "''") + "')");
 
             NotificationHelper notificationHelper = new NotificationHelper(context);
             NotificationCompat.Builder n = notificationHelper.notifyError(context, "Error " + errorCode + " has been logged successfully.");

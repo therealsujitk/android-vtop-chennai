@@ -68,52 +68,52 @@ public class HomeActivity extends AppCompatActivity {
         The following functions are to open the activities in the "Classes" category
      */
 
-    public void openTimetable(View view) {
-        startActivity(new Intent(this, TimetableActivity.class));
+    public static void expand(final View view) {
+        view.measure(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        final int targetHeight = view.getMeasuredHeight();
 
-        if (timetableNotification == -1) {
-            return;
-        }
+        view.getLayoutParams().height = 0;
+        view.setVisibility(View.VISIBLE);
 
-        try {
-            findViewById(timetableNotification).animate().scaleX(0).scaleY(0);
-
-            if (sharedPreferences.getBoolean("failedAttendance", false)) {
-                return;
+        ValueAnimator anim = ValueAnimator.ofInt(0, targetHeight);
+        anim.setInterpolator(new AccelerateInterpolator());
+        anim.setDuration(300);
+        anim.addUpdateListener(animation -> {
+            LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) view.getLayoutParams();
+            layoutParams.height = (int) (targetHeight * animation.getAnimatedFraction());
+            view.setLayoutParams(layoutParams);
+        });
+        anim.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) view.getLayoutParams();
+                layoutParams.height = LinearLayout.LayoutParams.WRAP_CONTENT;
             }
-
-            if (!sharedPreferences.getBoolean("newMessages", false) && !sharedPreferences.getBoolean("newFaculty", false)) {
-                findViewById(classesNotification).animate().scaleX(0).scaleY(0);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        });
+        anim.start();
     }
 
     public void openAttendance(View view) {
         startActivity(new Intent(this, AttendanceActivity.class));
     }
 
-    public void openMessages(View view) {
-        startActivity(new Intent(this, MessagesActivity.class));
-
-        if (messagesNotification == -1) {
-            return;
-        }
-
-        try {
-            findViewById(messagesNotification).animate().scaleX(0).scaleY(0);
-
-            if (sharedPreferences.getBoolean("failedAttendance", false)) {
-                return;
+    public static void compress(final View view) {
+        final int viewHeight = view.getMeasuredHeight();
+        ValueAnimator anim = ValueAnimator.ofInt(viewHeight, 0);
+        anim.setInterpolator(new AccelerateInterpolator());
+        anim.setDuration(300);
+        anim.addUpdateListener(animation -> {
+            LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) view.getLayoutParams();
+            layoutParams.height = (int) (viewHeight * (1 - animation.getAnimatedFraction()));
+            view.setLayoutParams(layoutParams);
+        });
+        anim.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                view.setVisibility(View.GONE);
             }
-
-            if (!sharedPreferences.getBoolean("newTimetable", false) && !sharedPreferences.getBoolean("newFaculty", false)) {
-                findViewById(classesNotification).animate().scaleX(0).scaleY(0);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        });
+        anim.start();
     }
 
     public void openCourses(View view) {
@@ -287,38 +287,48 @@ public class HomeActivity extends AppCompatActivity {
         startActivity(shareIntent);
     }
 
-    public static void expand(final View view) {
-        view.measure(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        final int targetHeight = view.getMeasuredHeight();
+    public void openTimetable(View view) {
+        startActivity(new Intent(this, TimetableActivity.class));
 
-        view.getLayoutParams().height = 0;
-        view.setVisibility(View.VISIBLE);
+        if (timetableNotification == -1) {
+            return;
+        }
 
-        ValueAnimator anim = ValueAnimator.ofInt(0, targetHeight);
-        anim.setInterpolator(new AccelerateInterpolator());
-        anim.setDuration(500);
-        anim.addUpdateListener(animation -> {
-            LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) view.getLayoutParams();
-            layoutParams.height = (int) (targetHeight * animation.getAnimatedFraction());
-            view.setLayoutParams(layoutParams);
-        });
-        anim.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) view.getLayoutParams();
-                layoutParams.height = LinearLayout.LayoutParams.WRAP_CONTENT;
+        try {
+            findViewById(timetableNotification).animate().scaleX(0).scaleY(0);
+
+            if (sharedPreferences.getBoolean("failedAttendance", false)) {
+                return;
             }
-        });
-        anim.start();
+
+            if (!sharedPreferences.getBoolean("newMessages", false) && !sharedPreferences.getBoolean("newCourses", false)) {
+                findViewById(classesNotification).animate().scaleX(0).scaleY(0);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
-    public void submitCaptcha(View view) {
-        hideKeyboard();
-        vtop.compress();
+    public void openMessages(View view) {
+        startActivity(new Intent(this, MessagesActivity.class));
 
-        EditText captchaView = download.findViewById(R.id.captcha);
-        String captcha = captchaView.getText().toString();
-        vtop.signIn("captchaCheck=" + captcha);
+        if (messagesNotification == -1) {
+            return;
+        }
+
+        try {
+            findViewById(messagesNotification).animate().scaleX(0).scaleY(0);
+
+            if (sharedPreferences.getBoolean("failedAttendance", false)) {
+                return;
+            }
+
+            if (!sharedPreferences.getBoolean("newTimetable", false) && !sharedPreferences.getBoolean("newCourses", false)) {
+                findViewById(classesNotification).animate().scaleX(0).scaleY(0);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void selectSemester(View view) {
@@ -399,27 +409,18 @@ public class HomeActivity extends AppCompatActivity {
         download = null;
     }
 
-    public void openAppearance(View view) {
-        appearance = new Dialog(this);
-        appearance.setContentView(R.layout.dialog_appearance);
-        appearance.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-
-        String theme = sharedPreferences.getString("appearance", "system");
-        if (theme.equals("light")) {
-            RadioButton light = appearance.findViewById(R.id.light);
-            light.setChecked(true);
-        } else if (theme.equals("dark")) {
-            RadioButton dark = appearance.findViewById(R.id.dark);
-            dark.setChecked(true);
-        } else {
-            RadioButton system = appearance.findViewById(R.id.system);
-            system.setChecked(true);
+    public void submitCaptcha(View view) {
+        if (vtop.isVerifyingCaptcha) {
+            return;
         }
 
-        appearance.show();
+        hideKeyboard();
+        vtop.isVerifyingCaptcha = true;
+        vtop.compress();
 
-        Window window = appearance.getWindow();
-        window.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        EditText captchaView = download.findViewById(R.id.captcha);
+        String captcha = captchaView.getText().toString();
+        vtop.signIn("captchaCheck=" + captcha);
     }
 
     public void setAppearance(View view) {
@@ -456,37 +457,48 @@ public class HomeActivity extends AppCompatActivity {
         startActivity(new Intent(HomeActivity.this, PrivacyActivity.class));
     }
 
+    public void openAppearance(View view) {
+        if (appearance != null) {
+            return;
+        }
+
+        appearance = new Dialog(this);
+        appearance.setContentView(R.layout.dialog_appearance);
+        appearance.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        String theme = sharedPreferences.getString("appearance", "system");
+        if (theme.equals("light")) {
+            RadioButton light = appearance.findViewById(R.id.light);
+            light.setChecked(true);
+        } else if (theme.equals("dark")) {
+            RadioButton dark = appearance.findViewById(R.id.dark);
+            dark.setChecked(true);
+        } else {
+            RadioButton system = appearance.findViewById(R.id.system);
+            system.setChecked(true);
+        }
+
+        appearance.setOnDismissListener(dialog -> appearance = null);
+
+        appearance.show();
+
+        Window window = appearance.getWindow();
+        window.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+    }
+
     public void openSignOut(View view) {
         if (signOut != null) {
-            signOut.dismiss();
+            return;
         }
 
         signOut = new Dialog(this);
         signOut.setContentView(R.layout.dialog_signout);
         signOut.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        signOut.setOnDismissListener(dialog -> signOut = null);
         signOut.show();
 
         Window window = signOut.getWindow();
         window.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-    }
-
-    public static void compress(final View view) {
-        final int viewHeight = view.getMeasuredHeight();
-        ValueAnimator anim = ValueAnimator.ofInt(viewHeight, 0);
-        anim.setInterpolator(new AccelerateInterpolator());
-        anim.setDuration(200);
-        anim.addUpdateListener(animation -> {
-            LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) view.getLayoutParams();
-            layoutParams.height = (int) (viewHeight * (1 - animation.getAnimatedFraction()));
-            view.setLayoutParams(layoutParams);
-        });
-        anim.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                view.setVisibility(View.GONE);
-            }
-        });
-        anim.start();
     }
 
     public void cancelSignOut(View view) {
@@ -515,14 +527,17 @@ public class HomeActivity extends AppCompatActivity {
 
     public void openDownload(View view) {
         if (download != null) {
-            download.dismiss();
+            return;
         }
 
         download = new Dialog(this);
         download.setContentView(R.layout.dialog_download);
         download.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         download.setCanceledOnTouchOutside(false);
-        download.setOnDismissListener(dialog -> vtop.terminateDownload());
+        download.setOnDismissListener(dialog -> {
+            vtop.terminateDownload();
+            download = null;
+        });
         download.show();
 
         Window window = download.getWindow();
@@ -568,6 +583,7 @@ public class HomeActivity extends AppCompatActivity {
              */
             sharedPreferences.edit().remove("semester").apply();
             sharedPreferences.edit().remove("newMarks").apply();
+            sharedPreferences.edit().remove("filterByCourse").apply();
             sharedPreferences.edit().remove("newSpotlight").apply();
             sharedPreferences.edit().remove("examsCount").apply();
             sharedPreferences.edit().remove("gradesCount").apply();
