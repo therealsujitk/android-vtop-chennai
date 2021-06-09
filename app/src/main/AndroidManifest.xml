@@ -91,7 +91,7 @@
             android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".FacultyActivity" />
+                android:value=".CoursesActivity" />
         </activity>
         <activity
             android:name=".ExamsActivity"
