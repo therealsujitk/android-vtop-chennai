@@ -135,7 +135,7 @@ public class VTOP {
                     }
 
 //                  errorHandler.append("<code class=\"").append(messageLevel).append("\">[INFO:CONSOLE(").append(lineNumber).append(")] ").append("\"").append(message).append("\", source: ").append(source).append("</code>\n");
-                    errorHandler.append(messageLevel.toUpperCase()).append(":CONSOLE(").append(lineNumber).append(")] ").append("\"").append(message).append("\", source: ").append(source).append("\n");
+                    errorHandler.append("[").append(messageLevel.toUpperCase()).append(":CONSOLE(").append(lineNumber).append(")] ").append("\"").append(message).append("\", source: ").append(source).append("\n");
                     return super.onConsoleMessage(consoleMessage);
                 }
             });
@@ -1285,21 +1285,28 @@ public class VTOP {
                             String[] facultyString = tempObj.getString("faculty").split("-");
 
                             String courseCode = courseString[0].trim();
-                            String course = courseString[1].trim();
+                            StringBuilder course = new StringBuilder(courseString[1].trim());
+                            for (int j = 2; j < courseString.length - 1; ++j) {
+                                course.append(" - ").append(courseString[j].trim());
+                            }
                             String courseType = courseString[courseString.length - 1].trim();
 
                             if (courseType.contains("(")) {
-                                course = course.substring(0, course.indexOf("("));
+                                course.append(" - ").append(courseString[courseString.length - 1].trim());
+                                course = new StringBuilder(course.substring(0, course.indexOf("(")));
                                 courseType = courseType.substring(courseType.indexOf("(") + 1, courseType.indexOf(")")).trim();
                             }
 
                             String slot = slotString[0].trim().replaceAll("\\+", " + ");
-                            String venue = slotString[slotString.length - 2].trim() + " + " + slotString[slotString.length - 1].trim();
+                            StringBuilder venue = new StringBuilder(slotString[1].trim());
+                            for (int j = 2; j < slotString.length; ++j) {
+                                venue.append(" - ").append(slotString[j].trim());
+                            }
 
                             String faculty = facultyString[0].trim();
                             String school = facultyString[1].trim();
 
-                            myDatabase.execSQL("INSERT INTO courses (course_code, course, course_type, slot, venue, faculty, school) VALUES('" + courseCode + "','" + course + "', '" + courseType + "','" + slot + "', '" + venue + "','" + faculty + "','" + school + "')");
+                            myDatabase.execSQL("INSERT INTO courses (course_code, course, course_type, slot, venue, faculty, school) VALUES('" + courseCode + "','" + course.toString().replaceAll("\n", "") + "', '" + courseType + "','" + slot.replaceAll("\n", "") + "', '" + venue.toString().replaceAll("\n", "") + "','" + faculty.replaceAll("\n", "") + "','" + school.replaceAll("\n", "") + "')");
                         }
 
                         sharedPreferences.edit().remove("newFaculty").apply();  // Old data

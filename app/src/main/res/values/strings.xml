@@ -129,6 +129,10 @@
     <string name="new_data">Looks like you do have some new data available, however <a href="https://therealsuji.tk">@therealsujitk</a> was a bit too lazy to add this feature, why don\'t you contact him and give him a piece of your mind.</string>
 
 
+    <string name="course_title">Course Title</string>
+    <string name="school">Faculty School</string>
+
+
     <string name="slot">Slot</string>
     <string name="date">Date</string>
     <string name="reporting">Reporting Time</string>

@@ -86,7 +86,6 @@ public class ExamsActivity extends AppCompatActivity {
 
         new Thread(() -> {
             SQLiteDatabase myDatabase = context.openOrCreateDatabase("vtop", Context.MODE_PRIVATE, null);
-
             myDatabase.execSQL("CREATE TABLE IF NOT EXISTS exams (id INTEGER PRIMARY KEY, exam VARCHAR, course VARCHAR, title VARCHAR, slot VARCHAR, date VARCHAR, reporting VARCHAR, start_time VARCHAR, end_time VARCHAR, venue VARCHAR, location VARCHAR, seat VARCHAR)");
 
             Cursor c = myDatabase.rawQuery("SELECT exam FROM exams GROUP BY exam", null);

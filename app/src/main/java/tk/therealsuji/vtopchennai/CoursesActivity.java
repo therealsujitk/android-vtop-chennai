@@ -5,15 +5,60 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.view.View;
+import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 public class CoursesActivity extends AppCompatActivity {
+    ScrollView courses;
+    HorizontalScrollView courseCodesContainer;
+    ArrayList<TextView> buttons = new ArrayList<>();
+    ArrayList<LinearLayout> courseViews = new ArrayList<>();
+    LinearLayout courseButtons;
+    Context context;
+    float pixelDensity;
+    int index, halfWidth;
+
     boolean terminateThread;
+
+    public void setCourse(View view) {
+        int selectedIndex = Integer.parseInt(view.getTag().toString());
+        if (index == selectedIndex) {
+            return;
+        }
+
+        index = selectedIndex;
+
+        courses.scrollTo(0, 0);
+        courses.removeAllViews();
+
+        if (courses.getChildCount() == 0) {
+            courses.setAlpha(0);
+            courses.addView(courseViews.get(index));
+            courses.animate().alpha(1);
+        }
+
+        for (int i = 0; i < buttons.size(); ++i) {
+            buttons.get(i).setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary));
+        }
+        buttons.get(index).setBackground(ContextCompat.getDrawable(this, R.drawable.button_secondary_selected));
+
+        float location = 0;
+        for (int i = 0; i < index; ++i) {
+            location += 10 * pixelDensity + (float) buttons.get(i).getWidth();
+        }
+        location += 20 * pixelDensity + (float) buttons.get(index).getWidth() / 2;
+        courseCodesContainer.smoothScrollTo((int) location - halfWidth, 0);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,23 +66,33 @@ public class CoursesActivity extends AppCompatActivity {
         setContentView(R.layout.activity_courses);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
-        final Context context = this;
-        final LinearLayout facultyInfo = findViewById(R.id.faculty);
+        context = this;
+        courses = findViewById(R.id.courses);
+        courseButtons = findViewById(R.id.courseCodes);
+        pixelDensity = context.getResources().getDisplayMetrics().density;
+
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        this.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        halfWidth = displayMetrics.widthPixels / 2;
+
+        courseCodesContainer = findViewById(R.id.courseCodesContainer);
 
         new Thread(() -> {
             SQLiteDatabase myDatabase = context.openOrCreateDatabase("vtop", Context.MODE_PRIVATE, null);
-            myDatabase.execSQL("CREATE TABLE IF NOT EXISTS faculty (id INT(3) PRIMARY KEY, course VARCHAR, faculty VARCHAR)");
-            Cursor c = myDatabase.rawQuery("SELECT * FROM faculty", null);
+            myDatabase.execSQL("CREATE TABLE IF NOT EXISTS courses (id INTEGER PRIMARY KEY, course_code VARCHAR, course VARCHAR, course_type VARCHAR, slot , venue VARCHAR, faculty VARCHAR, school VARCHAR)");
 
+            Cursor c = myDatabase.rawQuery("SELECT course_code, course FROM courses GROUP BY course_code", null);
+
+            int courseCodeIndex = c.getColumnIndex("course_code");
             int courseIndex = c.getColumnIndex("course");
-            int facultyIndex = c.getColumnIndex("faculty");
             c.moveToFirst();
 
-            CardGenerator myFaculty = new CardGenerator(context, CardGenerator.CARD_FACULTY);
+            LayoutGenerator myLayout = new LayoutGenerator(context);
+            ButtonGenerator myButton = new ButtonGenerator(context);
+            CardGenerator myCourse = new CardGenerator(context, CardGenerator.CARD_COURSE);
+            CardGenerator myCourseTitle = new CardGenerator(context, CardGenerator.CARD_COURSE_TITLE);
 
-            boolean isUsingNewLayout = false, checkIfIsUsingNewLayout = true;
-
-            for (int i = 0; i < c.getCount(); ++i) {
+            for (int i = 0; i < c.getCount(); ++i, c.moveToNext()) {
                 if (terminateThread) {
                     return;
                 }
@@ -46,34 +101,83 @@ public class CoursesActivity extends AppCompatActivity {
                     runOnUiThread(() -> findViewById(R.id.noData).setVisibility(View.GONE));
                 }
 
-                String[] rawString = c.getString(courseIndex).split("-");
-
-                String faculty = c.getString(facultyIndex).split("-")[0];
-                String course = rawString[0];
-                String type = rawString[rawString.length - 1];
-
-                if (checkIfIsUsingNewLayout) {
-                    if (type.contains("(")) {
-                        isUsingNewLayout = true;
-                    }
-
-                    checkIfIsUsingNewLayout = false;
-                }
-
-                if (isUsingNewLayout) {
-                    type = type.substring(type.indexOf("(") + 1, type.indexOf(")")).trim();
-                }
-
-                final LinearLayout card = myFaculty.generateCard(faculty, course, type);
-                card.setAlpha(0);
-                card.animate().alpha(1);
+                String courseCode = c.getString(courseCodeIndex);
+                String course = c.getString(courseIndex);
 
                 /*
-                    Adding the block to the activity
+                    Creating a the course view
                  */
-                runOnUiThread(() -> facultyInfo.addView(card));
+                final LinearLayout courseView = myLayout.generateLayout();
 
-                c.moveToNext();
+                courseViews.add(courseView);    //Storing the view
+
+                /*
+                    Creating the courseCode button
+                 */
+                final TextView courseButton = myButton.generateButton(courseCode);
+                if (i == 0 && i == index) {
+                    courseButton.setBackground(ContextCompat.getDrawable(context, R.drawable.button_secondary_selected));
+                }
+                courseButton.setTag(i);
+                courseButton.setOnClickListener(v -> setCourse(courseButton));
+
+                buttons.add(courseButton);  //Storing the button
+
+                /*
+                    Creating & adding the course title card
+                 */
+                final LinearLayout titleCard = myCourseTitle.generateCard(getString(R.string.course_title), course);
+
+                if (i == index) {
+                    titleCard.setAlpha(0);
+                    titleCard.animate().alpha(1);
+                }
+
+                courseView.addView(titleCard);
+
+                runOnUiThread(() -> courseButtons.addView(courseButton));
+
+                if (i == 0 && i == index && courses.getChildCount() == 0) {
+                    runOnUiThread(() -> courses.addView(courseView));
+                }
+
+                Cursor s = myDatabase.rawQuery("SELECT * FROM courses WHERE course_code = '" + courseCode + "'", null);
+
+                int courseTypeIndex = s.getColumnIndex("course_type");
+                int slotIndex = s.getColumnIndex("slot");
+                int venueIndex = s.getColumnIndex("venue");
+                int facultyIndex = s.getColumnIndex("faculty");
+                int schoolIndex = s.getColumnIndex("school");
+
+                s.moveToFirst();
+
+                for (int j = 0; j < s.getCount(); ++j, s.moveToNext()) {
+                    if (terminateThread) {
+                        return;
+                    }
+
+                    String courseType = s.getString(courseTypeIndex);
+                    String slot = s.getString(slotIndex);
+                    String venue = s.getString(venueIndex);
+                    String faculty = s.getString(facultyIndex);
+                    String school = s.getString(schoolIndex);
+
+                    final LinearLayout card = myCourse.generateCard(faculty, courseType, school, slot, venue);
+
+                    /*
+                        Adding the card to the view
+                     */
+                    if (i == index) {
+                        card.setAlpha(0);
+                        card.animate().alpha(1);
+
+                        runOnUiThread(() -> courseView.addView(card));
+                    } else {
+                        courseView.addView(card);
+                    }
+                }
+
+                s.close();
             }
 
             runOnUiThread(() -> findViewById(R.id.loading).animate().alpha(0));
@@ -82,7 +186,7 @@ public class CoursesActivity extends AppCompatActivity {
             myDatabase.close();
 
             SharedPreferences sharedPreferences = context.getSharedPreferences("tk.therealsuji.vtopchennai", Context.MODE_PRIVATE);
-            sharedPreferences.edit().remove("newFaculty").apply();
+            sharedPreferences.edit().remove("newCourses").apply();
         }).start();
     }
 
