@@ -1200,6 +1200,8 @@ public class HomeActivity extends AppCompatActivity {
                     LinearLayout appButtons = findViewById(R.id.appButtons);
                     appButtons.addView(reportBug, appButtons.getChildCount() - 1);
                 });
+            } else {
+                myDatabase.execSQL("DROP TABLE IF EXISTS error_logs");
             }
         }).start();
 

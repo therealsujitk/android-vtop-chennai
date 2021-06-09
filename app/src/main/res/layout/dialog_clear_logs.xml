@@ -36,17 +36,36 @@
             android:textColor="@color/colorText"
             android:textSize="16sp" />
 
-        <TextView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="end"
             android:layout_marginTop="10dp"
-            android:background="@drawable/button_tertiary"
-            android:onClick="clearLogs"
-            android:padding="10dp"
-            android:text="@string/clear"
-            android:textAllCaps="true"
-            android:textColor="@color/colorPrimary"
-            android:textSize="14sp" />
+            android:gravity="end"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="2dp"
+                android:background="@drawable/button_tertiary"
+                android:onClick="cancel"
+                android:padding="10dp"
+                android:text="@string/cancel"
+                android:textAllCaps="true"
+                android:textColor="@color/colorPrimary"
+                android:textSize="14sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="2dp"
+                android:background="@drawable/button_tertiary"
+                android:onClick="clearLogs"
+                android:padding="10dp"
+                android:text="@string/clear"
+                android:textAllCaps="true"
+                android:textColor="@color/colorPrimary"
+                android:textSize="14sp" />
+        </LinearLayout>
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
