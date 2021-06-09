@@ -66,7 +66,7 @@ public class LoginActivity extends AppCompatActivity {
 
     public void submitCaptcha(View view) {
         hideKeyboard(download.getCurrentFocus());
-        vtop.hideLayouts();
+        vtop.compress();
 
         EditText captchaView = download.findViewById(R.id.captcha);
         String captcha = captchaView.getText().toString();
@@ -79,7 +79,7 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         vtop.isInProgress = true;
-        vtop.hideLayouts();
+        vtop.compress();
 
         Spinner selectSemester = download.findViewById(R.id.selectSemester);
         String semester = selectSemester.getSelectedItem().toString().toLowerCase();

@@ -22,6 +22,7 @@ import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewPropertyAnimator;
 import android.view.ViewStub;
 import android.view.animation.AccelerateInterpolator;
 import android.webkit.ConsoleMessage;
@@ -50,8 +51,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Queue;
 
 import static android.content.Context.ALARM_SERVICE;
 
@@ -66,6 +69,7 @@ public class VTOP {
     Spinner selectSemester;
     LinearLayout captchaLayout, progressLayout, semesterLayout;
     ViewStub captchaStub, semesterStub, progressStub;
+    Queue<View> layoutQueue;
 
     String username, password, semesterID;
 
@@ -82,10 +86,10 @@ public class VTOP {
     SharedPreferences sharedPreferences;
     SQLiteDatabase myDatabase;
     TextView downloading, progressText;
-    int counter, lastDownload;
+    int counter, lastDownload, loadingHeight;
     float pixelDensity;
     public boolean isInProgress;
-    boolean isOpened, isCaptchaInflated, isSemesterInflated, isProgressInflated, terminateDownload;
+    boolean isOpened, isCaptchaInflated, isSemesterInflated, isProgressInflated, isCompressing, terminateDownload;
 
     ErrorHandler errorHandler;
 
@@ -185,10 +189,14 @@ public class VTOP {
         password = encryptedSharedPreferences.getString("password", null);
 
         loading = downloadDialog.findViewById(R.id.loading);
+        loading.measure(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        loadingHeight = loading.getMeasuredHeight();
 
         captchaStub = downloadDialog.findViewById(R.id.captchaStub);
         semesterStub = downloadDialog.findViewById(R.id.semesterStub);
         progressStub = downloadDialog.findViewById(R.id.progressStub);
+
+        layoutQueue = new LinkedList<>();
 
         sharedPreferences = context.getSharedPreferences("tk.therealsuji.vtopchennai", Context.MODE_PRIVATE);
         myDatabase = context.openOrCreateDatabase("vtop", Context.MODE_PRIVATE, null);
@@ -199,6 +207,8 @@ public class VTOP {
         isCaptchaInflated = false;
         isSemesterInflated = false;
         isProgressInflated = false;
+
+        isCompressing = false;
 
         /*
             If the credentials aren't encrypted
@@ -237,13 +247,12 @@ public class VTOP {
             return;
         }
 
+        if (!isCompressing && !layoutQueue.isEmpty()) {
+            compress();
+        }
+
         isOpened = false;
         isInProgress = false;
-
-        if (loading.getVisibility() == View.INVISIBLE) {
-            hideLayouts();
-            loading.setVisibility(View.VISIBLE);
-        }
 
         webView.clearCache(true);
         webView.clearHistory();
@@ -299,8 +308,10 @@ public class VTOP {
     /*
         Function to perform a smooth animation of expanding the layouts in the dialog
      */
-    private void expand(final View view) {
-        if (terminateDownload || view.getVisibility() == View.VISIBLE) {
+    private void expand() {
+        View view = layoutQueue.peek();
+
+        if (terminateDownload || view == null) {
             return;
         }
 
@@ -309,19 +320,19 @@ public class VTOP {
         view.measure(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         final int targetHeight = view.getMeasuredHeight();
 
-        view.getLayoutParams().height = 0;
+        view.getLayoutParams().height = loadingHeight;
         view.setVisibility(View.INVISIBLE);
         view.setAlpha(0);
 
-        ValueAnimator anim = ValueAnimator.ofInt(0, targetHeight);
-        anim.setInterpolator(new AccelerateInterpolator());
-        anim.setDuration(500);
-        anim.addUpdateListener(animation -> {
+        ValueAnimator expand = ValueAnimator.ofInt(loadingHeight, targetHeight);
+        expand.setInterpolator(new AccelerateInterpolator());
+        expand.setDuration(500);
+        expand.addUpdateListener(animation -> {
             RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) view.getLayoutParams();
             layoutParams.height = (int) (targetHeight * animation.getAnimatedFraction());
             view.setLayoutParams(layoutParams);
         });
-        anim.addListener(new AnimatorListenerAdapter() {
+        expand.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
                 RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) view.getLayoutParams();
@@ -330,63 +341,69 @@ public class VTOP {
                 view.animate().alpha(1);
             }
         });
-        anim.start();
+        expand.start();
     }
 
     /*
         Function to perform a smooth animation of compressing the layouts in the dialog
      */
-    private void compress(final View view) {
-        if (terminateDownload || view.getVisibility() == View.GONE) {
+    public void compress() {
+        View view = layoutQueue.peek();
+
+        if (terminateDownload || view == null) {
             return;
         }
 
-        loading.setVisibility(View.VISIBLE);
+        isCompressing = true;
 
-        view.animate().alpha(0).setListener(new AnimatorListenerAdapter() {
+        ViewPropertyAnimator fadeOut = view.animate().alpha(0);
+        fadeOut.setListener(new AnimatorListenerAdapter() {
+            /*
+                Compress after the layout has faded out
+             */
             @Override
             public void onAnimationEnd(Animator animation) {
                 final int viewHeight = view.getMeasuredHeight();
-                ValueAnimator anim = ValueAnimator.ofInt(viewHeight, 0);
-                anim.setInterpolator(new AccelerateInterpolator());
-                anim.setDuration(500);
-                anim.addUpdateListener(animation1 -> {
+                ValueAnimator compress = ValueAnimator.ofInt(viewHeight, loadingHeight);
+                compress.setInterpolator(new AccelerateInterpolator());
+                compress.setDuration(500);
+                compress.addUpdateListener(animation1 -> {
                     RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) view.getLayoutParams();
                     layoutParams.height = (int) (viewHeight * (1 - animation1.getAnimatedFraction()));
                     view.setLayoutParams(layoutParams);
                 });
-                anim.addListener(new AnimatorListenerAdapter() {
+                compress.addListener(new AnimatorListenerAdapter() {
+                    /*
+                        Show the loading progress  bar after the layout has been compressed
+                     */
                     @Override
                     public void onAnimationEnd(Animator animation) {
                         view.setVisibility(View.GONE);
+
+                        if (layoutQueue.size() == 1) {
+                            layoutQueue.remove();
+                            loading.setVisibility(View.VISIBLE);
+                        } else {
+                            layoutQueue.remove();
+                            expand();
+                        }
+
+                        isCompressing = false;
                     }
                 });
-                anim.start();
+                compress.start();
+
+                /*
+                    Deleting the listener after it's been used
+                 */
+                fadeOut.setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        super.onAnimationEnd(animation);
+                    }
+                });
             }
         });
-    }
-
-    /*
-        Function to hide all layouts at once because i'm too lazy to keep typing these
-     */
-    public void hideLayouts() {
-        if (terminateDownload) {
-            return;
-        }
-
-        loading.setVisibility(View.INVISIBLE);
-
-        if (isProgressInflated) {
-            compress(progressLayout);
-        }
-
-        if (isSemesterInflated) {
-            compress(semesterLayout);
-        }
-
-        if (isCaptchaInflated) {
-            compress(captchaLayout);
-        }
     }
 
     /*
@@ -483,9 +500,11 @@ public class VTOP {
                         captcha.setColorFilter(new ColorMatrixColorFilter(DARK));
                     }
 
-                    hideLayouts();
                     captchaView.setText("");
-                    expand(captchaLayout);
+                    layoutQueue.add(captchaLayout);
+                    if (layoutQueue.size() == 1) {
+                        expand();
+                    }
                 } catch (Exception e) {
                     if (ErrorHandler.isPreRelease) {
                         errorHandler.appendStackTrace(e);
@@ -714,8 +733,11 @@ public class VTOP {
                     selectSemester.setAdapter(adapter);
                     selectSemester.setSelection(index);
 
-                    hideLayouts();
-                    expand(semesterLayout);
+                    layoutQueue.add(semesterLayout);
+
+                    if (layoutQueue.size() == 1) {
+                        expand();
+                    }
                 } catch (Exception e) {
                     if (ErrorHandler.isPreRelease) {
                         errorHandler.appendStackTrace(e);
@@ -779,9 +801,12 @@ public class VTOP {
         setupProgress();    // Inflating the progress layout if it hasn't been inflated yet
 
         downloading.setText(context.getString(R.string.downloading_profile));
-        if (progressLayout.getVisibility() == View.GONE) {
-            hideLayouts();
-            expand(progressLayout);
+        if (!layoutQueue.contains(progressLayout)) {
+            layoutQueue.add(progressLayout);
+
+            if (layoutQueue.size() == 1) {
+                expand();
+            }
         }
 
         webView.evaluateJavascript("(function() {" +
@@ -851,9 +876,12 @@ public class VTOP {
         setupProgress();    // Inflating the progress layout if it hasn't been inflated yet
 
         downloading.setText(context.getString(R.string.downloading_timetable));
-        if (progressLayout.getVisibility() == View.GONE) {
-            hideLayouts();
-            expand(progressLayout);
+        if (!layoutQueue.contains(progressLayout)) {
+            layoutQueue.add(progressLayout);
+
+            if (layoutQueue.size() == 1) {
+                expand();
+            }
         }
 
         webView.evaluateJavascript("(function() {" +
@@ -1189,9 +1217,12 @@ public class VTOP {
         setupProgress();    // Inflating the progress layout if it hasn't been inflated yet
 
         downloading.setText(context.getString(R.string.downloading_courses));
-        if (progressLayout.getVisibility() == View.GONE) {
-            hideLayouts();
-            expand(progressLayout);
+        if (!layoutQueue.contains(progressLayout)) {
+            layoutQueue.add(progressLayout);
+
+            if (layoutQueue.size() == 1) {
+                expand();
+            }
         }
 
         webView.evaluateJavascript("(function() {" +
@@ -1338,9 +1369,12 @@ public class VTOP {
         setupProgress();    // Inflating the progress layout if it hasn't been inflated yet
 
         downloading.setText(context.getString(R.string.downloading_staff));
-        if (progressLayout.getVisibility() == View.GONE) {
-            hideLayouts();
-            expand(progressLayout);
+        if (!layoutQueue.contains(progressLayout)) {
+            layoutQueue.add(progressLayout);
+
+            if (layoutQueue.size() == 1) {
+                expand();
+            }
         }
 
         webView.evaluateJavascript("(function() {" +
@@ -1435,9 +1469,12 @@ public class VTOP {
         setupProgress();    // Inflating the progress layout if it hasn't been inflated yet
 
         downloading.setText(context.getString(R.string.downloading_staff));
-        if (progressLayout.getVisibility() == View.GONE) {
-            hideLayouts();
-            expand(progressLayout);
+        if (!layoutQueue.contains(progressLayout)) {
+            layoutQueue.add(progressLayout);
+
+            if (layoutQueue.size() == 1) {
+                expand();
+            }
         }
         webView.evaluateJavascript("(function() {" +
                 "var data = 'verifyMenu=true&winImage=' + $('#winImage').val() + '&authorizedID=' + $('#authorizedIDX').val() + '&nocache=@(new Date().getTime())';" +
@@ -1597,9 +1634,12 @@ public class VTOP {
         setupProgress();    // Inflating the progress layout if it hasn't been inflated yet
 
         downloading.setText(context.getString(R.string.downloading_attendance));
-        if (progressLayout.getVisibility() == View.GONE) {
-            hideLayouts();
-            expand(progressLayout);
+        if (!layoutQueue.contains(progressLayout)) {
+            layoutQueue.add(progressLayout);
+
+            if (layoutQueue.size() == 1) {
+                expand();
+            }
         }
 
         webView.evaluateJavascript("(function() {" +
@@ -1734,9 +1774,12 @@ public class VTOP {
         setupProgress();    // Inflating the progress layout if it hasn't been inflated yet
 
         downloading.setText(context.getString(R.string.downloading_exams));
-        if (progressLayout.getVisibility() == View.GONE) {
-            hideLayouts();
-            expand(progressLayout);
+        if (!layoutQueue.contains(progressLayout)) {
+            layoutQueue.add(progressLayout);
+
+            if (layoutQueue.size() == 1) {
+                expand();
+            }
         }
 
         webView.evaluateJavascript("(function() {" +
@@ -1966,9 +2009,12 @@ public class VTOP {
         setupProgress();    // Inflating the progress layout if it hasn't been inflated yet
 
         downloading.setText(R.string.downloading_marks);
-        if (progressLayout.getVisibility() == View.GONE) {
-            hideLayouts();
-            expand(progressLayout);
+        if (!layoutQueue.contains(progressLayout)) {
+            layoutQueue.add(progressLayout);
+
+            if (layoutQueue.size() == 1) {
+                expand();
+            }
         }
 
         webView.evaluateJavascript("(function() {" +
@@ -2193,9 +2239,12 @@ public class VTOP {
         setupProgress();    // Inflating the progress layout if it hasn't been inflated yet
 
         downloading.setText(context.getString(R.string.downloading_grades));
-        if (progressLayout.getVisibility() == View.GONE) {
-            hideLayouts();
-            expand(progressLayout);
+        if (!layoutQueue.contains(progressLayout)) {
+            layoutQueue.add(progressLayout);
+
+            if (layoutQueue.size() == 1) {
+                expand();
+            }
         }
         webView.evaluateJavascript("(function() {" +
                 "var data = 'semesterSubId=' + '" + semesterID + "' + '&authorizedID=' + $('#authorizedIDX').val();" +
@@ -2362,9 +2411,12 @@ public class VTOP {
         setupProgress();    // Inflating the progress layout if it hasn't been inflated yet
 
         downloading.setText(context.getString(R.string.downloading_grade_history));
-        if (progressLayout.getVisibility() == View.GONE) {
-            hideLayouts();
-            expand(progressLayout);
+        if (!layoutQueue.contains(progressLayout)) {
+            layoutQueue.add(progressLayout);
+
+            if (layoutQueue.size() == 1) {
+                expand();
+            }
         }
 
         webView.evaluateJavascript("(function() {" +
@@ -2613,9 +2665,12 @@ public class VTOP {
         setupProgress();    // Inflating the progress layout if it hasn't been inflated yet
 
         downloading.setText(context.getString(R.string.downloading_messages));
-        if (progressLayout.getVisibility() == View.GONE) {
-            hideLayouts();
-            expand(progressLayout);
+        if (!layoutQueue.contains(progressLayout)) {
+            layoutQueue.add(progressLayout);
+
+            if (layoutQueue.size() == 1) {
+                expand();
+            }
         }
 
         webView.evaluateJavascript("(function() {" +
@@ -2728,9 +2783,12 @@ public class VTOP {
         setupProgress();    // Inflating the progress layout if it hasn't been inflated yet
 
         downloading.setText(context.getString(R.string.downloading_messages));
-        if (progressLayout.getVisibility() == View.GONE) {
-            hideLayouts();
-            expand(progressLayout);
+        if (!layoutQueue.contains(progressLayout)) {
+            layoutQueue.add(progressLayout);
+
+            if (layoutQueue.size() == 1) {
+                expand();
+            }
         }
         webView.evaluateJavascript("(function() {" +
                 "var data = 'verifyMenu=true&winImage=' + $('#winImage').val() + '&authorizedID=' + $('#authorizedIDX').val() + '&nocache=@(new Date().getTime())';" +
@@ -2811,9 +2869,12 @@ public class VTOP {
         setupProgress();    // Inflating the progress layout if it hasn't been inflated yet
 
         downloading.setText(context.getString(R.string.downloading_spotlight));
-        if (progressLayout.getVisibility() == View.GONE) {
-            hideLayouts();
-            expand(progressLayout);
+        if (!layoutQueue.contains(progressLayout)) {
+            layoutQueue.add(progressLayout);
+
+            if (layoutQueue.size() == 1) {
+                expand();
+            }
         }
 
         webView.evaluateJavascript("(function() {" +
@@ -2997,9 +3058,12 @@ public class VTOP {
         setupProgress();    // Inflating the progress layout if it hasn't been inflated yet
 
         downloading.setText(context.getString(R.string.downloading_receipts));
-        if (progressLayout.getVisibility() == View.GONE) {
-            hideLayouts();
-            expand(progressLayout);
+        if (!layoutQueue.contains(progressLayout)) {
+            layoutQueue.add(progressLayout);
+
+            if (layoutQueue.size() == 1) {
+                expand();
+            }
         }
 
         webView.evaluateJavascript("(function() {" +
@@ -3136,7 +3200,7 @@ public class VTOP {
         clearing cache and finally signing the user in
      */
     public void finishUp() {
-        hideLayouts();
+        compress();
         loading.setVisibility(View.VISIBLE);
         sharedPreferences.edit().putBoolean("isSignedIn", true).apply();
         myDatabase.close();
