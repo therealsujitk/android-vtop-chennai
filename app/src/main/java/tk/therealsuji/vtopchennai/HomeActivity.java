@@ -913,6 +913,63 @@ public class HomeActivity extends AppCompatActivity {
 
             theory.close();
             lab.close();
+
+            /*
+                Checking if the report bug button should be visible
+             */
+            if (ErrorHandler.isPreRelease) {
+                LinearLayout reportBug = new LinearLayout(context);
+                LinearLayout.LayoutParams reportBugParams = new LinearLayout.LayoutParams(
+                        (int) (125 * pixelDensity),
+                        (int) (125 * pixelDensity)
+                );
+                reportBugParams.setMarginStart((int) (10 * pixelDensity));
+                reportBugParams.setMargins(0, (int) (10 * pixelDensity), 0, (int) (10 * pixelDensity));
+                reportBugParams.setMarginEnd((int) (10 * pixelDensity));
+                reportBug.setLayoutParams(reportBugParams);
+                reportBug.setBackground(ContextCompat.getDrawable(context, R.drawable.button_card));
+                reportBug.setClickable(true);
+                reportBug.setFocusable(true);
+                reportBug.setGravity(Gravity.CENTER_VERTICAL);
+                reportBug.setOrientation(LinearLayout.VERTICAL);
+                reportBug.setOnClickListener(this::openReportBug);
+
+                StateListAnimator elevation = AnimatorInflater.loadStateListAnimator(context, R.animator.item_elevation);
+                reportBug.setStateListAnimator(elevation);
+
+                ImageView icon = new ImageView(context);
+                LinearLayout.LayoutParams iconParams = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT
+                );
+                icon.setLayoutParams(iconParams);
+                icon.setContentDescription(getString(R.string.report_bug_description));
+                icon.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_report_bug));
+                ImageViewCompat.setImageTintList(icon, ColorStateList.valueOf(getColor(R.color.colorPrimary)));
+
+                TextView title = new TextView(context);
+                LinearLayout.LayoutParams textParams = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT
+                );
+                textParams.setMargins(0, (int) (2 * pixelDensity), 0, 0);
+                title.setLayoutParams(textParams);
+                title.setText(R.string.report_bug);
+                title.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                title.setTextColor(getColor(R.color.colorPrimary));
+                title.setTypeface(ResourcesCompat.getFont(context, R.font.rubik), Typeface.BOLD);
+
+                reportBug.addView(icon);
+                reportBug.addView(title);
+
+                runOnUiThread(() -> {
+                    LinearLayout appButtons = findViewById(R.id.appButtons);
+                    appButtons.addView(reportBug, appButtons.getChildCount() - 1);
+                });
+            } else {
+                myDatabase.execSQL("DROP TABLE IF EXISTS error_logs");
+            }
+
             myDatabase.close();
 
             /*
@@ -1162,62 +1219,6 @@ public class HomeActivity extends AppCompatActivity {
                     notificationCampus.setLayoutParams(notificationParams);
                     notificationCampus.animate().scaleX(1).scaleY(1);
                 });
-            }
-
-            /*
-                Checking if the report bug button should be visible
-             */
-            if (ErrorHandler.isPreRelease) {
-                LinearLayout reportBug = new LinearLayout(context);
-                LinearLayout.LayoutParams reportBugParams = new LinearLayout.LayoutParams(
-                        (int) (125 * pixelDensity),
-                        (int) (125 * pixelDensity)
-                );
-                reportBugParams.setMarginStart((int) (10 * pixelDensity));
-                reportBugParams.setMargins(0, (int) (10 * pixelDensity), 0, (int) (10 * pixelDensity));
-                reportBugParams.setMarginEnd((int) (10 * pixelDensity));
-                reportBug.setLayoutParams(reportBugParams);
-                reportBug.setBackground(ContextCompat.getDrawable(context, R.drawable.button_card));
-                reportBug.setClickable(true);
-                reportBug.setFocusable(true);
-                reportBug.setGravity(Gravity.CENTER_VERTICAL);
-                reportBug.setOrientation(LinearLayout.VERTICAL);
-                reportBug.setOnClickListener(this::openReportBug);
-
-                StateListAnimator elevation = AnimatorInflater.loadStateListAnimator(context, R.animator.item_elevation);
-                reportBug.setStateListAnimator(elevation);
-
-                ImageView icon = new ImageView(context);
-                LinearLayout.LayoutParams iconParams = new LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.MATCH_PARENT,
-                        LinearLayout.LayoutParams.WRAP_CONTENT
-                );
-                icon.setLayoutParams(iconParams);
-                icon.setContentDescription(getString(R.string.report_bug_description));
-                icon.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_report_bug));
-                ImageViewCompat.setImageTintList(icon, ColorStateList.valueOf(getColor(R.color.colorPrimary)));
-
-                TextView title = new TextView(context);
-                LinearLayout.LayoutParams textParams = new LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.MATCH_PARENT,
-                        LinearLayout.LayoutParams.WRAP_CONTENT
-                );
-                textParams.setMargins(0, (int) (2 * pixelDensity), 0, 0);
-                title.setLayoutParams(textParams);
-                title.setText(R.string.report_bug);
-                title.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-                title.setTextColor(getColor(R.color.colorPrimary));
-                title.setTypeface(ResourcesCompat.getFont(context, R.font.rubik), Typeface.BOLD);
-
-                reportBug.addView(icon);
-                reportBug.addView(title);
-
-                runOnUiThread(() -> {
-                    LinearLayout appButtons = findViewById(R.id.appButtons);
-                    appButtons.addView(reportBug, appButtons.getChildCount() - 1);
-                });
-            } else {
-                myDatabase.execSQL("DROP TABLE IF EXISTS error_logs");
             }
         }).start();
 
