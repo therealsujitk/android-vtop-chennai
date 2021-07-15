@@ -1303,8 +1303,7 @@ public class HomeActivity extends AppCompatActivity {
                 if (academicsNotificationView.getScaleX() == 0) {
                     academicsNotificationView.animate().scaleX(1).scaleY(1);
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
+            } catch (Exception ignored) {
             }
         }
 
@@ -1316,8 +1315,7 @@ public class HomeActivity extends AppCompatActivity {
                 if (academicsNotificationView.getScaleX() == 0) {
                     academicsNotificationView.animate().scaleX(1).scaleY(1);
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
+            } catch (Exception ignored) {
             }
         }
     }
