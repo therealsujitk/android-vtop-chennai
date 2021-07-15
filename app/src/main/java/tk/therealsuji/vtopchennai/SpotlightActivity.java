@@ -226,13 +226,14 @@ public class SpotlightActivity extends AppCompatActivity {
                      */
                     String id = s.getString(idIndex);
                     if (newSpotlight.has(id)) {
-                        RelativeLayout container = myNotification.generateNotificationContainer();
-                        container.addView(card);
+                        RelativeLayout container = myNotification.generateNotificationContainer(card);
 
                         int marginStart = (int) (screenWidth - 30 * pixelDensity);
                         ImageView notification = myNotification.generateNotificationDot(marginStart, NotificationDotGenerator.NOTIFICATION_DEFAULT);
                         notification.setPadding(0, (int) (5 * pixelDensity), 0, 0);
                         container.addView(notification);
+
+                        runOnUiThread(() -> notification.animate().scaleX(1).scaleY(1));
 
                         announcementsView.addView(container);
                         readAnnouncements.add(id);
@@ -270,8 +271,6 @@ public class SpotlightActivity extends AppCompatActivity {
 
                     sharedPreferences.edit().putString("newSpotlight", newSpotlight.toString()).apply();
                 });
-                category.setAlpha(0);
-                category.animate().alpha(1);
 
                 categories.add(category);    //Storing the button
 
@@ -279,28 +278,32 @@ public class SpotlightActivity extends AppCompatActivity {
                     Adding the button to the HorizontalScrollView
                  */
                 if (readAnnouncements.isEmpty()) {
-                    runOnUiThread(() -> categoryButtons.addView(category));
+                    runOnUiThread(() -> {
+                        category.setAlpha(0);
+                        categoryButtons.addView(category);
+                        category.animate().alpha(1);
+                    });
                 } else {
-                    final RelativeLayout container = myNotification.generateNotificationContainer();
-                    container.addView(category);
+                    final RelativeLayout container = myNotification.generateNotificationContainer(category);
 
                     final ImageView notification = myNotification.generateNotificationDot((int) (3 * pixelDensity), NotificationDotGenerator.NOTIFICATION_DEFAULT);
                     notification.setPadding(0, (int) (20 * pixelDensity), 0, 0);
                     container.addView(notification);
 
                     runOnUiThread(() -> {
+                        category.setAlpha(0);
                         categoryButtons.addView(container);
+                        category.animate().alpha(1);
                         notification.animate().scaleX(1).scaleY(1);
                     });
                 }
 
-                if (i == index) {
-                    announcementsView.setAlpha(0);
-                    announcementsView.animate().alpha(1);
-                }
-
-                if (i == 0) {
-                    runOnUiThread(() -> announcements.addView(announcementsView));
+                if (i == index && announcements.getChildCount() == 0) {
+                    runOnUiThread(() -> {
+                        announcementsView.setAlpha(0);
+                        announcements.addView(announcementsView);
+                        announcementsView.animate().alpha(1);
+                    });
                 }
 
                 s.close();

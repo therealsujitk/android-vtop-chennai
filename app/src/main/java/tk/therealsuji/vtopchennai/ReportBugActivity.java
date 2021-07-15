@@ -99,13 +99,15 @@ public class ReportBugActivity extends AppCompatActivity {
                 linkView.setOnClickListener(v -> errorHandler.sendLog(errorCode, error));
 
                 card.addView(linkView);
-                card.setAlpha(0);
-                card.animate().alpha(1);
 
                 /*
                     Adding the card to the activity
                  */
-                runOnUiThread(() -> logs.addView(card));
+                runOnUiThread(() -> {
+                    card.setAlpha(0);
+                    logs.addView(card);
+                    card.animate().alpha(1);
+                });
 
                 c.moveToNext();
             }

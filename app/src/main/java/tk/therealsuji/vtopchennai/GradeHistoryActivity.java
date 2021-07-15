@@ -130,10 +130,11 @@ public class GradeHistoryActivity extends AppCompatActivity {
                 }
 
                 if (grade == 0) {
-                    card.setAlpha(0);
-                    card.animate().alpha(1);
-
-                    runOnUiThread(() -> gradeViews[0].addView(card));
+                    runOnUiThread(() -> {
+                        card.setAlpha(0);
+                        gradeViews[0].addView(card);
+                        card.animate().alpha(1);
+                    });
                 } else {
                     gradeViews[0].addView(card);
                 }
@@ -173,10 +174,11 @@ public class GradeHistoryActivity extends AppCompatActivity {
                 }
 
                 if (grade == 1) {
-                    card.setAlpha(0);
-                    card.animate().alpha(1);
-
-                    runOnUiThread(() -> gradeViews[1].addView(card));
+                    runOnUiThread(() -> {
+                        card.setAlpha(0);
+                        gradeViews[1].addView(card);
+                        card.animate().alpha(1);
+                    });
                 } else {
                     gradeViews[1].addView(card);
                 }
@@ -212,10 +214,11 @@ public class GradeHistoryActivity extends AppCompatActivity {
                 }
 
                 if (grade == 2) {
-                    card.setAlpha(0);
-                    card.animate().alpha(1);
-
-                    runOnUiThread(() -> gradeViews[2].addView(card));
+                    runOnUiThread(() -> {
+                        card.setAlpha(0);
+                        gradeViews[2].addView(card);
+                        card.animate().alpha(1);
+                    });
                 } else {
                     gradeViews[2].addView(card);
                 }
@@ -249,10 +252,11 @@ public class GradeHistoryActivity extends AppCompatActivity {
                 }
 
                 if (grade == 3) {
-                    card.setAlpha(0);
-                    card.animate().alpha(1);
-
-                    runOnUiThread(() -> gradeViews[3].addView(card));
+                    runOnUiThread(() -> {
+                        card.setAlpha(0);
+                        gradeViews[3].addView(card);
+                        card.animate().alpha(1);
+                    });
                 } else {
                     gradeViews[3].addView(card);
                 }

@@ -18,6 +18,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.ColorMatrixColorFilter;
+import android.os.Build;
 import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.view.View;
@@ -2158,7 +2159,7 @@ public class VTOP {
                         /*
                             Removing any marks if they were deleted for some reason
                          */
-                        Cursor delete = myDatabase.rawQuery("SELECT id FROM marks WHERE (course, title, type) NOT IN (SELECT course, title, type FROM marks_new)", null);
+                        Cursor delete = myDatabase.rawQuery("SELECT id FROM marks WHERE course || title || type NOT IN (SELECT course || title || type FROM marks_new)", null);
 
                         int deleteIndex = delete.getColumnIndex("id");
                         delete.moveToFirst();
@@ -2186,7 +2187,7 @@ public class VTOP {
 
                         while (keys.hasNext()) {
                             String oldID = (String) keys.next();
-                            Cursor update = myDatabase.rawQuery("SELECT id FROM marks_new WHERE (course, title, type) IN (SELECT course, title, type FROM marks WHERE id = " + oldID + ")", null);
+                            Cursor update = myDatabase.rawQuery("SELECT id FROM marks_new WHERE course || title || type = (SELECT course || title || type FROM marks WHERE id = " + oldID + ")", null);
                             update.moveToFirst();
                             String newID = update.getString(update.getColumnIndex("id"));
 
@@ -2201,7 +2202,7 @@ public class VTOP {
                         /*
                             Adding the newly downloaded marks
                          */
-                        Cursor add = myDatabase.rawQuery("SELECT id FROM marks_new WHERE (course, title, type) NOT IN (SELECT course, title, type FROM marks)", null);
+                        Cursor add = myDatabase.rawQuery("SELECT id FROM marks_new WHERE course || title || type NOT IN (SELECT course || title || type FROM marks)", null);
 
                         int addIndex = add.getColumnIndex("id");
                         add.moveToFirst();
@@ -3245,7 +3246,12 @@ public class VTOP {
             return;
         }
 
-        progressBar.setProgress(++lastDownload, true);
+        if (Build.VERSION.SDK_INT >= 24) {
+            progressBar.setProgress(++lastDownload, true);
+        } else {
+            progressBar.setProgress(++lastDownload);
+        }
+
         String progress = lastDownload + " / 14";
         progressText.setText(progress);
     }

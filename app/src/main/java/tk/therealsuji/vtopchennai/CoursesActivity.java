@@ -127,18 +127,20 @@ public class CoursesActivity extends AppCompatActivity {
                     Creating & adding the course title card
                  */
                 final LinearLayout titleCard = myCourseTitle.generateCard(getString(R.string.course_title), course);
-
-                if (i == index) {
-                    titleCard.setAlpha(0);
-                    titleCard.animate().alpha(1);
-                }
-
                 courseView.addView(titleCard);
 
-                runOnUiThread(() -> courseButtons.addView(courseButton));
+                runOnUiThread(() -> {
+                    courseButton.setAlpha(0);
+                    courseButtons.addView(courseButton);
+                    courseButton.animate().alpha(1);
+                });
 
                 if (i == 0 && i == index && courses.getChildCount() == 0) {
-                    runOnUiThread(() -> courses.addView(courseView));
+                    runOnUiThread(() -> {
+                        titleCard.setAlpha(0);
+                        courses.addView(courseView);
+                        titleCard.animate().alpha(1);
+                    });
                 }
 
                 Cursor s = myDatabase.rawQuery("SELECT * FROM courses WHERE course_code = '" + courseCode + "'", null);
@@ -168,10 +170,11 @@ public class CoursesActivity extends AppCompatActivity {
                         Adding the card to the view
                      */
                     if (i == index) {
-                        card.setAlpha(0);
-                        card.animate().alpha(1);
-
-                        runOnUiThread(() -> courseView.addView(card));
+                        runOnUiThread(() -> {
+                            card.setAlpha(0);
+                            courseView.addView(card);
+                            card.animate().alpha(1);
+                        });
                     } else {
                         courseView.addView(card);
                     }

@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.util.Objects;
 
 public class AttendanceActivity extends AppCompatActivity {
+    int MIN_ATTENDANCE = 75;
     boolean terminateThread;
 
     @Override
@@ -63,15 +64,12 @@ public class AttendanceActivity extends AppCompatActivity {
                 String attended = c.getString(attendedIndex) + " | " + c.getString(totalIndex);
 
                 final LinearLayout card = myAttendance.generateCard(course, percentage + "%", type, attended);
-                card.setAlpha(0);
-                card.animate().alpha(1);
 
                 /*
                     Adding the card to the activity
                  */
-                if (Integer.parseInt(percentage) <= 75) {
-                    final RelativeLayout container = myNotification.generateNotificationContainer();
-                    container.addView(card);
+                if (Integer.parseInt(percentage) <= MIN_ATTENDANCE) {
+                    final RelativeLayout container = myNotification.generateNotificationContainer(card);
 
                     int marginStart = (int) (screenWidth - 30 * pixelDensity);
 
@@ -80,11 +78,18 @@ public class AttendanceActivity extends AppCompatActivity {
                     container.addView(notification);
 
                     runOnUiThread(() -> {
+                        card.setAlpha(0);
                         attendance.addView(container);
+                        card.animate().alpha(1);
+
                         notification.animate().scaleX(1).scaleY(1);
                     });
                 } else {
-                    runOnUiThread(() -> attendance.addView(card));
+                    runOnUiThread(() -> {
+                        card.setAlpha(0);
+                        attendance.addView(card);
+                        card.animate().alpha(1);
+                    });
                 }
 
                 c.moveToNext();

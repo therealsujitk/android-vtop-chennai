@@ -64,20 +64,24 @@ public class GradesActivity extends AppCompatActivity {
                 String grade = c.getString(gradeIndex);
 
                 final LinearLayout card = myGrade.generateCard(course, type, gradeType, total, grade);
-                card.setAlpha(0);
-                card.animate().alpha(1);
 
-                runOnUiThread(() -> grades.addView(card));
+                runOnUiThread(() -> {
+                    card.setAlpha(0);
+                    grades.addView(card);
+                    card.animate().alpha(1);
+                });
             }
 
             SharedPreferences sharedPreferences = context.getSharedPreferences("tk.therealsuji.vtopchennai", Context.MODE_PRIVATE);
             if (i > 0) {
                 String gpa = sharedPreferences.getString("gpa", "0.0");
                 final LinearLayout card = new CardGenerator(context, CardGenerator.CARD_GPA).generateCard("Your GPA", gpa);
-                card.setAlpha(0);
-                card.animate().alpha(1);
 
-                runOnUiThread(() -> grades.addView(card));
+                runOnUiThread(() -> {
+                    card.setAlpha(0);
+                    grades.addView(card);
+                    card.animate().alpha(1);
+                });
             }
 
             runOnUiThread(() -> findViewById(R.id.loading).animate().alpha(0));

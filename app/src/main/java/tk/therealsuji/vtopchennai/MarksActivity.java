@@ -156,13 +156,14 @@ public class MarksActivity extends AppCompatActivity {
                      */
                     String id = s.getString(idIndex);
                     if (newMarks.has(id)) {
-                        RelativeLayout container = myNotification.generateNotificationContainer();
-                        container.addView(card);
+                        RelativeLayout container = myNotification.generateNotificationContainer(card);
 
                         int marginStart = (int) (screenWidth - 30 * pixelDensity);
                         ImageView notification = myNotification.generateNotificationDot(marginStart, NotificationDotGenerator.NOTIFICATION_DEFAULT);
                         notification.setPadding(0, (int) (5 * pixelDensity), 0, 0);
                         container.addView(notification);
+
+                        runOnUiThread(() -> notification.animate().scaleX(1).scaleY(1));
 
                         markView.addView(container);
                         readMarks.add(id);
@@ -200,8 +201,6 @@ public class MarksActivity extends AppCompatActivity {
 
                     sharedPreferences.edit().putString("newMarks", newMarks.toString()).apply();
                 });
-                markButton.setAlpha(0);
-                markButton.animate().alpha(1);
 
                 buttons.add(markButton);    //Storing the button
 
@@ -209,28 +208,32 @@ public class MarksActivity extends AppCompatActivity {
                     Adding the button to the HorizontalScrollView
                  */
                 if (readMarks.isEmpty()) {
-                    runOnUiThread(() -> markButtons.addView(markButton));
+                    runOnUiThread(() -> {
+                        markButton.setAlpha(0);
+                        markButtons.addView(markButton);
+                        markButton.animate().alpha(1);
+                    });
                 } else {
-                    final RelativeLayout container = myNotification.generateNotificationContainer();
-                    container.addView(markButton);
+                    final RelativeLayout container = myNotification.generateNotificationContainer(markButton);
 
                     final ImageView notification = myNotification.generateNotificationDot((int) (3 * pixelDensity), NotificationDotGenerator.NOTIFICATION_DEFAULT);
                     notification.setPadding(0, (int) (20 * pixelDensity), 0, 0);
                     container.addView(notification);
 
                     runOnUiThread(() -> {
+                        markButton.setAlpha(0);
                         markButtons.addView(container);
+                        markButton.animate().alpha(1);
                         notification.animate().scaleX(1).scaleY(1);
                     });
                 }
 
-                if (i == index) {
-                    markView.setAlpha(0);
-                    markView.animate().alpha(1);
-                }
-
-                if (i == 0) {
-                    runOnUiThread(() -> marks.addView(markView));
+                if (i == index && marks.getChildCount() == 0) {
+                    runOnUiThread(() -> {
+                        markView.setAlpha(0);
+                        marks.addView(markView);
+                        markView.animate().alpha(1);
+                    });
                 }
 
                 s.close();
@@ -330,13 +333,14 @@ public class MarksActivity extends AppCompatActivity {
                      */
                     String id = s.getString(idIndex);
                     if (newMarks.has(id)) {
-                        RelativeLayout container = myNotification.generateNotificationContainer();
-                        container.addView(card);
+                        RelativeLayout container = myNotification.generateNotificationContainer(card);
 
                         int marginStart = (int) (screenWidth - 30 * pixelDensity);
                         ImageView notification = myNotification.generateNotificationDot(marginStart, NotificationDotGenerator.NOTIFICATION_DEFAULT);
                         notification.setPadding(0, (int) (5 * pixelDensity), 0, 0);
                         container.addView(notification);
+
+                        runOnUiThread(() -> notification.animate().scaleX(1).scaleY(1));
 
                         markView.addView(container);
                         readMarks.add(id);
@@ -374,8 +378,6 @@ public class MarksActivity extends AppCompatActivity {
 
                     sharedPreferences.edit().putString("newMarks", newMarks.toString()).apply();
                 });
-                markButton.setAlpha(0);
-                markButton.animate().alpha(1);
 
                 buttons.add(markButton);    //Storing the button
 
@@ -383,28 +385,32 @@ public class MarksActivity extends AppCompatActivity {
                     Adding the button to the HorizontalScrollView
                  */
                 if (readMarks.isEmpty()) {
-                    runOnUiThread(() -> markButtons.addView(markButton));
+                    runOnUiThread(() -> {
+                        markButton.setAlpha(0);
+                        markButtons.addView(markButton);
+                        markButton.animate().alpha(1);
+                    });
                 } else {
-                    final RelativeLayout container = myNotification.generateNotificationContainer();
-                    container.addView(markButton);
+                    final RelativeLayout container = myNotification.generateNotificationContainer(markButton);
 
                     final ImageView notification = myNotification.generateNotificationDot((int) (3 * pixelDensity), NotificationDotGenerator.NOTIFICATION_DEFAULT);
                     notification.setPadding(0, (int) (20 * pixelDensity), 0, 0);
                     container.addView(notification);
 
                     runOnUiThread(() -> {
+                        markButton.setAlpha(0);
                         markButtons.addView(container);
+                        markButton.animate().alpha(1);
                         notification.animate().scaleX(1).scaleY(1);
                     });
                 }
 
-                if (i == index) {
-                    markView.setAlpha(0);
-                    markView.animate().alpha(1);
-                }
-
-                if (i == 0) {
-                    runOnUiThread(() -> marks.addView(markView));
+                if (i == index && marks.getChildCount() == 0) {
+                    runOnUiThread(() -> {
+                        markView.setAlpha(0);
+                        marks.addView(markView);
+                        markView.animate().alpha(1);
+                    });
                 }
 
                 s.close();

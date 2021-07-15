@@ -207,14 +207,15 @@ public class TimetableActivity extends AppCompatActivity {
                             Adding card to the day view
                          */
                         if (j == day) {
-                            card.setAlpha(0);
-                            card.animate().alpha(1);
-
                             if (dayViews[day].getChildCount() == 0) {
                                 runOnUiThread(() -> findViewById(R.id.noData).setVisibility(View.GONE));
                             }
 
-                            runOnUiThread(() -> dayViews[day].addView(card));
+                            runOnUiThread(() -> {
+                                card.setAlpha(0);
+                                dayViews[day].addView(card);
+                                card.animate().alpha(1);
+                            });
                         } else {
                             dayViews[j].addView(card);
                         }
@@ -251,14 +252,15 @@ public class TimetableActivity extends AppCompatActivity {
                             Adding card to the day view
                          */
                         if (j == day) {
-                            card.setAlpha(0);
-                            card.animate().alpha(1);
-
                             if (dayViews[day].getChildCount() == 0) {
                                 runOnUiThread(() -> findViewById(R.id.noData).setVisibility(View.GONE));
                             }
 
-                            runOnUiThread(() -> dayViews[day].addView(card));
+                            runOnUiThread(() -> {
+                                card.setAlpha(0);
+                                dayViews[day].addView(card);
+                                card.animate().alpha(1);
+                            });
                         } else {
                             dayViews[j].addView(card);
                         }

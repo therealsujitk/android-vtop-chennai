@@ -66,13 +66,15 @@ public class ReceiptsActivity extends AppCompatActivity {
                 String date = c.getString(dateIndex);
 
                 final LinearLayout card = myReceipt.generateCard(amount, receiptNo, date);
-                card.setAlpha(0);
-                card.animate().alpha(1);
 
                 /*
                     Adding the block to the activity
                  */
-                runOnUiThread(() -> receipts.addView(card));
+                runOnUiThread(() -> {
+                    card.setAlpha(0);
+                    receipts.addView(card);
+                    card.animate().alpha(1);
+                });
 
                 c.moveToNext();
             }

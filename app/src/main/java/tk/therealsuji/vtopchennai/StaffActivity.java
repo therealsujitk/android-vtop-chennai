@@ -120,16 +120,14 @@ public class StaffActivity extends AppCompatActivity {
                         Adding the card to the view
                      */
                     if (staffID == 0) {
-                        card.setAlpha(0);
-                        card.animate().alpha(1);
-
                         final LinearLayout proctorView = staffViews[0];
-                        final int index = i;
+
                         runOnUiThread(() -> {
+                            card.setAlpha(0);
                             proctorView.addView(card);
-                            if (index <= 1) {
-                                findViewById(R.id.noData).setVisibility(View.GONE);
-                            }
+                            card.animate().alpha(1);
+
+                            findViewById(R.id.noData).setVisibility(View.GONE);
                         });
                     } else {
                         staffViews[0].addView(card);
@@ -166,16 +164,14 @@ public class StaffActivity extends AppCompatActivity {
                         Adding the card to the view
                      */
                     if (staffID == 1) {
-                        card.setAlpha(0);
-                        card.animate().alpha(1);
-
                         final LinearLayout deanView = staffViews[1];
-                        final int index = i;
+
                         runOnUiThread(() -> {
+                            card.setAlpha(0);
                             deanView.addView(card);
-                            if (index <= 1) {
-                                findViewById(R.id.noData).setVisibility(View.GONE);
-                            }
+                            card.animate().alpha(1);
+
+                            findViewById(R.id.noData).setVisibility(View.GONE);
                         });
                     } else {
                         staffViews[1].addView(card);
@@ -212,16 +208,14 @@ public class StaffActivity extends AppCompatActivity {
                         Adding the card to the view
                      */
                     if (staffID == 2) {
-                        card.setAlpha(0);
-                        card.animate().alpha(1);
-
                         final LinearLayout hodView = staffViews[2];
-                        final int index = i;
+
                         runOnUiThread(() -> {
+                            card.setAlpha(0);
                             hodView.addView(card);
-                            if (index <= 1) {
-                                findViewById(R.id.noData).setVisibility(View.GONE);
-                            }
+                            card.animate().alpha(1);
+
+                            findViewById(R.id.noData).setVisibility(View.GONE);
                         });
                     } else {
                         staffViews[2].addView(card);

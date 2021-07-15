@@ -127,7 +127,11 @@ public class ExamsActivity extends AppCompatActivity {
 
                 buttons.add(examButton);    //Storing the button
 
-                runOnUiThread(() -> examButtons.addView(examButton));
+                runOnUiThread(() -> {
+                    examButton.setAlpha(0);
+                    examButtons.addView(examButton);
+                    examButton.animate().alpha(1);
+                });
 
                 if (i == 0 && i == index && exams.getChildCount() == 0) {
                     runOnUiThread(() -> exams.addView(examView));
@@ -201,10 +205,11 @@ public class ExamsActivity extends AppCompatActivity {
                         Adding the card to the view
                      */
                     if (i == index) {
-                        card.setAlpha(0);
-                        card.animate().alpha(1);
-
-                        runOnUiThread(() -> examView.addView(card));
+                        runOnUiThread(() -> {
+                            card.setAlpha(0);
+                            examView.addView(card);
+                            card.animate().alpha(1);
+                        });
                     } else {
                         examView.addView(card);
                     }

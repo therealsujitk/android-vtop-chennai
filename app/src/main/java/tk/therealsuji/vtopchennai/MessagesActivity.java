@@ -52,13 +52,15 @@ public class MessagesActivity extends AppCompatActivity {
                 String type = c.getString(typeIndex);
 
                 final LinearLayout card = myMessage.generateCard(message, course, type);
-                card.setAlpha(0);
-                card.animate().alpha(1);
 
                 /*
                     Adding the card to the view
                  */
-                runOnUiThread(() -> messages.addView(card));
+                runOnUiThread(() -> {
+                    card.setAlpha(0);
+                    messages.addView(card);
+                    card.animate().alpha(1);
+                });
             }
 
             runOnUiThread(() -> findViewById(R.id.loading).animate().alpha(0));

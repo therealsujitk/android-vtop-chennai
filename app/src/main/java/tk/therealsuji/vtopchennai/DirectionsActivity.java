@@ -220,10 +220,11 @@ public class DirectionsActivity extends AppCompatActivity {
                             Adding the card to the view
                          */
                         if (i == locationCategory) {
-                            card.setAlpha(0);
-                            card.animate().alpha(1);
-
-                            runOnUiThread(() -> locationViews[locationCategory].addView(card));
+                            runOnUiThread(() -> {
+                                card.setAlpha(0);
+                                locationViews[locationCategory].addView(card);
+                                card.animate().alpha(1);
+                            });
                         } else {
                             locationViews[i].addView(card);
                         }
