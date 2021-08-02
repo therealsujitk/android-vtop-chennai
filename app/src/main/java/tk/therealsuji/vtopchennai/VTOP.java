@@ -1,5 +1,7 @@
 package tk.therealsuji.vtopchennai;
 
+import static android.content.Context.ALARM_SERVICE;
+
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
@@ -56,8 +58,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Queue;
-
-import static android.content.Context.ALARM_SERVICE;
 
 public class VTOP {
     Context context;
@@ -1059,7 +1059,7 @@ public class VTOP {
 
                         for (int i = 0; i < lab.length() / 2 && i < theory.length() / 2; ++i) {
                             String start_time_lab = lab.getString(i + "start");
-                            if (start_time_lab.toLowerCase().equals("lunch")) {
+                            if (start_time_lab.equalsIgnoreCase("lunch")) {
                                 continue;
                             }
                             String end_time_lab = lab.getString(i + "end");
@@ -1271,9 +1271,9 @@ public class VTOP {
                 "        var cells = division.getElementsByTagName('td');" +
                 "        for(var i = 0; courseIndex < cells.length && slotIndex < cells.length && facultyIndex < cells.length; ++i) {" +
                 "            var temp = {};" +
-                "            temp['course'] = cells[courseIndex].innerText.trim();" +
-                "            temp['slot'] = cells[slotIndex].innerText.trim();" +
-                "            temp['faculty'] = cells[facultyIndex].innerText.trim();" +
+                "            temp['course'] = cells[courseIndex].innerText.trim().replace(/\\t/g,'').replace(/\\n/g,' ');;" +
+                "            temp['slot'] = cells[slotIndex].innerText.replace(/\\t/g,'').replace(/\\n/g,'').trim();" +
+                "            temp['faculty'] = cells[facultyIndex].innerText.replace(/\\t/g,'').replace(/\\n/g,'').trim();" +
                 "            obj[i] = temp;" +
                 "            courseIndex += columns;" +
                 "            slotIndex += columns;" +
@@ -1339,7 +1339,7 @@ public class VTOP {
                             String faculty = facultyString[0].trim();
                             String school = facultyString[1].trim();
 
-                            myDatabase.execSQL("INSERT INTO courses (course_code, course, course_type, slot, venue, faculty, school) VALUES('" + courseCode + "','" + course.toString().replaceAll("\n", "") + "', '" + courseType + "','" + slot.replaceAll("\n", "") + "', '" + venue.toString().replaceAll("\n", "") + "','" + faculty.replaceAll("\n", "") + "','" + school.replaceAll("\n", "") + "')");
+                            myDatabase.execSQL("INSERT INTO courses (course_code, course, course_type, slot, venue, faculty, school) VALUES('" + courseCode + "','" + course.toString() + "', '" + courseType + "','" + slot + "', '" + venue.toString() + "','" + faculty + "','" + school + "')");
                         }
 
                         sharedPreferences.edit().remove("newFaculty").apply();  // Old data
@@ -2375,9 +2375,9 @@ public class VTOP {
                             String total = tempObj.getString("total") + " / 100";
                             String grade = tempObj.getString("grade");
 
-                            if (gradeType.toLowerCase().equals("ag")) {
+                            if (gradeType.equalsIgnoreCase("ag")) {
                                 gradeType = "Absolute";
-                            } else if (gradeType.toLowerCase().equals("rg")) {
+                            } else if (gradeType.equalsIgnoreCase("rg")) {
                                 gradeType = "Relative";
                             }
 
@@ -2907,7 +2907,7 @@ public class VTOP {
                 "                if(category.toLowerCase().includes('finance')) {" +
                 "                    category = 'Others';" +
                 "                } else {" +
-                "                    category = category.trim().replace(/\\t/g,'').replace(/\\n/g,'');" +
+                "                    category = category.replace(/\\t/g,'').replace(/\\n/g,'').trim();" +
                 "                    category = category.substring(0, category.length - 9).trim();" +
                 "                }" +
                 "                var announcements = modals[i].getElementsByTagName('li');" +
@@ -2916,7 +2916,7 @@ public class VTOP {
                 "                }" +
                 "                var temp = {};" +
                 "                for(var j = 0; j < announcements.length; ++j) {" +
-                "                    temp[j + 'announcement'] = announcements[j].innerText.trim().replace(/\\t/g,'').replace(/\\n/g,' ');" +
+                "                    temp[j + 'announcement'] = announcements[j].innerText.replace(/\\t/g,'').replace(/\\n/g,' ').trim();" +
                 "                    if(!announcements[j].getElementsByTagName('a').length) {" +
                 "                        temp[j + 'link'] = 'null';" +
                 "                    } else {" +
