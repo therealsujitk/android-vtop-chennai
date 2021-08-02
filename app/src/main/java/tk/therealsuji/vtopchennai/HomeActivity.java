@@ -981,51 +981,53 @@ public class HomeActivity extends AppCompatActivity {
             boolean classesFlag = false;
 
             if (sharedPreferences.getBoolean("newTimetable", false)) {
-                classesFlag = true;
                 final ImageView notification = myNotification.generateNotificationDot((int) (135 * pixelDensity), NotificationDotGenerator.NOTIFICATION_DEFAULT);
                 notification.setPadding(0, (int) (10 * pixelDensity), 0, 0);
                 timetableNotification = View.generateViewId();
                 notification.setId(timetableNotification);
 
                 runOnUiThread(() -> {
-                    ((RelativeLayout) findViewById(R.id.classesLayout)).addView(notification);
+                    ((RelativeLayout) findViewById(R.id.classesLayout)).addView(myNotification.applyElevation(notification));
                     notification.animate().scaleX(1).scaleY(1);
                 });
+
+                classesFlag = true;
             }
 
             if (sharedPreferences.getBoolean("newMessages", false)) {
-                classesFlag = true;
                 final ImageView notification = myNotification.generateNotificationDot((int) (425 * pixelDensity), NotificationDotGenerator.NOTIFICATION_DEFAULT);
                 notification.setPadding(0, (int) (10 * pixelDensity), 0, 0);
                 messagesNotification = View.generateViewId();
                 notification.setId(messagesNotification);
 
                 runOnUiThread(() -> {
-                    ((RelativeLayout) findViewById(R.id.classesLayout)).addView(notification);
+                    ((RelativeLayout) findViewById(R.id.classesLayout)).addView(myNotification.applyElevation(notification));
                     notification.animate().scaleX(1).scaleY(1);
                 });
+
+                classesFlag = true;
             }
 
             if (sharedPreferences.getBoolean("newCourses", false)) {
-                classesFlag = true;
                 final ImageView notification = myNotification.generateNotificationDot((int) (570 * pixelDensity), NotificationDotGenerator.NOTIFICATION_DEFAULT);
                 notification.setPadding(0, (int) (10 * pixelDensity), 0, 0);
                 coursesNotification = View.generateViewId();
                 notification.setId(coursesNotification);
 
                 runOnUiThread(() -> {
-                    ((RelativeLayout) findViewById(R.id.classesLayout)).addView(notification);
+                    ((RelativeLayout) findViewById(R.id.classesLayout)).addView(myNotification.applyElevation(notification));
                     notification.animate().scaleX(1).scaleY(1);
                 });
+
+                classesFlag = true;
             }
 
             if (sharedPreferences.getBoolean("failedAttendance", false)) {
-                classesFlag = false;
                 final ImageView notification = myNotification.generateNotificationDot((int) (280 * pixelDensity), NotificationDotGenerator.NOTIFICATION_URGENT);
                 notification.setPadding(0, (int) (10 * pixelDensity), 0, 0);
 
                 runOnUiThread(() -> {
-                    ((RelativeLayout) findViewById(R.id.classesLayout)).addView(notification);
+                    ((RelativeLayout) findViewById(R.id.classesLayout)).addView(myNotification.applyElevation(notification));
                     notification.animate().scaleX(1).scaleY(1);
                 });
 
@@ -1046,6 +1048,8 @@ public class HomeActivity extends AppCompatActivity {
                     notificationClasses.setLayoutParams(notificationParams);
                     notificationClasses.animate().scaleX(1).scaleY(1);
                 });
+
+                classesFlag = false;    // Prevent the default notification dot from showing up
             }
 
             /*
@@ -1072,55 +1076,59 @@ public class HomeActivity extends AppCompatActivity {
             boolean academicsFlag = false;
 
             if (sharedPreferences.getBoolean("newExams", false)) {
-                academicsFlag = true;
                 final ImageView notification = myNotification.generateNotificationDot((int) (135 * pixelDensity), NotificationDotGenerator.NOTIFICATION_DEFAULT);
                 notification.setPadding(0, (int) (10 * pixelDensity), 0, 0);
                 examsNotification = View.generateViewId();
                 notification.setId(examsNotification);
 
                 runOnUiThread(() -> {
-                    ((RelativeLayout) findViewById(R.id.academicsLayout)).addView(notification);
+                    ((RelativeLayout) findViewById(R.id.academicsLayout)).addView(myNotification.applyElevation(notification));
                     notification.animate().scaleX(1).scaleY(1);
                 });
+
+                academicsFlag = true;
             }
 
             if (!sharedPreferences.getString("newMarks", "{}").equals("{}")) {
-                academicsFlag = true;
                 final ImageView notification = myNotification.generateNotificationDot((int) (280 * pixelDensity), NotificationDotGenerator.NOTIFICATION_DEFAULT);
                 notification.setPadding(0, (int) (10 * pixelDensity), 0, 0);
                 marksNotification = View.generateViewId();
                 notification.setId(marksNotification);
 
                 runOnUiThread(() -> {
-                    ((RelativeLayout) findViewById(R.id.academicsLayout)).addView(notification);
+                    ((RelativeLayout) findViewById(R.id.academicsLayout)).addView(myNotification.applyElevation(notification));
                     notification.animate().scaleX(1).scaleY(1);
                 });
+
+                academicsFlag = true;
             }
 
             if (sharedPreferences.getBoolean("newGrades", false)) {
-                academicsFlag = true;
                 final ImageView notification = myNotification.generateNotificationDot((int) (425 * pixelDensity), NotificationDotGenerator.NOTIFICATION_DEFAULT);
                 notification.setPadding(0, (int) (10 * pixelDensity), 0, 0);
                 gradesNotification = View.generateViewId();
                 notification.setId(gradesNotification);
 
                 runOnUiThread(() -> {
-                    ((RelativeLayout) findViewById(R.id.academicsLayout)).addView(notification);
+                    ((RelativeLayout) findViewById(R.id.academicsLayout)).addView(myNotification.applyElevation(notification));
                     notification.animate().scaleX(1).scaleY(1);
                 });
+
+                academicsFlag = true;
             }
 
             if (!sharedPreferences.getString("newSpotlight", "{}").equals("{}")) {
-                academicsFlag = true;
                 final ImageView notification = myNotification.generateNotificationDot((int) (570 * pixelDensity), NotificationDotGenerator.NOTIFICATION_DEFAULT);
                 notification.setPadding(0, (int) (10 * pixelDensity), 0, 0);
                 spotlightNotification = View.generateViewId();
                 notification.setId(spotlightNotification);
 
                 runOnUiThread(() -> {
-                    ((RelativeLayout) findViewById(R.id.academicsLayout)).addView(notification);
+                    ((RelativeLayout) findViewById(R.id.academicsLayout)).addView(myNotification.applyElevation(notification));
                     notification.animate().scaleX(1).scaleY(1);
                 });
+
+                academicsFlag = true;
             }
 
             /*
@@ -1147,27 +1155,27 @@ public class HomeActivity extends AppCompatActivity {
             boolean campusFlag = false;
 
             if (sharedPreferences.getBoolean("newProctorMessages", false)) {
-                campusFlag = true;
                 final ImageView notification = myNotification.generateNotificationDot((int) (425 * pixelDensity), NotificationDotGenerator.NOTIFICATION_DEFAULT);
                 notification.setPadding(0, (int) (10 * pixelDensity), 0, 0);
                 proctorMessageNotification = View.generateViewId();
                 notification.setId(proctorMessageNotification);
 
                 runOnUiThread(() -> {
-                    ((RelativeLayout) findViewById(R.id.campusLayout)).addView(notification);
+                    ((RelativeLayout) findViewById(R.id.campusLayout)).addView(myNotification.applyElevation(notification));
                     notification.animate().scaleX(1).scaleY(1);
                 });
+
+                campusFlag = true;
             }
 
             if (sharedPreferences.getBoolean("duePayments", false)) {
-                campusFlag = false;
                 final ImageView notification = myNotification.generateNotificationDot((int) (570 * pixelDensity), NotificationDotGenerator.NOTIFICATION_URGENT);
                 notification.setPadding(0, (int) (10 * pixelDensity), 0, 0);
                 receiptsNotification = View.generateViewId();
                 notification.setId(receiptsNotification);
 
                 runOnUiThread(() -> {
-                    ((RelativeLayout) findViewById(R.id.campusLayout)).addView(notification);
+                    ((RelativeLayout) findViewById(R.id.campusLayout)).addView(myNotification.applyElevation(notification));
                     notification.animate().scaleX(1).scaleY(1);
                 });
 
@@ -1188,17 +1196,20 @@ public class HomeActivity extends AppCompatActivity {
                     notificationCampus.setLayoutParams(notificationParams);
                     notificationCampus.animate().scaleX(1).scaleY(1);
                 });
+
+                campusFlag = false;     // Prevent the default notification dot from showing up
             } else if (sharedPreferences.getBoolean("newReceipts", false)) {
-                campusFlag = true;
                 final ImageView notification = myNotification.generateNotificationDot((int) (570 * pixelDensity), NotificationDotGenerator.NOTIFICATION_DEFAULT);
                 notification.setPadding(0, (int) (10 * pixelDensity), 0, 0);
                 receiptsNotification = View.generateViewId();
                 notification.setId(receiptsNotification);
 
                 runOnUiThread(() -> {
-                    ((RelativeLayout) findViewById(R.id.campusLayout)).addView(notification);
+                    ((RelativeLayout) findViewById(R.id.campusLayout)).addView(myNotification.applyElevation(notification));
                     notification.animate().scaleX(1).scaleY(1);
                 });
+
+                campusFlag = true;
             }
 
             /*

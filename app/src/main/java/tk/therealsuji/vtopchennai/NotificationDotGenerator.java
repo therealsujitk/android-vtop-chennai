@@ -1,7 +1,5 @@
 package tk.therealsuji.vtopchennai;
 
-import android.animation.AnimatorInflater;
-import android.animation.StateListAnimator;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.widget.ImageView;
@@ -32,8 +30,6 @@ public class NotificationDotGenerator {
         notificationParams.setMarginStart(marginStart);
         notification.setLayoutParams(notificationParams);
         notification.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_notification_dot));
-        StateListAnimator elevation = AnimatorInflater.loadStateListAnimator(context, R.animator.item_elevation);
-        notification.setStateListAnimator(elevation);
         if (type == NOTIFICATION_DEFAULT) {
             ImageViewCompat.setImageTintList(notification, ColorStateList.valueOf(context.getColor(R.color.colorPrimaryTransparent)));
         } else if (type == NOTIFICATION_URGENT) {
@@ -42,6 +38,11 @@ public class NotificationDotGenerator {
         notification.setScaleX(0);
         notification.setScaleY(0);
 
+        return notification;
+    }
+
+    public ImageView applyElevation(ImageView notification) {
+        notification.setElevation(pixelDensity * 6);
         return notification;
     }
 
