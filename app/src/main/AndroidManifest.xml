@@ -21,7 +21,8 @@
         <activity
             android:name=".SplashScreenActivity"
             android:configChanges="orientation|keyboardHidden"
-            android:screenOrientation="portrait"
+            android:exported="true"
+            android:screenOrientation="sensorPortrait"
             android:theme="@style/SplashScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -33,14 +34,14 @@
             android:name=".LoginActivity"
             android:configChanges="orientation|keyboardHidden"
             android:label="Login"
-            android:screenOrientation="portrait"
+            android:screenOrientation="sensorPortrait"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".PrivacyActivity"
             android:configChanges="orientation|keyboardHidden"
             android:label="Privacy Policy"
-            android:screenOrientation="portrait">
+            android:screenOrientation="sensorPortrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".PrivacyActivity" />
@@ -49,13 +50,14 @@
             android:name=".HomeActivity"
             android:configChanges="orientation|keyboardHidden"
             android:label="Home"
-            android:screenOrientation="portrait"
+            android:screenOrientation="sensorPortrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".TimetableActivity"
             android:configChanges="orientation|keyboardHidden"
             android:label="Timetable"
-            android:screenOrientation="portrait">
+            android:exported="true"
+            android:screenOrientation="sensorPortrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".TimetableActivity" />
@@ -70,7 +72,7 @@
             android:name=".AttendanceActivity"
             android:configChanges="orientation|keyboardHidden"
             android:label="Attendance"
-            android:screenOrientation="portrait">
+            android:screenOrientation="sensorPortrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".AttendanceActivity" />
@@ -79,7 +81,7 @@
             android:name=".MessagesActivity"
             android:configChanges="orientation|keyboardHidden"
             android:label="Class Messages"
-            android:screenOrientation="portrait">
+            android:screenOrientation="sensorPortrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MessagesActivity" />
@@ -88,7 +90,7 @@
             android:name=".CoursesActivity"
             android:configChanges="orientation|keyboardHidden"
             android:label="Courses"
-            android:screenOrientation="portrait">
+            android:screenOrientation="sensorPortrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".CoursesActivity" />
@@ -97,7 +99,7 @@
             android:name=".ExamsActivity"
             android:configChanges="orientation|keyboardHidden"
             android:label="Exam Schedule"
-            android:screenOrientation="portrait">
+            android:screenOrientation="sensorPortrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ExamsActivity" />
@@ -106,7 +108,7 @@
             android:name=".MarksActivity"
             android:configChanges="orientation|keyboardHidden"
             android:label="Marks"
-            android:screenOrientation="portrait"
+            android:screenOrientation="sensorPortrait"
             android:theme="@style/AppTheme.MarksTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -116,7 +118,7 @@
             android:name=".GradesActivity"
             android:configChanges="orientation|keyboardHidden"
             android:label="Grades"
-            android:screenOrientation="portrait">
+            android:screenOrientation="sensorPortrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".GradesActivity" />
@@ -125,7 +127,7 @@
             android:name=".GradeHistoryActivity"
             android:configChanges="orientation|keyboardHidden"
             android:label="Grade History"
-            android:screenOrientation="portrait">
+            android:screenOrientation="sensorPortrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".GradeHistoryActivity" />
@@ -134,7 +136,7 @@
             android:name=".SpotlightActivity"
             android:configChanges="orientation|keyboardHidden"
             android:label="Spotlight"
-            android:screenOrientation="portrait">
+            android:screenOrientation="sensorPortrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".SpotlightActivity" />
@@ -143,7 +145,7 @@
             android:name=".DirectionsActivity"
             android:configChanges="orientation|keyboardHidden"
             android:label="Directions"
-            android:screenOrientation="portrait">
+            android:screenOrientation="sensorPortrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".DirectionsActivity" />
@@ -152,7 +154,7 @@
             android:name=".CampusMapActivity"
             android:configChanges="orientation|keyboardHidden"
             android:label="Campus Map"
-            android:screenOrientation="portrait">
+            android:screenOrientation="sensorPortrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".CampusMapActivity" />
@@ -161,20 +163,16 @@
             android:name=".StaffActivity"
             android:configChanges="orientation|keyboardHidden"
             android:label="Staff"
-            android:screenOrientation="portrait">
+            android:exported="false">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".StaffActivity" />
-
-            <intent-filter>
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".ProctorMessagesActivity"
             android:configChanges="orientation|keyboardHidden"
             android:label="Proctor Messages"
-            android:screenOrientation="portrait">
+            android:screenOrientation="sensorPortrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ProctorMessagesActivity" />
@@ -183,7 +181,7 @@
             android:name=".ReceiptsActivity"
             android:configChanges="orientation|keyboardHidden"
             android:label="Payment Receipts"
-            android:screenOrientation="portrait">
+            android:screenOrientation="sensorPortrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ReceiptsActivity" />
@@ -192,7 +190,8 @@
             android:name=".ReportBugActivity"
             android:configChanges="orientation|keyboardHidden"
             android:label="Report Bug"
-            android:screenOrientation="portrait">
+            android:exported="true"
+            android:screenOrientation="sensorPortrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ReportBugActivity" />
@@ -209,7 +208,9 @@
             android:resource="@array/preloaded_fonts" />
 
         <receiver android:name=".NotificationReceiver" />
-        <receiver android:name=".BootReceiver">
+        <receiver
+            android:name=".BootReceiver"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
