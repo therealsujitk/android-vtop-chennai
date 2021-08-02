@@ -639,6 +639,8 @@ public class VTOP {
                     "                successFlag = 'Invalid User ID / Password';" +
                     "            } else if(response.toLowerCase().includes('user id not available')) {" +
                     "                successFlag = 'Invalid User ID';" +
+                    "            } else if(response.toLowerCase().includes('your account is locked')) {" +
+                    "                successFlag = 'Your Account is Locked';" +
                     "            }" +
                     "        }" +
                     "    }" +
@@ -654,13 +656,16 @@ public class VTOP {
                     if (value.equals("Invalid Captcha")) {
                         getCaptchaType();
                     } else {
-                        sharedPreferences.edit().putString("isLoggedIn", "false").apply();
                         myDatabase.close();
                         downloadDialog.dismiss();
 
-                        if (!((Activity) context).getLocalClassName().equals("LoginActivity")) {
-                            context.startActivity(new Intent(context, LoginActivity.class));
-                            ((Activity) context).finish();
+                        if (value.equals("Your Account is Locked")) {
+                            sharedPreferences.edit().putString("isLoggedIn", "false").apply();
+
+                            if (!((Activity) context).getLocalClassName().equals("LoginActivity")) {
+                                context.startActivity(new Intent(context, LoginActivity.class));
+                                ((Activity) context).finish();
+                            }
                         }
                     }
 
