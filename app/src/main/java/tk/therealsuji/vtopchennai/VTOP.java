@@ -659,7 +659,7 @@ public class VTOP {
                         myDatabase.close();
                         downloadDialog.dismiss();
 
-                        if (value.equals("Your Account is Locked")) {
+                        if (!value.equals("Your Account is Locked")) {
                             sharedPreferences.edit().putString("isLoggedIn", "false").apply();
 
                             if (!((Activity) context).getLocalClassName().equals("LoginActivity")) {
