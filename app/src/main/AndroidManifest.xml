@@ -19,6 +19,9 @@
         android:usesCleartextTraffic="true"
         tools:ignore="AllowBackup">
         <activity
+            android:name=".MainActivity"
+            android:exported="true" />
+        <activity
             android:name=".SplashScreenActivity"
             android:configChanges="orientation|keyboardHidden"
             android:exported="true"
@@ -55,8 +58,8 @@
         <activity
             android:name=".TimetableActivity"
             android:configChanges="orientation|keyboardHidden"
-            android:label="Timetable"
             android:exported="true"
+            android:label="Timetable"
             android:screenOrientation="sensorPortrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -162,8 +165,8 @@
         <activity
             android:name=".StaffActivity"
             android:configChanges="orientation|keyboardHidden"
-            android:label="Staff"
-            android:exported="false">
+            android:exported="false"
+            android:label="Staff">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".StaffActivity" />
@@ -189,8 +192,8 @@
         <activity
             android:name=".ReportBugActivity"
             android:configChanges="orientation|keyboardHidden"
-            android:label="Report Bug"
             android:exported="true"
+            android:label="Report Bug"
             android:screenOrientation="sensorPortrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

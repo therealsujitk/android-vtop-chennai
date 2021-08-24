@@ -3,13 +3,42 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="../../../../layout/custom_preview.xml" value="0.33" />
+        <entry key="app/src/main/res/drawable/background_action_button.xml" value="0.18055555555555555" />
+        <entry key="app/src/main/res/drawable/background_bottom_navigation.xml" value="0.18055555555555555" />
+        <entry key="app/src/main/res/drawable/background_bottom_navigation_item.xml" value="0.209375" />
+        <entry key="app/src/main/res/drawable/background_card.xml" value="0.209375" />
+        <entry key="app/src/main/res/drawable/background_class_item.xml" value="0.209375" />
+        <entry key="app/src/main/res/drawable/background_info_card.xml" value="0.209375" />
+        <entry key="app/src/main/res/drawable/background_tab_indicator.xml" value="0.209375" />
+        <entry key="app/src/main/res/drawable/background_tab_item.xml" value="0.209375" />
+        <entry key="app/src/main/res/drawable/button_action.xml" value="0.18055555555555555" />
+        <entry key="app/src/main/res/drawable/button_card.xml" value="0.18055555555555555" />
+        <entry key="app/src/main/res/drawable/button_secondary.xml" value="0.209375" />
+        <entry key="app/src/main/res/drawable/button_secondary_selected.xml" value="0.209375" />
+        <entry key="app/src/main/res/drawable/button_tertiary.xml" value="0.209375" />
+        <entry key="app/src/main/res/drawable/gradient_linear.xml" value="0.209375" />
+        <entry key="app/src/main/res/drawable/ic_chevron_right.xml" value="0.209375" />
+        <entry key="app/src/main/res/drawable/ic_home.xml" value="0.18055555555555555" />
+        <entry key="app/src/main/res/drawable/ic_messages.xml" value="0.209375" />
         <entry key="app/src/main/res/drawable/ic_notification_dot.xml" value="0.18055555555555555" />
+        <entry key="app/src/main/res/drawable/ic_sign_out.xml" value="0.17685185185185184" />
+        <entry key="app/src/main/res/drawable/ic_spotlight.xml" value="0.17685185185185184" />
+        <entry key="app/src/main/res/drawable/item_bottom_navigation.xml" value="0.18055555555555555" />
+        <entry key="app/src/main/res/drawable/plain_card.xml" value="0.18055555555555555" />
+        <entry key="app/src/main/res/drawable/progress_bar.xml" value="0.209375" />
+        <entry key="app/src/main/res/layout/activity_home.xml" value="0.19025641025641027" />
+        <entry key="app/src/main/res/layout/activity_main.xml" value="0.33" />
         <entry key="app/src/main/res/layout/dialog_appearance.xml" value="0.3924050632911392" />
         <entry key="app/src/main/res/layout/dialog_clear_logs.xml" value="0.19322916666666667" />
         <entry key="app/src/main/res/layout/dialog_download.xml" value="0.19322916666666667" />
         <entry key="app/src/main/res/layout/dialog_due_payments.xml" value="0.19322916666666667" />
         <entry key="app/src/main/res/layout/dialog_refresh.xml" value="0.19322916666666667" />
         <entry key="app/src/main/res/layout/dialog_signout.xml" value="0.19322916666666667" />
+        <entry key="app/src/main/res/layout/fragment_home.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/layout_download_progress.xml" value="0.19322916666666667" />
+        <entry key="app/src/main/res/menu/bottom_navigation.xml" value="0.19322916666666667" />
+        <entry key="app/src/main/res/menu/marks_menu.xml" value="0.19322916666666667" />
       </map>
     </option>
   </component>

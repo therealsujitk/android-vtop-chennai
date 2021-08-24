@@ -11,6 +11,33 @@
     <string name="privacy">Privacy Policy</string>
 
 
+    <string name="good_morning">Good Morning,</string>
+    <string name="spotlight">Spotlight</string>
+
+    <string name="pending_classes">Pending Classes</string>
+    <string name="cgpa">CGPA</string>
+    <string name="overall_attendance">Overall Attendance</string>
+
+    <string name="s">S</string>
+    <string name="m">M</string>
+    <string name="t">T</string>
+    <string name="w">W</string>
+    <string name="f">F</string>
+
+    <string name="sunday">Sunday</string>
+    <string name="monday">Monday</string>
+    <string name="tuesday">Tuesday</string>
+    <string name="wednesday">Wednesday</string>
+    <string name="thursday">Thursday</string>
+    <string name="friday">Friday</string>
+    <string name="saturday">Saturday</string>
+
+    <string name="home">Home</string>
+    <string name="marks">Marks</string>
+    <string name="profile">Profile</string>
+    <string name="messages">Messages</string>
+
+
     <string name="privacy_intro">This VTOP Chennai application is completely free and does not contain any ads. The VTOP Chennai Portal service is provided by VIT Chennai.</string>
     <string name="privacy_ownership">Ownership</string>
     <string name="privacy_ownership_content">This application is a third-party service, meaning this application is owned and maintained by an individual and NOT by VIT Chennai.</string>
@@ -63,7 +90,6 @@
     <string name="timetable_description">Icon for the timetable button.</string>
     <string name="attendance">Attendance</string>
     <string name="attendance_description">Icon for the attendance button.</string>
-    <string name="messages">Messages</string>
     <string name="messages_description">Icon for the messages button.</string>
     <string name="courses">Courses</string>
     <string name="courses_description">Icon for the courses button.</string>
@@ -71,11 +97,9 @@
     <string name="academics">Academics</string>
     <string name="exams">Exams</string>
     <string name="exams_description">Icon for the exams button.</string>
-    <string name="marks">Marks</string>
     <string name="marks_description">Icon for the marks button.</string>
     <string name="grades">Grades</string>
     <string name="grades_description">Icon for the grades button.</string>
-    <string name="spotlight">Spotlight</string>
     <string name="spotlight_description">Icon for the spotlight button.</string>
 
     <string name="summary">Summary</string>
