@@ -13,11 +13,14 @@ import tk.therealsuji.vtopchennai.models.Timetable;
 import tk.therealsuji.vtopchennai.widgets.TimetableItem;
 
 public class TimetableItemAdapter extends RecyclerView.Adapter<TimetableItemAdapter.ViewHolder> {
-    private final List<Timetable> timetable;
+    private List<Timetable> timetable;
     float pixelDensity;
 
-    public TimetableItemAdapter(Context context, List<Timetable> timetable) {
+    public TimetableItemAdapter(Context context) {
         pixelDensity = context.getResources().getDisplayMetrics().density;
+    }
+
+    public void setTimetable(List<Timetable> timetable) {
         this.timetable = timetable;
     }
 
@@ -35,6 +38,10 @@ public class TimetableItemAdapter extends RecyclerView.Adapter<TimetableItemAdap
 
     @Override
     public int getItemCount() {
+        if (timetable == null) {
+            return 0;
+        }
+
         return timetable.size();
     }
 

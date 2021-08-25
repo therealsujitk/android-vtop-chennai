@@ -25,9 +25,6 @@ import tk.therealsuji.vtopchennai.models.TimetableTheory;
 public class TimetableAdapter extends RecyclerView.Adapter<TimetableAdapter.ViewHolder> {
     Context context;
 
-    List<TimetableLab> timetableLab;
-    List<TimetableTheory> timetableTheory;
-
     public TimetableAdapter(Context context) {
         this.context = context;
     }
@@ -37,26 +34,35 @@ public class TimetableAdapter extends RecyclerView.Adapter<TimetableAdapter.View
     public TimetableAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         Context context = parent.getContext();
 
-        RecyclerView timetable = new RecyclerView(context);
+        RecyclerView timetableView = new RecyclerView(context);
         ViewGroup.LayoutParams timetableParams = new ViewGroup.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.MATCH_PARENT
         );
-        timetable.setLayoutParams(timetableParams);
-        timetable.setLayoutManager(new LinearLayoutManager(context));
+        timetableView.setLayoutParams(timetableParams);
+        timetableView.setLayoutManager(new LinearLayoutManager(context));
 
-        return new ViewHolder(timetable);
+        return new ViewHolder(timetableView);
     }
 
     @Override
     public void onBindViewHolder(@NonNull TimetableAdapter.ViewHolder holder, int position) {
+        RecyclerView timetableView = (RecyclerView) holder.itemView;
+        TimetableItemAdapter timetableItemAdapter = new TimetableItemAdapter(context);
+
+        timetableView.setAdapter(timetableItemAdapter);
+
         AppDatabase appDatabase = AppDatabase.getInstance(context);
         TimetableDao timetableDao = appDatabase.timetableDao();
+        int day = holder.getAdapterPosition();
 
-        Observable<List<TimetableLab>> timetableLabObservable = Observable.fromSingle(timetableDao.getLabTimetable(position));
-        Observable<List<TimetableTheory>> timetableTheoryObservable = Observable.fromSingle(timetableDao.getTheoryTimetable(position));
+        Observable<List<TimetableLab>> timetableLabObservable = Observable.fromSingle(timetableDao.getLabTimetable(day));
+        Observable<List<TimetableTheory>> timetableTheoryObservable = Observable.fromSingle(timetableDao.getTheoryTimetable(day));
 
         Observable.merge(timetableLabObservable, timetableTheoryObservable).subscribeOn(Schedulers.single()).subscribe(new Observer<List<?>>() {
+            List<TimetableLab> timetableLab;
+            List<TimetableTheory> timetableTheory;
+
             @Override
             public void onSubscribe(@io.reactivex.rxjava3.annotations.NonNull Disposable d) {
             }
@@ -78,8 +84,9 @@ public class TimetableAdapter extends RecyclerView.Adapter<TimetableAdapter.View
             @Override
             public void onComplete() {
                 ((Activity) context).runOnUiThread(() -> {
-                    List<Timetable> timetable = Timetable.buildTimetable(timetableLab, timetableTheory, position);
-                    ((RecyclerView) holder.itemView).setAdapter(new TimetableItemAdapter(context, timetable));
+                    List<Timetable> timetable = Timetable.buildTimetable(timetableLab, timetableTheory, day);
+                    timetableItemAdapter.setTimetable(timetable);
+                    timetableItemAdapter.notifyItemRangeInserted(0, timetable.size());
                 });
             }
         });
