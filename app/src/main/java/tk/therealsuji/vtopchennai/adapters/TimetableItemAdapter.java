@@ -1,5 +1,6 @@
 package tk.therealsuji.vtopchennai.adapters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,19 +10,28 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
+import tk.therealsuji.vtopchennai.R;
 import tk.therealsuji.vtopchennai.models.Timetable;
+import tk.therealsuji.vtopchennai.widgets.InfoCard;
 import tk.therealsuji.vtopchennai.widgets.TimetableItem;
 
 public class TimetableItemAdapter extends RecyclerView.Adapter<TimetableItemAdapter.ViewHolder> {
+    Activity mainActivity;
     private List<Timetable> timetable;
     float pixelDensity;
 
     public TimetableItemAdapter(Context context) {
+        this.mainActivity = (Activity) context;
         pixelDensity = context.getResources().getDisplayMetrics().density;
     }
 
     public void setTimetable(List<Timetable> timetable) {
         this.timetable = timetable;
+    }
+
+    public void today() {
+        InfoCard pendingClasses = mainActivity.findViewById(R.id.card_pending_classes);
+        pendingClasses.setValue(String.valueOf(timetable.size()));
     }
 
     @NonNull

@@ -16,6 +16,8 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
+import java.util.Calendar;
+
 import tk.therealsuji.vtopchennai.R;
 import tk.therealsuji.vtopchennai.adapters.TimetableAdapter;
 import tk.therealsuji.vtopchennai.widgets.InfoCard;
@@ -57,11 +59,9 @@ public class HomeFragment extends Fragment {
         View spotlightButton = homeFragment.findViewById(R.id.button_spotlight);
         TooltipCompat.setTooltipText(spotlightButton, spotlightButton.getContentDescription());
 
-        InfoCard pendingClasses = homeFragment.findViewById(R.id.card_pending_classes);
         InfoCard attendance = homeFragment.findViewById(R.id.card_attendance);
         InfoCard cgpa = homeFragment.findViewById(R.id.card_cgpa);
 
-        pendingClasses.setValue("0");
         attendance.setValue(sharedPreferences.getString("overall_attendance", ""));
         cgpa.setValue(sharedPreferences.getString("cgpa", ""));
 
@@ -88,6 +88,8 @@ public class HomeFragment extends Fragment {
         ViewPager2 timetable = homeFragment.findViewById(R.id.timetable);
 
         timetable.setAdapter(new TimetableAdapter(homeFragment.getContext()));
+        timetable.setCurrentItem(Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 1);
+
         new TabLayoutMediator(days, timetable, (tab, position) -> {
             tab.setText(shortDayStrings[position]);
 

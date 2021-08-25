@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.Calendar;
 import java.util.List;
 
 import io.reactivex.rxjava3.core.Observable;
@@ -87,6 +88,10 @@ public class TimetableAdapter extends RecyclerView.Adapter<TimetableAdapter.View
                     List<Timetable> timetable = Timetable.buildTimetable(timetableLab, timetableTheory, day);
                     timetableItemAdapter.setTimetable(timetable);
                     timetableItemAdapter.notifyItemRangeInserted(0, timetable.size());
+
+                    if (day == Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 1) {
+                        timetableItemAdapter.today();
+                    }
                 });
             }
         });
