@@ -6,9 +6,9 @@
         android:title="@string/home" />
 
     <item
-        android:id="@+id/item_academics"
-        android:icon="@drawable/ic_academics"
-        android:title="@string/academics" />
+        android:id="@+id/item_performance"
+        android:icon="@drawable/ic_performance"
+        android:title="@string/performance" />
 
     <item
         android:id="@+id/item_courses"

@@ -33,9 +33,9 @@
     <string name="saturday">Saturday</string>
 
     <string name="home">Home</string>
-    <string name="marks">Marks</string>
+    <string name="performance">Performance</string>
+    <string name="courses">Courses</string>
     <string name="profile">Profile</string>
-    <string name="messages">Messages</string>
 
 
     <string name="privacy_intro">This VTOP Chennai application is completely free and does not contain any ads. The VTOP Chennai Portal service is provided by VIT Chennai.</string>
@@ -91,7 +91,6 @@
     <string name="attendance">Attendance</string>
     <string name="attendance_description">Icon for the attendance button.</string>
     <string name="messages_description">Icon for the messages button.</string>
-    <string name="courses">Courses</string>
     <string name="courses_description">Icon for the courses button.</string>
 
     <string name="academics">Academics</string>
@@ -206,4 +205,7 @@
     <string name="no_logs">No Error Logs</string>
     <string name="clear_logs_text">Are you sure you want to clear all logs?</string>
     <string name="clear">Clear</string>
+
+    <string name="marks">Marks</string>
+    <string name="messages">Messages</string>
 </resources>

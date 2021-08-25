@@ -9,9 +9,9 @@ import androidx.fragment.app.Fragment;
 
 import tk.therealsuji.vtopchennai.R;
 
-public class AcademicsFragment extends Fragment {
+public class PerformanceFragment extends Fragment {
 
-    public AcademicsFragment() {
+    public PerformanceFragment() {
         // Required empty public constructor
     }
 
@@ -22,6 +22,6 @@ public class AcademicsFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_academics, container, false);
+        return inflater.inflate(R.layout.fragment_performance, container, false);
     }
 }
