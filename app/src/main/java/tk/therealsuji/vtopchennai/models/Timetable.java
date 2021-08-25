@@ -6,7 +6,8 @@ import java.util.List;
 import tk.therealsuji.vtopchennai.widgets.TimetableItem;
 
 public class Timetable {
-    public String endTime, rawCourse, startTime;
+    public String courseCode, endTime, startTime;
+    public String[] rawCourse;
     public int courseType;
 
     /**
@@ -25,12 +26,12 @@ public class Timetable {
             Timetable timetableLabItem = Timetable.fromTimetableLabItem(timetableLab.get(i), day);
             Timetable timetableTheoryItem = Timetable.fromTimetableTheoryItem(timetableTheory.get(i), day);
 
-            if (timetableLabItem.rawCourse != null && !timetableLabItem.rawCourse.equals("null")) {
+            if (timetableLabItem.courseCode != null) {
                 timetable.add(timetableLabItem);
                 timetableLabItem.courseType = TimetableItem.LAB;
             }
 
-            if (timetableTheoryItem.rawCourse != null && !timetableTheoryItem.rawCourse.equals("null")) {
+            if (timetableTheoryItem.courseCode != null) {
                 timetable.add(timetableTheoryItem);
                 timetableLabItem.courseType = TimetableItem.THEORY;
             }
@@ -41,31 +42,38 @@ public class Timetable {
 
     private static Timetable fromTimetableLabItem(TimetableLab timetableLabItem, int day) {
         Timetable timetableItem = new Timetable();
+        String rawCourseString;
 
         timetableItem.startTime = timetableLabItem.startTime;
         timetableItem.endTime = timetableLabItem.endTime;
 
         switch (day) {
             case 1:
-                timetableItem.rawCourse = timetableLabItem.monday;
+                rawCourseString = timetableLabItem.monday;
                 break;
             case 2:
-                timetableItem.rawCourse = timetableLabItem.tuesday;
+                rawCourseString = timetableLabItem.tuesday;
                 break;
             case 3:
-                timetableItem.rawCourse = timetableLabItem.wednesday;
+                rawCourseString = timetableLabItem.wednesday;
                 break;
             case 4:
-                timetableItem.rawCourse = timetableLabItem.thursday;
+                rawCourseString = timetableLabItem.thursday;
                 break;
             case 5:
-                timetableItem.rawCourse = timetableLabItem.friday;
+                rawCourseString = timetableLabItem.friday;
                 break;
             case 6:
-                timetableItem.rawCourse = timetableLabItem.saturday;
+                rawCourseString = timetableLabItem.saturday;
                 break;
             default:
-                timetableItem.rawCourse = timetableLabItem.sunday;
+                rawCourseString = timetableLabItem.sunday;
+        }
+
+        timetableItem.rawCourse = rawCourseString.split("-");
+
+        if (timetableItem.rawCourse.length > 1) {
+            timetableItem.courseCode = timetableItem.rawCourse[1];
         }
 
         return timetableItem;
@@ -73,31 +81,42 @@ public class Timetable {
 
     private static Timetable fromTimetableTheoryItem(TimetableTheory timetableItemTheoryItem, int day) {
         Timetable timetableItem = new Timetable();
+        String rawCourseString;
 
         timetableItem.startTime = timetableItemTheoryItem.startTime;
         timetableItem.endTime = timetableItemTheoryItem.endTime;
 
         switch (day) {
             case 1:
-                timetableItem.rawCourse = timetableItemTheoryItem.monday;
+                rawCourseString = timetableItemTheoryItem.monday;
                 break;
             case 2:
-                timetableItem.rawCourse = timetableItemTheoryItem.tuesday;
+                rawCourseString = timetableItemTheoryItem.tuesday;
                 break;
             case 3:
-                timetableItem.rawCourse = timetableItemTheoryItem.wednesday;
+                rawCourseString = timetableItemTheoryItem.wednesday;
                 break;
             case 4:
-                timetableItem.rawCourse = timetableItemTheoryItem.thursday;
+                rawCourseString = timetableItemTheoryItem.thursday;
                 break;
             case 5:
-                timetableItem.rawCourse = timetableItemTheoryItem.friday;
+                rawCourseString = timetableItemTheoryItem.friday;
                 break;
             case 6:
-                timetableItem.rawCourse = timetableItemTheoryItem.saturday;
+                rawCourseString = timetableItemTheoryItem.saturday;
                 break;
             default:
-                timetableItem.rawCourse = timetableItemTheoryItem.sunday;
+                rawCourseString = timetableItemTheoryItem.sunday;
+        }
+
+        if (rawCourseString == null) {
+            return timetableItem;
+        }
+
+        timetableItem.rawCourse = rawCourseString.split("-");
+
+        if (timetableItem.rawCourse.length > 1) {
+            timetableItem.courseCode = timetableItem.rawCourse[1];
         }
 
         return timetableItem;

@@ -24,7 +24,6 @@ public class TimetableItem extends RelativeLayout {
     private ProgressBar classProgress;
     private ImageView courseType;
     private AppCompatTextView courseCode, timings;
-    private String[] rawCourse;
 
     public TimetableItem(Context context) {
         super(context);
@@ -159,13 +158,8 @@ public class TimetableItem extends RelativeLayout {
         }
     }
 
-    private void setCourseCode(String courseCode) {
+    public void setCourseCode(String courseCode) {
         this.courseCode.setText(courseCode);
-    }
-
-    public void setRawCourse(String rawCourse) {
-        this.rawCourse = rawCourse.split("-");
-        setCourseCode(this.rawCourse[1]);
     }
 
     public void setTimings(String startTime, String endTime) {

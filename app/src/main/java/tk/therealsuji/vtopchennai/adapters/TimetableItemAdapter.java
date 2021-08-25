@@ -65,7 +65,7 @@ public class TimetableItemAdapter extends RecyclerView.Adapter<TimetableItemAdap
 
         public void initializeTimetableItem(Timetable timetable, float pixelDensity) {
             timetableItem.setCourseType(timetable.courseType);
-            timetableItem.setRawCourse(timetable.rawCourse);
+            timetableItem.setCourseCode(timetable.courseCode);
             timetableItem.setTimings(timetable.startTime, timetable.endTime);
             timetableItem.setPadding(
                     (int) (30 * pixelDensity),
