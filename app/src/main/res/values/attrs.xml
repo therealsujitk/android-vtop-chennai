@@ -5,6 +5,14 @@
         <attr name="value" format="string" />
     </declare-styleable>
 
+    <declare-styleable name="SettingsGroup">
+        <attr name="category" format="reference" />
+    </declare-styleable>
+
+    <declare-styleable name="SettingsItem" parent="SettingsGroup">
+        <attr name="title" format="string" />
+    </declare-styleable>
+
     <declare-styleable name="TimetableItem">
         <attr name="course_code" format="string" />
         <attr name="course_type" format="enum">
@@ -13,17 +21,5 @@
         </attr>
         <attr name="end_time" format="string" />
         <attr name="start_time" format="string" />
-    </declare-styleable>
-
-    <declare-styleable name="TimetableLayout">
-        <attr name="day" format="enum">
-            <enum name="sunday" value="0" />
-            <enum name="monday" value="1" />
-            <enum name="tuesday" value="2" />
-            <enum name="wednesday" value="3" />
-            <enum name="thursday" value="4" />
-            <enum name="friday" value="5" />
-            <enum name="saturday" value="6" />
-        </attr>
     </declare-styleable>
 </resources>
