@@ -28,12 +28,12 @@ public class Timetable {
 
             if (timetableLabItem.courseCode != null) {
                 timetable.add(timetableLabItem);
-                timetableLabItem.courseType = TimetableItem.LAB;
+                timetableLabItem.courseType = TimetableItem.CLASS_LAB;
             }
 
             if (timetableTheoryItem.courseCode != null) {
                 timetable.add(timetableTheoryItem);
-                timetableLabItem.courseType = TimetableItem.THEORY;
+                timetableLabItem.courseType = TimetableItem.CLASS_THEORY;
             }
         }
 

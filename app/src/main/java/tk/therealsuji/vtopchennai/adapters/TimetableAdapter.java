@@ -22,6 +22,7 @@ import tk.therealsuji.vtopchennai.interfaces.TimetableDao;
 import tk.therealsuji.vtopchennai.models.Timetable;
 import tk.therealsuji.vtopchennai.models.TimetableLab;
 import tk.therealsuji.vtopchennai.models.TimetableTheory;
+import tk.therealsuji.vtopchennai.widgets.TimetableItem;
 
 public class TimetableAdapter extends RecyclerView.Adapter<TimetableAdapter.ViewHolder> {
     Context context;
@@ -85,13 +86,17 @@ public class TimetableAdapter extends RecyclerView.Adapter<TimetableAdapter.View
             @Override
             public void onComplete() {
                 ((Activity) context).runOnUiThread(() -> {
+                    int dayOfWeek = Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 1;
+
+                    if (day < dayOfWeek) {
+                        timetableItemAdapter.setStatus(TimetableItem.STATUS_PAST);
+                    } else if (day == dayOfWeek) {
+                        timetableItemAdapter.setStatus(TimetableItem.STATUS_PRESENT);
+                    }
+
                     List<Timetable> timetable = Timetable.buildTimetable(timetableLab, timetableTheory, day);
                     timetableItemAdapter.setTimetable(timetable);
                     timetableItemAdapter.notifyItemRangeInserted(0, timetable.size());
-
-                    if (day == Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 1) {
-                        timetableItemAdapter.today();
-                    }
                 });
             }
         });

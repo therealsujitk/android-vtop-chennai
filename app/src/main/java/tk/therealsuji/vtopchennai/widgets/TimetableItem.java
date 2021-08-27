@@ -1,12 +1,16 @@
 package tk.therealsuji.vtopchennai.widgets;
 
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
+import android.os.Build;
+import android.os.Handler;
 import android.text.format.DateFormat;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
+import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -17,18 +21,25 @@ import androidx.appcompat.widget.AppCompatTextView;
 import androidx.core.content.ContextCompat;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
 import tk.therealsuji.vtopchennai.R;
 
 public class TimetableItem extends RelativeLayout {
-    public static final int THEORY = 0;
-    public static final int LAB = 1;
+    public static final int CLASS_THEORY = 0;
+    public static final int CLASS_LAB = 1;
+
+    public static final int STATUS_PAST = 0;
+    public static final int STATUS_PRESENT = 1;
+    public static final int STATUS_FUTURE = 2;
+
     Context context;
     private ProgressBar classProgress;
     private ImageView courseType;
     private AppCompatTextView courseCode, timings;
+    private int status;
 
     public TimetableItem(Context context) {
         super(context);
@@ -87,8 +98,6 @@ public class TimetableItem extends RelativeLayout {
         this.classProgress.setFocusable(true);
         this.classProgress.setOnClickListener(view -> this.onClick());
         this.classProgress.setProgressDrawable(ContextCompat.getDrawable(context, R.drawable.background_class_item));
-
-        this.setClassProgress();
 
         this.courseType = new ImageView(context);
         this.courseType.setPadding(
@@ -151,12 +160,31 @@ public class TimetableItem extends RelativeLayout {
 
     }
 
-    private void setClassProgress() {
-        this.classProgress.setProgress(25);
+    private void setClassProgressDuration(long duration) {
+        ObjectAnimator objectAnimator = ObjectAnimator.ofInt(this.classProgress, "progress", this.classProgress.getProgress(), this.classProgress.getMax());
+        objectAnimator.setDuration(duration);
+        objectAnimator.setInterpolator(new LinearInterpolator());
+        objectAnimator.start();
+    }
+
+    private void setMaxClassProgress(long duration) {
+        int minutes = (int) duration / (1000 * 60);
+        this.classProgress.setMax(minutes);
+    }
+
+    private void setClassProgress(long duration) {
+        int minutes = (int) duration / (1000 * 60);
+
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            this.classProgress.setProgress(minutes, true);
+        } else {
+            this.classProgress.setProgress(minutes);
+        }
     }
 
     public void setCourseType(int courseType) {
-        if (courseType == LAB) {
+        if (courseType == CLASS_LAB) {
             this.courseType.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_lab));
         } else {
             this.courseType.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_theory));
@@ -180,12 +208,42 @@ public class TimetableItem extends RelativeLayout {
 
                 if (startTimeDate != null && endTimeDate != null) {
                     timings = hour12.format(startTimeDate) + " - " + hour12.format(endTimeDate);
+
+                    if (this.status == STATUS_PAST) {
+                        this.classProgress.setProgress(100);
+                    } else if (this.status == STATUS_PRESENT) {
+                        Date now = hour24.parse(hour24.format(Calendar.getInstance().getTime()));
+
+                        if (now != null) {
+                            if (now.after(endTimeDate)) {
+                                this.classProgress.setProgress(100);
+                            } else if (now.after(startTimeDate)) {
+                                long duration = endTimeDate.getTime() - startTimeDate.getTime();
+                                long durationComplete = now.getTime() - startTimeDate.getTime();
+                                long durationPending = endTimeDate.getTime() - now.getTime();
+
+                                this.setMaxClassProgress(duration);
+                                this.setClassProgress(durationComplete);
+                                this.setClassProgressDuration(durationPending);
+                            } else {
+                                long duration = endTimeDate.getTime() - startTimeDate.getTime();
+                                long durationPending = startTimeDate.getTime() - now.getTime();
+
+                                setMaxClassProgress(duration);
+                                new Handler().postDelayed(() -> this.setClassProgressDuration(duration), durationPending);
+                            }
+                        }
+                    }
                 }
             } catch (Exception ignored) {
             }
         }
 
         this.timings.setText(timings);
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
     }
 
     public void setPadding(int padding) {

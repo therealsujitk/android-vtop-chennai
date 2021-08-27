@@ -10,40 +10,48 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
-import tk.therealsuji.vtopchennai.R;
 import tk.therealsuji.vtopchennai.models.Timetable;
-import tk.therealsuji.vtopchennai.widgets.InfoCard;
 import tk.therealsuji.vtopchennai.widgets.TimetableItem;
 
 public class TimetableItemAdapter extends RecyclerView.Adapter<TimetableItemAdapter.ViewHolder> {
     Activity mainActivity;
     private List<Timetable> timetable;
-    float pixelDensity;
+    private final float pixelDensity;
+    private int status;
 
     public TimetableItemAdapter(Context context) {
         this.mainActivity = (Activity) context;
-        pixelDensity = context.getResources().getDisplayMetrics().density;
+
+        this.pixelDensity = context.getResources().getDisplayMetrics().density;
+        this.status = TimetableItem.STATUS_FUTURE;
     }
 
     public void setTimetable(List<Timetable> timetable) {
         this.timetable = timetable;
     }
 
-    public void today() {
-        InfoCard pendingClasses = mainActivity.findViewById(R.id.card_pending_classes);
-        pendingClasses.setValue(String.valueOf(timetable.size()));
+    public void setStatus(int status) {
+        this.status = status;
     }
 
     @NonNull
     @Override
     public TimetableItemAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         TimetableItem timetableItem = new TimetableItem(parent.getContext());
+        timetableItem.setPadding(
+                (int) (30 * pixelDensity),
+                (int) (5 * pixelDensity),
+                (int) (30 * pixelDensity),
+                (int) (5 * pixelDensity)
+        );
+        timetableItem.setStatus(this.status);
+
         return new ViewHolder(timetableItem);
     }
 
     @Override
     public void onBindViewHolder(@NonNull TimetableItemAdapter.ViewHolder holder, int position) {
-        holder.initializeTimetableItem(timetable.get(position), pixelDensity);
+        holder.initializeTimetableItem(timetable.get(position));
     }
 
     @Override
@@ -63,16 +71,10 @@ public class TimetableItemAdapter extends RecyclerView.Adapter<TimetableItemAdap
             this.timetableItem = (TimetableItem) itemView;
         }
 
-        public void initializeTimetableItem(Timetable timetable, float pixelDensity) {
+        public void initializeTimetableItem(Timetable timetable) {
             timetableItem.setCourseType(timetable.courseType);
             timetableItem.setCourseCode(timetable.courseCode);
             timetableItem.setTimings(timetable.startTime, timetable.endTime);
-            timetableItem.setPadding(
-                    (int) (30 * pixelDensity),
-                    (int) (5 * pixelDensity),
-                    (int) (30 * pixelDensity),
-                    (int) (5 * pixelDensity)
-            );
         }
     }
 }
