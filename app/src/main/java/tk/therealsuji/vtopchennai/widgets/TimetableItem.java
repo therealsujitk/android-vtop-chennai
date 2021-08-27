@@ -3,6 +3,7 @@ package tk.therealsuji.vtopchennai.widgets;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
+import android.text.format.DateFormat;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
@@ -14,6 +15,10 @@ import android.widget.RelativeLayout;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.core.content.ContextCompat;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 import tk.therealsuji.vtopchennai.R;
 
@@ -164,6 +169,22 @@ public class TimetableItem extends RelativeLayout {
 
     public void setTimings(String startTime, String endTime) {
         String timings = startTime + " - " + endTime;
+
+        if (!DateFormat.is24HourFormat(this.context)) {
+            SimpleDateFormat hour24 = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
+            SimpleDateFormat hour12 = new SimpleDateFormat("h:mm a", Locale.ENGLISH);
+
+            try {
+                Date startTimeDate = hour24.parse(startTime);
+                Date endTimeDate = hour24.parse(endTime);
+
+                if (startTimeDate != null && endTimeDate != null) {
+                    timings = hour12.format(startTimeDate) + " - " + hour12.format(endTimeDate);
+                }
+            } catch (Exception ignored) {
+            }
+        }
+
         this.timings.setText(timings);
     }
 
