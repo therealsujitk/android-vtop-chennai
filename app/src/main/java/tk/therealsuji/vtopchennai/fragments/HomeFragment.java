@@ -6,13 +6,15 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.widget.TooltipCompat;
-import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
@@ -38,17 +40,21 @@ public class HomeFragment extends Fragment {
         View homeFragment = inflater.inflate(R.layout.fragment_home, container, false);
         float pixelDensity = this.getResources().getDisplayMetrics().density;
 
-        homeFragment.findViewById(R.id.header).setOnApplyWindowInsetsListener((view, windowInsets) -> {
-            ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) view.getLayoutParams();
-            layoutParams.setMargins(
-                    (int) (20 * pixelDensity),
-                    (int) (20 * pixelDensity + windowInsets.getSystemWindowInsetTop()),
-                    (int) (20 * pixelDensity),
-                    (int) (20 * pixelDensity)
-            );
+        AppBarLayout appBarLayout = homeFragment.findViewById(R.id.app_bar);
+
+        appBarLayout.setOnApplyWindowInsetsListener((view, windowInsets) -> {
+            CoordinatorLayout.LayoutParams layoutParams = (CoordinatorLayout.LayoutParams) view.getLayoutParams();
+            layoutParams.setMargins(0, windowInsets.getSystemWindowInsetTop(), 0, 0);
             view.setLayoutParams(layoutParams);
 
             return windowInsets.consumeSystemWindowInsets();
+        });
+
+        appBarLayout.addOnOffsetChangedListener((appBarLayout1, verticalOffset) -> {
+            LinearLayout header = homeFragment.findViewById(R.id.header);
+            float alpha = 1 - ((float) (-1 * verticalOffset) / header.getHeight());
+
+            header.setAlpha(alpha);
         });
 
         SharedPreferences sharedPreferences = this.requireActivity().getSharedPreferences("tk.therealsuji.vtopchennai", Context.MODE_PRIVATE);

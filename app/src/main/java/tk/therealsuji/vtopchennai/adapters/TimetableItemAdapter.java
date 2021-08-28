@@ -38,12 +38,6 @@ public class TimetableItemAdapter extends RecyclerView.Adapter<TimetableItemAdap
     @Override
     public TimetableItemAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         TimetableItem timetableItem = new TimetableItem(parent.getContext());
-        timetableItem.setPadding(
-                (int) (30 * pixelDensity),
-                (int) (5 * pixelDensity),
-                (int) (30 * pixelDensity),
-                (int) (5 * pixelDensity)
-        );
         timetableItem.setStatus(this.status);
 
         return new ViewHolder(timetableItem);
@@ -52,6 +46,17 @@ public class TimetableItemAdapter extends RecyclerView.Adapter<TimetableItemAdap
     @Override
     public void onBindViewHolder(@NonNull TimetableItemAdapter.ViewHolder holder, int position) {
         holder.initializeTimetableItem(timetable.get(position));
+
+        int left = (int) (30 * this.pixelDensity);
+        int top = (int) (5 * this.pixelDensity);
+        int right = (int) (30 * this.pixelDensity);
+        int bottom = (int) (5 * this.pixelDensity);
+
+        if (position == 0) {
+            top = (int) (10 * this.pixelDensity);
+        }
+
+        holder.setPadding(left, top, right, bottom);
     }
 
     @Override
@@ -72,9 +77,13 @@ public class TimetableItemAdapter extends RecyclerView.Adapter<TimetableItemAdap
         }
 
         public void initializeTimetableItem(Timetable timetable) {
-            timetableItem.setCourseType(timetable.courseType);
-            timetableItem.setCourseCode(timetable.courseCode);
-            timetableItem.setTimings(timetable.startTime, timetable.endTime);
+            this.timetableItem.setCourseType(timetable.courseType);
+            this.timetableItem.setCourseCode(timetable.courseCode);
+            this.timetableItem.setTimings(timetable.startTime, timetable.endTime);
+        }
+
+        public void setPadding(int left, int top, int right, int bottom) {
+            this.timetableItem.setPadding(left, top, right, bottom);
         }
     }
 }

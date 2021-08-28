@@ -214,4 +214,5 @@
     <string name="settings_personal">Personal</string>
     <string name="settings_general">General</string>
     <string name="settings_application">Application</string>
+    <string name="days">Days of the week</string>
 </resources>
