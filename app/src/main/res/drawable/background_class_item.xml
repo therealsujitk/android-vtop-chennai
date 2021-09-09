@@ -3,12 +3,7 @@
     android:color="@color/colorBlue04">
     <item android:id="@android:id/background">
         <shape android:shape="rectangle">
-            <gradient
-                android:angle="135"
-                android:endColor="@color/colorBlue06"
-                android:startColor="@color/colorBlue05"
-                android:type="linear" />
-
+            <solid android:color="@color/colorBlue06" />
             <corners android:radius="15dp" />
         </shape>
     </item>
