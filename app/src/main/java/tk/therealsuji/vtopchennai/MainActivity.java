@@ -3,7 +3,7 @@ package tk.therealsuji.vtopchennai;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.view.WindowCompat;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -21,21 +21,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        float pixelDensity = this.getResources().getDisplayMetrics().density;
+        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
+
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
-
-        bottomNavigationView.setOnApplyWindowInsetsListener((view, windowInsets) -> {
-            ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) view.getLayoutParams();
-            layoutParams.setMargins(
-                    (int) (20 * pixelDensity),
-                    (int) (20 * pixelDensity),
-                    (int) (20 * pixelDensity),
-                    (int) (20 * pixelDensity + windowInsets.getSystemWindowInsetBottom())
-            );
-            view.setLayoutParams(layoutParams);
-
-            return windowInsets.consumeSystemWindowInsets();
-        });
 
         bottomNavigationView.setOnItemSelectedListener(item -> {
             Fragment selectedFragment;
