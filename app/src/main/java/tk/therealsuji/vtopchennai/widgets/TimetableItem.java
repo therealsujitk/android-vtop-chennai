@@ -8,6 +8,7 @@ import android.os.Build;
 import android.os.Handler;
 import android.text.format.DateFormat;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.view.animation.LinearInterpolator;
@@ -141,12 +142,14 @@ public class TimetableItem extends RelativeLayout {
                 0
         );
 
-        ColorStateList colorPrimary = ColorStateList.valueOf(context.getColor(R.color.colorPrimary));
+        TypedValue colorSecondary = new TypedValue();
+        getContext().getTheme().resolveAttribute(R.attr.colorSecondary, colorSecondary, true);
+        ColorStateList colorSecondaryTintList = ColorStateList.valueOf(colorSecondary.data);
 
-        this.courseType.setImageTintList(colorPrimary);
-        this.courseCode.setTextColor(colorPrimary);
-        this.timings.setTextColor(colorPrimary);
-        moreInfo.setImageTintList(colorPrimary);
+        this.courseType.setImageTintList(colorSecondaryTintList);
+        this.courseCode.setTextColor(colorSecondary.data);
+        this.timings.setTextColor(colorSecondary.data);
+        moreInfo.setImageTintList(colorSecondaryTintList);
 
         container.addView(this.courseType);
         container.addView(classInfo);

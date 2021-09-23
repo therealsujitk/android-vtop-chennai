@@ -1,5 +1,10 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
+    <style name="Widget.VTOP.BottomNavigationView" parent="Widget.Material3.BottomNavigationView">
+        <item name="materialThemeOverlay">@style/ThemeOverlay.Material3.DynamicColors.DayNight
+        </item>
+    </style>
+
     <style name="AppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimary</item>

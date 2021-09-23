@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item>
+    <item android:state_selected="true">
         <shape android:shape="oval">
-            <solid android:color="@color/colorBlue06" />
+            <solid android:color="?attr/colorSecondaryContainer" />
+        </shape>
+    </item>
+
+    <item android:state_selected="false">
+        <shape android:shape="oval">
+            <solid android:color="@color/secondary_container_25" />
         </shape>
     </item>
 </selector>

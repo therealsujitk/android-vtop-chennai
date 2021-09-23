@@ -3,6 +3,7 @@ package tk.therealsuji.vtopchennai.widgets;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.widget.LinearLayout;
 
@@ -44,10 +45,13 @@ public class InfoCard extends LinearLayout {
     private void initialize(Context context) {
         float pixelDensity = context.getResources().getDisplayMetrics().density;
 
-        this.key.setTextColor(context.getColor(R.color.colorText));
+        TypedValue colorPrimary = new TypedValue();
+        getContext().getTheme().resolveAttribute(R.attr.colorPrimary, colorPrimary, true);
+
+        this.key.setTextColor(colorPrimary.data);
         this.key.setTextSize(16);
 
-        this.value.setTextColor(context.getColor(R.color.colorText));
+        this.value.setTextColor(colorPrimary.data);
         this.value.setTextSize(42);
 
         this.setGravity(Gravity.BOTTOM);

@@ -42,7 +42,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/good_morning"
                         android:textAllCaps="true"
-                        android:textColor="@color/colorText"
+                        android:textColor="?attr/colorOnSurface"
                         android:textSize="15sp" />
 
                     <TextView
@@ -51,7 +51,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/name"
                         android:textAllCaps="true"
-                        android:textColor="@color/colorText"
+                        android:textColor="?attr/colorOnSurface"
                         android:textSize="30sp"
                         android:textStyle="bold" />
 
@@ -65,7 +65,7 @@
                     android:contentDescription="@string/spotlight"
                     android:padding="12dp"
                     android:src="@drawable/ic_spotlight"
-                    app:tint="@color/colorPrimary" />
+                    app:tint="?attr/colorPrimary" />
 
             </LinearLayout>
 
@@ -121,16 +121,20 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
+            android:layout_gravity="center"
             android:contentDescription="@string/days"
+            android:background="@android:color/transparent"
+            android:textAlignment="center"
             app:tabBackground="@drawable/background_tab_item"
             app:tabGravity="center"
             app:tabIndicator="@drawable/background_tab_item"
             app:tabIndicatorAnimationMode="elastic"
-            app:tabIndicatorColor="@color/colorBlue04"
+            app:tabIndicatorColor="?attr/colorSecondaryContainer"
             app:tabIndicatorGravity="stretch"
+            app:tabIndicatorFullWidth="true"
             app:tabMaxWidth="50dp"
             app:tabMode="scrollable"
-            app:tabTextColor="@color/colorPrimary"
+            app:tabTextColor="?attr/colorSecondary"
             app:tabUnboundedRipple="true" />
 
     </com.google.android.material.appbar.AppBarLayout>
