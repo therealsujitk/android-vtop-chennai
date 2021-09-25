@@ -5,25 +5,37 @@
       <map>
         <entry key="../../../../layout/custom_preview.xml" value="0.33" />
         <entry key="app/src/main/res/drawable/background_action_button.xml" value="0.18055555555555555" />
+        <entry key="app/src/main/res/drawable/background_announcement.xml" value="0.209375" />
+        <entry key="app/src/main/res/drawable/background_announcement_first.xml" value="0.209375" />
+        <entry key="app/src/main/res/drawable/background_announcement_last.xml" value="0.209375" />
+        <entry key="app/src/main/res/drawable/background_announcement_single.xml" value="0.20615384615384616" />
         <entry key="app/src/main/res/drawable/background_bottom_navigation.xml" value="0.18055555555555555" />
         <entry key="app/src/main/res/drawable/background_bottom_navigation_item.xml" value="0.209375" />
         <entry key="app/src/main/res/drawable/background_card.xml" value="0.209375" />
         <entry key="app/src/main/res/drawable/background_class_item.xml" value="0.209375" />
         <entry key="app/src/main/res/drawable/background_info_card.xml" value="0.209375" />
+        <entry key="app/src/main/res/drawable/background_spotlight_item.xml" value="0.209375" />
+        <entry key="app/src/main/res/drawable/background_spotlight_type.xml" value="0.209375" />
         <entry key="app/src/main/res/drawable/background_tab_indicator.xml" value="0.209375" />
         <entry key="app/src/main/res/drawable/background_tab_item.xml" value="0.209375" />
         <entry key="app/src/main/res/drawable/button_action.xml" value="0.18055555555555555" />
         <entry key="app/src/main/res/drawable/button_card.xml" value="0.18055555555555555" />
+        <entry key="app/src/main/res/drawable/button_link.xml" value="0.209375" />
         <entry key="app/src/main/res/drawable/button_secondary.xml" value="0.209375" />
         <entry key="app/src/main/res/drawable/button_secondary_selected.xml" value="0.209375" />
         <entry key="app/src/main/res/drawable/button_tertiary.xml" value="0.209375" />
         <entry key="app/src/main/res/drawable/gradient_linear.xml" value="0.209375" />
         <entry key="app/src/main/res/drawable/ic_chevron_right.xml" value="0.209375" />
+        <entry key="app/src/main/res/drawable/ic_history.xml" value="0.209375" />
         <entry key="app/src/main/res/drawable/ic_home.xml" value="0.18055555555555555" />
+        <entry key="app/src/main/res/drawable/ic_link.xml" value="0.209375" />
+        <entry key="app/src/main/res/drawable/ic_location.xml" value="0.209375" />
         <entry key="app/src/main/res/drawable/ic_messages.xml" value="0.209375" />
         <entry key="app/src/main/res/drawable/ic_notification_dot.xml" value="0.18055555555555555" />
+        <entry key="app/src/main/res/drawable/ic_phone.xml" value="0.209375" />
         <entry key="app/src/main/res/drawable/ic_sign_out.xml" value="0.17685185185185184" />
         <entry key="app/src/main/res/drawable/ic_spotlight.xml" value="0.17685185185185184" />
+        <entry key="app/src/main/res/drawable/ic_theory.xml" value="0.209375" />
         <entry key="app/src/main/res/drawable/item_bottom_navigation.xml" value="0.18055555555555555" />
         <entry key="app/src/main/res/drawable/plain_card.xml" value="0.18055555555555555" />
         <entry key="app/src/main/res/drawable/progress_bar.xml" value="0.209375" />
@@ -40,6 +52,7 @@
         <entry key="app/src/main/res/layout/fragment_courses.xml" value="0.19322916666666667" />
         <entry key="app/src/main/res/layout/fragment_home.xml" value="0.33" />
         <entry key="app/src/main/res/layout/fragment_profile.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/fragment_spotlight.xml" value="0.33" />
         <entry key="app/src/main/res/layout/layout_download_progress.xml" value="0.19322916666666667" />
         <entry key="app/src/main/res/menu/bottom_navigation.xml" value="0.19322916666666667" />
         <entry key="app/src/main/res/menu/marks_menu.xml" value="0.19322916666666667" />

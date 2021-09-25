@@ -19,7 +19,18 @@ import tk.therealsuji.vtopchennai.fragments.PerformanceFragment;
 import tk.therealsuji.vtopchennai.fragments.ProfileFragment;
 
 public class MainActivity extends AppCompatActivity {
+    BottomNavigationView bottomNavigationView;
     Fragment homeFragment, performanceFragment, coursesFragment, profileFragment;
+
+    public void hideBottomNavigationView() {
+        this.bottomNavigationView.clearAnimation();
+        this.bottomNavigationView.animate().translationY(bottomNavigationView.getMeasuredHeight());
+    }
+
+    public void showBottomNavigationView() {
+        this.bottomNavigationView.clearAnimation();
+        this.bottomNavigationView.animate().translationY(0);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,35 +53,35 @@ public class MainActivity extends AppCompatActivity {
 
         getWindow().getDecorView().setSystemUiVisibility(visibility);
 
-        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
+        this.bottomNavigationView = findViewById(R.id.bottom_navigation);
 
-        bottomNavigationView.setOnItemSelectedListener(item -> {
+        this.bottomNavigationView.setOnItemSelectedListener(item -> {
             Fragment selectedFragment;
 
             if (item.getItemId() == R.id.item_performance) {
-                if (performanceFragment == null) {
-                    performanceFragment = new PerformanceFragment();
+                if (this.performanceFragment == null) {
+                    this.performanceFragment = new PerformanceFragment();
                 }
 
-                selectedFragment = performanceFragment;
+                selectedFragment = this.performanceFragment;
             } else if (item.getItemId() == R.id.item_courses) {
-                if (coursesFragment == null) {
-                    coursesFragment = new CoursesFragment();
+                if (this.coursesFragment == null) {
+                    this.coursesFragment = new CoursesFragment();
                 }
 
-                selectedFragment = coursesFragment;
+                selectedFragment = this.coursesFragment;
             } else if (item.getItemId() == R.id.item_profile) {
-                if (profileFragment == null) {
-                    profileFragment = new ProfileFragment();
+                if (this.profileFragment == null) {
+                    this.profileFragment = new ProfileFragment();
                 }
 
-                selectedFragment = profileFragment;
+                selectedFragment = this.profileFragment;
             } else {
-                if (homeFragment == null) {
-                    homeFragment = new HomeFragment();
+                if (this.homeFragment == null) {
+                    this.homeFragment = new HomeFragment();
                 }
 
-                selectedFragment = homeFragment;
+                selectedFragment = this.homeFragment;
             }
 
             getSupportFragmentManager().beginTransaction()
@@ -80,6 +91,6 @@ public class MainActivity extends AppCompatActivity {
             return true;
         });
 
-        bottomNavigationView.setSelectedItemId(R.id.item_home);
+        this.bottomNavigationView.setSelectedItemId(R.id.item_home);
     }
 }

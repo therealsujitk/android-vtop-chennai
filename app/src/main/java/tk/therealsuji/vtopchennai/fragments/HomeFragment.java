@@ -20,6 +20,7 @@ import com.google.android.material.tabs.TabLayoutMediator;
 
 import java.util.Calendar;
 
+import tk.therealsuji.vtopchennai.MainActivity;
 import tk.therealsuji.vtopchennai.R;
 import tk.therealsuji.vtopchennai.adapters.TimetableAdapter;
 import tk.therealsuji.vtopchennai.widgets.InfoCard;
@@ -64,6 +65,15 @@ public class HomeFragment extends Fragment {
 
         View spotlightButton = homeFragment.findViewById(R.id.button_spotlight);
         TooltipCompat.setTooltipText(spotlightButton, spotlightButton.getContentDescription());
+        spotlightButton.setOnClickListener(view -> {
+            requireActivity().getSupportFragmentManager().beginTransaction()
+                    .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right)
+                    .add(R.id.main_body, new SpotlightFragment())
+                    .addToBackStack(null)
+                    .commit();
+
+            ((MainActivity) requireActivity()).hideBottomNavigationView();
+        });
 
         InfoCard attendance = homeFragment.findViewById(R.id.card_attendance);
         InfoCard cgpa = homeFragment.findViewById(R.id.card_cgpa);
@@ -123,4 +133,6 @@ public class HomeFragment extends Fragment {
 
         return homeFragment;
     }
+
+
 }
