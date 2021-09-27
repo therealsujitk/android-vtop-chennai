@@ -78,8 +78,9 @@
     <string name="upcoming">UPCOMING</string>
     <string name="ongoing">ONGOING</string>
 
-    <string name="theory">Theory</string>
-    <string name="lab">Lab</string>
+    <string name="lab">Lab Marks</string>
+    <string name="project">Project Marks</string>
+    <string name="theory">Theory Marks</string>
 
     <string name="update_title">Update Available</string>
     <string name="update_text">A new version of VTOP Chennai has been released!</string>
@@ -216,4 +217,5 @@
     <string name="settings_application">Application</string>
     <string name="days">Days of the week</string>
     <string name="go_back">Go Back</string>
+    <string name="performance_header">Your Performance</string>
 </resources>

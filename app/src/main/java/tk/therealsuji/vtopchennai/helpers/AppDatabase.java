@@ -6,14 +6,17 @@ import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
+import tk.therealsuji.vtopchennai.interfaces.MarksDao;
 import tk.therealsuji.vtopchennai.interfaces.SpotlightDao;
 import tk.therealsuji.vtopchennai.interfaces.TimetableDao;
+import tk.therealsuji.vtopchennai.models.Marks;
 import tk.therealsuji.vtopchennai.models.Spotlight;
 import tk.therealsuji.vtopchennai.models.TimetableLab;
 import tk.therealsuji.vtopchennai.models.TimetableTheory;
 
 @Database(
         entities = {
+                Marks.class,
                 Spotlight.class,
                 TimetableLab.class,
                 TimetableTheory.class
@@ -35,7 +38,8 @@ public abstract class AppDatabase extends RoomDatabase {
         return instance;
     }
 
-    public abstract SpotlightDao spotlightDao();
+    public abstract MarksDao marksDao();
 
+    public abstract SpotlightDao spotlightDao();
     public abstract TimetableDao timetableDao();
 }

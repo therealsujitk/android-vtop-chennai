@@ -12,8 +12,10 @@
         <entry key="app/src/main/res/drawable/background_bottom_navigation.xml" value="0.18055555555555555" />
         <entry key="app/src/main/res/drawable/background_bottom_navigation_item.xml" value="0.209375" />
         <entry key="app/src/main/res/drawable/background_card.xml" value="0.209375" />
+        <entry key="app/src/main/res/drawable/background_circular_progress_bar.xml" value="0.209375" />
         <entry key="app/src/main/res/drawable/background_class_item.xml" value="0.209375" />
         <entry key="app/src/main/res/drawable/background_info_card.xml" value="0.209375" />
+        <entry key="app/src/main/res/drawable/background_marks_item.xml" value="0.209375" />
         <entry key="app/src/main/res/drawable/background_spotlight_item.xml" value="0.209375" />
         <entry key="app/src/main/res/drawable/background_spotlight_type.xml" value="0.209375" />
         <entry key="app/src/main/res/drawable/background_tab_indicator.xml" value="0.209375" />
@@ -51,6 +53,7 @@
         <entry key="app/src/main/res/layout/fragment_academics.xml" value="0.19322916666666667" />
         <entry key="app/src/main/res/layout/fragment_courses.xml" value="0.19322916666666667" />
         <entry key="app/src/main/res/layout/fragment_home.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/fragment_performance.xml" value="0.33" />
         <entry key="app/src/main/res/layout/fragment_profile.xml" value="0.33" />
         <entry key="app/src/main/res/layout/fragment_spotlight.xml" value="0.33" />
         <entry key="app/src/main/res/layout/layout_download_progress.xml" value="0.19322916666666667" />
