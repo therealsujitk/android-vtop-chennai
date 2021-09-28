@@ -212,10 +212,13 @@
 
     <string name="marks">Marks</string>
     <string name="messages">Messages</string>
-    <string name="settings_personal">Personal</string>
+    <string name="personal">Personal</string>
     <string name="settings_general">General</string>
-    <string name="settings_application">Application</string>
+    <string name="application">Application</string>
     <string name="days">Days of the week</string>
     <string name="go_back">Go Back</string>
     <string name="performance_header">Your Performance</string>
+    <string name="switch_semester">Switch Semester</string>
+    <string name="faq">Frequently Asked Questions</string>
+    <string name="send_feedback">Send Feedback</string>
 </resources>

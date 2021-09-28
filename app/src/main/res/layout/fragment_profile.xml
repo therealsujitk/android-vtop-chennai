@@ -6,103 +6,45 @@
     android:layout_height="match_parent"
     tools:context=".fragments.ProfileFragment">
 
-    <LinearLayout
+    <TextView
         android:id="@+id/header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="20dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/profile_header"
-            android:textColor="@color/colorText"
-            android:textSize="25sp"
-            android:textStyle="bold" />
-
-    </LinearLayout>
-
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
         android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+        android:text="@string/profile_header"
+        android:textColor="?attr/colorOnBackground"
+        android:textSize="25sp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="10dp"
+        android:scrollbars="none"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/header">
 
         <LinearLayout
-            android:id="@+id/settings"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <tk.therealsuji.vtopchennai.widgets.SettingsGroup
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/info_cards"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:category="@string/settings_personal">
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
-                <tk.therealsuji.vtopchennai.widgets.SettingsItem
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:title="Messages" />
-
-                <tk.therealsuji.vtopchennai.widgets.SettingsItem
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:title="Staff" />
-
-                <tk.therealsuji.vtopchennai.widgets.SettingsItem
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:title="Switch semester" />
-
-            </tk.therealsuji.vtopchennai.widgets.SettingsGroup>
-
-            <tk.therealsuji.vtopchennai.widgets.SettingsGroup
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/profile_groups"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:category="@string/settings_general">
-
-                <tk.therealsuji.vtopchennai.widgets.SettingsItem
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:title="Notifications" />
-
-                <tk.therealsuji.vtopchennai.widgets.SettingsItem
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:title="Theme" />
-
-            </tk.therealsuji.vtopchennai.widgets.SettingsGroup>
-
-            <tk.therealsuji.vtopchennai.widgets.SettingsGroup
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:category="@string/settings_application">
-
-                <tk.therealsuji.vtopchennai.widgets.SettingsItem
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:title="Privacy policy" />
-
-                <tk.therealsuji.vtopchennai.widgets.SettingsItem
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:title="Share feedback" />
-
-                <tk.therealsuji.vtopchennai.widgets.SettingsItem
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:title="View on GitHub" />
-
-            </tk.therealsuji.vtopchennai.widgets.SettingsGroup>
-
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
         </LinearLayout>
-
-    </ScrollView>
-
+    </androidx.core.widget.NestedScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

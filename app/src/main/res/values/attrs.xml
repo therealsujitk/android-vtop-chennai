@@ -13,14 +13,6 @@
         <attr name="total" format="float" />
     </declare-styleable>
 
-    <declare-styleable name="SettingsGroup">
-        <attr name="category" format="reference" />
-    </declare-styleable>
-
-    <declare-styleable name="SettingsItem" parent="SettingsGroup">
-        <attr name="title" />
-    </declare-styleable>
-
     <declare-styleable name="TimetableItem">
         <attr name="course_code" format="string" />
         <attr name="course_type" format="enum">

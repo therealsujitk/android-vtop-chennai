@@ -7,8 +7,10 @@ import android.view.ViewGroup;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
 
 import tk.therealsuji.vtopchennai.R;
+import tk.therealsuji.vtopchennai.adapters.ProfileGroupAdapter;
 
 public class ProfileFragment extends Fragment {
 
@@ -38,6 +40,9 @@ public class ProfileFragment extends Fragment {
 
             return windowInsets.consumeSystemWindowInsets();
         });
+
+        RecyclerView profileGroups = profileFragment.findViewById(R.id.profile_groups);
+        profileGroups.setAdapter(new ProfileGroupAdapter());
 
         return profileFragment;
     }
