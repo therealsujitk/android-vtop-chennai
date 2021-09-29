@@ -4,6 +4,7 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="../../../../layout/custom_preview.xml" value="0.33" />
+        <entry key="app/src/main/res/drawable/avatar.xml" value="0.209375" />
         <entry key="app/src/main/res/drawable/background_action_button.xml" value="0.18055555555555555" />
         <entry key="app/src/main/res/drawable/background_announcement.xml" value="0.209375" />
         <entry key="app/src/main/res/drawable/background_announcement_first.xml" value="0.209375" />
@@ -25,6 +26,7 @@
         <entry key="app/src/main/res/drawable/button_action.xml" value="0.18055555555555555" />
         <entry key="app/src/main/res/drawable/button_card.xml" value="0.18055555555555555" />
         <entry key="app/src/main/res/drawable/button_link.xml" value="0.209375" />
+        <entry key="app/src/main/res/drawable/button_primary.xml" value="0.209375" />
         <entry key="app/src/main/res/drawable/button_secondary.xml" value="0.209375" />
         <entry key="app/src/main/res/drawable/button_secondary_selected.xml" value="0.209375" />
         <entry key="app/src/main/res/drawable/button_tertiary.xml" value="0.209375" />
@@ -50,7 +52,9 @@
         <entry key="app/src/main/res/drawable/plain_card.xml" value="0.18055555555555555" />
         <entry key="app/src/main/res/drawable/progress_bar.xml" value="0.209375" />
         <entry key="app/src/main/res/drawable/spinner_primary.xml" value="0.209375" />
+        <entry key="app/src/main/res/drawable/text_field_primary.xml" value="0.209375" />
         <entry key="app/src/main/res/layout/activity_home.xml" value="0.19025641025641027" />
+        <entry key="app/src/main/res/layout/activity_login.xml" value="0.33" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.33" />
         <entry key="app/src/main/res/layout/dialog_appearance.xml" value="0.3924050632911392" />
         <entry key="app/src/main/res/layout/dialog_clear_logs.xml" value="0.19322916666666667" />

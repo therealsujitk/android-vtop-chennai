@@ -1,5 +1,24 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
+    <style name="Widget.VTOP.EditText" parent="Widget.AppCompat.EditText">
+        <item name="android:background">@drawable/text_field_primary</item>
+        <item name="android:drawablePadding">12dp</item>
+        <item name="android:drawableTint">?attr/colorSecondary</item>
+        <item name="android:padding">15dp</item>
+        <item name="android:textColor">?attr/colorSecondary</item>
+        <item name="android:textColorHint">@color/secondary_75</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+
+    <style name="Widget.VTOP.Button" parent="Widget.AppCompat.Button">
+        <item name="android:background">@drawable/button_primary</item>
+        <item name="android:drawableTint">?attr/colorPrimary</item>
+        <item name="android:padding">15dp</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textColor">?attr/colorOnPrimary</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+
     <style name="Widget.VTOP.BottomNavigationView" parent="Widget.Material3.BottomNavigationView">
         <item name="materialThemeOverlay">@style/ThemeOverlay.Material3.DynamicColors.DayNight
         </item>

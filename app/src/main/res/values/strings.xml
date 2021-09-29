@@ -3,8 +3,8 @@
     <string name="app_name_long">VTOP Chennai</string>
 
 
-    <string name="login_background_description">Background image used in activity_login.</string>
-    <string name="logo">Logo of this application.</string>
+    <string name="login_header">Login</string>
+    <string name="login_description">Sign in using your VTOP credentials</string>
     <string name="username">Username</string>
     <string name="password">Password</string>
     <string name="sign_in">Sign In</string>

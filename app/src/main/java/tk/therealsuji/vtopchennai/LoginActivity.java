@@ -1,25 +1,25 @@
 package tk.therealsuji.vtopchennai;
 
-import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
-import android.view.KeyEvent;
-import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.security.crypto.EncryptedSharedPreferences;
 import androidx.security.crypto.MasterKey;
 
@@ -174,11 +174,38 @@ public class LoginActivity extends AppCompatActivity {
         startActivity(browserIntent);
     }
 
-    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        SharedPreferences sharedPreferences = this.getSharedPreferences("tk.therealsuji.vtopchennai", Context.MODE_PRIVATE);
+        String appearance = sharedPreferences.getString("appearance", "system");
+        int visibility = getWindow().getDecorView().getSystemUiVisibility();
+
+        if (appearance.equals("light") || (appearance.equals("system") && (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_NO)) {
+            visibility |= View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                visibility |= View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR;
+            }
+        }
+
+        getWindow().getDecorView().setSystemUiVisibility(visibility);
+
+        ConstraintLayout loginLayout = findViewById(R.id.layout_login);
+        loginLayout.setOnApplyWindowInsetsListener((view, windowInsets) -> {
+            ViewGroup.MarginLayoutParams layoutParams = (ViewGroup.MarginLayoutParams) view.getLayoutParams();
+            layoutParams.setMargins(
+                    windowInsets.getSystemWindowInsetLeft(),
+                    windowInsets.getSystemWindowInsetTop(),
+                    windowInsets.getSystemWindowInsetRight(),
+                    windowInsets.getSystemWindowInsetBottom()
+            );
+            view.setLayoutParams(layoutParams);
+
+            return windowInsets.consumeSystemWindowInsets();
+        });
 
         sharedPreferences = this.getSharedPreferences("tk.therealsuji.vtopchennai", Context.MODE_PRIVATE);
 
@@ -197,58 +224,6 @@ public class LoginActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        /*
-            The below code is just to add some beautiful animation to the views
-         */
-        final EditText username = findViewById(R.id.username);
-        final EditText password = findViewById(R.id.password);
-
-        username.setOnFocusChangeListener((view, b) -> {
-            if (b) {
-                username.animate().scaleX(1.07f).scaleY(1.07f).setDuration(200);
-            } else {
-                username.animate().scaleX(1f).scaleY(1f).setDuration(200);
-            }
-        });
-        username.setOnKeyListener((v, keyCode, event) -> {
-            if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_ENTER) {
-                password.requestFocus();
-            }
-
-            return false;
-        });
-
-        password.setOnFocusChangeListener((view, b) -> {
-            if (b) {
-                password.animate().scaleX(1.07f).scaleY(1.07f).setDuration(200);
-            } else {
-                password.animate().scaleX(1f).scaleY(1f).setDuration(200);
-            }
-        });
-        password.setOnKeyListener((v, keyCode, event) -> {
-            if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_ENTER) {
-                signIn(null);
-            }
-
-            return false;
-        });
-
-        final Button signIn = findViewById(R.id.signIn);
-        signIn.setOnTouchListener((view, motionEvent) -> {
-            switch (motionEvent.getAction()) {
-                case MotionEvent.ACTION_DOWN:
-                    signIn.animate().scaleX(0.93f).scaleY(0.93f).setDuration(50);
-                    signIn.setAlpha(0.85f);
-                    break;
-                case MotionEvent.ACTION_UP:
-                case MotionEvent.ACTION_CANCEL:
-                    signIn.animate().scaleX(1f).scaleY(1f).setDuration(50);
-                    signIn.setAlpha(1f);
-                    break;
-            }
-            return false;
-        });
 
         /*
             Locally check for a new version (The actually checking is done in the SplashScreenActivity)

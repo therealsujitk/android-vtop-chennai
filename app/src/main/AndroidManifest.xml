@@ -38,7 +38,7 @@
             android:configChanges="orientation|keyboardHidden"
             android:label="Login"
             android:screenOrientation="sensorPortrait"
-            android:theme="@style/AppTheme.NoActionBar"
+            android:theme="@style/Theme.VTOP.Login"
             android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".PrivacyActivity"

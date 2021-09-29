@@ -2,120 +2,98 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout_login"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".LoginActivity">
 
-    <ImageView
+    <TextView
+        android:id="@+id/text_header"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:contentDescription="@string/login_background_description"
-        android:scaleType="fitStart"
-        app:layout_constraintDimensionRatio="1:1"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="100dp"
+        android:layout_marginEnd="40dp"
+        android:text="@string/login_header"
+        android:textColor="?attr/colorPrimary"
+        android:textSize="50sp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/login_background" />
-
-    <ImageView
-        android:id="@+id/logoSignIn"
-        android:layout_width="100dp"
-        android:layout_height="40dp"
-        android:layout_marginStart="30dp"
-        android:layout_marginTop="30dp"
-        android:contentDescription="@string/logo"
-        android:scaleType="fitCenter"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_logo_light" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/nameSignIn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="30dp"
-        android:layout_marginTop="10dp"
-        android:text="@string/app_name_long"
-        android:textColor="@color/colorDefault"
-        android:textSize="24sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/logoSignIn" />
-
-    <LinearLayout
+        android:id="@+id/text_description"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="125dp"
-        android:gravity="center_horizontal"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toTopOf="@+id/privacyText"
-        app:layout_constraintTop_toBottomOf="@+id/nameSignIn">
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="40dp"
+        android:text="@string/login_description"
+        android:textColor="?attr/colorPrimary"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/text_header" />
 
-        <EditText
-            android:id="@+id/username"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="45dp"
-            android:layout_marginTop="25dp"
-            android:layout_marginEnd="45dp"
-            android:autofillHints="Enter your VTOP username"
-            android:background="@drawable/text_field_primary"
-            android:drawableStart="@drawable/ic_username"
-            android:drawablePadding="7dp"
-            android:drawableTint="@color/colorHint"
-            android:ems="10"
-            android:hint="@string/username"
-            android:inputType="textCapCharacters"
-            android:padding="10dp"
-            android:textColor="@color/colorText"
-            android:textColorHint="@color/colorHint" />
-
-        <EditText
-            android:id="@+id/password"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="45dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="45dp"
-            android:autofillHints="Enter your VTOP password"
-            android:background="@drawable/text_field_primary"
-            android:drawableStart="@drawable/ic_password"
-            android:drawablePadding="7dp"
-            android:drawableTint="@color/colorHint"
-            android:ems="10"
-            android:hint="@string/password"
-            android:inputType="textPassword"
-            android:padding="10dp"
-            android:textColor="@color/colorText"
-            android:textColorHint="@color/colorHint" />
-
-        <Button
-            android:id="@+id/signIn"
-            style="?android:attr/borderlessButtonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:background="@drawable/button_primary"
-            android:onClick="signIn"
-            android:paddingStart="50dp"
-            android:paddingTop="15dp"
-            android:paddingEnd="50dp"
-            android:paddingBottom="15dp"
-            android:text="@string/sign_in"
-            android:textAllCaps="true"
-            android:textColor="@color/colorDefault"
-            android:textSize="16sp" />
-    </LinearLayout>
-
-    <TextView
-        android:id="@+id/privacyText"
-        android:layout_width="wrap_content"
+    <EditText
+        android:id="@+id/username"
+        style="@style/Widget.VTOP.EditText"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="75dp"
+        android:layout_marginEnd="40dp"
+        android:autofillHints="Enter your VTOP username"
+        android:drawableStart="@drawable/ic_profile"
+        android:hint="@string/username"
+        android:inputType="textCapCharacters"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/text_description" />
+
+    <EditText
+        android:id="@+id/password"
+        style="@style/Widget.VTOP.EditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="40dp"
+        android:autofillHints="Enter your VTOP password"
+        android:drawableStart="@drawable/ic_password"
+        android:hint="@string/password"
+        android:inputType="textPassword"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/username" />
+
+    <Button
+        android:id="@+id/signIn"
+        style="@style/Widget.VTOP.Button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="40dp"
+        android:onClick="signIn"
+        android:text="@string/sign_in"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/password" />
+
+    <Button
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:onClick="openPrivacy"
+        android:padding="20dp"
         android:text="@string/privacy"
-        android:textColor="@color/colorBlue01"
+        android:textAllCaps="false"
+        android:textColor="?attr/colorPrimary"
+        android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>
