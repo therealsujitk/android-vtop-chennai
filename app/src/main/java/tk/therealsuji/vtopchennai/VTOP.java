@@ -997,10 +997,10 @@ public class VTOP {
             } else if (obj.equals("false")) {
                 new Thread(() -> {
                     myDatabase.execSQL("DROP TABLE IF EXISTS timetable_lab");
-                    myDatabase.execSQL("CREATE TABLE timetable_lab (id INTEGER PRIMARY KEY, start_time VARCHAR, end_time VARCHAR, sun VARCHAR, mon VARCHAR, tue VARCHAR, wed VARCHAR, thu VARCHAR, fri VARCHAR, sat VARCHAR)");
+                    myDatabase.execSQL("CREATE TABLE timetable_lab (id INTEGER PRIMARY KEY NOT NULL, start_time TEXT, end_time TEXT, sun TEXT, mon TEXT, tue TEXT, wed TEXT, thu TEXT, fri TEXT, sat TEXT)");
 
                     myDatabase.execSQL("DROP TABLE IF EXISTS timetable_theory");
-                    myDatabase.execSQL("CREATE TABLE timetable_theory (id INTEGER PRIMARY KEY, start_time VARCHAR, end_time VARCHAR, sun VARCHAR, mon VARCHAR, tue VARCHAR, wed VARCHAR, thu VARCHAR, fri VARCHAR, sat VARCHAR)");
+                    myDatabase.execSQL("CREATE TABLE timetable_theory (id INTEGER PRIMARY KEY NOT NULL, start_time TEXT, end_time TEXT, sun TEXT, mon TEXT, tue TEXT, wed TEXT, thu TEXT, fri TEXT, sat TEXT)");
 
                     sharedPreferences.edit().remove("credits").apply();
 
@@ -1027,10 +1027,10 @@ public class VTOP {
                         sharedPreferences.edit().putString("credits", credits).apply();
 
                         myDatabase.execSQL("DROP TABLE IF EXISTS timetable_lab");
-                        myDatabase.execSQL("CREATE TABLE timetable_lab (id INTEGER PRIMARY KEY, start_time VARCHAR, end_time VARCHAR, sun VARCHAR, mon VARCHAR, tue VARCHAR, wed VARCHAR, thu VARCHAR, fri VARCHAR, sat VARCHAR)");
+                        myDatabase.execSQL("CREATE TABLE timetable_lab (id INTEGER PRIMARY KEY NOT NULL, start_time TEXT, end_time TEXT, sun TEXT, mon TEXT, tue TEXT, wed TEXT, thu TEXT, fri TEXT, sat TEXT)");
 
                         myDatabase.execSQL("DROP TABLE IF EXISTS timetable_theory");
-                        myDatabase.execSQL("CREATE TABLE timetable_theory (id INTEGER PRIMARY KEY, start_time VARCHAR, end_time VARCHAR, sun VARCHAR, mon VARCHAR, tue VARCHAR, wed VARCHAR, thu VARCHAR, fri VARCHAR, sat VARCHAR)");
+                        myDatabase.execSQL("CREATE TABLE timetable_theory (id INTEGER PRIMARY KEY NOT NULL, start_time TEXT, end_time TEXT, sun TEXT, mon TEXT, tue TEXT, wed TEXT, thu TEXT, fri TEXT, sat TEXT)");
 
                         JSONObject lab = new JSONObject(myObj.getString("lab"));
                         JSONObject theory = new JSONObject(myObj.getString("theory"));
@@ -1298,7 +1298,7 @@ public class VTOP {
                 new Thread(() -> {
                     myDatabase.execSQL("DROP TABLE IF EXISTS faculty"); // Old data
                     myDatabase.execSQL("DROP TABLE IF EXISTS courses");
-                    myDatabase.execSQL("CREATE TABLE courses (id INTEGER PRIMARY KEY, course_code VARCHAR, course VARCHAR, course_type VARCHAR, slot , venue VARCHAR, faculty VARCHAR, school VARCHAR)");
+                    myDatabase.execSQL("CREATE TABLE courses (id INTEGER PRIMARY KEY NOT NULL, course_code TEXT, course TEXT, course_type TEXT, slot , venue TEXT, faculty TEXT, school TEXT)");
 
                     ((Activity) context).runOnUiThread(() -> {
                         updateProgress();
@@ -1315,7 +1315,7 @@ public class VTOP {
 
                         myDatabase.execSQL("DROP TABLE IF EXISTS faculty"); // Old data
                         myDatabase.execSQL("DROP TABLE IF EXISTS courses");
-                        myDatabase.execSQL("CREATE TABLE courses (id INTEGER PRIMARY KEY, course_code VARCHAR, course VARCHAR, course_type VARCHAR, slot , venue VARCHAR, faculty VARCHAR, school VARCHAR)");
+                        myDatabase.execSQL("CREATE TABLE courses (id INTEGER PRIMARY KEY NOT NULL, course_code TEXT, course TEXT, course_type TEXT, slot , venue TEXT, faculty TEXT, school TEXT)");
 
                         for (int i = 0; i < myObj.length(); ++i) {
                             JSONObject tempObj = new JSONObject(myObj.getString(Integer.toString(i)));
@@ -1425,7 +1425,7 @@ public class VTOP {
             } else if (obj.equals("false")) {
                 new Thread(() -> {
                     myDatabase.execSQL("DROP TABLE IF EXISTS proctor");
-                    myDatabase.execSQL("CREATE TABLE proctor (id INTEGER PRIMARY KEY, column1 VARCHAR, column2 VARCHAR)");
+                    myDatabase.execSQL("CREATE TABLE proctor (id INTEGER PRIMARY KEY NOT NULL, column1 TEXT, column2 TEXT)");
 
                     ((Activity) context).runOnUiThread(() -> {
                         updateProgress();
@@ -1438,7 +1438,7 @@ public class VTOP {
                         JSONObject myObj = new JSONObject(obj);
 
                         myDatabase.execSQL("DROP TABLE IF EXISTS proctor");
-                        myDatabase.execSQL("CREATE TABLE proctor (id INTEGER PRIMARY KEY, column1 VARCHAR, column2 VARCHAR)");
+                        myDatabase.execSQL("CREATE TABLE proctor (id INTEGER PRIMARY KEY NOT NULL, column1 TEXT, column2 TEXT)");
 
                         Iterator<?> keys = myObj.keys();
 
@@ -1563,10 +1563,10 @@ public class VTOP {
             } else if (obj.equals("false")) {
                 new Thread(() -> {
                     myDatabase.execSQL("DROP TABLE IF EXISTS dean");
-                    myDatabase.execSQL("CREATE TABLE dean (id INTEGER PRIMARY KEY, column1 VARCHAR, column2 VARCHAR)");
+                    myDatabase.execSQL("CREATE TABLE dean (id INTEGER PRIMARY KEY NOT NULL, column1 TEXT, column2 TEXT)");
 
                     myDatabase.execSQL("DROP TABLE IF EXISTS hod");
-                    myDatabase.execSQL("CREATE TABLE hod (id INTEGER PRIMARY KEY, column1 VARCHAR, column2 VARCHAR)");
+                    myDatabase.execSQL("CREATE TABLE hod (id INTEGER PRIMARY KEY NOT NULL, column1 TEXT, column2 TEXT)");
 
                     ((Activity) context).runOnUiThread(() -> {
                         updateProgress();
@@ -1581,12 +1581,10 @@ public class VTOP {
                         JSONArray hod = myObj.getJSONArray("hod");
 
                         myDatabase.execSQL("DROP TABLE IF EXISTS dean");
-                        myDatabase.execSQL("CREATE TABLE dean (id INTEGER PRIMARY KEY, column1 VARCHAR, column2 VARCHAR)");
+                        myDatabase.execSQL("CREATE TABLE dean (id INTEGER PRIMARY KEY NOT NULL, column1 TEXT, column2 TEXT)");
 
                         myDatabase.execSQL("DROP TABLE IF EXISTS hod");
-                        myDatabase.execSQL("CREATE TABLE hod (id INTEGER PRIMARY KEY, column1 VARCHAR, column2 VARCHAR)");
-
-                        Iterator<?> keys = dean.keys();
+                        myDatabase.execSQL("CREATE TABLE hod (id INTEGER PRIMARY KEY NOT NULL, column1 TEXT, column2 TEXT)");
 
                         for (int i = 0; i < dean.length(); ++i) {
                             String key = dean.getJSONObject(i).getString("key");
@@ -1709,7 +1707,7 @@ public class VTOP {
             } else if (obj.equals("false")) {
                 new Thread(() -> {
                     myDatabase.execSQL("DROP TABLE IF EXISTS attendance");
-                    myDatabase.execSQL("CREATE TABLE attendance (id INTEGER PRIMARY KEY, course VARCHAR, type VARCHAR, attended VARCHAR, total VARCHAR, percent VARCHAR)");
+                    myDatabase.execSQL("CREATE TABLE attendance (id INTEGER PRIMARY KEY NOT NULL, course TEXT, type TEXT, attended TEXT, total TEXT, percent TEXT)");
 
                     ((Activity) context).runOnUiThread(() -> {
                         updateProgress();
@@ -1724,7 +1722,7 @@ public class VTOP {
                         JSONObject myObj = new JSONObject(obj);
 
                         myDatabase.execSQL("DROP TABLE IF EXISTS attendance");
-                        myDatabase.execSQL("CREATE TABLE attendance (id INTEGER PRIMARY KEY, course VARCHAR, type VARCHAR, attended VARCHAR, total VARCHAR, percent VARCHAR)");
+                        myDatabase.execSQL("CREATE TABLE attendance (id INTEGER PRIMARY KEY NOT NULL, course TEXT, type TEXT, attended TEXT, total TEXT, percent TEXT)");
 
                         sharedPreferences.edit().remove("failedAttendance").apply();
 
@@ -1893,7 +1891,7 @@ public class VTOP {
             } else if (obj.equals("false")) {
                 new Thread(() -> {
                     myDatabase.execSQL("DROP TABLE IF EXISTS exams");
-                    myDatabase.execSQL("CREATE TABLE exams (id INTEGER PRIMARY KEY, exam VARCHAR, course VARCHAR, title VARCHAR, slot VARCHAR, date VARCHAR, reporting VARCHAR, start_time VARCHAR, end_time VARCHAR, venue VARCHAR, location VARCHAR, seat VARCHAR)");
+                    myDatabase.execSQL("CREATE TABLE exams (id INTEGER PRIMARY KEY NOT NULL, exam TEXT, course TEXT, title TEXT, slot TEXT, date TEXT, reporting TEXT, start_time TEXT, end_time TEXT, venue TEXT, location TEXT, seat TEXT)");
 
                     ((Activity) context).runOnUiThread(() -> {
                         updateProgress();
@@ -1909,7 +1907,7 @@ public class VTOP {
                         JSONObject myObj = new JSONObject(obj);
 
                         myDatabase.execSQL("DROP TABLE IF EXISTS exams");
-                        myDatabase.execSQL("CREATE TABLE exams (id INTEGER PRIMARY KEY, exam VARCHAR, course VARCHAR, title VARCHAR, slot VARCHAR, date VARCHAR, reporting VARCHAR, start_time VARCHAR, end_time VARCHAR, venue VARCHAR, location VARCHAR, seat VARCHAR)");
+                        myDatabase.execSQL("CREATE TABLE exams (id INTEGER PRIMARY KEY NOT NULL, exam TEXT, course TEXT, title TEXT, slot TEXT, date TEXT, reporting TEXT, start_time TEXT, end_time TEXT, venue TEXT, location TEXT, seat TEXT)");
 
                         SimpleDateFormat hour24 = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
                         SimpleDateFormat hour12 = new SimpleDateFormat("h:mm a", Locale.ENGLISH);
@@ -2115,7 +2113,7 @@ public class VTOP {
             } else if (obj.equals("false")) {
                 new Thread(() -> {
                     myDatabase.execSQL("DROP TABLE IF EXISTS marks");
-                    myDatabase.execSQL("CREATE TABLE marks (id INTEGER PRIMARY KEY, course VARCHAR, type VARCHAR, title VARCHAR, score VARCHAR, status VARCHAR, weightage VARCHAR, average VARCHAR, posted VARCHAR)");
+                    myDatabase.execSQL("CREATE TABLE marks (id INTEGER PRIMARY KEY NOT NULL, course TEXT, type TEXT, title TEXT, score TEXT, status TEXT, weightage TEXT, average TEXT, posted TEXT)");
 
                     ((Activity) context).runOnUiThread(() -> {
                         updateProgress();
@@ -2129,9 +2127,9 @@ public class VTOP {
                     try {
                         JSONObject myObj = new JSONObject(obj);
 
-                        myDatabase.execSQL("CREATE TABLE IF NOT EXISTS marks (id INTEGER PRIMARY KEY, course VARCHAR, type VARCHAR, title VARCHAR, score VARCHAR, status VARCHAR, weightage VARCHAR, average VARCHAR, posted VARCHAR)");
+                        myDatabase.execSQL("CREATE TABLE IF NOT EXISTS marks (id INTEGER PRIMARY KEY NOT NULL, course TEXT, type TEXT, title TEXT, score TEXT, status TEXT, weightage TEXT, average TEXT, posted TEXT)");
                         myDatabase.execSQL("DROP TABLE IF EXISTS marks_new");
-                        myDatabase.execSQL("CREATE TABLE marks_new (id INTEGER PRIMARY KEY, course VARCHAR, type VARCHAR, title VARCHAR, score VARCHAR, status VARCHAR, weightage VARCHAR, average VARCHAR, posted VARCHAR)");
+                        myDatabase.execSQL("CREATE TABLE marks_new (id INTEGER PRIMARY KEY NOT NULL, course TEXT, type TEXT, title TEXT, score TEXT, status TEXT, weightage TEXT, average TEXT, posted TEXT)");
 
                         for (int i = 0; i < myObj.length(); ++i) {
                             JSONObject tempObj = new JSONObject(myObj.getString(Integer.toString(i)));
@@ -2342,7 +2340,7 @@ public class VTOP {
                  */
                 new Thread(() -> {
                     myDatabase.execSQL("DROP TABLE IF EXISTS grades");
-                    myDatabase.execSQL("CREATE TABLE grades (id INTEGER PRIMARY KEY, course VARCHAR, type VARCHAR, grade_type VARCHAR, total VARCHAR, grade VARCHAR)");
+                    myDatabase.execSQL("CREATE TABLE grades (id INTEGER PRIMARY KEY NOT NULL, course TEXT, type TEXT, grade_type TEXT, total TEXT, grade TEXT)");
 
                     ((Activity) context).runOnUiThread(() -> {
                         updateProgress();
@@ -2360,7 +2358,7 @@ public class VTOP {
                 new Thread(() -> {
                     try {
                         myDatabase.execSQL("DROP TABLE IF EXISTS grades");
-                        myDatabase.execSQL("CREATE TABLE grades (id INTEGER PRIMARY KEY, course VARCHAR, type VARCHAR, grade_type VARCHAR, total VARCHAR, grade VARCHAR)");
+                        myDatabase.execSQL("CREATE TABLE grades (id INTEGER PRIMARY KEY NOT NULL, course TEXT, type TEXT, grade_type TEXT, total TEXT, grade TEXT)");
 
                         JSONObject myObj = new JSONObject(obj);
 
@@ -2563,7 +2561,7 @@ public class VTOP {
                         JSONObject myObj = new JSONObject(obj);
 
                         myDatabase.execSQL("DROP TABLE IF EXISTS grades_effective");
-                        myDatabase.execSQL("CREATE TABLE grades_effective (id INTEGER PRIMARY KEY, course VARCHAR, title VARCHAR, credits VARCHAR, grade VARCHAR)");
+                        myDatabase.execSQL("CREATE TABLE grades_effective (id INTEGER PRIMARY KEY NOT NULL, course TEXT, title TEXT, credits TEXT, grade TEXT)");
 
                         /*
                             Storing the effective grades
@@ -2580,7 +2578,7 @@ public class VTOP {
                         }
 
                         myDatabase.execSQL("DROP TABLE IF EXISTS grades_curriculum");
-                        myDatabase.execSQL("CREATE TABLE grades_curriculum (id INTEGER PRIMARY KEY, type VARCHAR, credits VARCHAR)");
+                        myDatabase.execSQL("CREATE TABLE grades_curriculum (id INTEGER PRIMARY KEY NOT NULL, type TEXT, credits TEXT)");
 
                         /*
                             Storing the curriculum details
@@ -2606,7 +2604,7 @@ public class VTOP {
                         }
 
                         myDatabase.execSQL("DROP TABLE IF EXISTS grades_basket");
-                        myDatabase.execSQL("CREATE TABLE grades_basket (id INTEGER PRIMARY KEY, title VARCHAR, credits VARCHAR)");
+                        myDatabase.execSQL("CREATE TABLE grades_basket (id INTEGER PRIMARY KEY NOT NULL, title TEXT, credits TEXT)");
 
                         /*
                             Storing the basket grades
@@ -2621,7 +2619,7 @@ public class VTOP {
                         }
 
                         myDatabase.execSQL("DROP TABLE IF EXISTS grades_summary");
-                        myDatabase.execSQL("CREATE TABLE grades_summary (id INTEGER PRIMARY KEY, column1 VARCHAR, column2 VARCHAR)");
+                        myDatabase.execSQL("CREATE TABLE grades_summary (id INTEGER PRIMARY KEY NOT NULL, column1 TEXT, column2 TEXT)");
 
                         /*
                             Storing the summary
@@ -2720,7 +2718,7 @@ public class VTOP {
                  */
                 new Thread(() -> {
                     myDatabase.execSQL("DROP TABLE IF EXISTS messages");
-                    myDatabase.execSQL("CREATE TABLE messages (id INTEGER PRIMARY KEY, course VARCHAR, type VARCHAR, message VARCHAR)");
+                    myDatabase.execSQL("CREATE TABLE messages (id INTEGER PRIMARY KEY NOT NULL, course TEXT, type TEXT, message TEXT)");
 
                     ((Activity) context).runOnUiThread(() -> {
                         updateProgress();
@@ -2735,9 +2733,9 @@ public class VTOP {
                  */
                 new Thread(() -> {
                     try {
-                        myDatabase.execSQL("CREATE TABLE IF NOT EXISTS messages (id INTEGER PRIMARY KEY, course VARCHAR, type VARCHAR, message VARCHAR)");
+                        myDatabase.execSQL("CREATE TABLE IF NOT EXISTS messages (id INTEGER PRIMARY KEY NOT NULL, course TEXT, type TEXT, message TEXT)");
                         myDatabase.execSQL("DROP TABLE IF EXISTS messages_new");
-                        myDatabase.execSQL("CREATE TABLE messages_new (id INTEGER PRIMARY KEY, course VARCHAR, type VARCHAR, message VARCHAR)");
+                        myDatabase.execSQL("CREATE TABLE messages_new (id INTEGER PRIMARY KEY NOT NULL, course TEXT, type TEXT, message TEXT)");
 
                         JSONObject myObj = new JSONObject(obj);
 
@@ -2826,7 +2824,7 @@ public class VTOP {
                  */
                 new Thread(() -> {
                     myDatabase.execSQL("DROP TABLE IF EXISTS proctor_messages");
-                    myDatabase.execSQL("CREATE TABLE proctor_messages (id INTEGER PRIMARY KEY, time VARCHAR, message VARCHAR)");
+                    myDatabase.execSQL("CREATE TABLE proctor_messages (id INTEGER PRIMARY KEY NOT NULL, time TEXT, message TEXT)");
 
                     ((Activity) context).runOnUiThread(() -> {
                         updateProgress();
@@ -2842,7 +2840,7 @@ public class VTOP {
                 new Thread(() -> {
                     try {
                         myDatabase.execSQL("DROP TABLE IF EXISTS proctor_messages");
-                        myDatabase.execSQL("CREATE TABLE proctor_messages (id INTEGER PRIMARY KEY, time VARCHAR, message VARCHAR)");
+                        myDatabase.execSQL("CREATE TABLE proctor_messages (id INTEGER PRIMARY KEY NOT NULL, time TEXT, message TEXT)");
 
                         myDatabase.execSQL("INSERT INTO proctor_messages (time, message) VALUES('null', 'null')"); //To be changed with the actual announcements
 
@@ -2942,7 +2940,7 @@ public class VTOP {
                  */
                 new Thread(() -> {
                     myDatabase.execSQL("DROP TABLE IF EXISTS spotlight");
-                    myDatabase.execSQL("CREATE TABLE spotlight (id INTEGER PRIMARY KEY, category VARCHAR, announcement VARCHAR, link VARCHAR)");
+                    myDatabase.execSQL("CREATE TABLE spotlight (id INTEGER PRIMARY KEY NOT NULL, category TEXT, announcement TEXT, link TEXT)");
 
                     ((Activity) context).runOnUiThread(() -> {
                         updateProgress();
@@ -2959,9 +2957,9 @@ public class VTOP {
                     try {
                         JSONObject myObj = new JSONObject(obj);
 
-                        myDatabase.execSQL("CREATE TABLE IF NOT EXISTS spotlight (id INTEGER PRIMARY KEY, category VARCHAR, announcement VARCHAR, link VARCHAR)");
+                        myDatabase.execSQL("CREATE TABLE IF NOT EXISTS spotlight (id INTEGER PRIMARY KEY NOT NULL, category TEXT, announcement TEXT, link TEXT)");
                         myDatabase.execSQL("DROP TABLE IF EXISTS spotlight_new");
-                        myDatabase.execSQL("CREATE TABLE spotlight_new (id INTEGER PRIMARY KEY, category VARCHAR, announcement VARCHAR, link VARCHAR)");
+                        myDatabase.execSQL("CREATE TABLE spotlight_new (id INTEGER PRIMARY KEY NOT NULL, category TEXT, announcement TEXT, link TEXT)");
 
                         Iterator<?> keys = myObj.keys();
 
@@ -3139,7 +3137,7 @@ public class VTOP {
                         JSONObject myObj = new JSONObject(obj);
 
                         myDatabase.execSQL("DROP TABLE IF EXISTS receipts");
-                        myDatabase.execSQL("CREATE TABLE receipts (id INTEGER PRIMARY KEY, receipt VARCHAR, date VARCHAR, amount VARCHAR)");
+                        myDatabase.execSQL("CREATE TABLE receipts (id INTEGER PRIMARY KEY NOT NULL, receipt TEXT, date TEXT, amount TEXT)");
 
                         int i;
                         for (i = 0; i < myObj.length(); ++i) {
