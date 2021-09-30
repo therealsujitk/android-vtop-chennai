@@ -47,6 +47,7 @@ import android.widget.Toast;
 import androidx.security.crypto.EncryptedSharedPreferences;
 import androidx.security.crypto.MasterKey;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
@@ -1495,76 +1496,67 @@ public class VTOP {
                 "    success: function(response) {" +
                 "        var doc = new DOMParser().parseFromString(response, 'text/html');" +
                 "        obj = {};" +
-                "        if(!doc.getElementsByTagName('table')[0]) {" +
+                "        var tables = doc.getElementsByTagName('table');" +
+                "        if (tables.length == 0) {" +
                 "            obj = false;" +
                 "            return;" +
                 "        }" +
-                "        var tables = doc.getElementsByTagName('table');" +
-                "        var first = 'dean';" +
-                "        if(doc.getElementsByTagName('h3')[0].innerText.toLowerCase() != 'dean') {" +
-                "            first = 'hod';" +
-                "        }" +
-                "        var dean = {}, hod = {};" +
-                "        var cells = tables[0].getElementsByTagName('td');" +
-                "        for(var i = 0; i < cells.length; ++i) {" +
-                "            if(first == 'dean') {" +
-                "                if(cells[i].innerHTML.includes('img')) {" +
+                "        var headers = doc.getElementsByTagName('h3');" +
+                "        var dean = [], hod = [];" +
+                "        for (var i = 0; i < tables.length; ++i) {" +
+                "            var cells = tables[i].getElementsByTagName('td');" +
+                "            var isDean = headers[i].innerText.toLowerCase().includes('dean');" +
+                "            var count = 0;" +
+                "            for (var j = 0; j < cells.length; ++j) {" +
+                "                if (cells[j].innerHTML.includes('img')) {" +
                 "                    continue;" +
                 "                }" +
-                "                var key = cells[i].innerText.trim();" +
-                "                var value = cells[++i].innerText.trim();" +
-                "                var prefix = i;" +
-                "                if (i < 10) {" +
-                "                    prefix = '0' + i;" +
-                "                }" +
-                "                dean[prefix + key] = value;" +
+                "                var key = cells[j].innerText.trim();" +
+                "                var value = cells[++j].innerText.trim();" +
+                "                var column = {" +
+                "                    key: key," +
+                "                    value: value" +
+                "                };" +
+                "                if (isDean) {" +
+                "                    dean.push(column);" +
                 "                } else {" +
-                "                    if(cells[i].innerHTML.includes('img')) {" +
-                "                    continue;" +
+                "                    hod.push(column);" +
                 "                }" +
-                "                var key = cells[i].innerText.trim();" +
-                "                var value = cells[++i].innerText.trim();" +
-                "                var prefix = i;" +
-                "                if (i < 10) {" +
-                "                    prefix = '0' + i;" +
-                "                }" +
-                "                hod[prefix + key] = value;" +
                 "            }" +
                 "        }" +
-                "        var cells = tables[1].getElementsByTagName('td');" +   //Possible error: If only one table is present
-                "        for(var i = 0; i < cells.length; ++i) {" +
-                "            if(first == 'dean') {" +
-                "                if(cells[i].innerHTML.includes('img')) {" +
-                "                    continue;" +
-                "                }" +
-                "                var key = cells[i].innerText.trim();" +
-                "                var value = cells[++i].innerText.trim();" +
-                "                var prefix = i;" +
-                "                if (i < 10) {" +
-                "                    prefix = '0' + i;" +
-                "                }" +
-                "                hod[prefix + key] = value;" +
-                "            } else {" +
-                "                if(cells[i].innerHTML.includes('img')) {" +
-                "                    continue;" +
-                "            }" +
-                "            var key = cells[i].innerText.trim();" +
-                "            var value = cells[++i].innerText.trim();" +
-                "            var prefix = i;" +
-                "            if (i < 10) {" +
-                "                prefix = '0' + i;" +
-                "            }" +
-                "            dean[prefix + key] = value;" +
-                "        }" +
-                "    }" +
-                "    obj['dean'] = dean;" +
-                "    obj['hod'] = hod;" +
-                "}" +
+                "        obj = {" +
+                "            dean: dean," +
+                "            hod: hod" +
+                "        };" +
+                "   }" +
                 "});" +
                 "return obj;" +
                 "})();", obj -> {
             /*
-                obj is in the form of a JSON string like {"dean": {"00Faculty Name": "Jack Ryan", "01Email ID": "jack@cia.gov.us",...}, "hod: {"00Faculty Name": "Jimmy Fallon", "01Email ID": "jimmy@tonight.us",...}"}
+             * Example of response object
+             *
+             * {
+             *     "dean": [
+             *         {
+             *             "key": "Name of Faculty",
+             *             "value": "John Doe"
+             *         },
+             *         {
+             *             "key": "Designation",
+             *             "value": "Associate Professor"
+             *         }
+             *     ],
+             *     "hod": [
+             *         {
+             *             "key": "Name of Faculty",
+             *             "value": "John Doe"
+             *         },
+             *         {
+             *             "key": "Designation",
+             *             "value": "Associate Professor"
+             *         }
+             *     ],
+             * }
              */
             if (obj.equals("null")) {
                 error(703);
@@ -1585,8 +1577,8 @@ public class VTOP {
                 new Thread(() -> {
                     try {
                         JSONObject myObj = new JSONObject(obj);
-                        JSONObject dean = new JSONObject(myObj.getString("dean"));
-                        JSONObject hod = new JSONObject(myObj.getString("hod"));
+                        JSONArray dean = myObj.getJSONArray("dean");
+                        JSONArray hod = myObj.getJSONArray("hod");
 
                         myDatabase.execSQL("DROP TABLE IF EXISTS dean");
                         myDatabase.execSQL("CREATE TABLE dean (id INTEGER PRIMARY KEY, column1 VARCHAR, column2 VARCHAR)");
@@ -1596,22 +1588,16 @@ public class VTOP {
 
                         Iterator<?> keys = dean.keys();
 
-                        while (keys.hasNext()) {
-                            String key = (String) keys.next();
-                            String value = dean.getString(key);
-
-                            key = key.substring(2);
+                        for (int i = 0; i < dean.length(); ++i) {
+                            String key = dean.getJSONObject(i).getString("key");
+                            String value = dean.getJSONObject(i).getString("value");
 
                             myDatabase.execSQL("INSERT INTO dean (column1, column2) VALUES('" + key + "', '" + value + "')");
                         }
 
-                        keys = hod.keys();
-
-                        while (keys.hasNext()) {
-                            String key = (String) keys.next();
-                            String value = hod.getString(key);
-
-                            key = key.substring(2);
+                        for (int i = 0; i < hod.length(); ++i) {
+                            String key = hod.getJSONObject(i).getString("key");
+                            String value = hod.getJSONObject(i).getString("value");
 
                             myDatabase.execSQL("INSERT INTO hod (column1, column2) VALUES('" + key + "', '" + value + "')");
                         }
