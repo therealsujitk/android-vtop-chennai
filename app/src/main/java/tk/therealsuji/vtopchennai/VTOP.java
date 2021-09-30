@@ -1007,7 +1007,7 @@ public class VTOP {
                     AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
                     Intent notificationIntent = new Intent(context, NotificationReceiver.class);
                     for (int j = 0; j < sharedPreferences.getInt("alarmCount", 0); ++j) {
-                        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, 0);
+                        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, j, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
                         alarmManager.cancel(pendingIntent);
                     }
 
@@ -1136,11 +1136,11 @@ public class VTOP {
 
                                     assert date != null;
                                     c.setTime(date);
-                                    PendingIntent pendingIntent = PendingIntent.getBroadcast(context, alarmCount++, notificationIntent, 0);
+                                    PendingIntent pendingIntent = PendingIntent.getBroadcast(context, alarmCount++, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
                                     alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
 
                                     c.add(Calendar.MINUTE, -30);
-                                    pendingIntent = PendingIntent.getBroadcast(context, alarmCount++, notificationIntent, 0);
+                                    pendingIntent = PendingIntent.getBroadcast(context, alarmCount++, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
                                     alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
                                 }
 
@@ -1177,11 +1177,11 @@ public class VTOP {
 
                                     assert date != null;
                                     c.setTime(date);
-                                    PendingIntent pendingIntent = PendingIntent.getBroadcast(context, alarmCount++, notificationIntent, 0);
+                                    PendingIntent pendingIntent = PendingIntent.getBroadcast(context, alarmCount++, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
                                     alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
 
                                     c.add(Calendar.MINUTE, -30);
-                                    pendingIntent = PendingIntent.getBroadcast(context, alarmCount++, notificationIntent, 0);
+                                    pendingIntent = PendingIntent.getBroadcast(context, alarmCount++, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
                                     alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
                                 }
                             }
@@ -1191,7 +1191,7 @@ public class VTOP {
                         }
 
                         for (int i = alarmCount; i < sharedPreferences.getInt("alarmCount", 0); ++i) {
-                            PendingIntent pendingIntent = PendingIntent.getBroadcast(context, i, notificationIntent, 0);
+                            PendingIntent pendingIntent = PendingIntent.getBroadcast(context, i, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
                             alarmManager.cancel(pendingIntent);
                         }
 
