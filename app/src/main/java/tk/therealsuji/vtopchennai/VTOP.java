@@ -661,7 +661,7 @@ public class VTOP {
                         downloadDialog.dismiss();
 
                         if (!value.equals("Your Account is Locked")) {
-                            sharedPreferences.edit().putString("isLoggedIn", "false").apply();
+                            sharedPreferences.edit().putBoolean("isSignedIn", false).apply();
 
                             if (!((Activity) context).getLocalClassName().equals("LoginActivity")) {
                                 context.startActivity(new Intent(context, LoginActivity.class));
