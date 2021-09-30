@@ -2178,9 +2178,16 @@ public class VTOP {
 
                         while (keys.hasNext()) {
                             String oldID = (String) keys.next();
+
                             Cursor update = myDatabase.rawQuery("SELECT id FROM marks_new WHERE course || title || type = (SELECT course || title || type FROM marks WHERE id = " + oldID + ")", null);
                             update.moveToFirst();
-                            String newID = update.getString(update.getColumnIndex("id"));
+
+                            int idIndex = update.getColumnIndex("id");
+                            if (idIndex < 0) {
+                                continue;
+                            }
+
+                            String newID = update.getString(idIndex);
 
                             if (!oldID.equals(newID)) {
                                 newMarks.remove(oldID);
@@ -3001,9 +3008,16 @@ public class VTOP {
 
                         while (keys.hasNext()) {
                             String oldID = (String) keys.next();
+
                             Cursor update = myDatabase.rawQuery("SELECT id FROM spotlight_new WHERE announcement IN (SELECT announcement FROM spotlight WHERE id = " + oldID + ")", null);
                             update.moveToFirst();
-                            String newID = update.getString(update.getColumnIndex("id"));
+
+                            int idIndex = update.getColumnIndex("id");
+                            if (idIndex < 0) {
+                                continue;
+                            }
+
+                            String newID = update.getString(idIndex);
 
                             if (!oldID.equals(newID)) {
                                 newSpotlight.remove(oldID);
