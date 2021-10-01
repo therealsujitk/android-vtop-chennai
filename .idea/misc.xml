@@ -56,6 +56,7 @@
         <entry key="app/src/main/res/layout/activity_home.xml" value="0.19025641025641027" />
         <entry key="app/src/main/res/layout/activity_login.xml" value="0.33" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/activity_web_view.xml" value="0.19322916666666667" />
         <entry key="app/src/main/res/layout/dialog_appearance.xml" value="0.3924050632911392" />
         <entry key="app/src/main/res/layout/dialog_clear_logs.xml" value="0.19322916666666667" />
         <entry key="app/src/main/res/layout/dialog_download.xml" value="0.19322916666666667" />
