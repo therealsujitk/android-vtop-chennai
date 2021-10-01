@@ -177,7 +177,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        SharedPreferences sharedPreferences = this.getSharedPreferences("tk.therealsuji.vtopchennai", Context.MODE_PRIVATE);
+        sharedPreferences = this.getSharedPreferences("tk.therealsuji.vtopchennai", Context.MODE_PRIVATE);
         String appearance = sharedPreferences.getString("appearance", "system");
         int visibility = getWindow().getDecorView().getSystemUiVisibility();
 
@@ -210,8 +210,6 @@ public class LoginActivity extends AppCompatActivity {
                 getString(R.string.privacy),
                 SettingsRepository.APP_PRIVACY_URL
         ));
-
-        sharedPreferences = this.getSharedPreferences("tk.therealsuji.vtopchennai", Context.MODE_PRIVATE);
 
         try {
             MasterKey masterKey = new MasterKey.Builder(this, MasterKey.DEFAULT_MASTER_KEY_ALIAS)
