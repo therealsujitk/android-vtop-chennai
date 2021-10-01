@@ -29,7 +29,7 @@ public class ProfileItemAdapter extends RecyclerView.Adapter<ProfileItemAdapter.
 
     @Override
     public int getItemCount() {
-        return ProfileItem.PROFILE_ITEM_TITLES[profileGroupIndex].length;
+        return ProfileItem.PROFILE_ITEMS[profileGroupIndex].length;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

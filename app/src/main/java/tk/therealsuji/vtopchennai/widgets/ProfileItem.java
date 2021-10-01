@@ -13,41 +13,27 @@ import androidx.appcompat.widget.AppCompatTextView;
 import androidx.core.content.ContextCompat;
 
 import tk.therealsuji.vtopchennai.R;
+import tk.therealsuji.vtopchennai.models.ProfileItemData;
 
 public class ProfileItem extends LinearLayout {
-    private static final int[] PERSONAL_PROFILE_ITEM_TITLES = {
-            R.string.messages,
-            R.string.receipts,
-            R.string.switch_semester
+    private static final ProfileItemData[] PERSONAL_PROFILE_ITEMS = {
+            new ProfileItemData(R.string.messages, R.drawable.ic_messages),
+            new ProfileItemData(R.string.receipts, R.drawable.ic_receipts),
+            new ProfileItemData(R.string.switch_semester, R.drawable.ic_semester)
     };
-    private static final int[] APPLICATION_PROFILE_ITEM_TITLES = {
-            R.string.appearance,
-            R.string.faq,
-            R.string.notifications,
-            R.string.privacy,
-            R.string.send_feedback,
-            R.string.sign_out
+
+    private static final ProfileItemData[] APPLICATION_PROFILE_ITEMS = {
+            new ProfileItemData(R.string.appearance, R.drawable.ic_appearance),
+            new ProfileItemData(R.string.faq, R.drawable.ic_faq),
+            new ProfileItemData(R.string.notifications, R.drawable.ic_notifications),
+            new ProfileItemData(R.string.privacy, R.drawable.ic_privacy),
+            new ProfileItemData(R.string.send_feedback, R.drawable.ic_feedback),
+            new ProfileItemData(R.string.sign_out, R.drawable.ic_sign_out)
     };
-    public static final int[][] PROFILE_ITEM_TITLES = {
-            PERSONAL_PROFILE_ITEM_TITLES,
-            APPLICATION_PROFILE_ITEM_TITLES
-    };
-    private static final int[] PERSONAL_PROFILE_ITEM_ICONS = {
-            R.drawable.ic_messages,
-            R.drawable.ic_receipts,
-            R.drawable.ic_semester
-    };
-    private static final int[] APPLICATION_PROFILE_ITEM_ICONS = {
-            R.drawable.ic_appearance,
-            R.drawable.ic_faq,
-            R.drawable.ic_notifications,
-            R.drawable.ic_privacy,
-            R.drawable.ic_feedback,
-            R.drawable.ic_sign_out
-    };
-    public static final int[][] PROFILE_ITEM_ICONS = {
-            PERSONAL_PROFILE_ITEM_ICONS,
-            APPLICATION_PROFILE_ITEM_ICONS
+
+    public static final ProfileItemData[][] PROFILE_ITEMS = {
+            PERSONAL_PROFILE_ITEMS,
+            APPLICATION_PROFILE_ITEMS
     };
 
     AppCompatTextView title;
@@ -120,8 +106,10 @@ public class ProfileItem extends LinearLayout {
     }
 
     public void initializeProfileItem(int profileGroupIndex, int profileItemIndex) {
-        String title = this.getContext().getString(PROFILE_ITEM_TITLES[profileGroupIndex][profileItemIndex]);
-        this.title.setText(title);
-        this.icon.setImageDrawable(ContextCompat.getDrawable(this.getContext(), PROFILE_ITEM_ICONS[profileGroupIndex][profileItemIndex]));
+        ProfileItemData profileItemData = PROFILE_ITEMS[profileGroupIndex][profileItemIndex];
+
+        this.title.setText(this.getContext().getString(profileItemData.titleId));
+        this.icon.setImageDrawable(ContextCompat.getDrawable(this.getContext(), profileItemData.iconId));
+        this.setOnClickListener(view -> profileItemData.onClick(this.getContext()));
     }
 }

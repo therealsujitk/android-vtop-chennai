@@ -84,10 +84,10 @@
         app:layout_constraintTop_toBottomOf="@+id/password" />
 
     <Button
+        android:id="@+id/button_privacy"
         style="@style/Widget.AppCompat.Button.Borderless"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:onClick="openPrivacy"
         android:padding="20dp"
         android:text="@string/privacy"
         android:textAllCaps="false"

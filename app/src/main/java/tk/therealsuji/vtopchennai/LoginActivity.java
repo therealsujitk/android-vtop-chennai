@@ -23,6 +23,8 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.security.crypto.EncryptedSharedPreferences;
 import androidx.security.crypto.MasterKey;
 
+import tk.therealsuji.vtopchennai.helpers.SettingsRepository;
+
 public class LoginActivity extends AppCompatActivity {
     SharedPreferences sharedPreferences, encryptedSharedPreferences;
     Dialog download;
@@ -164,10 +166,6 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    public void openPrivacy(View view) {
-        startActivity(new Intent(LoginActivity.this, PrivacyActivity.class));
-    }
-
     public void openUpdate(View view) {
         String link = "http://vtopchennai.therealsuji.tk";
         Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(link));
@@ -206,6 +204,12 @@ public class LoginActivity extends AppCompatActivity {
 
             return windowInsets.consumeSystemWindowInsets();
         });
+
+        findViewById(R.id.button_privacy).setOnClickListener(view -> SettingsRepository.openWebViewActivity(
+                this,
+                getString(R.string.privacy),
+                SettingsRepository.APP_PRIVACY_URL
+        ));
 
         sharedPreferences = this.getSharedPreferences("tk.therealsuji.vtopchennai", Context.MODE_PRIVATE);
 
