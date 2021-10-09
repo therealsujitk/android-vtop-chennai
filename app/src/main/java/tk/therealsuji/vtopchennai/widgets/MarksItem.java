@@ -14,7 +14,7 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import tk.therealsuji.vtopchennai.R;
-import tk.therealsuji.vtopchennai.models.Marks;
+import tk.therealsuji.vtopchennai.models.Mark;
 
 public class MarksItem extends LinearLayout {
     private AppCompatTextView title;
@@ -135,26 +135,28 @@ public class MarksItem extends LinearLayout {
         return appCompatTextView;
     }
 
-    public void initializeMarksItem(@NonNull Marks marksItem) {
-        this.title.setText(marksItem.title);
+    public void initializeMarksItem(@NonNull Mark.AllData markItem) {
+        this.title.setText(markItem.title);
 
-        if (!marksItem.score.equals("")) {
-            ((AppCompatTextView) this.score.getChildAt(1)).setText(marksItem.score);
+        if (markItem.score != null && markItem.maxScore != null) {
+            String score = markItem.score + " / " + markItem.maxScore;
+            ((AppCompatTextView) this.score.getChildAt(1)).setText(score);
             this.score.setVisibility(VISIBLE);
         }
 
-        if (!marksItem.weightage.equals("")) {
-            ((AppCompatTextView) this.weightage.getChildAt(1)).setText(marksItem.weightage);
+        if (markItem.weightage != null && markItem.maxWeightage != null) {
+            String weightage = markItem.weightage + " / " + markItem.maxWeightage;
+            ((AppCompatTextView) this.weightage.getChildAt(1)).setText(weightage);
             this.weightage.setVisibility(VISIBLE);
         }
 
-        if (!marksItem.average.equals("")) {
-            ((AppCompatTextView) this.average.getChildAt(1)).setText(marksItem.average);
+        if (markItem.average != null) {
+            ((AppCompatTextView) this.average.getChildAt(1)).setText(String.valueOf(markItem.average));
             this.average.setVisibility(VISIBLE);
         }
 
-        if (!marksItem.status.equals("")) {
-            ((AppCompatTextView) this.status.getChildAt(1)).setText(marksItem.status);
+        if (markItem.status != null && !markItem.status.equals("")) {
+            ((AppCompatTextView) this.status.getChildAt(1)).setText(markItem.status);
             this.status.setVisibility(VISIBLE);
         }
     }

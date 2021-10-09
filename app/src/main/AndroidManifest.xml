@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="tk.therealsuji.vtopchennai">
 
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission
@@ -208,6 +209,12 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+
+        <service
+            android:name=".services.VTOP"
+            android:description="@string/vtop_service_description"
+            android:foregroundServiceType="dataSync"
+            android:label="VTOP" />
 
         <meta-data
             android:name="preloaded_fonts"

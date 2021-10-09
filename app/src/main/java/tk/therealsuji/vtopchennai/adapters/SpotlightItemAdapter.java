@@ -12,11 +12,11 @@ import java.util.List;
 import tk.therealsuji.vtopchennai.models.Spotlight;
 import tk.therealsuji.vtopchennai.widgets.Announcement;
 
-public class AnnouncementAdapter extends RecyclerView.Adapter<AnnouncementAdapter.ViewHolder> {
+public class SpotlightItemAdapter extends RecyclerView.Adapter<SpotlightItemAdapter.ViewHolder> {
     private final float pixelDensity;
     private List<Spotlight> announcements;
 
-    public AnnouncementAdapter(Context context) {
+    public SpotlightItemAdapter(Context context) {
         this.pixelDensity = context.getResources().getDisplayMetrics().density;
     }
 

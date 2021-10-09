@@ -29,14 +29,13 @@ import java.util.Locale;
 import tk.therealsuji.vtopchennai.R;
 
 public class TimetableItem extends RelativeLayout {
-    public static final int CLASS_THEORY = 0;
-    public static final int CLASS_LAB = 1;
+    public static final int CLASS_LAB = 0;
+    public static final int CLASS_THEORY = 1;
 
     public static final int STATUS_PAST = 0;
     public static final int STATUS_PRESENT = 1;
     public static final int STATUS_FUTURE = 2;
 
-    Context context;
     private ProgressBar classProgress;
     private ImageView courseType;
     private AppCompatTextView courseCode, timings;
@@ -45,15 +44,13 @@ public class TimetableItem extends RelativeLayout {
     public TimetableItem(Context context) {
         super(context);
 
-        this.context = context;
-        this.initialize(context);
+        this.initialize();
     }
 
     public TimetableItem(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
 
-        this.context = context;
-        this.initialize(context);
+        this.initialize();
 
         TypedArray a = context.getTheme().obtainStyledAttributes(attrs, R.styleable.TimetableItem, 0, 0);
 
@@ -66,12 +63,12 @@ public class TimetableItem extends RelativeLayout {
         }
     }
 
-    private void initialize(Context context) {
-        float pixelDensity = context.getResources().getDisplayMetrics().density;
+    private void initialize() {
+        float pixelDensity = this.getContext().getResources().getDisplayMetrics().density;
 
         int containerId = View.generateViewId();
 
-        LinearLayout container = new LinearLayout(context);
+        LinearLayout container = new LinearLayout(this.getContext());
         RelativeLayout.LayoutParams containerParams = new RelativeLayout.LayoutParams(
                 LayoutParams.MATCH_PARENT,
                 LayoutParams.WRAP_CONTENT
@@ -87,7 +84,7 @@ public class TimetableItem extends RelativeLayout {
         );
         container.setOrientation(LinearLayout.HORIZONTAL);
 
-        this.classProgress = new ProgressBar(context, null, android.R.attr.progressBarStyleHorizontal);
+        this.classProgress = new ProgressBar(this.getContext(), null, android.R.attr.progressBarStyleHorizontal);
         RelativeLayout.LayoutParams classProgressParams = new RelativeLayout.LayoutParams(
                 LayoutParams.MATCH_PARENT,
                 LayoutParams.WRAP_CONTENT
@@ -98,18 +95,18 @@ public class TimetableItem extends RelativeLayout {
         this.classProgress.setClickable(true);
         this.classProgress.setFocusable(true);
         this.classProgress.setOnClickListener(view -> this.onClick());
-        this.classProgress.setProgressDrawable(ContextCompat.getDrawable(context, R.drawable.background_class_item));
+        this.classProgress.setProgressDrawable(ContextCompat.getDrawable(this.getContext(), R.drawable.background_class_item));
 
-        this.courseType = new ImageView(context);
+        this.courseType = new ImageView(this.getContext());
         this.courseType.setPadding(
                 (int) (10 * pixelDensity),
                 (int) (10 * pixelDensity),
                 (int) (10 * pixelDensity),
                 (int) (10 * pixelDensity)
         );
-        this.courseType.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_lab));
+        this.courseType.setImageDrawable(ContextCompat.getDrawable(this.getContext(), R.drawable.ic_lab));
 
-        LinearLayout classInfo = new LinearLayout(context);
+        LinearLayout classInfo = new LinearLayout(this.getContext());
         LinearLayout.LayoutParams classInfoParams = new LinearLayout.LayoutParams(
                 LayoutParams.WRAP_CONTENT,
                 LayoutParams.WRAP_CONTENT,
@@ -124,17 +121,17 @@ public class TimetableItem extends RelativeLayout {
                 0
         );
 
-        this.courseCode = new AppCompatTextView(context);
+        this.courseCode = new AppCompatTextView(this.getContext());
         this.courseCode.setTextSize(20);
 
-        this.timings = new AppCompatTextView(context);
+        this.timings = new AppCompatTextView(this.getContext());
         this.timings.setTextSize(16);
 
         classInfo.addView(this.courseCode);
         classInfo.addView(this.timings);
 
-        ImageView moreInfo = new ImageView(context);
-        moreInfo.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_chevron_right));
+        ImageView moreInfo = new ImageView(this.getContext());
+        moreInfo.setImageDrawable(ContextCompat.getDrawable(this.getContext(), R.drawable.ic_chevron_right));
         moreInfo.setPadding(
                 (int) (10 * pixelDensity),
                 0,
@@ -164,7 +161,12 @@ public class TimetableItem extends RelativeLayout {
     }
 
     private void setClassProgressDuration(long duration) {
-        ObjectAnimator objectAnimator = ObjectAnimator.ofInt(this.classProgress, "progress", this.classProgress.getProgress(), this.classProgress.getMax());
+        ObjectAnimator objectAnimator = ObjectAnimator.ofInt(
+                this.classProgress,
+                "progress",
+                this.classProgress.getProgress(),
+                this.classProgress.getMax()
+        );
         objectAnimator.setDuration(duration);
         objectAnimator.setInterpolator(new LinearInterpolator());
         objectAnimator.start();
@@ -187,11 +189,13 @@ public class TimetableItem extends RelativeLayout {
     }
 
     public void setCourseType(int courseType) {
+        int drawableId = R.drawable.ic_theory;
+
         if (courseType == CLASS_LAB) {
-            this.courseType.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_lab));
-        } else {
-            this.courseType.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_theory));
+            drawableId = R.drawable.ic_lab;
         }
+
+        this.courseType.setImageDrawable(ContextCompat.getDrawable(this.getContext(), drawableId));
     }
 
     public void setCourseCode(String courseCode) {
@@ -201,7 +205,7 @@ public class TimetableItem extends RelativeLayout {
     public void setTimings(String startTime, String endTime) {
         String timings = startTime + " - " + endTime;
 
-        if (!DateFormat.is24HourFormat(this.context)) {
+        if (!DateFormat.is24HourFormat(this.getContext())) {
             SimpleDateFormat hour24 = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
             SimpleDateFormat hour12 = new SimpleDateFormat("h:mm a", Locale.ENGLISH);
 
@@ -247,9 +251,5 @@ public class TimetableItem extends RelativeLayout {
 
     public void setStatus(int status) {
         this.status = status;
-    }
-
-    public void setPadding(int padding) {
-        this.setPadding(padding, padding, padding, padding);
     }
 }

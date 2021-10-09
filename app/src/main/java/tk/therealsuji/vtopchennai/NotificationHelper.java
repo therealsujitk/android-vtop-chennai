@@ -12,6 +12,9 @@ import android.os.Build;
 import androidx.core.app.NotificationCompat;
 
 public class NotificationHelper extends ContextWrapper {
+    public static final String CHANNEL_ID_APPLICATION = "application";
+    public static final String CHANNEL_NAME_APPLICATION = "Application";
+
     public static final String CHANNEL_ID_UPCOMING = "upcoming";
     public static final String CHANNEL_NAME_UPCOMING = "Upcoming Classes";
 
@@ -27,6 +30,12 @@ public class NotificationHelper extends ContextWrapper {
         super(base);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel application = new NotificationChannel(CHANNEL_ID_APPLICATION, CHANNEL_NAME_APPLICATION, NotificationManager.IMPORTANCE_LOW);
+            application.enableVibration(false);
+            application.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
+
+            getManager().createNotificationChannel(application);
+
             NotificationChannel upcoming = new NotificationChannel(CHANNEL_ID_UPCOMING, CHANNEL_NAME_UPCOMING, NotificationManager.IMPORTANCE_HIGH);
             upcoming.enableVibration(true);
             upcoming.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
@@ -55,6 +64,14 @@ public class NotificationHelper extends ContextWrapper {
         }
 
         return manager;
+    }
+
+    public NotificationCompat.Builder notifyApplication(String title, String message) {
+        return new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID_APPLICATION)
+                .setContentTitle(title)
+                .setContentText(message)
+                .setSmallIcon(R.drawable.ic_logo_light)
+                .setVisibility(NotificationCompat.VISIBILITY_PRIVATE);
     }
 
     public NotificationCompat.Builder notifyUpcoming(Context context, String title, String message) {

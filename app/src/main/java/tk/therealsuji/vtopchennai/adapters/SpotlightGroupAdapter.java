@@ -15,7 +15,7 @@ import java.util.Objects;
 import tk.therealsuji.vtopchennai.models.Spotlight;
 import tk.therealsuji.vtopchennai.widgets.SpotlightSection;
 
-public class SpotlightSectionAdapter extends RecyclerView.Adapter<SpotlightSectionAdapter.ViewHolder> {
+public class SpotlightGroupAdapter extends RecyclerView.Adapter<SpotlightGroupAdapter.ViewHolder> {
     private Map<String, List<Spotlight>> announcements;
     private List<String> categories;
 

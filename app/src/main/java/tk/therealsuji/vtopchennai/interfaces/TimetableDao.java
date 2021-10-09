@@ -1,93 +1,67 @@
 package tk.therealsuji.vtopchennai.interfaces;
 
 import androidx.room.Dao;
+import androidx.room.Insert;
 import androidx.room.Query;
 
 import java.util.List;
 
+import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.core.Single;
-import tk.therealsuji.vtopchennai.models.TimetableLab;
-import tk.therealsuji.vtopchennai.models.TimetableTheory;
+import tk.therealsuji.vtopchennai.models.Timetable;
 
 @Dao
 public interface TimetableDao {
-    default Single<List<TimetableLab>> getLabTimetable(int day) {
+    default Single<List<Timetable.AllData>> get(int day) {
         switch (day) {
             case 1:
-                return getMonLabTimetable();
+                return getMonday();
             case 2:
-                return getTueLabTimetable();
+                return getTuesday();
             case 3:
-                return getWedLabTimetable();
+                return getWednesday();
             case 4:
-                return getThuLabTimetable();
+                return getThursday();
             case 5:
-                return getFriLabTimetable();
+                return getFriday();
             case 6:
-                return getSatLabTimetable();
+                return getSaturday();
             default:
-                return getSunLabTimetable();
+                return getSunday();
         }
     }
 
-    default Single<List<TimetableTheory>> getTheoryTimetable(int day) {
-        switch (day) {
-            case 1:
-                return getMonTheoryTimetable();
-            case 2:
-                return getTueTheoryTimetable();
-            case 3:
-                return getWedTheoryTimetable();
-            case 4:
-                return getThuTheoryTimetable();
-            case 5:
-                return getFriTheoryTimetable();
-            case 6:
-                return getSatTheoryTimetable();
-            default:
-                return getSunTheoryTimetable();
-        }
-    }
+    @Insert
+    Completable insert(List<Timetable> timetable);
 
-    @Query("SELECT id, start_time, end_time, sun FROM timetable_lab")
-    Single<List<TimetableLab>> getSunLabTimetable();
+    @Query("DELETE FROM timetable")
+    Completable deleteAll();
 
-    @Query("SELECT id, start_time, end_time, sun FROM timetable_theory")
-    Single<List<TimetableTheory>> getSunTheoryTimetable();
+    @Query("SELECT courses.type AS courseType, start_time AS startTime, end_time AS endTime, code AS courseCode " +
+            "FROM timetable, slots, courses WHERE sunday = slots.id AND course_id = courses.id")
+    Single<List<Timetable.AllData>> getSunday();
 
-    @Query("SELECT id, start_time, end_time, mon FROM timetable_lab")
-    Single<List<TimetableLab>> getMonLabTimetable();
+    @Query("SELECT courses.type AS courseType, start_time AS startTime, end_time AS endTime, code AS courseCode " +
+            "FROM timetable, slots, courses WHERE monday = slots.id AND course_id = courses.id")
+    Single<List<Timetable.AllData>> getMonday();
 
-    @Query("SELECT id, start_time, end_time, mon FROM timetable_theory")
-    Single<List<TimetableTheory>> getMonTheoryTimetable();
+    @Query("SELECT courses.type AS courseType, start_time AS startTime, end_time AS endTime, code AS courseCode " +
+            "FROM timetable, slots, courses WHERE tuesday = slots.id AND course_id = courses.id")
+    Single<List<Timetable.AllData>> getTuesday();
 
-    @Query("SELECT id, start_time, end_time, tue FROM timetable_lab")
-    Single<List<TimetableLab>> getTueLabTimetable();
+    @Query("SELECT courses.type AS courseType, start_time AS startTime, end_time AS endTime, code AS courseCode " +
+            "FROM timetable, slots, courses WHERE wednesday = slots.id AND course_id = courses.id")
+    Single<List<Timetable.AllData>> getWednesday();
 
-    @Query("SELECT id, start_time, end_time, tue FROM timetable_theory")
-    Single<List<TimetableTheory>> getTueTheoryTimetable();
+    @Query("SELECT courses.type AS courseType, start_time AS startTime, end_time AS endTime, code AS courseCode " +
+            "FROM timetable, slots, courses WHERE thursday = slots.id AND course_id = courses.id")
+    Single<List<Timetable.AllData>> getThursday();
 
-    @Query("SELECT id, start_time, end_time, wed FROM timetable_lab")
-    Single<List<TimetableLab>> getWedLabTimetable();
+    @Query("SELECT courses.type AS courseType, start_time AS startTime, end_time AS endTime, code AS courseCode " +
+            "FROM timetable, slots, courses WHERE friday = slots.id AND course_id = courses.id")
+    Single<List<Timetable.AllData>> getFriday();
 
-    @Query("SELECT id, start_time, end_time, wed FROM timetable_theory")
-    Single<List<TimetableTheory>> getWedTheoryTimetable();
-
-    @Query("SELECT id, start_time, end_time, thu FROM timetable_lab")
-    Single<List<TimetableLab>> getThuLabTimetable();
-
-    @Query("SELECT id, start_time, end_time, thu FROM timetable_theory")
-    Single<List<TimetableTheory>> getThuTheoryTimetable();
-
-    @Query("SELECT id, start_time, end_time, fri FROM timetable_lab")
-    Single<List<TimetableLab>> getFriLabTimetable();
-
-    @Query("SELECT id, start_time, end_time, fri FROM timetable_theory")
-    Single<List<TimetableTheory>> getFriTheoryTimetable();
-
-    @Query("SELECT id, start_time, end_time, sat FROM timetable_lab")
-    Single<List<TimetableLab>> getSatLabTimetable();
-
-    @Query("SELECT id, start_time, end_time, sat FROM timetable_theory")
-    Single<List<TimetableTheory>> getSatTheoryTimetable();
+    @Query("SELECT courses.type AS courseType, start_time AS startTime, end_time AS endTime, code AS courseCode " +
+            "FROM timetable, slots, courses WHERE saturday = slots.id AND course_id = courses.id")
+    Single<List<Timetable.AllData>> getSaturday();
 }

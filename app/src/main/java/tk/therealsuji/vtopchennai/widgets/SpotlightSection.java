@@ -13,11 +13,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 import tk.therealsuji.vtopchennai.R;
-import tk.therealsuji.vtopchennai.adapters.AnnouncementAdapter;
+import tk.therealsuji.vtopchennai.adapters.SpotlightItemAdapter;
 import tk.therealsuji.vtopchennai.models.Spotlight;
 
 public class SpotlightSection extends LinearLayout {
-    AnnouncementAdapter announcementAdapter;
+    SpotlightItemAdapter spotlightItemAdapter;
     AppCompatTextView category;
     Context context;
     RecyclerView announcements;
@@ -55,8 +55,8 @@ public class SpotlightSection extends LinearLayout {
         );
         this.announcements.setLayoutParams(announcementsParams);
         this.announcements.setLayoutManager(new LinearLayoutManager(this.context));
-        this.announcementAdapter = new AnnouncementAdapter(this.context);
-        this.announcements.setAdapter(this.announcementAdapter);
+        this.spotlightItemAdapter = new SpotlightItemAdapter(this.context);
+        this.announcements.setAdapter(this.spotlightItemAdapter);
 
         this.addView(this.announcements);
 
@@ -70,6 +70,6 @@ public class SpotlightSection extends LinearLayout {
 
     public void setSpotlightSection(String category, List<Spotlight> announcements) {
         this.category.setText(category);
-        this.announcementAdapter.setAnnouncements(announcements);
+        this.spotlightItemAdapter.setAnnouncements(announcements);
     }
 }

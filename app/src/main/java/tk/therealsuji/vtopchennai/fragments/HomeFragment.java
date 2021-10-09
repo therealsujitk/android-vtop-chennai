@@ -18,6 +18,7 @@ import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
+import java.text.DecimalFormat;
 import java.util.Calendar;
 
 import tk.therealsuji.vtopchennai.MainActivity;
@@ -26,10 +27,6 @@ import tk.therealsuji.vtopchennai.adapters.TimetableAdapter;
 import tk.therealsuji.vtopchennai.widgets.InfoCard;
 
 public class HomeFragment extends Fragment {
-
-    public HomeFragment() {
-        // Required empty public constructor
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -78,8 +75,8 @@ public class HomeFragment extends Fragment {
         InfoCard attendance = homeFragment.findViewById(R.id.card_attendance);
         InfoCard cgpa = homeFragment.findViewById(R.id.card_cgpa);
 
-        attendance.setValue(sharedPreferences.getString("overall_attendance", ""));
-        cgpa.setValue(sharedPreferences.getString("cgpa", ""));
+        attendance.setValue(sharedPreferences.getInt("overall_attendance", 0) + "%");
+        cgpa.setValue(new DecimalFormat("#.00").format(sharedPreferences.getFloat("cgpa", 0)));
 
         TabLayout days = homeFragment.findViewById(R.id.days);
         String[] dayStrings = {
@@ -103,7 +100,7 @@ public class HomeFragment extends Fragment {
 
         ViewPager2 timetable = homeFragment.findViewById(R.id.timetable);
 
-        timetable.setAdapter(new TimetableAdapter(homeFragment.getContext()));
+        timetable.setAdapter(new TimetableAdapter());
         timetable.setCurrentItem(Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 1);
 
         new TabLayoutMediator(days, timetable, (tab, position) -> {
@@ -133,6 +130,4 @@ public class HomeFragment extends Fragment {
 
         return homeFragment;
     }
-
-
 }

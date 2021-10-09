@@ -122,7 +122,7 @@ public class Announcement extends LinearLayout {
     }
 
     public void setLink(String link) {
-        if (link.equals("null")) {
+        if (link == null) {
             this.setAnnouncementType(TYPE_ANNOUNCEMENT);
         } else if (link.toLowerCase().startsWith("http")) {
             this.setAnnouncementType(TYPE_LINK);

@@ -6,20 +6,34 @@ import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
+import tk.therealsuji.vtopchennai.interfaces.AttendanceDao;
+import tk.therealsuji.vtopchennai.interfaces.CoursesDao;
 import tk.therealsuji.vtopchennai.interfaces.MarksDao;
+import tk.therealsuji.vtopchennai.interfaces.ReceiptsDao;
 import tk.therealsuji.vtopchennai.interfaces.SpotlightDao;
+import tk.therealsuji.vtopchennai.interfaces.StaffDao;
 import tk.therealsuji.vtopchennai.interfaces.TimetableDao;
-import tk.therealsuji.vtopchennai.models.Marks;
+import tk.therealsuji.vtopchennai.models.Attendance;
+import tk.therealsuji.vtopchennai.models.Course;
+import tk.therealsuji.vtopchennai.models.CumulativeMark;
+import tk.therealsuji.vtopchennai.models.Mark;
+import tk.therealsuji.vtopchennai.models.Receipt;
+import tk.therealsuji.vtopchennai.models.Slot;
 import tk.therealsuji.vtopchennai.models.Spotlight;
-import tk.therealsuji.vtopchennai.models.TimetableLab;
-import tk.therealsuji.vtopchennai.models.TimetableTheory;
+import tk.therealsuji.vtopchennai.models.Staff;
+import tk.therealsuji.vtopchennai.models.Timetable;
 
 @Database(
         entities = {
-                Marks.class,
+                Attendance.class,
+                Course.class,
+                CumulativeMark.class,
+                Mark.class,
+                Receipt.class,
+                Slot.class,
                 Spotlight.class,
-                TimetableLab.class,
-                TimetableTheory.class
+                Staff.class,
+                Timetable.class
         },
         version = 1,
         exportSchema = false
@@ -38,8 +52,17 @@ public abstract class AppDatabase extends RoomDatabase {
         return instance;
     }
 
+    public abstract AttendanceDao attendanceDao();
+
+    public abstract CoursesDao coursesDao();
+
     public abstract MarksDao marksDao();
 
+    public abstract ReceiptsDao receiptsDao();
+
     public abstract SpotlightDao spotlightDao();
+
+    public abstract StaffDao staffDao();
+
     public abstract TimetableDao timetableDao();
 }

@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
+import androidx.appcompat.widget.TooltipCompat;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
@@ -16,6 +17,7 @@ import com.google.android.material.tabs.TabLayoutMediator;
 
 import java.util.List;
 
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.annotations.NonNull;
 import io.reactivex.rxjava3.core.SingleObserver;
 import io.reactivex.rxjava3.disposables.Disposable;
@@ -24,7 +26,7 @@ import tk.therealsuji.vtopchennai.R;
 import tk.therealsuji.vtopchennai.adapters.MarksAdapter;
 import tk.therealsuji.vtopchennai.helpers.AppDatabase;
 import tk.therealsuji.vtopchennai.interfaces.MarksDao;
-import tk.therealsuji.vtopchennai.models.Marks;
+import tk.therealsuji.vtopchennai.models.Course;
 
 public class PerformanceFragment extends Fragment {
 
@@ -60,49 +62,53 @@ public class PerformanceFragment extends Fragment {
 
         float pixelDensity = this.getResources().getDisplayMetrics().density;
 
+        TabLayout courseTabs = performanceFragment.findViewById(R.id.courses);
+        ViewPager2 marks = performanceFragment.findViewById(R.id.marks);
+
         AppDatabase appDatabase = AppDatabase.getInstance(requireActivity().getApplicationContext());
         MarksDao marksDao = appDatabase.marksDao();
 
-        marksDao.getCourses().subscribeOn(Schedulers.single()).subscribe(new SingleObserver<List<Marks>>() {
-            @Override
-            public void onSubscribe(@NonNull Disposable d) {
-            }
+        marksDao
+                .getCourses()
+                .subscribeOn(Schedulers.single())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new SingleObserver<List<Course>>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+                    }
 
-            @Override
-            public void onSuccess(@NonNull List<Marks> courses) {
-                requireActivity().runOnUiThread(() -> {
-                    TabLayout courseTabs = performanceFragment.findViewById(R.id.courses);
-                    ViewPager2 marks = performanceFragment.findViewById(R.id.marks);
+                    @Override
+                    public void onSuccess(@NonNull List<Course> courses) {
+                        marks.setAdapter(new MarksAdapter(courses));
+                        new TabLayoutMediator(courseTabs, marks, (tab, position) -> {
+                            Course course = courses.get(position);
 
-                    marks.setAdapter(new MarksAdapter(getContext(), courses));
-                    new TabLayoutMediator(courseTabs, marks, (tab, position) -> {
-                        Marks course = courses.get(position);
+                            tab.setText(course.code);
+                            TooltipCompat.setTooltipText(tab.view, course.title);
+                            tab.view.setContentDescription(course.title);
+                        }).attach();
 
-                        tab.setText(course.course);
-                    }).attach();
+                        for (int i = 0; i < courses.size(); ++i) {
+                            View day = ((ViewGroup) courseTabs.getChildAt(0)).getChildAt(i);
+                            ViewGroup.MarginLayoutParams tabParams = (ViewGroup.MarginLayoutParams) day.getLayoutParams();
 
-                    for (int i = 0; i < courses.size(); ++i) {
-                        View day = ((ViewGroup) courseTabs.getChildAt(0)).getChildAt(i);
-                        ViewGroup.MarginLayoutParams tabParams = (ViewGroup.MarginLayoutParams) day.getLayoutParams();
-
-                        if (i == 0) {
-                            tabParams.setMarginStart((int) (20 * pixelDensity));
-                            tabParams.setMarginEnd((int) (5 * pixelDensity));
-                        } else if (i == courseTabs.getTabCount() - 1) {
-                            tabParams.setMarginStart((int) (5 * pixelDensity));
-                            tabParams.setMarginEnd((int) (20 * pixelDensity));
-                        } else {
-                            tabParams.setMarginStart((int) (5 * pixelDensity));
-                            tabParams.setMarginEnd((int) (5 * pixelDensity));
+                            if (i == 0) {
+                                tabParams.setMarginStart((int) (20 * pixelDensity));
+                                tabParams.setMarginEnd((int) (5 * pixelDensity));
+                            } else if (i == courseTabs.getTabCount() - 1) {
+                                tabParams.setMarginStart((int) (5 * pixelDensity));
+                                tabParams.setMarginEnd((int) (20 * pixelDensity));
+                            } else {
+                                tabParams.setMarginStart((int) (5 * pixelDensity));
+                                tabParams.setMarginEnd((int) (5 * pixelDensity));
+                            }
                         }
                     }
-                });
-            }
 
-            @Override
-            public void onError(@NonNull Throwable e) {
-            }
-        });
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                    }
+                });
 
         return performanceFragment;
     }

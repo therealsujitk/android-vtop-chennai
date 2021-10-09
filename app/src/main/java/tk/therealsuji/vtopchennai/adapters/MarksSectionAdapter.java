@@ -12,24 +12,24 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import tk.therealsuji.vtopchennai.models.Marks;
+import tk.therealsuji.vtopchennai.models.Mark;
 import tk.therealsuji.vtopchennai.widgets.MarksSection;
 
 public class MarksSectionAdapter extends RecyclerView.Adapter<MarksSectionAdapter.ViewHolder> {
-    Map<Integer, List<Marks>> marks;
+    Map<Integer, List<Mark.AllData>> marks;
     List<Integer> sectionTypes;
 
-    public MarksSectionAdapter(List<Marks> marks) {
+    public MarksSectionAdapter(List<Mark.AllData> marks) {
         this.marks = new HashMap<>();
         this.sectionTypes = new ArrayList<>();
 
         for (int i = 0; i < marks.size(); ++i) {
-            Marks mark = marks.get(i);
+            Mark.AllData mark = marks.get(i);
             int sectionType = MarksSection.TYPE_THEORY;
 
-            if (mark.type.toLowerCase().contains("lab")) {
+            if (mark.courseType.equals("lab")) {
                 sectionType = MarksSection.TYPE_LAB;
-            } else if (mark.type.toLowerCase().contains("project")) {
+            } else if (mark.courseType.equals("project")) {
                 sectionType = MarksSection.TYPE_PROJECT;
             }
 
@@ -68,7 +68,7 @@ public class MarksSectionAdapter extends RecyclerView.Adapter<MarksSectionAdapte
             this.marksSection = (MarksSection) itemView;
         }
 
-        public void setMarksSection(int sectionType, List<Marks> marks) {
+        public void setMarksSection(int sectionType, List<Mark.AllData> marks) {
             this.marksSection.setMarksSection(sectionType, marks);
         }
     }

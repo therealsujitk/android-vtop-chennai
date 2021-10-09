@@ -9,22 +9,24 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
-import tk.therealsuji.vtopchennai.models.Marks;
+import tk.therealsuji.vtopchennai.models.Mark;
 import tk.therealsuji.vtopchennai.widgets.MarksItem;
 
 public class MarksItemAdapter extends RecyclerView.Adapter<MarksItemAdapter.ViewHolder> {
     float pixelDensity;
-    List<Marks> marks;
 
-    public MarksItemAdapter(Context context, List<Marks> marks) {
-        this.pixelDensity = context.getResources().getDisplayMetrics().density;
+    List<Mark.AllData> marks;
+
+    public MarksItemAdapter(List<Mark.AllData> marks) {
         this.marks = marks;
     }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        MarksItem marksItem = new MarksItem(parent.getContext());
+        Context context = parent.getContext();
+        this.pixelDensity = context.getResources().getDisplayMetrics().density;
+        MarksItem marksItem = new MarksItem(context);
         return new ViewHolder(marksItem);
     }
 
@@ -57,8 +59,8 @@ public class MarksItemAdapter extends RecyclerView.Adapter<MarksItemAdapter.View
             this.marksItem = (MarksItem) itemView;
         }
 
-        public void initializeMarksItem(Marks marksItem) {
-            this.marksItem.initializeMarksItem(marksItem);
+        public void initializeMarksItem(Mark.AllData markItem) {
+            this.marksItem.initializeMarksItem(markItem);
         }
 
         public void setMargin(int left, int top, int right, int bottom) {

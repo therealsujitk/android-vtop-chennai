@@ -1,124 +1,94 @@
 package tk.therealsuji.vtopchennai.models;
 
-import java.util.ArrayList;
-import java.util.List;
+import static androidx.room.ForeignKey.CASCADE;
 
-import tk.therealsuji.vtopchennai.widgets.TimetableItem;
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.ForeignKey;
+import androidx.room.PrimaryKey;
 
+@Entity(
+        tableName = "timetable",
+        foreignKeys = {
+                @ForeignKey(
+                        entity = Slot.class,
+                        parentColumns = "id",
+                        childColumns = "sunday",
+                        onDelete = CASCADE
+                ),
+                @ForeignKey(
+                        entity = Slot.class,
+                        parentColumns = "id",
+                        childColumns = "monday",
+                        onDelete = CASCADE
+                ),
+                @ForeignKey(
+                        entity = Slot.class,
+                        parentColumns = "id",
+                        childColumns = "tuesday",
+                        onDelete = CASCADE
+                ),
+                @ForeignKey(
+                        entity = Slot.class,
+                        parentColumns = "id",
+                        childColumns = "wednesday",
+                        onDelete = CASCADE
+                ),
+                @ForeignKey(
+                        entity = Slot.class,
+                        parentColumns = "id",
+                        childColumns = "thursday",
+                        onDelete = CASCADE
+                ),
+                @ForeignKey(
+                        entity = Slot.class,
+                        parentColumns = "id",
+                        childColumns = "friday",
+                        onDelete = CASCADE
+                ),
+                @ForeignKey(
+                        entity = Slot.class,
+                        parentColumns = "id",
+                        childColumns = "saturday",
+                        onDelete = CASCADE
+                )
+        }
+)
 public class Timetable {
-    public String courseCode, endTime, startTime;
-    public String[] rawCourse;
-    public int courseType;
+    @PrimaryKey(autoGenerate = true)
+    public int id;
 
-    /**
-     * Builds a list of Timetable objects containing the timings, course & course type.
-     * This function ignores null courses.
-     *
-     * @param timetableLab    The lab timetable
-     * @param timetableTheory The theory timetable
-     * @param day             The timetable's day
-     * @return Returns a list of Timetable objects
-     */
-    public static List<Timetable> buildTimetable(List<TimetableLab> timetableLab, List<TimetableTheory> timetableTheory, int day) {
-        List<Timetable> timetable = new ArrayList<>();
+    @ColumnInfo(name = "start_time")
+    public String startTime;
 
-        for (int i = 0; i < timetableLab.size() && i < timetableTheory.size(); ++i) {
-            Timetable timetableLabItem = Timetable.fromTimetableLabItem(timetableLab.get(i), day);
-            Timetable timetableTheoryItem = Timetable.fromTimetableTheoryItem(timetableTheory.get(i), day);
+    @ColumnInfo(name = "end_time")
+    public String endTime;
 
-            if (timetableLabItem.courseCode != null) {
-                timetable.add(timetableLabItem);
-                timetableLabItem.courseType = TimetableItem.CLASS_LAB;
-            }
+    @ColumnInfo(name = "sunday")
+    public Integer sunday;
 
-            if (timetableTheoryItem.courseCode != null) {
-                timetable.add(timetableTheoryItem);
-                timetableLabItem.courseType = TimetableItem.CLASS_THEORY;
-            }
-        }
+    @ColumnInfo(name = "monday")
+    public Integer monday;
 
-        return timetable;
-    }
+    @ColumnInfo(name = "tuesday")
+    public Integer tuesday;
 
-    private static Timetable fromTimetableLabItem(TimetableLab timetableLabItem, int day) {
-        Timetable timetableItem = new Timetable();
-        String rawCourseString;
+    @ColumnInfo(name = "wednesday")
+    public Integer wednesday;
 
-        timetableItem.startTime = timetableLabItem.startTime;
-        timetableItem.endTime = timetableLabItem.endTime;
+    @ColumnInfo(name = "thursday")
+    public Integer thursday;
 
-        switch (day) {
-            case 1:
-                rawCourseString = timetableLabItem.monday;
-                break;
-            case 2:
-                rawCourseString = timetableLabItem.tuesday;
-                break;
-            case 3:
-                rawCourseString = timetableLabItem.wednesday;
-                break;
-            case 4:
-                rawCourseString = timetableLabItem.thursday;
-                break;
-            case 5:
-                rawCourseString = timetableLabItem.friday;
-                break;
-            case 6:
-                rawCourseString = timetableLabItem.saturday;
-                break;
-            default:
-                rawCourseString = timetableLabItem.sunday;
-        }
+    @ColumnInfo(name = "friday")
+    public Integer friday;
 
-        timetableItem.rawCourse = rawCourseString.split("-");
+    @ColumnInfo(name = "saturday")
+    public Integer saturday;
 
-        if (timetableItem.rawCourse.length > 1) {
-            timetableItem.courseCode = timetableItem.rawCourse[1];
-        }
-
-        return timetableItem;
-    }
-
-    private static Timetable fromTimetableTheoryItem(TimetableTheory timetableItemTheoryItem, int day) {
-        Timetable timetableItem = new Timetable();
-        String rawCourseString;
-
-        timetableItem.startTime = timetableItemTheoryItem.startTime;
-        timetableItem.endTime = timetableItemTheoryItem.endTime;
-
-        switch (day) {
-            case 1:
-                rawCourseString = timetableItemTheoryItem.monday;
-                break;
-            case 2:
-                rawCourseString = timetableItemTheoryItem.tuesday;
-                break;
-            case 3:
-                rawCourseString = timetableItemTheoryItem.wednesday;
-                break;
-            case 4:
-                rawCourseString = timetableItemTheoryItem.thursday;
-                break;
-            case 5:
-                rawCourseString = timetableItemTheoryItem.friday;
-                break;
-            case 6:
-                rawCourseString = timetableItemTheoryItem.saturday;
-                break;
-            default:
-                rawCourseString = timetableItemTheoryItem.sunday;
-        }
-
-        if (rawCourseString == null) {
-            return timetableItem;
-        }
-
-        timetableItem.rawCourse = rawCourseString.split("-");
-
-        if (timetableItem.rawCourse.length > 1) {
-            timetableItem.courseCode = timetableItem.rawCourse[1];
-        }
-
-        return timetableItem;
+    public static class AllData {
+        public String startTime;
+        public String endTime;
+        public String courseType;
+        public String courseCode;
     }
 }

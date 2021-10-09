@@ -50,10 +50,12 @@
     <string name="privacy_contact_content">If you have any queries, suggestions or face any issues, my contact information is available at <a href="http://therealsuji.tk">http://therealsuji.tk</a>.</string>
 
 
-    <string name="captcha">Enter Captcha</string>
+    <string name="solve_captcha">Solve the captcha</string>
+    <string name="enter_captcha">Enter Captcha</string>
     <string name="captcha_description">Image that shows the captcha code.</string>
     <string name="submit">Submit</string>
     <string name="select">Select</string>
+    <string name="sign_in_attempt">Attempting to sign you in</string>
     <string name="downloading_profile">Downloading Profile</string>
     <string name="downloading_timetable">Downloading Timetable</string>
     <string name="downloading_courses">Downloading Course Info</string>
@@ -66,6 +68,7 @@
     <string name="downloading_messages">Downloading Messages</string>
     <string name="downloading_spotlight">Downloading Spotlight</string>
     <string name="downloading_receipts">Downloading Receipts</string>
+    <string name="completing_download">Completing download</string>
 
 
     <string name="avatar_description">Image that shows a users profile picture.</string>
@@ -83,7 +86,7 @@
     <string name="theory">Theory Marks</string>
 
     <string name="update_title">Update Available</string>
-    <string name="update_text">A new version of VTOP Chennai has been released!</string>
+    <string name="update_message">A new version of VTOP Chennai has been released! The Update button bellow will take you to the download page.</string>
     <string name="update">Update</string>
 
     <string name="refresh_text">Your data hasn\'t been refreshed in a while. It might be out of date.</string>
@@ -221,4 +224,6 @@
     <string name="switch_semester">Switch Semester</string>
     <string name="faq">Frequently Asked Questions</string>
     <string name="send_feedback">Send Feedback</string>
+    <string name="select_semester">Select a semester</string>
+    <string name="vtop_service_description">Downloads data from VTOP.</string>
 </resources>

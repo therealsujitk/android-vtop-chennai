@@ -69,19 +69,40 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/username" />
 
-    <Button
-        android:id="@+id/signIn"
+    <RelativeLayout
+        android:id="@+id/sign_in_button"
         style="@style/Widget.VTOP.Button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="40dp"
         android:layout_marginTop="20dp"
         android:layout_marginEnd="40dp"
-        android:onClick="signIn"
-        android:text="@string/sign_in"
+        android:clickable="true"
+        android:focusable="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/password" />
+        app:layout_constraintTop_toBottomOf="@+id/password">
+
+        <TextView
+            android:id="@+id/sign_in_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/sign_in"
+            android:textAllCaps="true"
+            android:textColor="?attr/colorOnPrimary"
+            android:textSize="18sp" />
+
+        <ProgressBar
+            android:id="@+id/loading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@id/sign_in_text"
+            android:layout_alignTop="@id/sign_in_text"
+            android:layout_alignEnd="@id/sign_in_text"
+            android:layout_alignBottom="@id/sign_in_text"
+            android:indeterminateTint="?attr/colorOnPrimary"
+            android:visibility="invisible" />
+    </RelativeLayout>
 
     <Button
         android:id="@+id/button_privacy"

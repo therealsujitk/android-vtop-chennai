@@ -19,6 +19,7 @@
         <entry key="app/src/main/res/drawable/background_info_card.xml" value="0.209375" />
         <entry key="app/src/main/res/drawable/background_marks_item.xml" value="0.209375" />
         <entry key="app/src/main/res/drawable/background_profile_item_icon.xml" value="0.209375" />
+        <entry key="app/src/main/res/drawable/background_spinner.xml" value="0.20615384615384616" />
         <entry key="app/src/main/res/drawable/background_spotlight_item.xml" value="0.209375" />
         <entry key="app/src/main/res/drawable/background_spotlight_type.xml" value="0.209375" />
         <entry key="app/src/main/res/drawable/background_tab_indicator.xml" value="0.209375" />
@@ -30,6 +31,7 @@
         <entry key="app/src/main/res/drawable/button_secondary.xml" value="0.209375" />
         <entry key="app/src/main/res/drawable/button_secondary_selected.xml" value="0.209375" />
         <entry key="app/src/main/res/drawable/button_tertiary.xml" value="0.209375" />
+        <entry key="app/src/main/res/drawable/dialog_background.xml" value="0.209375" />
         <entry key="app/src/main/res/drawable/gradient_linear.xml" value="0.209375" />
         <entry key="app/src/main/res/drawable/ic_appearance.xml" value="0.209375" />
         <entry key="app/src/main/res/drawable/ic_chevron_right.xml" value="0.209375" />
@@ -59,17 +61,22 @@
         <entry key="app/src/main/res/layout/activity_web_view.xml" value="0.19322916666666667" />
         <entry key="app/src/main/res/layout/dialog_appearance.xml" value="0.3924050632911392" />
         <entry key="app/src/main/res/layout/dialog_clear_logs.xml" value="0.19322916666666667" />
-        <entry key="app/src/main/res/layout/dialog_download.xml" value="0.19322916666666667" />
+        <entry key="app/src/main/res/layout/dialog_download.xml" value="0.33" />
         <entry key="app/src/main/res/layout/dialog_due_payments.xml" value="0.19322916666666667" />
         <entry key="app/src/main/res/layout/dialog_refresh.xml" value="0.19322916666666667" />
         <entry key="app/src/main/res/layout/dialog_signout.xml" value="0.19322916666666667" />
+        <entry key="app/src/main/res/layout/dialog_update.xml" value="0.1" />
         <entry key="app/src/main/res/layout/fragment_academics.xml" value="0.19322916666666667" />
         <entry key="app/src/main/res/layout/fragment_courses.xml" value="0.19322916666666667" />
         <entry key="app/src/main/res/layout/fragment_home.xml" value="0.33" />
         <entry key="app/src/main/res/layout/fragment_performance.xml" value="0.33" />
         <entry key="app/src/main/res/layout/fragment_profile.xml" value="0.33" />
         <entry key="app/src/main/res/layout/fragment_spotlight.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/layout_download_captcha.xml" value="0.25" />
         <entry key="app/src/main/res/layout/layout_download_progress.xml" value="0.19322916666666667" />
+        <entry key="app/src/main/res/layout/layout_download_semester.xml" value="0.19322916666666667" />
+        <entry key="app/src/main/res/layout/style_spinner.xml" value="0.19322916666666667" />
+        <entry key="app/src/main/res/layout/style_spinner_selected.xml" value="0.19322916666666667" />
         <entry key="app/src/main/res/menu/bottom_navigation.xml" value="0.19322916666666667" />
         <entry key="app/src/main/res/menu/marks_menu.xml" value="0.19322916666666667" />
         <entry key="app/src/main/res/xml/root_preferences.xml" value="0.33" />

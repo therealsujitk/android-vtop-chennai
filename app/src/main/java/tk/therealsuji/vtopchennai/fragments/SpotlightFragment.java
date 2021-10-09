@@ -19,7 +19,7 @@ import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import tk.therealsuji.vtopchennai.MainActivity;
 import tk.therealsuji.vtopchennai.R;
-import tk.therealsuji.vtopchennai.adapters.SpotlightSectionAdapter;
+import tk.therealsuji.vtopchennai.adapters.SpotlightGroupAdapter;
 import tk.therealsuji.vtopchennai.helpers.AppDatabase;
 import tk.therealsuji.vtopchennai.interfaces.SpotlightDao;
 import tk.therealsuji.vtopchennai.models.Spotlight;
@@ -47,9 +47,9 @@ public class SpotlightFragment extends Fragment {
 
         RecyclerView spotlight = spotlightFragment.findViewById(R.id.spotlight);
         spotlight.setLayoutManager(new LinearLayoutManager(this.requireActivity()));
-        SpotlightSectionAdapter spotlightSectionAdapter = new SpotlightSectionAdapter();
+        SpotlightGroupAdapter spotlightGroupAdapter = new SpotlightGroupAdapter();
 
-        spotlight.setAdapter(spotlightSectionAdapter);
+        spotlight.setAdapter(spotlightGroupAdapter);
 
         AppDatabase appDatabase = AppDatabase.getInstance(this.requireActivity().getApplicationContext());
         SpotlightDao spotlightDao = appDatabase.spotlightDao();
@@ -61,7 +61,7 @@ public class SpotlightFragment extends Fragment {
 
             @Override
             public void onSuccess(@NonNull List<Spotlight> spotlight) {
-                spotlightSectionAdapter.setSpotlight(spotlight);
+                spotlightGroupAdapter.setSpotlight(spotlight);
             }
 
             @Override

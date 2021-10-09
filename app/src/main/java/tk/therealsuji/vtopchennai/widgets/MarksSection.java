@@ -14,7 +14,7 @@ import java.util.List;
 
 import tk.therealsuji.vtopchennai.R;
 import tk.therealsuji.vtopchennai.adapters.MarksItemAdapter;
-import tk.therealsuji.vtopchennai.models.Marks;
+import tk.therealsuji.vtopchennai.models.Mark;
 
 public class MarksSection extends LinearLayout {
     public static final int TYPE_LAB = 0;
@@ -73,7 +73,7 @@ public class MarksSection extends LinearLayout {
         this.setOrientation(VERTICAL);
     }
 
-    public void setMarksSection(int sectionType, List<Marks> marks) {
+    public void setMarksSection(int sectionType, List<Mark.AllData> marks) {
         if (sectionType == TYPE_LAB) {
             this.sectionType.setText(this.getContext().getString(R.string.lab));
         } else if (sectionType == TYPE_PROJECT) {
@@ -82,6 +82,6 @@ public class MarksSection extends LinearLayout {
             this.sectionType.setText(this.getContext().getString(R.string.theory));
         }
 
-        this.marks.setAdapter(new MarksItemAdapter(this.getContext(), marks));
+        this.marks.setAdapter(new MarksItemAdapter(marks));
     }
 }
