@@ -1,6 +1,7 @@
 package tk.therealsuji.vtopchennai.widgets;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.util.AttributeSet;
 import android.util.TypedValue;
@@ -13,25 +14,53 @@ import androidx.appcompat.widget.AppCompatTextView;
 import androidx.core.content.ContextCompat;
 
 import tk.therealsuji.vtopchennai.R;
-import tk.therealsuji.vtopchennai.models.ProfileItemData;
+import tk.therealsuji.vtopchennai.helpers.SettingsRepository;
 
 public class ProfileItem extends LinearLayout {
-    private static final ProfileItemData[] PERSONAL_PROFILE_ITEMS = {
-            new ProfileItemData(R.string.messages, R.drawable.ic_messages),
-            new ProfileItemData(R.string.receipts, R.drawable.ic_receipts),
-            new ProfileItemData(R.string.switch_semester, R.drawable.ic_semester)
+    private static final ItemData[] PERSONAL_PROFILE_ITEMS = {
+            new ItemData(R.string.messages, R.drawable.ic_messages, context -> {
+
+            }),
+            new ItemData(R.string.receipts, R.drawable.ic_receipts, context -> {
+
+            }),
+            new ItemData(R.string.switch_semester, R.drawable.ic_semester, context -> {
+
+            })
     };
 
-    private static final ProfileItemData[] APPLICATION_PROFILE_ITEMS = {
-            new ProfileItemData(R.string.appearance, R.drawable.ic_appearance),
-            new ProfileItemData(R.string.faq, R.drawable.ic_faq),
-            new ProfileItemData(R.string.notifications, R.drawable.ic_notifications),
-            new ProfileItemData(R.string.privacy, R.drawable.ic_privacy),
-            new ProfileItemData(R.string.send_feedback, R.drawable.ic_feedback),
-            new ProfileItemData(R.string.sign_out, R.drawable.ic_sign_out)
+    private static final ItemData[] APPLICATION_PROFILE_ITEMS = {
+            new ItemData(R.string.appearance, R.drawable.ic_appearance, context -> {
+
+            }),
+            new ItemData(R.string.faq, R.drawable.ic_faq, context -> SettingsRepository.openWebViewActivity(
+                    context,
+                    context.getString(R.string.faq),
+                    SettingsRepository.APP_FAQ_URL
+            )),
+            new ItemData(R.string.notifications, R.drawable.ic_notifications, context -> {
+                Intent intent = new Intent();
+                intent.setAction("android.settings.APP_NOTIFICATION_SETTINGS");
+                intent.putExtra("app_package", context.getPackageName());
+                intent.putExtra("app_uid", context.getApplicationInfo().uid);
+                intent.putExtra("android.provider.extra.APP_PACKAGE", context.getPackageName());
+
+                context.startActivity(intent);
+            }),
+            new ItemData(R.string.privacy, R.drawable.ic_privacy, context -> SettingsRepository.openWebViewActivity(
+                    context,
+                    context.getString(R.string.privacy),
+                    SettingsRepository.APP_PRIVACY_URL
+            )),
+            new ItemData(R.string.send_feedback, R.drawable.ic_feedback, context -> {
+
+            }),
+            new ItemData(R.string.sign_out, R.drawable.ic_sign_out, context -> {
+
+            })
     };
 
-    public static final ProfileItemData[][] PROFILE_ITEMS = {
+    public static final ItemData[][] PROFILE_ITEMS = {
             PERSONAL_PROFILE_ITEMS,
             APPLICATION_PROFILE_ITEMS
     };
@@ -106,10 +135,27 @@ public class ProfileItem extends LinearLayout {
     }
 
     public void initializeProfileItem(int profileGroupIndex, int profileItemIndex) {
-        ProfileItemData profileItemData = PROFILE_ITEMS[profileGroupIndex][profileItemIndex];
+        ItemData itemData = PROFILE_ITEMS[profileGroupIndex][profileItemIndex];
 
-        this.title.setText(this.getContext().getString(profileItemData.titleId));
-        this.icon.setImageDrawable(ContextCompat.getDrawable(this.getContext(), profileItemData.iconId));
-        this.setOnClickListener(view -> profileItemData.onClick(this.getContext()));
+        this.title.setText(this.getContext().getString(itemData.titleId));
+        this.icon.setImageDrawable(ContextCompat.getDrawable(this.getContext(), itemData.iconId));
+        this.setOnClickListener(view -> itemData.onClickListener.onClick(this.getContext()));
     }
+
+    public static class ItemData {
+        public final int titleId, iconId;
+        public final OnClickListener onClickListener;
+
+        public ItemData(int titleId, int iconId, OnClickListener onClickListener) {
+            this.titleId = titleId;
+            this.iconId = iconId;
+            this.onClickListener = onClickListener;
+        }
+
+        private interface OnClickListener {
+            void onClick(Context context);
+        }
+    }
+
+
 }
