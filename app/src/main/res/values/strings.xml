@@ -226,4 +226,5 @@
     <string name="send_feedback">Send Feedback</string>
     <string name="select_semester">Select a semester</string>
     <string name="vtop_service_description">Downloads data from VTOP.</string>
+    <string name="total_credits">Overall Credits Earned</string>
 </resources>

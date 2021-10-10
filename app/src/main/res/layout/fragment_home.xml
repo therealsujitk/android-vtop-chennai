@@ -80,33 +80,29 @@
                     android:id="@+id/appButtons"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginBottom="10dp"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp"
                     android:orientation="horizontal">
-
-                    <tk.therealsuji.vtopchennai.widgets.InfoCard
-                        android:id="@+id/card_pending_classes"
-                        android:layout_width="150dp"
-                        android:layout_height="150dp"
-                        android:layout_marginStart="20dp"
-                        android:layout_marginEnd="10dp"
-                        android:baselineAligned="false"
-                        app:key="@string/pending_classes" />
 
                     <tk.therealsuji.vtopchennai.widgets.InfoCard
                         android:id="@+id/card_attendance"
                         android:layout_width="150dp"
                         android:layout_height="150dp"
-                        android:layout_marginStart="10dp"
-                        android:layout_marginEnd="10dp"
+                        android:layout_margin="10dp"
                         app:key="@string/overall_attendance" />
+
+                    <tk.therealsuji.vtopchennai.widgets.InfoCard
+                        android:id="@+id/card_credits"
+                        android:layout_width="150dp"
+                        android:layout_height="150dp"
+                        android:layout_margin="10dp"
+                        app:key="@string/total_credits" />
 
                     <tk.therealsuji.vtopchennai.widgets.InfoCard
                         android:id="@+id/card_cgpa"
                         android:layout_width="150dp"
                         android:layout_height="150dp"
-                        android:layout_marginStart="10dp"
-                        android:layout_marginEnd="20dp"
+                        android:layout_margin="10dp"
                         app:key="@string/cgpa" />
 
                 </LinearLayout>
@@ -119,19 +115,19 @@
             android:id="@+id/days"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
-            android:layout_gravity="center"
-            android:contentDescription="@string/days"
             android:background="@android:color/transparent"
+            android:contentDescription="@string/days"
             android:textAlignment="center"
             app:tabBackground="@drawable/background_tab_item"
             app:tabGravity="center"
             app:tabIndicator="@drawable/background_tab_item"
             app:tabIndicatorAnimationMode="elastic"
             app:tabIndicatorColor="?attr/colorSecondaryContainer"
-            app:tabIndicatorGravity="stretch"
             app:tabIndicatorFullWidth="true"
+            app:tabIndicatorGravity="stretch"
             app:tabMaxWidth="50dp"
             app:tabMode="scrollable"
             app:tabTextColor="?attr/colorSecondary"

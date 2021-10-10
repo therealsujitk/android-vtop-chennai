@@ -73,9 +73,11 @@ public class HomeFragment extends Fragment {
         });
 
         InfoCard attendance = homeFragment.findViewById(R.id.card_attendance);
+        InfoCard credits = homeFragment.findViewById(R.id.card_credits);
         InfoCard cgpa = homeFragment.findViewById(R.id.card_cgpa);
 
         attendance.setValue(sharedPreferences.getInt("overall_attendance", 0) + "%");
+        credits.setValue(String.valueOf(sharedPreferences.getInt("total_credits", 0)));
         cgpa.setValue(new DecimalFormat("#.00").format(sharedPreferences.getFloat("cgpa", 0)));
 
         TabLayout days = homeFragment.findViewById(R.id.days);
