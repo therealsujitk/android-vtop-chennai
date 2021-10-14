@@ -2,6 +2,7 @@ package tk.therealsuji.vtopchennai.widgets;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.util.AttributeSet;
 import android.util.TypedValue;
@@ -10,9 +11,12 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import tk.therealsuji.vtopchennai.R;
 import tk.therealsuji.vtopchennai.fragments.RecyclerViewFragment;
@@ -40,7 +44,41 @@ public class ProfileItem extends LinearLayout {
 
     private static final ItemData[] APPLICATION_PROFILE_ITEMS = {
             new ItemData(R.string.appearance, R.drawable.ic_appearance, context -> {
+                String[] themes = {
+                        context.getString(R.string.light),
+                        context.getString(R.string.dark),
+                        context.getString(R.string.system)
+                };
 
+                SharedPreferences sharedPreferences = SettingsRepository.getSharedPreferences(context);
+
+                int checkedItem = 2;
+                String theme = sharedPreferences.getString("appearance", "system");
+
+                if (theme.equals("light")) {
+                    checkedItem = 0;
+                } else if (theme.equals("dark")) {
+                    checkedItem = 1;
+                }
+
+                new MaterialAlertDialogBuilder(context)
+                        .setTitle(R.string.appearance)
+                        .setNegativeButton(R.string.cancel, (dialogInterface, i) -> dialogInterface.cancel())
+                        .setSingleChoiceItems(themes, checkedItem, (dialogInterface, i) -> {
+                            if (i == 0) {
+                                sharedPreferences.edit().putString("appearance", "light").apply();
+                                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                            } else if (i == 1) {
+                                sharedPreferences.edit().putString("appearance", "dark").apply();
+                                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                            } else {
+                                sharedPreferences.edit().remove("appearance").apply();
+                                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
+                            }
+
+                            dialogInterface.dismiss();
+                        })
+                        .show();
             }),
             new ItemData(R.string.faq, R.drawable.ic_faq, context -> SettingsRepository.openWebViewActivity(
                     context,
