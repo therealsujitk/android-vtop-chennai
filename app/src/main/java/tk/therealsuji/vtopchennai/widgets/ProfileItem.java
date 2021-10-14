@@ -1,5 +1,6 @@
 package tk.therealsuji.vtopchennai.widgets;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -18,6 +19,7 @@ import androidx.fragment.app.FragmentActivity;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
+import tk.therealsuji.vtopchennai.LoginActivity;
 import tk.therealsuji.vtopchennai.R;
 import tk.therealsuji.vtopchennai.fragments.RecyclerViewFragment;
 import tk.therealsuji.vtopchennai.helpers.SettingsRepository;
@@ -62,7 +64,6 @@ public class ProfileItem extends LinearLayout {
                 }
 
                 new MaterialAlertDialogBuilder(context)
-                        .setTitle(R.string.appearance)
                         .setNegativeButton(R.string.cancel, (dialogInterface, i) -> dialogInterface.cancel())
                         .setSingleChoiceItems(themes, checkedItem, (dialogInterface, i) -> {
                             if (i == 0) {
@@ -78,6 +79,7 @@ public class ProfileItem extends LinearLayout {
 
                             dialogInterface.dismiss();
                         })
+                        .setTitle(R.string.appearance)
                         .show();
             }),
             new ItemData(R.string.faq, R.drawable.ic_faq, context -> SettingsRepository.openWebViewActivity(
@@ -102,9 +104,16 @@ public class ProfileItem extends LinearLayout {
             new ItemData(R.string.send_feedback, R.drawable.ic_feedback, context -> {
 
             }),
-            new ItemData(R.string.sign_out, R.drawable.ic_sign_out, context -> {
-
-            })
+            new ItemData(R.string.sign_out, R.drawable.ic_sign_out, context -> new MaterialAlertDialogBuilder(context)
+                    .setMessage(R.string.sign_out_text)
+                    .setNegativeButton(R.string.cancel, (dialogInterface, i) -> dialogInterface.cancel())
+                    .setPositiveButton(R.string.sign_out, (dialogInterface, i) -> {
+                        SettingsRepository.getSharedPreferences(context).edit().remove("isSignedIn").apply();
+                        context.startActivity(new Intent(context, LoginActivity.class));
+                        ((Activity) context).finish();
+                    })
+                    .setTitle(R.string.sign_out)
+                    .show())
     };
 
     public static final ItemData[][] PROFILE_ITEMS = {

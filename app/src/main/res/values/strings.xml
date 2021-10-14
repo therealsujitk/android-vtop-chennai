@@ -136,7 +136,7 @@
     <string name="sign_out">Sign Out</string>
     <string name="sign_out_description">Icon for the sign out button.</string>
 
-    <string name="sign_out_text">Are you sure you want to sign out?</string>
+    <string name="sign_out_text">Are you sure you want to sign out of this application? You can switch semesters without having to sign out.</string>
     <string name="cancel">Cancel</string>
 
     <string name="refreshed">Last Refreshed</string>
