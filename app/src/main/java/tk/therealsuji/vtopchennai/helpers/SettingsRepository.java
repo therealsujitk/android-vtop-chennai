@@ -5,11 +5,16 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.net.Uri;
+import android.os.Bundle;
 
+import androidx.fragment.app.FragmentActivity;
 import androidx.security.crypto.EncryptedSharedPreferences;
 import androidx.security.crypto.MasterKey;
 
+import tk.therealsuji.vtopchennai.MainActivity;
+import tk.therealsuji.vtopchennai.R;
 import tk.therealsuji.vtopchennai.WebViewActivity;
+import tk.therealsuji.vtopchennai.fragments.RecyclerViewFragment;
 
 public class SettingsRepository {
     public static String APP_BASE_URL = "https://vtopchennai.therealsuji.tk";
@@ -61,6 +66,24 @@ public class SettingsRepository {
         String link = APP_BASE_URL;
         Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(link));
         context.startActivity(browserIntent);
+    }
+
+    public static void openRecyclerViewFragment(FragmentActivity fragmentActivity, int titleId, int contentType) {
+        RecyclerViewFragment recyclerViewFragment = new RecyclerViewFragment();
+        Bundle bundle = new Bundle();
+
+        bundle.putInt("title_id", titleId);
+        bundle.putInt("content_type", contentType);
+
+        recyclerViewFragment.setArguments(bundle);
+
+        fragmentActivity.getSupportFragmentManager().beginTransaction()
+                .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right)
+                .add(R.id.main_body, recyclerViewFragment)
+                .addToBackStack(null)
+                .commit();
+
+        ((MainActivity) fragmentActivity).hideBottomNavigationView();
     }
 
     public static void openWebViewActivity(Context context, String title, String url) {

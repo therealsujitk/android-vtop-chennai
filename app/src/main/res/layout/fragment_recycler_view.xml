@@ -7,7 +7,7 @@
     android:background="@color/secondary_container_95"
     android:clickable="true"
     android:focusable="true"
-    tools:context=".fragments.SpotlightFragment">
+    tools:context=".fragments.RecyclerViewFragment">
 
     <LinearLayout
         android:id="@+id/header"
@@ -29,6 +29,7 @@
             app:tint="?attr/colorSecondary" />
 
         <TextView
+            android:id="@+id/text_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
@@ -39,9 +40,10 @@
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/spotlight"
+        android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

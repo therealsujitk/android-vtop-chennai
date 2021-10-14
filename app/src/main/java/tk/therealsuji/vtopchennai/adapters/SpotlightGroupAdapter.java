@@ -16,10 +16,10 @@ import tk.therealsuji.vtopchennai.models.Spotlight;
 import tk.therealsuji.vtopchennai.widgets.SpotlightSection;
 
 public class SpotlightGroupAdapter extends RecyclerView.Adapter<SpotlightGroupAdapter.ViewHolder> {
-    private Map<String, List<Spotlight>> announcements;
-    private List<String> categories;
+    private final Map<String, List<Spotlight>> announcements;
+    private final List<String> categories;
 
-    public void setSpotlight(List<Spotlight> spotlight) {
+    public SpotlightGroupAdapter(List<Spotlight> spotlight) {
         this.announcements = new HashMap<>();
         this.categories = new ArrayList<>();
 
