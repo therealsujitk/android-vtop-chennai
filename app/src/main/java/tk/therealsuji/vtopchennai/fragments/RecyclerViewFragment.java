@@ -28,7 +28,6 @@ public class RecyclerViewFragment extends Fragment {
     public static final int TYPE_ATTENDANCE = 1;
     public static final int TYPE_RECEIPTS = 2;
     public static final int TYPE_SPOTLIGHT = 3;
-    public static final int TYPE_STAFF = 4;
 
     AppDatabase appDatabase;
     RecyclerView recyclerView;
@@ -61,10 +60,6 @@ public class RecyclerViewFragment extends Fragment {
             public void onError(@NonNull Throwable e) {
             }
         });
-    }
-
-    private void attachStaff() {
-
     }
 
     @Override
@@ -103,9 +98,6 @@ public class RecyclerViewFragment extends Fragment {
                 break;
             case TYPE_SPOTLIGHT:
                 this.attachSpotlight();
-                break;
-            case TYPE_STAFF:
-                this.attachStaff();
                 break;
         }
 

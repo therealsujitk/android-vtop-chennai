@@ -34,6 +34,7 @@
         <entry key="app/src/main/res/drawable/dialog_background.xml" value="0.209375" />
         <entry key="app/src/main/res/drawable/gradient_linear.xml" value="0.209375" />
         <entry key="app/src/main/res/drawable/ic_appearance.xml" value="0.209375" />
+        <entry key="app/src/main/res/drawable/ic_attendance.xml" value="0.19907407407407407" />
         <entry key="app/src/main/res/drawable/ic_chevron_right.xml" value="0.209375" />
         <entry key="app/src/main/res/drawable/ic_faq.xml" value="0.209375" />
         <entry key="app/src/main/res/drawable/ic_history.xml" value="0.209375" />
@@ -49,6 +50,7 @@
         <entry key="app/src/main/res/drawable/ic_semester.xml" value="0.209375" />
         <entry key="app/src/main/res/drawable/ic_sign_out.xml" value="0.17685185185185184" />
         <entry key="app/src/main/res/drawable/ic_spotlight.xml" value="0.17685185185185184" />
+        <entry key="app/src/main/res/drawable/ic_staff.xml" value="0.19907407407407407" />
         <entry key="app/src/main/res/drawable/ic_theory.xml" value="0.209375" />
         <entry key="app/src/main/res/drawable/item_bottom_navigation.xml" value="0.18055555555555555" />
         <entry key="app/src/main/res/drawable/plain_card.xml" value="0.18055555555555555" />

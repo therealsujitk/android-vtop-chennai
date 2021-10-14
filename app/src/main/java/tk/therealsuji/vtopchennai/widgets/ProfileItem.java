@@ -12,16 +12,25 @@ import android.widget.LinearLayout;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.FragmentActivity;
 
 import tk.therealsuji.vtopchennai.R;
+import tk.therealsuji.vtopchennai.fragments.RecyclerViewFragment;
 import tk.therealsuji.vtopchennai.helpers.SettingsRepository;
 
 public class ProfileItem extends LinearLayout {
     private static final ItemData[] PERSONAL_PROFILE_ITEMS = {
-            new ItemData(R.string.messages, R.drawable.ic_messages, context -> {
-
-            }),
-            new ItemData(R.string.receipts, R.drawable.ic_receipts, context -> {
+            new ItemData(R.string.attendance, R.drawable.ic_attendance, context -> SettingsRepository.openRecyclerViewFragment(
+                    (FragmentActivity) context,
+                    R.string.attendance,
+                    RecyclerViewFragment.TYPE_ATTENDANCE
+            )),
+            new ItemData(R.string.receipts, R.drawable.ic_receipts, context -> SettingsRepository.openRecyclerViewFragment(
+                    (FragmentActivity) context,
+                    R.string.receipts,
+                    RecyclerViewFragment.TYPE_RECEIPTS
+            )),
+            new ItemData(R.string.staff, R.drawable.ic_staff, context -> {
 
             }),
             new ItemData(R.string.switch_semester, R.drawable.ic_semester, context -> {
