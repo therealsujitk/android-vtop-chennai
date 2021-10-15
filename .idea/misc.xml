@@ -69,11 +69,13 @@
         <entry key="app/src/main/res/layout/dialog_signout.xml" value="0.19322916666666667" />
         <entry key="app/src/main/res/layout/dialog_update.xml" value="0.1" />
         <entry key="app/src/main/res/layout/fragment_academics.xml" value="0.19322916666666667" />
+        <entry key="app/src/main/res/layout/fragment_assignments.xml" value="0.16574074074074074" />
         <entry key="app/src/main/res/layout/fragment_courses.xml" value="0.19322916666666667" />
         <entry key="app/src/main/res/layout/fragment_home.xml" value="0.33" />
         <entry key="app/src/main/res/layout/fragment_performance.xml" value="0.33" />
         <entry key="app/src/main/res/layout/fragment_profile.xml" value="0.33" />
         <entry key="app/src/main/res/layout/fragment_spotlight.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/layout_attendance_item.xml" value="0.33" />
         <entry key="app/src/main/res/layout/layout_download_captcha.xml" value="0.25" />
         <entry key="app/src/main/res/layout/layout_download_progress.xml" value="0.19322916666666667" />
         <entry key="app/src/main/res/layout/layout_download_semester.xml" value="0.19322916666666667" />

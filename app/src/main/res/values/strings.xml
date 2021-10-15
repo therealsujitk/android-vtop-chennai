@@ -227,4 +227,6 @@
     <string name="select_semester">Select a semester</string>
     <string name="vtop_service_description">Downloads data from VTOP.</string>
     <string name="total_credits">Overall Credits Earned</string>
+    <string name="assignments">Assignments</string>
+    <string name="assignments_header">Your Assignments</string>
 </resources>

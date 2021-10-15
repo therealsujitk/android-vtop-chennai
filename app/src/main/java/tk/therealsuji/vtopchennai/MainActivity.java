@@ -13,14 +13,14 @@ import androidx.fragment.app.Fragment;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-import tk.therealsuji.vtopchennai.fragments.CoursesFragment;
+import tk.therealsuji.vtopchennai.fragments.AssignmentsFragment;
 import tk.therealsuji.vtopchennai.fragments.HomeFragment;
 import tk.therealsuji.vtopchennai.fragments.PerformanceFragment;
 import tk.therealsuji.vtopchennai.fragments.ProfileFragment;
 
 public class MainActivity extends AppCompatActivity {
     BottomNavigationView bottomNavigationView;
-    Fragment homeFragment, performanceFragment, coursesFragment, profileFragment;
+    Fragment homeFragment, performanceFragment, assignmentsFragment, profileFragment;
 
     public void hideBottomNavigationView() {
         this.bottomNavigationView.clearAnimation();
@@ -64,12 +64,12 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 selectedFragment = this.performanceFragment;
-            } else if (item.getItemId() == R.id.item_courses) {
-                if (this.coursesFragment == null) {
-                    this.coursesFragment = new CoursesFragment();
+            } else if (item.getItemId() == R.id.item_assignments) {
+                if (this.assignmentsFragment == null) {
+                    this.assignmentsFragment = new AssignmentsFragment();
                 }
 
-                selectedFragment = this.coursesFragment;
+                selectedFragment = this.assignmentsFragment;
             } else if (item.getItemId() == R.id.item_profile) {
                 if (this.profileFragment == null) {
                     this.profileFragment = new ProfileFragment();

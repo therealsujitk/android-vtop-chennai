@@ -11,9 +11,9 @@
         android:title="@string/performance" />
 
     <item
-        android:id="@+id/item_courses"
-        android:icon="@drawable/ic_courses"
-        android:title="@string/courses" />
+        android:id="@+id/item_assignments"
+        android:icon="@drawable/ic_assignments"
+        android:title="@string/assignments" />
 
     <item
         android:id="@+id/item_profile"
