@@ -13,15 +13,19 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.annotations.NonNull;
 import io.reactivex.rxjava3.core.SingleObserver;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import tk.therealsuji.vtopchennai.MainActivity;
 import tk.therealsuji.vtopchennai.R;
+import tk.therealsuji.vtopchennai.adapters.ReceiptsAdapter;
 import tk.therealsuji.vtopchennai.adapters.SpotlightGroupAdapter;
 import tk.therealsuji.vtopchennai.helpers.AppDatabase;
+import tk.therealsuji.vtopchennai.interfaces.ReceiptsDao;
 import tk.therealsuji.vtopchennai.interfaces.SpotlightDao;
+import tk.therealsuji.vtopchennai.models.Receipt;
 import tk.therealsuji.vtopchennai.models.Spotlight;
 
 public class RecyclerViewFragment extends Fragment {
@@ -41,7 +45,26 @@ public class RecyclerViewFragment extends Fragment {
     }
 
     private void attachReceipts() {
+        ReceiptsDao receiptsDao = this.appDatabase.receiptsDao();
 
+        receiptsDao
+                .getReceipts()
+                .subscribeOn(Schedulers.single())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new SingleObserver<List<Receipt>>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+                    }
+
+                    @Override
+                    public void onSuccess(@NonNull List<Receipt> receipts) {
+                        recyclerView.setAdapter(new ReceiptsAdapter(receipts));
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                    }
+                });
     }
 
     private void attachSpotlight() {

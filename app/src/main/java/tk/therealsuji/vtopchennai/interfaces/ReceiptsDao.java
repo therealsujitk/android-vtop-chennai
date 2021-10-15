@@ -7,6 +7,7 @@ import androidx.room.Query;
 import java.util.List;
 
 import io.reactivex.rxjava3.core.Completable;
+import io.reactivex.rxjava3.core.Single;
 import tk.therealsuji.vtopchennai.models.Receipt;
 
 @Dao
@@ -16,4 +17,7 @@ public interface ReceiptsDao {
 
     @Query("DELETE FROM receipts")
     Completable deleteAll();
+
+    @Query("SELECT * FROM receipts")
+    Single<List<Receipt>> getReceipts();
 }

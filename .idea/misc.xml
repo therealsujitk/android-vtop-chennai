@@ -77,6 +77,7 @@
         <entry key="app/src/main/res/layout/layout_download_captcha.xml" value="0.25" />
         <entry key="app/src/main/res/layout/layout_download_progress.xml" value="0.19322916666666667" />
         <entry key="app/src/main/res/layout/layout_download_semester.xml" value="0.19322916666666667" />
+        <entry key="app/src/main/res/layout/layout_receipts_item.xml" value="0.33" />
         <entry key="app/src/main/res/layout/style_spinner.xml" value="0.19322916666666667" />
         <entry key="app/src/main/res/layout/style_spinner_selected.xml" value="0.19322916666666667" />
         <entry key="app/src/main/res/menu/bottom_navigation.xml" value="0.19322916666666667" />
