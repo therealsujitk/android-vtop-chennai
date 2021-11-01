@@ -111,7 +111,7 @@ public class PerformanceCard extends LinearLayout {
         container.addView(this.scoreText);
         this.addView(container);
 
-        this.setBackground(ContextCompat.getDrawable(this.context, R.drawable.background_info_card));
+        this.setBackground(ContextCompat.getDrawable(this.context, R.drawable.background_card));
         this.setOrientation(VERTICAL);
         this.setPadding(
                 (int) (20 * pixelDensity),

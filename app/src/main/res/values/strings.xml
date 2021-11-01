@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">VTOP</string>
-    <string name="app_name_long">VTOP Chennai</string>
 
 
     <string name="login_header">Login</string>
@@ -14,7 +13,6 @@
     <string name="good_morning">Good Morning,</string>
     <string name="spotlight">Spotlight</string>
 
-    <string name="pending_classes">Pending Classes</string>
     <string name="cgpa">CGPA</string>
     <string name="overall_attendance">Overall Attendance</string>
 
@@ -41,45 +39,23 @@
     <string name="profile_header">Your Profile</string>
 
 
-    <string name="privacy_intro">This VTOP Chennai application is completely free and does not contain any ads. The VTOP Chennai Portal service is provided by VIT Chennai.</string>
-    <string name="privacy_ownership">Ownership</string>
-    <string name="privacy_ownership_content">This application is a third-party service, meaning this application is owned and maintained by an individual and NOT by VIT Chennai.</string>
-    <string name="privacy_data">Information Collection and Use</string>
-    <string name="privacy_data_content">All necessary data such as your VTOP username, password (both in their encrypted forms) and the data collected from the VTOP Chennai portal is ONLY stored locally on your device. I DO NOT collect or disclose any information entered by you or downloaded from the VTOP Chennai Portal. Data is NOT synced automatically with the portal, you will have to manually refresh data to get the latest updates.</string>
-    <string name="privacy_contact">Contact Me</string>
-    <string name="privacy_contact_content">If you have any queries, suggestions or face any issues, my contact information is available at <a href="http://therealsuji.tk">http://therealsuji.tk</a>.</string>
-
-
     <string name="solve_captcha">Solve the captcha</string>
     <string name="enter_captcha">Enter Captcha</string>
     <string name="captcha_description">Image that shows the captcha code.</string>
     <string name="submit">Submit</string>
-    <string name="select">Select</string>
     <string name="sign_in_attempt">Attempting to sign you in</string>
     <string name="downloading_profile">Downloading Profile</string>
     <string name="downloading_timetable">Downloading Timetable</string>
     <string name="downloading_courses">Downloading Course Info</string>
     <string name="downloading_staff">Downloading Staff Info</string>
     <string name="downloading_attendance">Downloading Attendance</string>
-    <string name="downloading_exams">Downloading Exam Schedule</string>
     <string name="downloading_marks">Downloading Marks</string>
-    <string name="downloading_grades">Downloading Grades</string>
-    <string name="downloading_grade_history">Downloading Grade History</string>
-    <string name="downloading_messages">Downloading Messages</string>
     <string name="downloading_spotlight">Downloading Spotlight</string>
     <string name="downloading_receipts">Downloading Receipts</string>
     <string name="completing_download">Completing download</string>
 
 
-    <string name="avatar_description">Image that shows a users profile picture.</string>
-    <string name="profile_background">Background image for the profile section.</string>
     <string name="name">JOHN DOE</string>
-    <string name="id">20XYZ3727</string>
-    <string name="credits">Credits</string>
-
-    <string name="no_upcoming">No Upcoming Classes</string>
-    <string name="upcoming">UPCOMING</string>
-    <string name="ongoing">ONGOING</string>
 
     <string name="lab">Lab Marks</string>
     <string name="project">Project Marks</string>
@@ -89,134 +65,30 @@
     <string name="update_message">A new version of VTOP Chennai has been released! The Update button bellow will take you to the download page.</string>
     <string name="update">Update</string>
 
-    <string name="refresh_text">Your data hasn\'t been refreshed in a while. It might be out of date.</string>
-    <string name="refresh_button">Refresh</string>
-
-    <string name="classes">Classes</string>
-    <string name="timetable">Timetable</string>
-    <string name="timetable_description">Icon for the timetable button.</string>
     <string name="attendance">Attendance</string>
-    <string name="attendance_description">Icon for the attendance button.</string>
-    <string name="messages_description">Icon for the messages button.</string>
-    <string name="courses_description">Icon for the courses button.</string>
 
-    <string name="academics">Academics</string>
-    <string name="exams">Exams</string>
-    <string name="exams_description">Icon for the exams button.</string>
-    <string name="marks_description">Icon for the marks button.</string>
-    <string name="grades">Grades</string>
-    <string name="grades_description">Icon for the grades button.</string>
-    <string name="spotlight_description">Icon for the spotlight button.</string>
-
-    <string name="summary">Summary</string>
-    <string name="effective">Effective Grades</string>
-    <string name="curriculum">Curriculum Details</string>
-    <string name="basket">Basket Details</string>
-
-    <string name="campus">Campus</string>
-    <string name="directions">Directions</string>
-    <string name="directions_description">Icon for the directions button.</string>
     <string name="staff">Staff</string>
-    <string name="staff_description">Icon for the staff button.</string>
     <string name="receipts">Receipts</string>
-    <string name="receipts_description">Icon for the receipts button.</string>
 
-    <string name="app">Application</string>
-    <string name="share">Share</string>
-    <string name="share_description">Icon for the share button.</string>
-    <string name="refresh">Refresh Data</string>
-    <string name="refresh_description">Icon for the refresh button.</string>
     <string name="appearance">Appearance</string>
-    <string name="appearance_description">Icon for the appearance button.</string>
     <string name="notifications">Notifications</string>
-    <string name="notifications_description">Icon for the notification settings button.</string>
-    <string name="privacy_description">Icon for the privacy button.</string>
-    <string name="report_bug">Report Bug</string>
-    <string name="report_bug_description">Icon for the bug report button.</string>
     <string name="sign_out">Sign Out</string>
-    <string name="sign_out_description">Icon for the sign out button.</string>
 
     <string name="sign_out_text">Are you sure you want to sign out of this application? You can switch semesters without having to sign out.</string>
     <string name="cancel">Cancel</string>
 
-    <string name="refreshed">Last Refreshed</string>
-    <string name="refreshed_unavailable">Last Refreshed: Unavailable</string>
-    <string name="about">Built by <a href="https://therealsuji.tk">@therealsujitk</a></string>
 
-
-    <string name="sun">Sun</string>
-    <string name="mon">Mon</string>
-    <string name="tue">Tue</string>
-    <string name="wed">Wed</string>
-    <string name="thu">Thu</string>
-    <string name="fri">Fri</string>
-    <string name="sat">Sat</string>
-
-
-    <string name="no_data">No Data Available</string>
-    <string name="no_messages">No Messages</string>
-    <string name="no_announcements">No Announcements</string>
-    <string name="new_data">Looks like you do have some new data available, however <a href="https://therealsuji.tk">@therealsujitk</a> was a bit too lazy to add this feature, why don\'t you contact him and give him a piece of your mind.</string>
-
-
-    <string name="course_title">Course Title</string>
-    <string name="school">Faculty School</string>
-
-
-    <string name="slot">Slot</string>
-    <string name="date">Date</string>
-    <string name="reporting">Reporting Time</string>
-    <string name="timings">Timings</string>
-    <string name="venue">Venue</string>
-    <string name="location">Location</string>
-    <string name="seat">Seat Number</string>
-
-
-    <string name="type">Course Type</string>
     <string name="score">Your Score</string>
     <string name="weightage">Weightage Score</string>
     <string name="status">Status</string>
     <string name="average">Class Average</string>
-
-    <string name="filter_by_course">Filter By Course</string>
-    <string name="filter_by_title">Filter By Title</string>
-
-    <string name="grade_history">Grade History</string>
-    <string name="grade">Grade</string>
-    <string name="grade_type">Grade Type</string>
-
-
-    <string name="map">Campus Map</string>
-    <string name="main_blocks">Main Blocks</string>
-    <string name="hostels">Hostels</string>
-    <string name="food">Food</string>
-    <string name="atm">Banks &amp; ATM\'s</string>
-    <string name="amenities">Amenities</string>
-    <string name="sports">Sports</string>
-
-
-    <string name="proctor">Proctor</string>
-    <string name="dean">Dean</string>
-    <string name="hod">HOD</string>
-
-
-    <string name="due_payments">Due Payments</string>
-    <string name="due_payments_text">You have one or more payments due. Please visit the VTOP portal for more information.</string>
 
 
     <string name="light">Light</string>
     <string name="dark">Dark</string>
     <string name="system">Set by System</string>
 
-    <string name="clear_logs">Clear Logs</string>
-    <string name="no_logs">No Error Logs</string>
-    <string name="clear_logs_text">Are you sure you want to clear all logs?</string>
-    <string name="clear">Clear</string>
-
-    <string name="marks">Marks</string>
-    <string name="messages">Messages</string>
     <string name="personal">Personal</string>
-    <string name="settings_general">General</string>
     <string name="application">Application</string>
     <string name="days">Days of the week</string>
     <string name="go_back">Go Back</string>
@@ -227,6 +99,10 @@
     <string name="select_semester">Select a semester</string>
     <string name="vtop_service_description">Downloads data from VTOP.</string>
     <string name="total_credits">Overall Credits Earned</string>
+    <string name="theory_weightage">Theory Weightage</string>
+    <string name="lab_weightage">Lab Weightage</string>
+    <string name="project_weightage">Project Weightage</string>
+    <string name="overall_course_score">Overall Course Score</string>
     <string name="assignments">Assignments</string>
     <string name="assignments_header">Your Assignments</string>
 </resources>

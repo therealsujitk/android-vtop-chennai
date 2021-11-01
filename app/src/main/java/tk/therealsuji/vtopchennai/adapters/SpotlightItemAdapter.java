@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 import tk.therealsuji.vtopchennai.models.Spotlight;
-import tk.therealsuji.vtopchennai.widgets.Announcement;
+import tk.therealsuji.vtopchennai.widgets.SpotlightItem;
 
 public class SpotlightItemAdapter extends RecyclerView.Adapter<SpotlightItemAdapter.ViewHolder> {
     private final float pixelDensity;
@@ -27,9 +27,9 @@ public class SpotlightItemAdapter extends RecyclerView.Adapter<SpotlightItemAdap
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        Announcement announcement = new Announcement(parent.getContext());
+        SpotlightItem spotlightItem = new SpotlightItem(parent.getContext());
 
-        return new ViewHolder(announcement);
+        return new ViewHolder(spotlightItem);
     }
 
     @Override
@@ -64,32 +64,32 @@ public class SpotlightItemAdapter extends RecyclerView.Adapter<SpotlightItemAdap
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        Announcement announcement;
+        SpotlightItem spotlightItem;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            this.announcement = (Announcement) itemView;
+            this.spotlightItem = (SpotlightItem) itemView;
         }
 
         public void initializeAnnouncement(Spotlight announcement) {
-            this.announcement.setAnnouncement(announcement.announcement);
-            this.announcement.setLink(announcement.link);
+            this.spotlightItem.setAnnouncement(announcement.announcement);
+            this.spotlightItem.setLink(announcement.link);
         }
 
         public void setMargins(int left, int top, int right, int bottom) {
-            this.announcement.setMargins(left, top, right, bottom);
+            this.spotlightItem.setMargins(left, top, right, bottom);
         }
 
         public void setFirst() {
-            this.announcement.setFirst();
+            this.spotlightItem.setFirst();
         }
 
         public void setLast() {
-            this.announcement.setLast();
+            this.spotlightItem.setLast();
         }
 
         public void setSingle() {
-            this.announcement.setSingle();
+            this.spotlightItem.setSingle();
         }
     }
 }

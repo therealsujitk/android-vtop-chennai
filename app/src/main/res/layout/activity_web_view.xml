@@ -5,7 +5,7 @@
     android:id="@+id/layout_web_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".WebViewActivity">
+    tools:context=".activities.WebViewActivity">
 
     <LinearLayout
         android:id="@+id/header"

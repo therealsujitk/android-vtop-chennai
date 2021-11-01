@@ -11,13 +11,14 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.security.crypto.EncryptedSharedPreferences;
 import androidx.security.crypto.MasterKey;
 
-import tk.therealsuji.vtopchennai.MainActivity;
 import tk.therealsuji.vtopchennai.R;
-import tk.therealsuji.vtopchennai.WebViewActivity;
+import tk.therealsuji.vtopchennai.activities.MainActivity;
+import tk.therealsuji.vtopchennai.activities.WebViewActivity;
 import tk.therealsuji.vtopchennai.fragments.RecyclerViewFragment;
 
 public class SettingsRepository {
     public static String APP_BASE_URL = "https://vtopchennai.therealsuji.tk";
+    public static String APP_ABOUT_URL = APP_BASE_URL + "/about.json";
     public static String APP_PRIVACY_URL = APP_BASE_URL + "/privacy-policy";
     public static String APP_FAQ_URL = APP_BASE_URL + "/frequently-asked-questions";
 
@@ -78,7 +79,7 @@ public class SettingsRepository {
         recyclerViewFragment.setArguments(bundle);
 
         fragmentActivity.getSupportFragmentManager().beginTransaction()
-                .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right)
+                .setCustomAnimations(R.anim.slide_in_right, 0, 0, R.anim.slide_out_right)
                 .add(R.id.main_body, recyclerViewFragment)
                 .addToBackStack(null)
                 .commit();

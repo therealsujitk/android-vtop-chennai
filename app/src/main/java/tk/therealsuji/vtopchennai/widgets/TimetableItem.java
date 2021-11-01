@@ -95,7 +95,7 @@ public class TimetableItem extends RelativeLayout {
         this.classProgress.setClickable(true);
         this.classProgress.setFocusable(true);
         this.classProgress.setOnClickListener(view -> this.onClick());
-        this.classProgress.setProgressDrawable(ContextCompat.getDrawable(this.getContext(), R.drawable.background_class_item));
+        this.classProgress.setProgressDrawable(ContextCompat.getDrawable(this.getContext(), R.drawable.background_timetable_item));
 
         this.courseType = new ImageView(this.getContext());
         this.courseType.setPadding(

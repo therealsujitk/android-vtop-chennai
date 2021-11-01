@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import tk.therealsuji.vtopchennai.models.Mark;
-import tk.therealsuji.vtopchennai.widgets.MarksSection;
+import tk.therealsuji.vtopchennai.widgets.MarksGroup;
 
 public class MarksSectionAdapter extends RecyclerView.Adapter<MarksSectionAdapter.ViewHolder> {
     Map<Integer, List<Mark.AllData>> marks;
@@ -25,12 +25,12 @@ public class MarksSectionAdapter extends RecyclerView.Adapter<MarksSectionAdapte
 
         for (int i = 0; i < marks.size(); ++i) {
             Mark.AllData mark = marks.get(i);
-            int sectionType = MarksSection.TYPE_THEORY;
+            int sectionType = MarksGroup.TYPE_THEORY;
 
             if (mark.courseType.equals("lab")) {
-                sectionType = MarksSection.TYPE_LAB;
+                sectionType = MarksGroup.TYPE_LAB;
             } else if (mark.courseType.equals("project")) {
-                sectionType = MarksSection.TYPE_PROJECT;
+                sectionType = MarksGroup.TYPE_PROJECT;
             }
 
             if (!this.marks.containsKey(sectionType)) {
@@ -45,8 +45,8 @@ public class MarksSectionAdapter extends RecyclerView.Adapter<MarksSectionAdapte
     @NonNull
     @Override
     public MarksSectionAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        MarksSection marksSection = new MarksSection(parent.getContext());
-        return new ViewHolder(marksSection);
+        MarksGroup marksGroup = new MarksGroup(parent.getContext());
+        return new ViewHolder(marksGroup);
     }
 
     @Override
@@ -61,15 +61,15 @@ public class MarksSectionAdapter extends RecyclerView.Adapter<MarksSectionAdapte
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        MarksSection marksSection;
+        MarksGroup marksGroup;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            this.marksSection = (MarksSection) itemView;
+            this.marksGroup = (MarksGroup) itemView;
         }
 
         public void setMarksSection(int sectionType, List<Mark.AllData> marks) {
-            this.marksSection.setMarksSection(sectionType, marks);
+            this.marksGroup.setMarksSection(sectionType, marks);
         }
     }
 }

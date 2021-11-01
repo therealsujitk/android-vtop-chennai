@@ -1,7 +1,7 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
 
     <style name="Widget.VTOP.EditText" parent="Widget.AppCompat.EditText">
-        <item name="android:background">@drawable/text_field_primary</item>
+        <item name="android:background">@drawable/background_edit_text</item>
         <item name="android:drawablePadding">12dp</item>
         <item name="android:drawableTint">?attr/colorSecondary</item>
         <item name="android:padding">15dp</item>
@@ -43,42 +43,5 @@
     <style name="Widget.VTOP.CircularProgressBar" parent="Widget.AppCompat.ProgressBar">
         <item name="android:indeterminateOnly">false</item>
         <item name="android:progressDrawable">@drawable/background_circular_progress_bar</item>
-    </style>
-
-    <style name="AppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimary</item>
-        <item name="colorAccent">@color/colorAccent</item>
-        <item name="colorControlHighlight">@color/colorBlue04</item>
-        <item name="android:statusBarColor">@android:color/transparent</item>
-        <item name="android:enforceStatusBarContrast" tools:targetApi="q">false</item>
-        <item name="android:windowLightStatusBar">true</item>
-        <item name="android:navigationBarColor">@android:color/transparent</item>
-        <item name="android:enforceNavigationBarContrast" tools:targetApi="q">false</item>
-        <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">true</item>
-        <item name="android:windowBackground">@color/colorBackground</item>
-        <item name="android:fontFamily">@font/rubik</item>
-    </style>
-
-    <style name="SplashScreen" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="colorPrimary">@color/colorDefault</item>
-        <item name="colorPrimaryDark">@color/colorDefault</item>
-        <item name="android:windowBackground">@drawable/splash_screen</item>
-        <item name="android:navigationBarColor">@color/colorDefault</item>
-    </style>
-
-    <style name="AppTheme.NoActionBar">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-    </style>
-
-    <style name="AppTheme.MarksTheme">
-        <item name="actionOverflowButtonStyle">@style/FilterButtonOverflow</item>
-    </style>
-
-    <style name="FilterButtonOverflow" parent="android:style/Widget.Holo.Light.ActionButton.Overflow">
-        <item name="android:src">@drawable/ic_filter</item>
-        <item name="android:background">?android:attr/actionBarItemBackground</item>
-        <item name="android:contentDescription">Filter Marks</item>
     </style>
 </resources>

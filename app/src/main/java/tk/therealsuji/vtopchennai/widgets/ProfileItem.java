@@ -19,8 +19,8 @@ import androidx.fragment.app.FragmentActivity;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
-import tk.therealsuji.vtopchennai.LoginActivity;
 import tk.therealsuji.vtopchennai.R;
+import tk.therealsuji.vtopchennai.activities.LoginActivity;
 import tk.therealsuji.vtopchennai.fragments.RecyclerViewFragment;
 import tk.therealsuji.vtopchennai.helpers.SettingsRepository;
 

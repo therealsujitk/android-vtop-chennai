@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import tk.therealsuji.vtopchennai.models.Spotlight;
-import tk.therealsuji.vtopchennai.widgets.SpotlightSection;
+import tk.therealsuji.vtopchennai.widgets.SpotlightGroup;
 
 public class SpotlightGroupAdapter extends RecyclerView.Adapter<SpotlightGroupAdapter.ViewHolder> {
     private final Map<String, List<Spotlight>> announcements;
@@ -38,8 +38,8 @@ public class SpotlightGroupAdapter extends RecyclerView.Adapter<SpotlightGroupAd
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        SpotlightSection spotlightSection = new SpotlightSection(parent.getContext());
-        return new ViewHolder(spotlightSection);
+        SpotlightGroup spotlightGroup = new SpotlightGroup(parent.getContext());
+        return new ViewHolder(spotlightGroup);
     }
 
     @Override
@@ -58,15 +58,15 @@ public class SpotlightGroupAdapter extends RecyclerView.Adapter<SpotlightGroupAd
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        SpotlightSection spotlightSection;
+        SpotlightGroup spotlightGroup;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            this.spotlightSection = (SpotlightSection) itemView;
+            this.spotlightGroup = (SpotlightGroup) itemView;
         }
 
         public void setSpotlightSection(String category, List<Spotlight> announcements) {
-            this.spotlightSection.setSpotlightSection(category, announcements);
+            this.spotlightGroup.setSpotlightSection(category, announcements);
         }
     }
 }

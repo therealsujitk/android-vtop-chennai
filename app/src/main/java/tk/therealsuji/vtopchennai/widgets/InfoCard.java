@@ -63,7 +63,7 @@ public class InfoCard extends LinearLayout {
                 (int) (20 * pixelDensity)
         );
 
-        this.setBackground(ContextCompat.getDrawable(context, R.drawable.background_info_card));
+        this.setBackground(ContextCompat.getDrawable(context, R.drawable.background_card));
         this.addView(this.value);
         this.addView(this.key);
     }

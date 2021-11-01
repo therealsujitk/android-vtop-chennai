@@ -5,7 +5,7 @@
     android:layout_marginStart="20dp"
     android:layout_marginTop="10dp"
     android:layout_marginEnd="20dp"
-    android:background="@drawable/background_announcement_single"
+    android:background="@drawable/background_recycler_view_item_single"
     android:orientation="vertical"
     android:padding="20dp">
 
