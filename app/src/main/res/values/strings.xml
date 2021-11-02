@@ -102,4 +102,8 @@
     <string name="overall_course_score">Overall Course Score</string>
     <string name="assignments">Assignments</string>
     <string name="assignments_header">Your Assignments</string>
+    <string name="attendance">Attendance</string>
+
+    <string name="faculty">Faculty: &lt;b>%s&lt;/b></string>
+    <string name="venue">Venue: &lt;b>%s&lt;/b></string>
 </resources>

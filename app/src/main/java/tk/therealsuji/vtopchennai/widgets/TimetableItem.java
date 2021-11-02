@@ -6,6 +6,7 @@ import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.os.Build;
 import android.os.Handler;
+import android.text.Html;
 import android.text.format.DateFormat;
 import android.util.AttributeSet;
 import android.util.TypedValue;
@@ -21,12 +22,25 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.core.content.ContextCompat;
 
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.chip.Chip;
+
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.annotations.NonNull;
+import io.reactivex.rxjava3.core.SingleObserver;
+import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 import tk.therealsuji.vtopchennai.R;
+import tk.therealsuji.vtopchennai.helpers.AppDatabase;
+import tk.therealsuji.vtopchennai.interfaces.CoursesDao;
+import tk.therealsuji.vtopchennai.models.Course;
+import tk.therealsuji.vtopchennai.models.Timetable;
 
 public class TimetableItem extends RelativeLayout {
     public static final int CLASS_LAB = 0;
@@ -188,6 +202,23 @@ public class TimetableItem extends RelativeLayout {
         }
     }
 
+    public void setTimetableItem(Timetable.AllData timetableItem) {
+        this.setOnClickListener(timetableItem.slotId);
+
+        if (timetableItem.courseType.equals("lab")) {
+            this.setCourseType(CLASS_LAB);
+        } else {
+            this.setCourseType(CLASS_THEORY);
+        }
+
+        String courseCode = timetableItem.courseCode;
+        String startTime = timetableItem.startTime;
+        String endTime = timetableItem.endTime;
+
+        this.setCourseCode(courseCode);
+        this.setTimings(startTime, endTime);
+    }
+
     public void setCourseType(int courseType) {
         int drawableId = R.drawable.ic_theory;
 
@@ -251,5 +282,67 @@ public class TimetableItem extends RelativeLayout {
 
     public void setStatus(int status) {
         this.status = status;
+    }
+
+    public void setOnClickListener(int slotId) {
+        this.classProgress.setOnClickListener(view -> {
+            BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(this.getContext());
+            View bottomSheetLayout = View.inflate(this.getContext(), R.layout.layout_timetable_item_bottom_sheet, null);
+            bottomSheetDialog.setContentView(bottomSheetLayout);
+            bottomSheetDialog.show();
+
+            AppDatabase appDatabase = AppDatabase.getInstance(this.getContext().getApplicationContext());
+            CoursesDao coursesDao = appDatabase.coursesDao();
+
+            coursesDao
+                    .getCourse(slotId)
+                    .subscribeOn(Schedulers.single())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new SingleObserver<Course.AllData>() {
+                        @Override
+                        public void onSubscribe(@NonNull Disposable d) {
+                        }
+
+                        @Override
+                        public void onSuccess(@NonNull Course.AllData course) {
+                            AppCompatTextView courseTitle = bottomSheetLayout.findViewById(R.id.course_title);
+                            AppCompatTextView courseCode = bottomSheetLayout.findViewById(R.id.course_code);
+                            AppCompatTextView faculty = bottomSheetLayout.findViewById(R.id.faculty);
+                            AppCompatTextView venue = bottomSheetLayout.findViewById(R.id.venue);
+                            AppCompatTextView attendanceText = bottomSheetLayout.findViewById(R.id.attendance_text);
+
+                            Chip courseType = bottomSheetLayout.findViewById(R.id.course_type);
+                            Chip slot = bottomSheetLayout.findViewById(R.id.slot);
+
+                            ProgressBar attendanceProgress = bottomSheetLayout.findViewById(R.id.attendance_progress);
+
+                            courseTitle.setText(course.courseTitle);
+                            courseCode.setText(course.courseCode);
+                            faculty.setText(Html.fromHtml(getContext().getString(R.string.faculty, course.faculty)));
+                            venue.setText(Html.fromHtml(getContext().getString(R.string.venue, course.venue)));
+
+                            if (course.courseType.equals("lab")) {
+                                courseType.setChipIconResource(R.drawable.ic_lab);
+                                courseType.setText(R.string.lab);
+                            } else {
+                                courseType.setChipIconResource(R.drawable.ic_theory);
+                                courseType.setText(R.string.theory);
+                            }
+
+                            slot.setChipIconResource(R.drawable.ic_timetable);
+                            slot.setText(course.slot);
+
+                            attendanceText.setText(new DecimalFormat("#'%'").format(course.attendance));
+                            attendanceProgress.setProgress(course.attendance, true);
+
+                            bottomSheetLayout.findViewById(R.id.progress_bar).setVisibility(GONE);
+                            bottomSheetLayout.findViewById(R.id.layout_container).setVisibility(VISIBLE);
+                        }
+
+                        @Override
+                        public void onError(@NonNull Throwable e) {
+                        }
+                    });
+        });
     }
 }

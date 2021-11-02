@@ -86,6 +86,7 @@ public class Timetable {
     public Integer saturday;
 
     public static class AllData {
+        public int slotId;
         public String startTime;
         public String endTime;
         public String courseType;

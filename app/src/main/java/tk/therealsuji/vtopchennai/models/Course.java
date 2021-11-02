@@ -26,4 +26,14 @@ public class Course {
 
     @ColumnInfo(name = "faculty")
     public String faculty;
+
+    public static class AllData {
+        public String courseTitle;
+        public String courseCode;
+        public String courseType;
+        public String faculty;
+        public String slot;
+        public String venue;
+        public Integer attendance;
+    }
 }

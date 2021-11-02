@@ -37,31 +37,31 @@ public interface TimetableDao {
     @Query("DELETE FROM timetable")
     Completable deleteAll();
 
-    @Query("SELECT courses.type AS courseType, start_time AS startTime, end_time AS endTime, code AS courseCode " +
+    @Query("SELECT slots.id AS slotId, courses.type AS courseType, start_time AS startTime, end_time AS endTime, code AS courseCode " +
             "FROM timetable, slots, courses WHERE sunday = slots.id AND course_id = courses.id")
     Single<List<Timetable.AllData>> getSunday();
 
-    @Query("SELECT courses.type AS courseType, start_time AS startTime, end_time AS endTime, code AS courseCode " +
+    @Query("SELECT slots.id AS slotId, courses.type AS courseType, start_time AS startTime, end_time AS endTime, code AS courseCode " +
             "FROM timetable, slots, courses WHERE monday = slots.id AND course_id = courses.id")
     Single<List<Timetable.AllData>> getMonday();
 
-    @Query("SELECT courses.type AS courseType, start_time AS startTime, end_time AS endTime, code AS courseCode " +
+    @Query("SELECT slots.id AS slotId, courses.type AS courseType, start_time AS startTime, end_time AS endTime, code AS courseCode " +
             "FROM timetable, slots, courses WHERE tuesday = slots.id AND course_id = courses.id")
     Single<List<Timetable.AllData>> getTuesday();
 
-    @Query("SELECT courses.type AS courseType, start_time AS startTime, end_time AS endTime, code AS courseCode " +
+    @Query("SELECT slots.id AS slotId, courses.type AS courseType, start_time AS startTime, end_time AS endTime, code AS courseCode " +
             "FROM timetable, slots, courses WHERE wednesday = slots.id AND course_id = courses.id")
     Single<List<Timetable.AllData>> getWednesday();
 
-    @Query("SELECT courses.type AS courseType, start_time AS startTime, end_time AS endTime, code AS courseCode " +
+    @Query("SELECT slots.id AS slotId, courses.type AS courseType, start_time AS startTime, end_time AS endTime, code AS courseCode " +
             "FROM timetable, slots, courses WHERE thursday = slots.id AND course_id = courses.id")
     Single<List<Timetable.AllData>> getThursday();
 
-    @Query("SELECT courses.type AS courseType, start_time AS startTime, end_time AS endTime, code AS courseCode " +
+    @Query("SELECT slots.id AS slotId, courses.type AS courseType, start_time AS startTime, end_time AS endTime, code AS courseCode " +
             "FROM timetable, slots, courses WHERE friday = slots.id AND course_id = courses.id")
     Single<List<Timetable.AllData>> getFriday();
 
-    @Query("SELECT courses.type AS courseType, start_time AS startTime, end_time AS endTime, code AS courseCode " +
+    @Query("SELECT slots.id AS slotId, courses.type AS courseType, start_time AS startTime, end_time AS endTime, code AS courseCode " +
             "FROM timetable, slots, courses WHERE saturday = slots.id AND course_id = courses.id")
     Single<List<Timetable.AllData>> getSaturday();
 }
