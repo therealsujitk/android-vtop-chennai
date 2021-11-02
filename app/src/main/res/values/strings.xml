@@ -57,9 +57,9 @@
 
     <string name="name">JOHN DOE</string>
 
-    <string name="lab">Lab Marks</string>
-    <string name="project">Project Marks</string>
-    <string name="theory">Theory Marks</string>
+    <string name="lab">Lab</string>
+    <string name="project">Project</string>
+    <string name="theory">Theory</string>
 
     <string name="update_title">Update Available</string>
     <string name="update_message">A new version of VTOP Chennai has been released! The Update button bellow will take you to the download page.</string>

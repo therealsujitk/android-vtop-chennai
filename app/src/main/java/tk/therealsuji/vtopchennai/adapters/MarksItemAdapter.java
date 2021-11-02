@@ -39,8 +39,10 @@ public class MarksItemAdapter extends RecyclerView.Adapter<MarksItemAdapter.View
         int right = (int) (30 * this.pixelDensity);
         int bottom = (int) (5 * this.pixelDensity);
 
-        if (position == marks.size() - 1) {
-            bottom = (int) (20 * this.pixelDensity);
+        if (position == 0) {
+            top = (int) (10 * this.pixelDensity);
+        } else if (position == marks.size() - 1) {
+            bottom = (int) (10 * this.pixelDensity);
         }
 
         holder.setMargin(left, top, right, bottom);
