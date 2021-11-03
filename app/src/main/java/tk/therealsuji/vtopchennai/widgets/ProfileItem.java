@@ -24,21 +24,26 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import tk.therealsuji.vtopchennai.R;
 import tk.therealsuji.vtopchennai.activities.LoginActivity;
 import tk.therealsuji.vtopchennai.fragments.RecyclerViewFragment;
+import tk.therealsuji.vtopchennai.fragments.ViewPagerFragment;
 import tk.therealsuji.vtopchennai.helpers.SettingsRepository;
 
 public class ProfileItem extends LinearLayout {
     private static final ItemData[] PERSONAL_PROFILE_ITEMS = {
-            new ItemData(R.string.courses, R.drawable.ic_courses, context -> {
-
-            }),
+            new ItemData(R.string.courses, R.drawable.ic_courses, context -> SettingsRepository.openViewPagerFragment(
+                    (FragmentActivity) context,
+                    R.string.courses,
+                    ViewPagerFragment.TYPE_COURSES
+            )),
             new ItemData(R.string.receipts, R.drawable.ic_receipts, context -> SettingsRepository.openRecyclerViewFragment(
                     (FragmentActivity) context,
                     R.string.receipts,
                     RecyclerViewFragment.TYPE_RECEIPTS
             )),
-            new ItemData(R.string.staff, R.drawable.ic_staff, context -> {
-
-            }),
+            new ItemData(R.string.staff, R.drawable.ic_staff, context -> SettingsRepository.openViewPagerFragment(
+                    (FragmentActivity) context,
+                    R.string.staff,
+                    ViewPagerFragment.TYPE_STAFF
+            )),
             new ItemData(R.string.switch_semester, R.drawable.ic_semester, context -> {
 
             })

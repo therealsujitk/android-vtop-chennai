@@ -15,6 +15,7 @@ import tk.therealsuji.vtopchennai.R;
 import tk.therealsuji.vtopchennai.activities.MainActivity;
 import tk.therealsuji.vtopchennai.activities.WebViewActivity;
 import tk.therealsuji.vtopchennai.fragments.RecyclerViewFragment;
+import tk.therealsuji.vtopchennai.fragments.ViewPagerFragment;
 
 public class SettingsRepository {
     public static String APP_BASE_URL = "https://vtopchennai.therealsuji.tk";
@@ -87,6 +88,24 @@ public class SettingsRepository {
         fragmentActivity.getSupportFragmentManager().beginTransaction()
                 .setCustomAnimations(R.anim.slide_in_right, 0, 0, R.anim.slide_out_right)
                 .add(R.id.main_body, recyclerViewFragment)
+                .addToBackStack(null)
+                .commit();
+
+        ((MainActivity) fragmentActivity).hideBottomNavigationView();
+    }
+
+    public static void openViewPagerFragment(FragmentActivity fragmentActivity, int titleId, int contentType) {
+        ViewPagerFragment viewPagerFragment = new ViewPagerFragment();
+        Bundle bundle = new Bundle();
+
+        bundle.putInt("title_id", titleId);
+        bundle.putInt("content_type", contentType);
+
+        viewPagerFragment.setArguments(bundle);
+
+        fragmentActivity.getSupportFragmentManager().beginTransaction()
+                .setCustomAnimations(R.anim.slide_in_right, 0, 0, R.anim.slide_out_right)
+                .add(R.id.main_body, viewPagerFragment)
                 .addToBackStack(null)
                 .commit();
 
