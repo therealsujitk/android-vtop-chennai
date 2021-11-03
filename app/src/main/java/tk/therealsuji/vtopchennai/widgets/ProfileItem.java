@@ -108,6 +108,16 @@ public class ProfileItem extends LinearLayout {
                 bottomSheetDialog.setContentView(bottomSheetLayout);
                 bottomSheetDialog.show();
             }),
+            new ItemData(R.string.share, R.drawable.ic_share, context -> {
+                Intent intent = new Intent();
+                intent.setAction(Intent.ACTION_SEND);
+                intent.putExtra(Intent.EXTRA_SUBJECT, context.getString(R.string.share_subject));
+                intent.putExtra(Intent.EXTRA_TEXT, context.getString(R.string.share_text, SettingsRepository.APP_BASE_URL));
+                intent.setType("text/plain");
+
+                Intent shareIntent = Intent.createChooser(intent, context.getString(R.string.share_title));
+                context.startActivity(shareIntent);
+            }),
             new ItemData(R.string.sign_out, R.drawable.ic_sign_out, context -> new MaterialAlertDialogBuilder(context)
                     .setMessage(R.string.sign_out_text)
                     .setNegativeButton(R.string.cancel, (dialogInterface, i) -> dialogInterface.cancel())
