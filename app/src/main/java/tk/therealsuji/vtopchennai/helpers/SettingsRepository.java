@@ -22,6 +22,12 @@ public class SettingsRepository {
     public static String APP_PRIVACY_URL = APP_BASE_URL + "/privacy-policy";
     public static String APP_FAQ_URL = APP_BASE_URL + "/frequently-asked-questions";
 
+    public static String DEVELOPER_BASE_URL = "https://therealsuji.tk";
+
+    public static String GITHUB_BASE_URL = "https://github.com/therealsujitk/android-vtop-chennai";
+    public static String GITHUB_FEATURE_URL = GITHUB_BASE_URL + "/issues";
+    public static String GITHUB_ISSUE_URL = GITHUB_BASE_URL + "/issues";
+
     public static String VTOP_BASE_URL = "https://vtopcc.vit.ac.in/vtop";
 
     public static int THEME_DAY = 0;
@@ -91,6 +97,11 @@ public class SettingsRepository {
         Intent intent = new Intent(context, WebViewActivity.class);
         intent.putExtra("url", url);
         intent.putExtra("title", title);
+        context.startActivity(intent);
+    }
+
+    public static void openBrowser(Context context, String url) {
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
         context.startActivity(intent);
     }
 }

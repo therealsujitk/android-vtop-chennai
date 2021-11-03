@@ -106,4 +106,7 @@
 
     <string name="faculty">Faculty: &lt;b>%s&lt;/b></string>
     <string name="venue">Venue: &lt;b>%s&lt;/b></string>
+    <string name="contact_developer">Contact the developer</string>
+    <string name="open_issue">Open an issue</string>
+    <string name="request_feature">Request a feature</string>
 </resources>
