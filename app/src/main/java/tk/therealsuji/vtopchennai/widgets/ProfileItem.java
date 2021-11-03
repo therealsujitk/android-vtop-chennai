@@ -36,6 +36,9 @@ public class ProfileItem extends LinearLayout {
                     R.string.receipts,
                     RecyclerViewFragment.TYPE_RECEIPTS
             )),
+            new ItemData(R.string.staff, R.drawable.ic_staff, context -> {
+
+            }),
             new ItemData(R.string.switch_semester, R.drawable.ic_semester, context -> {
 
             })
