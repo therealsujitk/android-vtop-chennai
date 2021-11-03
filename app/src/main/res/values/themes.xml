@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
-
     <style name="Base.Theme.VTOP" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="android:forceDarkAllowed" tools:targetApi="q">false</item>
 
@@ -11,6 +10,7 @@
         <item name="android:fontFamily">@font/rubik</item>
 
         <item name="bottomNavigationStyle">@style/Widget.VTOP.BottomNavigationView</item>
+        <item name="chipStyle">@style/Widget.VTOP.Chip</item>
     </style>
 
     <style name="Theme.VTOP" parent="Base.Theme.VTOP">
