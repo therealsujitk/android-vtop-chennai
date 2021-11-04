@@ -24,8 +24,10 @@ import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import tk.therealsuji.vtopchennai.R;
 import tk.therealsuji.vtopchennai.activities.MainActivity;
+import tk.therealsuji.vtopchennai.adapters.CoursesAdapter;
 import tk.therealsuji.vtopchennai.adapters.StaffAdapter;
 import tk.therealsuji.vtopchennai.helpers.AppDatabase;
+import tk.therealsuji.vtopchennai.interfaces.CoursesDao;
 import tk.therealsuji.vtopchennai.interfaces.StaffDao;
 
 public class ViewPagerFragment extends Fragment {
@@ -86,6 +88,48 @@ public class ViewPagerFragment extends Fragment {
     }
 
     private void attachCourses() {
+        CoursesDao coursesDao = this.appDatabase.coursesDao();
+        float pixelDensity = this.getResources().getDisplayMetrics().density;
+
+        coursesDao
+                .getCourseCodes()
+                .subscribeOn(Schedulers.single())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new SingleObserver<List<String>>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+                    }
+
+                    @Override
+                    public void onSuccess(@NonNull List<String> courseCodes) {
+                        viewPager.setAdapter(new CoursesAdapter(courseCodes));
+
+                        new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {
+                            tab.setText(courseCodes.get(position));
+                            TooltipCompat.setTooltipText(tab.view, null);
+                        }).attach();
+
+                        for (int i = 0; i < tabLayout.getTabCount(); ++i) {
+                            View day = ((ViewGroup) tabLayout.getChildAt(0)).getChildAt(i);
+                            ViewGroup.MarginLayoutParams tabParams = (ViewGroup.MarginLayoutParams) day.getLayoutParams();
+
+                            if (i == 0) {
+                                tabParams.setMarginStart((int) (20 * pixelDensity));
+                                tabParams.setMarginEnd((int) (5 * pixelDensity));
+                            } else if (i == tabLayout.getTabCount() - 1) {
+                                tabParams.setMarginStart((int) (5 * pixelDensity));
+                                tabParams.setMarginEnd((int) (20 * pixelDensity));
+                            } else {
+                                tabParams.setMarginStart((int) (5 * pixelDensity));
+                                tabParams.setMarginEnd((int) (5 * pixelDensity));
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                    }
+                });
     }
 
     @Override

@@ -2,7 +2,10 @@ package tk.therealsuji.vtopchennai.models;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
+
+import java.util.List;
 
 @Entity(tableName = "courses")
 public class Course {
@@ -34,6 +37,11 @@ public class Course {
         public String faculty;
         public String slot;
         public String venue;
-        public Integer attendance;
+        public Integer attendanceAttended;
+        public Integer attendanceTotal;
+        public Integer attendancePercentage;
+
+        @Ignore
+        public List<String> slots;
     }
 }

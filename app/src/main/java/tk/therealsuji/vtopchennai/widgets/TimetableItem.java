@@ -332,8 +332,8 @@ public class TimetableItem extends RelativeLayout {
                             slot.setChipIconResource(R.drawable.ic_timetable);
                             slot.setText(course.slot);
 
-                            attendanceText.setText(new DecimalFormat("#'%'").format(course.attendance));
-                            attendanceProgress.setProgress(course.attendance, true);
+                            attendanceText.setText(new DecimalFormat("#'%'").format(course.attendancePercentage));
+                            attendanceProgress.setProgress(course.attendancePercentage);
 
                             bottomSheetLayout.findViewById(R.id.progress_bar).setVisibility(GONE);
                             bottomSheetLayout.findViewById(R.id.layout_container).setVisibility(VISIBLE);
