@@ -77,8 +77,8 @@
 
     <string name="score">Your Score</string>
     <string name="weightage">Weightage Score</string>
-    <string name="status">Status</string>
-    <string name="average">Class Average</string>
+    <string name="status">Status: %s</string>
+    <string name="average">Average: %f</string>
 
 
     <string name="light">Light</string>

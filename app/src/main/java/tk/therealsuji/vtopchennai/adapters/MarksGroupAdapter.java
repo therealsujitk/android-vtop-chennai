@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
+import tk.therealsuji.vtopchennai.R;
 import tk.therealsuji.vtopchennai.models.Mark;
 
 public class MarksGroupAdapter extends RecyclerView.Adapter<MarksGroupAdapter.ViewHolder> {
@@ -25,12 +26,16 @@ public class MarksGroupAdapter extends RecyclerView.Adapter<MarksGroupAdapter.Vi
         Context context = parent.getContext();
 
         RecyclerView marksGroup = new RecyclerView(context);
-        ViewGroup.LayoutParams timetableParams = new ViewGroup.LayoutParams(
+        ViewGroup.LayoutParams marksGroupParams = new ViewGroup.LayoutParams(
                 RecyclerView.LayoutParams.MATCH_PARENT,
                 RecyclerView.LayoutParams.WRAP_CONTENT
         );
-        marksGroup.setLayoutParams(timetableParams);
+        marksGroup.setLayoutParams(marksGroupParams);
         marksGroup.setLayoutManager(new LinearLayoutManager(context));
+        marksGroup.setNestedScrollingEnabled(false);
+
+        View courseTypes = ((View) parent.getParent()).findViewById(R.id.course_types);
+        courseTypes.post(() -> marksGroup.setPadding(0, courseTypes.getMeasuredHeight(), 0, 0));
 
         return new ViewHolder(marksGroup);
     }

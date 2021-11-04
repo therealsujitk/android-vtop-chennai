@@ -1,16 +1,22 @@
 package tk.therealsuji.vtopchennai.adapters;
 
-import android.content.Context;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatTextView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.chip.Chip;
+
+import java.text.DecimalFormat;
 import java.util.List;
 
+import tk.therealsuji.vtopchennai.R;
 import tk.therealsuji.vtopchennai.models.Mark;
-import tk.therealsuji.vtopchennai.widgets.MarksItem;
 
 public class MarksItemAdapter extends RecyclerView.Adapter<MarksItemAdapter.ViewHolder> {
     float pixelDensity;
@@ -24,28 +30,16 @@ public class MarksItemAdapter extends RecyclerView.Adapter<MarksItemAdapter.View
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        Context context = parent.getContext();
-        this.pixelDensity = context.getResources().getDisplayMetrics().density;
-        MarksItem marksItem = new MarksItem(context);
+        LinearLayout marksItem = (LinearLayout) LayoutInflater
+                .from(parent.getContext())
+                .inflate(R.layout.layout_item_marks, parent, false);
+
         return new ViewHolder(marksItem);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.initializeMarksItem(marks.get(position));
-
-        int left = (int) (30 * this.pixelDensity);
-        int top = (int) (5 * this.pixelDensity);
-        int right = (int) (30 * this.pixelDensity);
-        int bottom = (int) (5 * this.pixelDensity);
-
-        if (position == 0) {
-            top = (int) (10 * this.pixelDensity);
-        } else if (position == marks.size() - 1) {
-            bottom = (int) (10 * this.pixelDensity);
-        }
-
-        holder.setMargin(left, top, right, bottom);
+        holder.setMarksItem(marks.get(position));
     }
 
     @Override
@@ -54,19 +48,76 @@ public class MarksItemAdapter extends RecyclerView.Adapter<MarksItemAdapter.View
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        MarksItem marksItem;
+        LinearLayout marksItem;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            this.marksItem = (MarksItem) itemView;
+            this.marksItem = (LinearLayout) itemView;
         }
 
-        public void initializeMarksItem(Mark.AllData markItem) {
-            this.marksItem.initializeMarksItem(markItem);
+        public void setMarksItem(Mark.AllData marksItem) {
+            LinearLayout markDetails = this.marksItem.findViewById(R.id.mark_details);
+            AppCompatTextView markTitle = this.marksItem.findViewById(R.id.mark_title);
+            AppCompatTextView scoreText = this.marksItem.findViewById(R.id.score_text);
+            ProgressBar scoreProgress = this.marksItem.findViewById(R.id.score_progress);
+            AppCompatTextView markType = this.marksItem.findViewById(R.id.mark_type);
+
+            markTitle.setText(marksItem.title);
+
+            if (marksItem.score != null && marksItem.maxScore != null && marksItem.weightage != null && marksItem.maxWeightage != null) {
+                String markTypeScore = this.marksItem.getContext().getString(R.string.score);
+                String score = new DecimalFormat("#.##").format(marksItem.score) + "/" + new DecimalFormat("#.##").format(marksItem.maxScore);
+                String weightage = new DecimalFormat("#.##").format(marksItem.weightage) + "/" + new DecimalFormat("#.##").format(marksItem.maxWeightage);
+
+                scoreText.setText(score);
+                scoreProgress.setProgress(marksItem.score.intValue());
+                scoreProgress.setMax(marksItem.maxScore.intValue());
+
+                scoreText.setOnClickListener(view -> {
+                    if (markType.getText().equals(markTypeScore)) {
+                        scoreText.setText(weightage);
+                        markType.setText(R.string.weightage);
+                    } else {
+                        scoreText.setText(score);
+                        markType.setText(R.string.score);
+                    }
+                });
+            }
+
+            if (marksItem.average != null) {
+                markDetails.addView(this.createTextView(this.marksItem.getContext().getString(R.string.average, marksItem.average)));
+            }
+
+            if (marksItem.status != null) {
+                markDetails.addView(this.createTextView(this.marksItem.getContext().getString(R.string.status, marksItem.status)));
+            }
+
+            Chip courseType = new Chip(this.marksItem.getContext());
+            courseType.setLayoutParams(new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+            ));
+
+            if (marksItem.courseType.equals("lab")) {
+                courseType.setChipIconResource(R.drawable.ic_lab);
+                courseType.setText(R.string.lab);
+            } else if (marksItem.courseType.equals("project")) {
+                courseType.setChipIconResource(R.drawable.ic_project);
+                courseType.setText(R.string.project);
+            } else {
+                courseType.setChipIconResource(R.drawable.ic_theory);
+                courseType.setText(R.string.theory);
+            }
+
+            markDetails.addView(courseType);
         }
 
-        public void setMargin(int left, int top, int right, int bottom) {
-            this.marksItem.setMargin(left, top, right, bottom);
+        AppCompatTextView createTextView(String text) {
+            AppCompatTextView textView = new AppCompatTextView(this.marksItem.getContext());
+            textView.setText(text);
+            textView.setTextSize(16);
+
+            return textView;
         }
     }
 }

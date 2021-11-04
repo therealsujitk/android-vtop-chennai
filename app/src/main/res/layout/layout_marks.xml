@@ -1,23 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/mark_groups"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
     <com.google.android.material.chip.ChipGroup
         android:id="@+id/course_types"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
+        android:layout_centerHorizontal="true"
+        android:clipToPadding="false"
         android:paddingStart="20dp"
         android:paddingEnd="20dp"
         app:selectionRequired="true"
         app:singleSelection="true" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/mark_groups"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
-</LinearLayout>
+</RelativeLayout>

@@ -4,7 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
-import com.google.android.material.divider.MaterialDividerItemDecoration;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -42,7 +41,7 @@ public class MarksAdapter extends RecyclerView.Adapter<MarksAdapter.ViewHolder> 
     @Override
     public MarksAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         this.context = parent.getContext();
-        LinearLayout marks = (LinearLayout) LayoutInflater
+        RelativeLayout marks = (RelativeLayout) LayoutInflater
                 .from(parent.getContext())
                 .inflate(R.layout.layout_marks, parent, false);
 
@@ -91,10 +90,6 @@ public class MarksAdapter extends RecyclerView.Adapter<MarksAdapter.ViewHolder> 
 
             this.courseTypes = itemView.findViewById(R.id.course_types);
             this.markGroups = itemView.findViewById(R.id.mark_groups);
-            this.markGroups.addItemDecoration(new MaterialDividerItemDecoration(
-                    itemView.getContext(),
-                    MaterialDividerItemDecoration.VERTICAL
-            ));
 
             this.markGroups.addOnScrollListener(new RecyclerView.OnScrollListener() {
                 @Override
@@ -113,13 +108,13 @@ public class MarksAdapter extends RecyclerView.Adapter<MarksAdapter.ViewHolder> 
 
         private void addChips() {
             this.courseTypes.removeAllViews();
-
             List<String> courseTypes = new ArrayList<>(this.marks.keySet());
 
             for (int i = 0; i < courseTypes.size(); ++i) {
                 String courseType = courseTypes.get(i);
                 Chip chip = new Chip(this.markGroups.getContext());
                 chip.setCheckable(true);
+                chip.setElevation(15);
 
                 if (courseType.equals("lab")) {
                     chip.setText(R.string.lab);
