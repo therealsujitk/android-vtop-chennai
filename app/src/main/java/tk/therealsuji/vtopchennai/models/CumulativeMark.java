@@ -5,6 +5,8 @@ import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
+import tk.therealsuji.vtopchennai.services.VTOP;
+
 @Entity(tableName = "cumulative_marks")
 public class CumulativeMark {
     @PrimaryKey(autoGenerate = true)
@@ -37,26 +39,26 @@ public class CumulativeMark {
         this.projectCredits = 0;
     }
 
-    public void addWeightage(Double weightageScore, String courseType, Integer credits) {
+    public void addWeightage(Double weightageScore, int courseType, Integer credits) {
         if (weightageScore == null || credits == null) {
             return;
         }
 
-        if (courseType == null || courseType.equals("theory")) {
+        if (courseType == VTOP.COURSE_THEORY) {
             if (this.theoryTotal == null) {
                 this.theoryTotal = (double) 0;
             }
 
             this.theoryTotal += weightageScore;
             this.theoryCredits = credits;
-        } else if (courseType.equals("lab")) {
+        } else if (courseType == VTOP.COURSE_LAB) {
             if (this.labTotal == null) {
                 this.labTotal = (double) 0;
             }
 
             this.labTotal += weightageScore;
             this.labCredits = credits;
-        } else if (courseType.equals("project")) {
+        } else if (courseType == VTOP.COURSE_PROJECT) {
             if (this.projectTotal == null) {
                 this.projectTotal = (double) 0;
             }
