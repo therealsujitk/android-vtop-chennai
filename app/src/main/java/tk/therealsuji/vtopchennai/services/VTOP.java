@@ -1530,8 +1530,8 @@ public class VTOP extends Service {
                 "                continue;" +
                 "            }" +
                 "            var record = {};" +
-                "            record.key = cells[i].innerText.trim();" +
-                "            record.value = cells[++i].innerText.trim();" +
+                "            record.key = cells[i].innerText.trim() || null;" +
+                "            record.value = cells[++i].innerText.trim() || null;" +
                 "            response.proctor.push(record);" +
                 "        }" +
                 "    }" +
@@ -1636,8 +1636,8 @@ public class VTOP extends Service {
                 "                    continue;" +
                 "                }" +
                 "                var record = {};" +
-                "                record.key = cells[j].innerText.trim();" +
-                "                record.value = cells[++j].innerText.trim();" +
+                "                record.key = cells[j].innerText.trim() || null;" +
+                "                record.value = cells[++j].innerText.trim() || null;" +
                 "                response[heading].push(record);" +
                 "            }" +
                 "        }" +
@@ -1654,6 +1654,12 @@ public class VTOP extends Service {
                     String staffType = keys.next();
                     JSONArray staffArray = response.getJSONArray(staffType);
 
+                    if (staffType.contains("dean")) {
+                        staffType = "dean";
+                    } else if (staffType.contains("hod")) {
+                        staffType = "hod";
+                    }
+
                     for (int i = 0; i < staffArray.length(); ++i) {
                         JSONObject staffObject = staffArray.getJSONObject(i);
                         Staff staffItem = new Staff();
@@ -1664,27 +1670,27 @@ public class VTOP extends Service {
 
                         staff.add(staffItem);
                     }
-
-                    StaffDao staffDao = appDatabase.staffDao();
-                    staffDao
-                            .insert(staff)
-                            .subscribeOn(Schedulers.single())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe(new CompletableObserver() {
-                                @Override
-                                public void onSubscribe(@NonNull Disposable d) {
-                                }
-
-                                @Override
-                                public void onComplete() {
-                                    downloadSpotlight();
-                                }
-
-                                @Override
-                                public void onError(@NonNull Throwable e) {
-                                }
-                            });
                 }
+
+                StaffDao staffDao = appDatabase.staffDao();
+                staffDao
+                        .insert(staff)
+                        .subscribeOn(Schedulers.single())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new CompletableObserver() {
+                            @Override
+                            public void onSubscribe(@NonNull Disposable d) {
+                            }
+
+                            @Override
+                            public void onComplete() {
+                                downloadSpotlight();
+                            }
+
+                            @Override
+                            public void onError(@NonNull Throwable e) {
+                            }
+                        });
             } catch (Exception e) {
                 error(703);
             }
