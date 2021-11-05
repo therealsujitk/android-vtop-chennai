@@ -34,4 +34,7 @@ public interface MarksDao {
             "WHERE course_id = courses.id AND code = :courseCode " +
             "ORDER BY type DESC, title")
     Single<List<Mark.AllData>> getMarks(String courseCode);
+
+    @Query("SELECT * FROM cumulative_marks WHERE course_code = :courseCode")
+    Single<CumulativeMark> getCumulativeMark(String courseCode);
 }

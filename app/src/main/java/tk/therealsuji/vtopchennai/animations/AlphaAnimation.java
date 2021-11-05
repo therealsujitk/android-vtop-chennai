@@ -16,12 +16,11 @@ public class AlphaAnimation extends Animation {
 
         this.setDuration((long) (300 * Math.abs(this.finalAlpha - this.initialAlpha)));
         this.setInterpolator(new LinearInterpolator());
-        ((View) this.view.getParent()).invalidate();    // Animations don't work unless this is present
     }
 
     @Override
     protected void applyTransformation(float interpolatedTime, Transformation t) {
-        if (finalAlpha > initialAlpha) {
+        if (finalAlpha >= initialAlpha) {
             this.view.setAlpha(initialAlpha + (finalAlpha - initialAlpha) * interpolatedTime);
         } else {
             this.view.setAlpha((initialAlpha - finalAlpha) * (1 - interpolatedTime));

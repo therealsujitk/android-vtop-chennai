@@ -26,8 +26,8 @@ public class ResizeAnimation extends Animation {
         this.height = view.getMeasuredHeight();
         this.marginStart = layoutParams.getMarginStart();
         this.marginEnd = layoutParams.getMarginEnd();
-        this.endMarginStart = (this.width != 0) ? defaultValues.getInt("marginStart") * endValue / this.width : defaultValues.getInt("marginStart");
-        this.endMarginEnd = (this.width != 0) ? defaultValues.getInt("marginEnd") * endValue / this.width : defaultValues.getInt("marginEnd");
+        this.endMarginStart = defaultValues.getInt("marginStart") * endValue / defaultValues.getInt("cardWidth");
+        this.endMarginEnd = defaultValues.getInt("marginEnd") * endValue / defaultValues.getInt("cardWidth");
         this.endValue = endValue;
         this.view = view;
 
@@ -41,14 +41,14 @@ public class ResizeAnimation extends Animation {
         ViewGroup.MarginLayoutParams layoutParams = (ViewGroup.MarginLayoutParams) this.view.getLayoutParams();
 
         if (this.animationDirection == DIRECTION_X) {
-            if (this.width > this.endValue) {
-                layoutParams.width = (int) ((this.width - this.endValue) * (1 - interpolatedTime));
-                layoutParams.setMarginStart((int) ((this.marginStart - this.endMarginStart) * (1 - interpolatedTime)));
-                layoutParams.setMarginEnd((int) ((this.marginEnd - this.endMarginEnd) * (1 - interpolatedTime)));
-            } else {
+            if (this.endValue >= this.width) {
                 layoutParams.width = this.width + (int) ((this.endValue - this.width) * interpolatedTime);
                 layoutParams.setMarginStart(this.marginStart + (int) ((this.endMarginStart - this.marginStart) * interpolatedTime));
                 layoutParams.setMarginEnd(this.marginEnd + (int) ((this.endMarginEnd - this.marginEnd) * interpolatedTime));
+            } else {
+                layoutParams.width = (int) ((this.width - this.endValue) * (1 - interpolatedTime));
+                layoutParams.setMarginStart((int) ((this.marginStart - this.endMarginStart) * (1 - interpolatedTime)));
+                layoutParams.setMarginEnd((int) ((this.marginEnd - this.endMarginEnd) * (1 - interpolatedTime)));
             }
 
             layoutParams.height = this.height;

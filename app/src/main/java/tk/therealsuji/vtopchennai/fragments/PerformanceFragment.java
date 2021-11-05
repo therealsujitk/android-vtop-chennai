@@ -27,6 +27,8 @@ import tk.therealsuji.vtopchennai.adapters.MarksAdapter;
 import tk.therealsuji.vtopchennai.helpers.AppDatabase;
 import tk.therealsuji.vtopchennai.interfaces.MarksDao;
 import tk.therealsuji.vtopchennai.models.Course;
+import tk.therealsuji.vtopchennai.models.CumulativeMark;
+import tk.therealsuji.vtopchennai.widgets.PerformanceCard;
 
 public class PerformanceFragment extends Fragment {
 
@@ -103,6 +105,73 @@ public class PerformanceFragment extends Fragment {
                                 tabParams.setMarginEnd((int) (5 * pixelDensity));
                             }
                         }
+
+                        PerformanceCard overall = performanceFragment.findViewById(R.id.overall);
+                        PerformanceCard theory = performanceFragment.findViewById(R.id.theory);
+                        PerformanceCard project = performanceFragment.findViewById(R.id.project);
+                        PerformanceCard lab = performanceFragment.findViewById(R.id.lab);
+
+
+                        marks.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+                            @Override
+                            public void onPageSelected(int position) {
+                                super.onPageSelected(position);
+
+                                overall.setIndeterminate(true);
+                                theory.setIndeterminate(true);
+                                project.setIndeterminate(true);
+                                lab.setIndeterminate(true);
+
+                                marksDao
+                                        .getCumulativeMark(courses.get(position).code)
+                                        .subscribeOn(Schedulers.single())
+                                        .observeOn(AndroidSchedulers.mainThread())
+                                        .subscribe(new SingleObserver<CumulativeMark>() {
+                                            @Override
+                                            public void onSubscribe(@NonNull Disposable d) {
+                                            }
+
+                                            @Override
+                                            public void onSuccess(@NonNull CumulativeMark cumulativeMark) {
+                                                if (cumulativeMark.grandTotal != null) {
+                                                    overall.show();
+                                                    overall.setIndeterminate(false);
+                                                    overall.setScore(cumulativeMark.grandTotal, 100.0);
+                                                } else {
+                                                    overall.hide();
+                                                }
+
+                                                if (cumulativeMark.theoryTotal != null) {
+                                                    theory.show();
+                                                    theory.setIndeterminate(false);
+                                                    theory.setScore(cumulativeMark.theoryTotal, 100.0);
+                                                } else {
+                                                    theory.hide();
+                                                }
+
+                                                if (cumulativeMark.projectTotal != null) {
+                                                    project.show();
+                                                    project.setIndeterminate(false);
+                                                    project.setScore(cumulativeMark.projectTotal, 100.0);
+                                                } else {
+                                                    project.hide();
+                                                }
+
+                                                if (cumulativeMark.labTotal != null) {
+                                                    lab.show();
+                                                    lab.setIndeterminate(false);
+                                                    lab.setScore(cumulativeMark.labTotal, 100.0);
+                                                } else {
+                                                    lab.hide();
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onError(@NonNull Throwable e) {
+                                            }
+                                        });
+                            }
+                        });
                     }
 
                     @Override

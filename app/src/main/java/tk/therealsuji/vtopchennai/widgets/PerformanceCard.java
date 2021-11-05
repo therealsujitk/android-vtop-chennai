@@ -2,6 +2,7 @@ package tk.therealsuji.vtopchennai.widgets;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.View;
@@ -46,8 +47,8 @@ public class PerformanceCard extends LinearLayout {
         try {
             this.setTitle(a.getString(R.styleable.PerformanceCard_title));
             this.setScore(
-                    a.getFloat(R.styleable.PerformanceCard_score, 80),
-                    a.getFloat(R.styleable.PerformanceCard_total, 100)
+                    (double) a.getFloat(R.styleable.PerformanceCard_score, 0),
+                    (double) a.getFloat(R.styleable.PerformanceCard_total, 100)
             );
         } finally {
             a.recycle();
@@ -104,6 +105,7 @@ public class PerformanceCard extends LinearLayout {
                 (int) (100 * pixelDensity),
                 (int) (100 * pixelDensity)
         );
+        this.scoreProgress.setIndeterminateDrawable(ContextCompat.getDrawable(this.getContext(), R.drawable.background_circular_progress_indeterminate));
         this.scoreProgress.setLayoutParams(scoreProgressParams);
 
         RelativeLayout.LayoutParams scoreTextParams = new RelativeLayout.LayoutParams(
@@ -114,6 +116,7 @@ public class PerformanceCard extends LinearLayout {
         this.scoreText.setLayoutParams(scoreTextParams);
         this.scoreText.setTextColor(colorPrimary.data);
         this.scoreText.setTextSize(16);
+        this.scoreText.setTypeface(this.scoreText.getTypeface(), Typeface.BOLD);
 
         container.addView(this.scoreProgress);
         container.addView(this.scoreText);
@@ -133,12 +136,24 @@ public class PerformanceCard extends LinearLayout {
         this.title.setText(title);
     }
 
-    public void setScore(float score, float total) {
-        this.scoreProgress.setProgress((int) score);
-        this.scoreProgress.setMax((int) total);
+    public void setScore(Double score, Double total) {
+        score = Math.ceil(score);
 
-        String scoreText = (total == 100) ? score + "%" : score + " / " + total;
+        this.scoreProgress.setProgress(score.intValue(), true);
+        this.scoreProgress.setMax(total.intValue());
+
+        String scoreText = (total == 100) ? score.intValue() + "%" : score.intValue() + " / " + total.intValue();
         this.scoreText.setText(scoreText);
+    }
+
+    public void setIndeterminate(boolean indeterminate) {
+        this.scoreProgress.setIndeterminate(indeterminate);
+
+        if (indeterminate) {
+            this.scoreText.setVisibility(INVISIBLE);
+        } else {
+            this.scoreText.setVisibility(VISIBLE);
+        }
     }
 
     public void show() {
@@ -148,7 +163,7 @@ public class PerformanceCard extends LinearLayout {
                 LinearLayout card = this;
                 int cardWidth = this.defaultValues.getInt("cardWidth");
 
-                ResizeAnimation expandAnimation = new ResizeAnimation(card, ResizeAnimation.DIRECTION_X, cardWidth, defaultValues);
+                ResizeAnimation expandAnimation = new ResizeAnimation(card, ResizeAnimation.DIRECTION_X, cardWidth, this.defaultValues);
                 AlphaAnimation alphaAnimation = new AlphaAnimation(card, 1);
 
                 expandAnimation.setAnimationListener(new Animation.AnimationListener() {
@@ -166,6 +181,7 @@ public class PerformanceCard extends LinearLayout {
                     }
                 });
 
+                card.setVisibility(VISIBLE);
                 card.startAnimation(expandAnimation);
             } catch (Exception ignored) {
             }
@@ -176,16 +192,17 @@ public class PerformanceCard extends LinearLayout {
         this.clearAnimation();
         this.post(() -> {
             try {
-                LayoutParams layoutParams = (LayoutParams) this.getLayoutParams();
                 LinearLayout card = this;
 
                 if (!this.defaultValues.has("cardWidth")) {
-                    this.defaultValues.put("cardWidth", this.getMeasuredWidth());
+                    LayoutParams layoutParams = (LayoutParams) card.getLayoutParams();
+
+                    this.defaultValues.put("cardWidth", card.getMeasuredWidth());
                     this.defaultValues.put("marginStart", layoutParams.getMarginStart());
                     this.defaultValues.put("marginEnd", layoutParams.getMarginEnd());
                 }
 
-                ResizeAnimation compressAnimation = new ResizeAnimation(card, ResizeAnimation.DIRECTION_X, 0, defaultValues);
+                ResizeAnimation compressAnimation = new ResizeAnimation(card, ResizeAnimation.DIRECTION_X, 0, this.defaultValues);
                 AlphaAnimation alphaAnimation = new AlphaAnimation(card, 0);
 
                 alphaAnimation.setAnimationListener(new Animation.AnimationListener() {
@@ -195,6 +212,7 @@ public class PerformanceCard extends LinearLayout {
 
                     @Override
                     public void onAnimationEnd(Animation animation) {
+                        card.setVisibility(INVISIBLE);
                         card.startAnimation(compressAnimation);
                     }
 

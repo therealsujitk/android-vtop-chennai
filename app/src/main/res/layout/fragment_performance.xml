@@ -40,47 +40,40 @@
 
                 <LinearLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:padding="10dp">
 
                     <tk.therealsuji.vtopchennai.widgets.PerformanceCard
+                        android:id="@+id/overall"
                         android:layout_width="140dp"
                         android:layout_height="match_parent"
-                        android:layout_marginStart="20dp"
-                        android:layout_marginTop="10dp"
+                        android:layout_marginStart="10dp"
                         android:layout_marginEnd="10dp"
-                        android:layout_marginBottom="10dp"
-                        app:score="96"
                         app:title="@string/overall_course_score" />
 
                     <tk.therealsuji.vtopchennai.widgets.PerformanceCard
+                        android:id="@+id/theory"
                         android:layout_width="140dp"
                         android:layout_height="match_parent"
                         android:layout_marginStart="10dp"
-                        android:layout_marginTop="10dp"
                         android:layout_marginEnd="10dp"
-                        android:layout_marginBottom="10dp"
-                        app:score="72"
                         app:title="@string/theory_weightage" />
 
                     <tk.therealsuji.vtopchennai.widgets.PerformanceCard
+                        android:id="@+id/project"
                         android:layout_width="140dp"
                         android:layout_height="match_parent"
                         android:layout_marginStart="10dp"
-                        android:layout_marginTop="10dp"
                         android:layout_marginEnd="10dp"
-                        android:layout_marginBottom="10dp"
-                        app:score="86"
-                        app:title="@string/lab_weightage" />
+                        app:title="@string/project_weightage" />
 
                     <tk.therealsuji.vtopchennai.widgets.PerformanceCard
+                        android:id="@+id/lab"
                         android:layout_width="140dp"
                         android:layout_height="match_parent"
                         android:layout_marginStart="10dp"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginEnd="20dp"
-                        android:layout_marginBottom="10dp"
-                        app:score="75"
-                        app:title="@string/project_weightage" />
+                        android:layout_marginEnd="10dp"
+                        app:title="@string/lab_weightage" />
                 </LinearLayout>
             </HorizontalScrollView>
         </LinearLayout>
