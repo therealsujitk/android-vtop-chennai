@@ -5,6 +5,7 @@ import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.View;
+import android.view.animation.Animation;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -13,12 +14,18 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.core.content.ContextCompat;
 
+import org.json.JSONObject;
+
 import tk.therealsuji.vtopchennai.R;
+import tk.therealsuji.vtopchennai.animations.AlphaAnimation;
+import tk.therealsuji.vtopchennai.animations.ResizeAnimation;
 
 public class PerformanceCard extends LinearLayout {
     AppCompatTextView title, scoreText;
     Context context;
     ProgressBar scoreProgress;
+
+    JSONObject defaultValues;
 
     public PerformanceCard(Context context) {
         super(context);
@@ -52,6 +59,7 @@ public class PerformanceCard extends LinearLayout {
 
     private void initialize() {
         float pixelDensity = this.context.getResources().getDisplayMetrics().density;
+        this.defaultValues = new JSONObject();
 
         TypedValue colorPrimary = new TypedValue();
         getContext().getTheme().resolveAttribute(R.attr.colorPrimary, colorPrimary, true);
@@ -131,5 +139,74 @@ public class PerformanceCard extends LinearLayout {
 
         String scoreText = (total == 100) ? score + "%" : score + " / " + total;
         this.scoreText.setText(scoreText);
+    }
+
+    public void show() {
+        this.clearAnimation();
+        this.post(() -> {
+            try {
+                LinearLayout card = this;
+                int cardWidth = this.defaultValues.getInt("cardWidth");
+
+                ResizeAnimation expandAnimation = new ResizeAnimation(card, ResizeAnimation.DIRECTION_X, cardWidth, defaultValues);
+                AlphaAnimation alphaAnimation = new AlphaAnimation(card, 1);
+
+                expandAnimation.setAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        card.startAnimation(alphaAnimation);
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+                    }
+                });
+
+                card.startAnimation(expandAnimation);
+            } catch (Exception ignored) {
+            }
+        });
+    }
+
+    public void hide() {
+        this.clearAnimation();
+        this.post(() -> {
+            try {
+                LayoutParams layoutParams = (LayoutParams) this.getLayoutParams();
+                LinearLayout card = this;
+
+                if (!this.defaultValues.has("cardWidth")) {
+                    this.defaultValues.put("cardWidth", this.getMeasuredWidth());
+                    this.defaultValues.put("marginStart", layoutParams.getMarginStart());
+                    this.defaultValues.put("marginEnd", layoutParams.getMarginEnd());
+                }
+
+                ResizeAnimation compressAnimation = new ResizeAnimation(card, ResizeAnimation.DIRECTION_X, 0, defaultValues);
+                AlphaAnimation alphaAnimation = new AlphaAnimation(card, 0);
+
+                alphaAnimation.setAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        card.startAnimation(compressAnimation);
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+                    }
+                });
+
+                card.startAnimation(alphaAnimation);
+            } catch (Exception ignored) {
+            }
+
+        });
     }
 }
