@@ -1109,6 +1109,7 @@ public class VTOP extends Service {
                 "            attendanceObject.total = parseInt(cells[totalIndex].innerText.trim()) || 0;" +
                 "            attendanceObject.percentage = parseInt(cells[percentageIndex].innerText.trim()) || 0;" +
                 "            response.attendance.push(attendanceObject);" +
+                "            courseTypeIndex += headings.length;" +
                 "            slotIndex += headings.length;" +
                 "            attendedIndex += headings.length;" +
                 "            totalIndex += headings.length;" +
@@ -1133,8 +1134,6 @@ public class VTOP extends Service {
 
                     if (attendanceObject.getString("course_type").toLowerCase().contains("lab")) {
                         courseType = COURSE_LAB;
-                    } else if (attendanceObject.getString("course_type").toLowerCase().contains("project")) {
-                        courseType = COURSE_PROJECT;
                     }
 
                     attendanceItem.courseId = this.getCourseId(attendanceObject.getString("slot"), courseType);
