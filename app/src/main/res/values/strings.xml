@@ -10,17 +10,13 @@
     <string name="privacy">Privacy Policy</string>
 
 
-    <string name="good_morning">Good Morning,</string>
+    <string name="morning_greeting">Good Morning,</string>
+    <string name="afternoon_greeting">Good Afternoon,</string>
+    <string name="evening_greeting">Good Evening,</string>
     <string name="spotlight">Spotlight</string>
 
     <string name="cgpa">CGPA</string>
     <string name="overall_attendance">Overall Attendance</string>
-
-    <string name="s">S</string>
-    <string name="m">M</string>
-    <string name="t">T</string>
-    <string name="w">W</string>
-    <string name="f">F</string>
 
     <string name="sunday">Sunday</string>
     <string name="monday">Monday</string>

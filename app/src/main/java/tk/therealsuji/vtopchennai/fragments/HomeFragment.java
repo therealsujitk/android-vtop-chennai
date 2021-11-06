@@ -1,6 +1,5 @@
 package tk.therealsuji.vtopchennai.fragments;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -19,7 +18,10 @@ import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 import tk.therealsuji.vtopchennai.R;
 import tk.therealsuji.vtopchennai.adapters.TimetableAdapter;
@@ -55,7 +57,27 @@ public class HomeFragment extends Fragment {
             header.setAlpha(alpha);
         });
 
-        SharedPreferences sharedPreferences = this.requireActivity().getSharedPreferences("tk.therealsuji.vtopchennai", Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = SettingsRepository.getSharedPreferences(this.requireContext());
+
+        try {
+            TextView greeting = homeFragment.findViewById(R.id.greeting);
+            SimpleDateFormat hour24 = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
+            Calendar calendar = Calendar.getInstance();
+
+            Date now = hour24.parse(hour24.format(calendar.getTime()));
+            assert now != null;
+
+            if (now.before(hour24.parse("05:00"))) {
+                greeting.setText(R.string.evening_greeting);
+            } else if (now.before(hour24.parse("12:00"))) {
+                greeting.setText(R.string.morning_greeting);
+            } else if (now.before(hour24.parse("17:00"))) {
+                greeting.setText(R.string.afternoon_greeting);
+            } else {
+                greeting.setText(R.string.evening_greeting);
+            }
+        } catch (Exception ignored) {
+        }
 
         String name = sharedPreferences.getString("name", getString(R.string.name));
         ((TextView) homeFragment.findViewById(R.id.text_name)).setText(name);
@@ -86,15 +108,6 @@ public class HomeFragment extends Fragment {
                 getString(R.string.friday),
                 getString(R.string.saturday)
         };
-        String[] shortDayStrings = {
-                getString(R.string.s),
-                getString(R.string.m),
-                getString(R.string.t),
-                getString(R.string.w),
-                getString(R.string.t),
-                getString(R.string.f),
-                getString(R.string.s)
-        };
 
         ViewPager2 timetable = homeFragment.findViewById(R.id.timetable);
 
@@ -102,7 +115,7 @@ public class HomeFragment extends Fragment {
         timetable.setCurrentItem(Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 1);
 
         new TabLayoutMediator(days, timetable, (tab, position) -> {
-            tab.setText(shortDayStrings[position]);
+            tab.setText(dayStrings[position].substring(0, 1));
 
             View day = tab.view;
 

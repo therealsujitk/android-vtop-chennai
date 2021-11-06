@@ -37,9 +37,10 @@
                     android:orientation="vertical">
 
                     <TextView
+                        android:id="@+id/greeting"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/good_morning"
+                        android:text="@string/morning_greeting"
                         android:textAllCaps="true"
                         android:textColor="?attr/colorOnSurface"
                         android:textSize="15sp" />
