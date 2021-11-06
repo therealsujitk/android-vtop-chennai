@@ -30,6 +30,7 @@ import org.json.JSONObject;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -982,6 +983,12 @@ public class VTOP extends Service {
 
                 List<Timetable> timetable = new ArrayList<>();
 
+                /*
+                    Used for converting 12-hour to 24-hour if necessary
+                 */
+                SimpleDateFormat hour24 = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
+                SimpleDateFormat hour12 = new SimpleDateFormat("h:mm a", Locale.ENGLISH);
+
                 for (int i = 0; i < labArray.length() && i < theoryArray.length(); ++i) {
                     JSONObject labObject = labArray.getJSONObject(i);
                     JSONObject theoryObject = theoryArray.getJSONObject(i);
@@ -1008,6 +1015,35 @@ public class VTOP extends Service {
                     theory.thursday = this.getSlotId(theoryObject.getString("thursday"), COURSE_THEORY);
                     theory.friday = this.getSlotId(theoryObject.getString("friday"), COURSE_THEORY);
                     theory.saturday = this.getSlotId(theoryObject.getString("saturday"), COURSE_THEORY);
+
+                    /*
+                        Formatting time in 24-hour in-case it's given in 12-hour format because VIT
+                        thought it would be a good idea to use both 12-hour and 24-hour formats
+
+                        This conversion works under the assumption that there will not be any classes
+                        after 20:00 and before 08:00. If the time is less than 08:00, the time is in
+                        a 12-hour format and has to be converted
+                     */
+                    String[] timings = {lab.startTime, lab.endTime, theory.startTime, theory.endTime};
+                    for (int j = 0; j < timings.length; ++j) {
+                        try {
+                            Date time = hour24.parse(timings[j]);
+                            Date hourStart = hour24.parse("08:00");
+
+                            if (time != null && time.before(hourStart)) {
+                                time = hour12.parse(timings[j] + " PM");
+                                if (time != null) {
+                                    timings[j] = hour24.format(time);
+                                }
+                            }
+                        } catch (Exception ignored) {
+                        }
+                    }
+
+                    lab.startTime = timings[0];
+                    lab.endTime = timings[1];
+                    theory.startTime = timings[2];
+                    theory.endTime = timings[3];
 
                     timetable.add(lab);
                     timetable.add(theory);
