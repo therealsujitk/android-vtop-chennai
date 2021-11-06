@@ -7,11 +7,21 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 
 import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
+
+import com.google.android.material.color.MaterialColors;
+
+import java.text.ParseException;
+import java.util.Calendar;
 
 import tk.therealsuji.vtopchennai.R;
+import tk.therealsuji.vtopchennai.activities.MainActivity;
+import tk.therealsuji.vtopchennai.models.Timetable;
 
 public class NotificationHelper extends ContextWrapper {
     public static final String CHANNEL_ID_APPLICATION = "application";
@@ -25,28 +35,42 @@ public class NotificationHelper extends ContextWrapper {
 
     private NotificationManager manager;
 
-    public NotificationHelper(Context base) {
-        super(base);
+    public NotificationHelper(Context context) {
+        super(context);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel application = new NotificationChannel(CHANNEL_ID_APPLICATION, CHANNEL_NAME_APPLICATION, NotificationManager.IMPORTANCE_LOW);
+            NotificationChannel application = new NotificationChannel(
+                    CHANNEL_ID_APPLICATION,
+                    CHANNEL_NAME_APPLICATION,
+                    NotificationManager.IMPORTANCE_LOW
+            );
             application.enableVibration(false);
             application.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
 
             getManager().createNotificationChannel(application);
 
-            NotificationChannel upcoming = new NotificationChannel(CHANNEL_ID_UPCOMING, CHANNEL_NAME_UPCOMING, NotificationManager.IMPORTANCE_HIGH);
+            NotificationChannel upcoming = new NotificationChannel(
+                    CHANNEL_ID_UPCOMING,
+                    CHANNEL_NAME_UPCOMING,
+                    NotificationManager.IMPORTANCE_HIGH
+            );
             upcoming.enableVibration(true);
             upcoming.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
 
             getManager().createNotificationChannel(upcoming);
 
-            NotificationChannel ongoing = new NotificationChannel(CHANNEL_ID_ONGOING, CHANNEL_NAME_ONGOING, NotificationManager.IMPORTANCE_HIGH);
+            NotificationChannel ongoing = new NotificationChannel(
+                    CHANNEL_ID_ONGOING,
+                    CHANNEL_NAME_ONGOING,
+                    NotificationManager.IMPORTANCE_HIGH
+            );
             ongoing.enableVibration(true);
             ongoing.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
 
             getManager().createNotificationChannel(ongoing);
         }
+
+        this.setTheme(R.style.Base_Theme_VTOP);
     }
 
     public NotificationManager getManager() {
@@ -65,27 +89,69 @@ public class NotificationHelper extends ContextWrapper {
                 .setVisibility(NotificationCompat.VISIBILITY_PRIVATE);
     }
 
-    public NotificationCompat.Builder notifyUpcoming(Context context, String title, String message) {
-        PendingIntent contentIntent = PendingIntent.getActivity(context, 0, new Intent("tk.therealsuji.vtopchennai.LAUNCH_TIMETABLE"), 0);
+    public NotificationCompat.Builder notifyUpcoming(Timetable.AllData timetableItem) throws ParseException {
+        Drawable largeIcon;
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, MainActivity.class), PendingIntent.FLAG_IMMUTABLE);
+        String title = "Upcoming: " +
+                SettingsRepository.getSystemFormattedTime(this, timetableItem.startTime) + " - " +
+                SettingsRepository.getSystemFormattedTime(this, timetableItem.endTime);
+        String message = timetableItem.courseCode + " - " + timetableItem.courseTitle;
+
+        if (timetableItem.courseType.equals("lab")) {
+            largeIcon = ContextCompat.getDrawable(this, R.drawable.ic_lab);
+        } else {
+            largeIcon = ContextCompat.getDrawable(this, R.drawable.ic_theory);
+        }
+
+        int colorPrimary = MaterialColors.getColor(this, R.attr.colorPrimary, 0);
+
+        assert largeIcon != null;
+        largeIcon = DrawableCompat.wrap(largeIcon);
+        DrawableCompat.setTint(largeIcon, colorPrimary);
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(timetableItem.startTime.split(":")[0]));
+        calendar.set(Calendar.MINUTE, Integer.parseInt(timetableItem.startTime.split(":")[1]));
 
         return new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID_UPCOMING)
-                .setContentTitle(title)
+                .setColor(colorPrimary)
+                .setContentIntent(pendingIntent)
                 .setContentText(message)
-                .setContentIntent(contentIntent)
+                .setContentTitle(title)
                 .setSmallIcon(R.drawable.ic_timetable)
-                .setColor(getColor(R.color.colorPrimary))
-                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
+                .setLargeIcon(SettingsRepository.getBitmapFromVectorDrawable(largeIcon))
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                .setWhen(calendar.getTimeInMillis());
     }
 
-    public NotificationCompat.Builder notifyOngoing(Context context, String title, String message) {
-        PendingIntent contentIntent = PendingIntent.getActivity(context, 0, new Intent("tk.therealsuji.vtopchennai.LAUNCH_TIMETABLE"), 0);
+    public NotificationCompat.Builder notifyOngoing(Timetable.AllData timetableItem) throws ParseException {
+        Drawable largeIcon;
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, MainActivity.class), PendingIntent.FLAG_IMMUTABLE);
+        String title = "Ongoing: " +
+                SettingsRepository.getSystemFormattedTime(this, timetableItem.startTime) + " - " +
+                SettingsRepository.getSystemFormattedTime(this, timetableItem.endTime);
+        String message = timetableItem.courseCode + " - " + timetableItem.courseTitle;
+
+        if (timetableItem.courseType.equals("lab")) {
+            largeIcon = ContextCompat.getDrawable(this, R.drawable.ic_lab);
+        } else {
+            largeIcon = ContextCompat.getDrawable(this, R.drawable.ic_theory);
+        }
+
+        int colorPrimary = MaterialColors.getColor(this, R.attr.colorPrimary, 0);
+
+        assert largeIcon != null;
+        largeIcon = DrawableCompat.wrap(largeIcon);
+        DrawableCompat.setTint(largeIcon, colorPrimary);
 
         return new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID_ONGOING)
-                .setContentTitle(title)
+                .setColor(colorPrimary)
+                .setContentIntent(pendingIntent)
                 .setContentText(message)
-                .setContentIntent(contentIntent)
+                .setContentTitle(title)
+                .setLargeIcon(SettingsRepository.getBitmapFromVectorDrawable(largeIcon))
+                .setShowWhen(false)
                 .setSmallIcon(R.drawable.ic_timetable)
-                .setColor(getColor(R.color.colorPrimary))
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
     }
 }

@@ -3,184 +3,85 @@ package tk.therealsuji.vtopchennai.receivers;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.text.format.DateFormat;
-
-import androidx.core.app.NotificationCompat;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.Locale;
 
+import io.reactivex.rxjava3.annotations.NonNull;
+import io.reactivex.rxjava3.core.SingleObserver;
+import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
+import tk.therealsuji.vtopchennai.helpers.AppDatabase;
 import tk.therealsuji.vtopchennai.helpers.NotificationHelper;
+import tk.therealsuji.vtopchennai.helpers.SettingsRepository;
+import tk.therealsuji.vtopchennai.interfaces.TimetableDao;
+import tk.therealsuji.vtopchennai.models.Timetable;
 
 public class NotificationReceiver extends BroadcastReceiver {
+
     @Override
     public void onReceive(Context context, Intent intent) {
-        Calendar cal = Calendar.getInstance();
-        Calendar calFuture = Calendar.getInstance();
-        calFuture.add(Calendar.MINUTE, 30);
-        int dayCode = cal.get(Calendar.DAY_OF_WEEK);
+        Calendar calendar = Calendar.getInstance();
+        Calendar calendarFuture = Calendar.getInstance();
+        calendarFuture.add(Calendar.MINUTE, 30);
+
         SimpleDateFormat hour24 = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
-        SimpleDateFormat hour12 = new SimpleDateFormat("h:mm a", Locale.ENGLISH);
 
-        String day;
+        int day = calendar.get(Calendar.DAY_OF_WEEK) - 1;
+        String currentTime = hour24.format(calendar.getTime());
+        String futureTime = hour24.format(calendarFuture.getTime());
 
-        if (dayCode == 1) {
-            day = "sun";
-        } else if (dayCode == 2) {
-            day = "mon";
-        } else if (dayCode == 3) {
-            day = "tue";
-        } else if (dayCode == 4) {
-            day = "wed";
-        } else if (dayCode == 5) {
-            day = "thu";
-        } else if (dayCode == 6) {
-            day = "fri";
-        } else {
-            day = "sat";
-        }
+        AppDatabase appDatabase = AppDatabase.getInstance(context);
+        TimetableDao timetableDao = appDatabase.timetableDao();
 
-        SQLiteDatabase myDatabase = context.openOrCreateDatabase("vtop", Context.MODE_PRIVATE, null);
-        myDatabase.execSQL("CREATE TABLE IF NOT EXISTS timetable_theory (id INT(3) PRIMARY KEY, start_time VARCHAR, end_time VARCHAR, mon VARCHAR, tue VARCHAR, wed VARCHAR, thu VARCHAR, fri VARCHAR, sat VARCHAR, sun VARCHAR)");
-        myDatabase.execSQL("CREATE TABLE IF NOT EXISTS timetable_lab (id INT(3) PRIMARY KEY, start_time VARCHAR, end_time VARCHAR, mon VARCHAR, tue VARCHAR, wed VARCHAR, thu VARCHAR, fri VARCHAR, sat VARCHAR, sun VARCHAR)");
+        timetableDao
+                .getUpcoming(day, currentTime, futureTime)
+                .subscribeOn(Schedulers.single())
+                .subscribe(new SingleObserver<Timetable.AllData>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+                    }
 
-        Cursor theory = myDatabase.rawQuery("SELECT start_time, end_time, " + day + " FROM timetable_theory", null);
-        Cursor lab = myDatabase.rawQuery("SELECT start_time, end_time, " + day + " FROM timetable_lab", null);
-
-        int startTheory = theory.getColumnIndex("start_time");
-        int endTheory = theory.getColumnIndex("end_time");
-        int dayTheory = theory.getColumnIndex(day);
-
-        int startLab = lab.getColumnIndex("start_time");
-        int endLab = lab.getColumnIndex("end_time");
-        int dayLab = lab.getColumnIndex(day);
-
-        theory.moveToFirst();
-        lab.moveToFirst();
-
-        boolean flag = false;
-        boolean upcoming = true;
-        String title = null;
-        String message = null;
-
-        for (int i = 0; i < theory.getCount() && i < lab.getCount(); ++i, theory.moveToNext(), lab.moveToNext()) {
-            String startTimeTheory = theory.getString(startTheory);
-            String endTimeTheory = theory.getString(endTheory);
-            String startTimeLab = lab.getString(startLab);
-            String endTimeLab = lab.getString(endLab);
-
-            try {
-                Date currentTime = hour24.parse(hour24.format(cal.getTime()));
-                Date futureTime = hour24.parse(hour24.format(calFuture.getTime()));
-
-                assert currentTime != null;
-                assert futureTime != null;
-
-                if (!theory.getString(dayTheory).equals("null") && (futureTime.after(hour24.parse(startTimeTheory)) || futureTime.equals(hour24.parse(startTimeTheory))) && currentTime.before(hour24.parse(startTimeTheory))) {
-                    title = "Upcoming: ";
-                    if (DateFormat.is24HourFormat(context)) {
-                        title = title + startTimeTheory + " - " + endTimeTheory;
-                    } else {
+                    @Override
+                    public void onSuccess(Timetable.@NonNull AllData timetableItem) {
                         try {
-                            Date startTime = hour24.parse(startTimeTheory);
-                            Date endTime = hour24.parse(endTimeTheory);
-                            if (startTime != null && endTime != null) {
-                                title = title + hour12.format(startTime) + " - " + hour12.format(endTime);
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                            NotificationHelper notificationHelper = new NotificationHelper(context);
+                            notificationHelper.getManager().notify(
+                                    SettingsRepository.NOTIFICATION_ID_TIMETABLE,
+                                    notificationHelper.notifyUpcoming(timetableItem).build()
+                            );
+                        } catch (Exception ignored) {
                         }
                     }
-                    message = theory.getString(dayTheory).split("-")[1].trim() + " - Theory";
-                    upcoming = true;
-                    flag = true;
-                }
 
-                if (!lab.getString(dayLab).equals("null") && (futureTime.after(hour24.parse(startTimeLab)) || futureTime.equals(hour24.parse(startTimeLab))) && currentTime.before(hour24.parse(startTimeLab))) {
-                    title = "Upcoming: ";
-                    if (DateFormat.is24HourFormat(context)) {
-                        title = title + startTimeLab + " - " + endTimeLab;
-                    } else {
-                        try {
-                            Date startTime = hour24.parse(startTimeLab);
-                            Date endTime = hour24.parse(endTimeLab);
-                            if (startTime != null && endTime != null) {
-                                title = title + hour12.format(startTime) + " - " + hour12.format(endTime);
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                        timetableDao
+                                .getOngoing(day, currentTime)
+                                .subscribeOn(Schedulers.single())
+                                .subscribe(new SingleObserver<Timetable.AllData>() {
+                                    @Override
+                                    public void onSubscribe(@NonNull Disposable d) {
+                                    }
+
+                                    @Override
+                                    public void onSuccess(Timetable.@NonNull AllData timetableItem) {
+                                        try {
+                                            NotificationHelper notificationHelper = new NotificationHelper(context);
+                                            notificationHelper.getManager().notify(
+                                                    SettingsRepository.NOTIFICATION_ID_TIMETABLE,
+                                                    notificationHelper.notifyOngoing(timetableItem).build()
+                                            );
+                                        } catch (Exception ignored) {
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onError(@NonNull Throwable e) {
+                                    }
+                                });
                     }
-                    message = lab.getString(dayLab).split("-")[1].trim() + " - Lab";
-                    upcoming = true;
-                    flag = true;
-                }
-
-                if (flag) {
-                    break;
-                }
-
-                if (!theory.getString(dayTheory).equals("null") && (currentTime.after(hour24.parse(startTimeTheory)) || currentTime.equals(hour24.parse(startTimeTheory))) && currentTime.before(hour24.parse(endTimeTheory))) {
-                    title = "Ongoing: ";
-                    if (DateFormat.is24HourFormat(context)) {
-                        title = title + startTimeTheory + " - " + endTimeTheory;
-                    } else {
-                        try {
-                            Date startTime = hour24.parse(startTimeTheory);
-                            Date endTime = hour24.parse(endTimeTheory);
-                            if (startTime != null && endTime != null) {
-                                title = title + hour12.format(startTime) + " - " + hour12.format(endTime);
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    message = theory.getString(dayTheory).split("-")[1].trim() + " - Theory";
-                    upcoming = false;
-                    flag = true;
-                }
-
-                if (!lab.getString(dayLab).equals("null") && (currentTime.after(hour24.parse(startTimeLab)) || currentTime.equals(hour24.parse(startTimeLab))) && currentTime.before(hour24.parse(endTimeLab))) {
-                    title = "Ongoing: ";
-                    if (DateFormat.is24HourFormat(context)) {
-                        title = title + startTimeLab + " - " + endTimeLab;
-                    } else {
-                        try {
-                            Date startTime = hour24.parse(startTimeLab);
-                            Date endTime = hour24.parse(endTimeLab);
-                            if (startTime != null && endTime != null) {
-                                title = title + hour12.format(startTime) + " - " + hour12.format(endTime);
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    message = lab.getString(dayLab).split("-")[1].trim() + " - Lab";
-                    upcoming = false;
-                    flag = true;
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-        if (title != null && message != null) {
-            NotificationHelper notificationHelper = new NotificationHelper(context);
-            NotificationCompat.Builder n;
-            if (upcoming) {
-                n = notificationHelper.notifyUpcoming(context, title, message);
-            } else {
-                n = notificationHelper.notifyOngoing(context, title, message);
-            }
-            notificationHelper.getManager().notify(2, n.build());
-        }
-
-        theory.close();
-        lab.close();
-        myDatabase.close();
+                });
     }
 }

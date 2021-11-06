@@ -37,7 +37,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Random;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.annotations.NonNull;
@@ -75,7 +74,6 @@ public class VTOP extends Service {
     public static final int COURSE_PROJECT = 2;
     public static final int COURSE_THEORY = 3;
 
-    private static final int NOTIFICATION_ID = new Random().nextInt(9999 - 1000) + 1000;
     private static final String END_SERVICE_ACTION = "END_SERVICE_ACTION";
 
     AppDatabase appDatabase;
@@ -133,10 +131,10 @@ public class VTOP extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent.getAction() != null && intent.getAction().equals(END_SERVICE_ACTION)) {
             this.endService(false);
-            this.notificationManager.cancel(NOTIFICATION_ID);   // In case the notification isn't removed for some reason
+            this.notificationManager.cancel(SettingsRepository.NOTIFICATION_ID_VTOP_DOWNLOAD);  // In case the notification isn't removed for some reason
         } else {
             this.notification.setColor(intent.getExtras().getInt("colorPrimary"));
-            this.startForeground(NOTIFICATION_ID, this.notification.build());
+            this.startForeground(SettingsRepository.NOTIFICATION_ID_VTOP_DOWNLOAD, this.notification.build());
 
             this.counter = 0;
             this.maxProgress = 11;
@@ -238,7 +236,7 @@ public class VTOP extends Service {
         this.notification.setContentTitle(getString(R.string.sign_in_attempt));
         this.notification.setContentText(null);
         this.notification.setProgress(0, 0, true);
-        this.notificationManager.notify(NOTIFICATION_ID, this.notification.build());
+        this.notificationManager.notify(SettingsRepository.NOTIFICATION_ID_VTOP_DOWNLOAD, this.notification.build());
 
         CookieManager.getInstance().removeAllCookies(null);
         this.webView.clearCache(true);
@@ -259,7 +257,7 @@ public class VTOP extends Service {
             this.notification.setContentTitle(getString(currentDownload));
         }
 
-        this.notificationManager.notify(NOTIFICATION_ID, notification.build());
+        this.notificationManager.notify(SettingsRepository.NOTIFICATION_ID_VTOP_DOWNLOAD, notification.build());
     }
 
     /**
@@ -981,6 +979,8 @@ public class VTOP extends Service {
                 JSONArray labArray = response.getJSONArray("lab");
                 JSONArray theoryArray = response.getJSONArray("theory");
 
+                SettingsRepository.clearTimetableNotifications(this.getApplicationContext());
+
                 List<Timetable> timetable = new ArrayList<>();
 
                 /*
@@ -1047,6 +1047,12 @@ public class VTOP extends Service {
 
                     timetable.add(lab);
                     timetable.add(theory);
+
+                    try {
+                        SettingsRepository.setTimetableNotifications(this.getApplicationContext(), lab);
+                        SettingsRepository.setTimetableNotifications(this.getApplicationContext(), theory);
+                    } catch (Exception ignored) {
+                    }
                 }
 
                 TimetableDao timetableDao = appDatabase.timetableDao();
@@ -2016,7 +2022,7 @@ public class VTOP extends Service {
         this.notification.setProgress(0, 0, true);
         this.notification.setContentText(null);
 
-        this.notificationManager.notify(NOTIFICATION_ID, this.notification.build());
+        this.notificationManager.notify(SettingsRepository.NOTIFICATION_ID_VTOP_DOWNLOAD, this.notification.build());
 
         this.sharedPreferences.edit().putBoolean("isSignedIn", true).apply();
 

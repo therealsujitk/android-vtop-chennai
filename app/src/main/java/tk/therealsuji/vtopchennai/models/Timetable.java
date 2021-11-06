@@ -91,5 +91,6 @@ public class Timetable {
         public String endTime;
         public String courseType;
         public String courseCode;
+        public String courseTitle;
     }
 }

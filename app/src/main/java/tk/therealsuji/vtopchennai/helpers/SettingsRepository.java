@@ -1,21 +1,36 @@
 package tk.therealsuji.vtopchennai.helpers;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.format.DateFormat;
 
 import androidx.fragment.app.FragmentActivity;
 import androidx.security.crypto.EncryptedSharedPreferences;
 import androidx.security.crypto.MasterKey;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+import java.util.Objects;
 
 import tk.therealsuji.vtopchennai.R;
 import tk.therealsuji.vtopchennai.activities.MainActivity;
 import tk.therealsuji.vtopchennai.activities.WebViewActivity;
 import tk.therealsuji.vtopchennai.fragments.RecyclerViewFragment;
 import tk.therealsuji.vtopchennai.fragments.ViewPagerFragment;
+import tk.therealsuji.vtopchennai.models.Timetable;
+import tk.therealsuji.vtopchennai.receivers.NotificationReceiver;
 
 public class SettingsRepository {
     public static String APP_BASE_URL = "https://vtopchennai.therealsuji.tk";
@@ -33,6 +48,9 @@ public class SettingsRepository {
 
     public static int THEME_DAY = 0;
     public static int THEME_NIGHT = 1;
+
+    public static int NOTIFICATION_ID_TIMETABLE = 1;
+    public static int NOTIFICATION_ID_VTOP_DOWNLOAD = 1;
 
     public static int getTheme(Context context) {
         SharedPreferences sharedPreferences = getSharedPreferences(context);
@@ -122,5 +140,109 @@ public class SettingsRepository {
     public static void openBrowser(Context context, String url) {
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
         context.startActivity(intent);
+    }
+
+    public static Bitmap getBitmapFromVectorDrawable(Drawable drawable) {
+        if (drawable == null) {
+            return null;
+        }
+
+        Bitmap bitmap = Bitmap.createBitmap(
+                drawable.getIntrinsicWidth(),
+                drawable.getIntrinsicHeight(),
+                Bitmap.Config.ARGB_8888
+        );
+
+        Canvas canvas = new Canvas(bitmap);
+        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        drawable.draw(canvas);
+
+        return bitmap;
+    }
+
+    public static String getSystemFormattedTime(Context context, String time) throws ParseException {
+        if (DateFormat.is24HourFormat(context)) {
+            return time;
+        } else {
+            SimpleDateFormat hour12 = new SimpleDateFormat("h:mm a", Locale.ENGLISH);
+            SimpleDateFormat hour24 = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
+
+            return hour12.format(Objects.requireNonNull(hour24.parse(time)));
+        }
+    }
+
+    public static void clearTimetableNotifications(Context context) {
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        SharedPreferences sharedPreferences = getSharedPreferences(context);
+        Intent notificationIntent = new Intent(context, NotificationReceiver.class);
+
+        int alarmCount = sharedPreferences.getInt("alarmCount", 0);
+        while (alarmCount >= 0) {
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(context, --alarmCount, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
+            alarmManager.cancel(pendingIntent);
+        }
+
+        sharedPreferences.edit().remove("alarmCount").apply();
+    }
+
+    public static void setTimetableNotifications(Context context, Timetable timetable) throws ParseException {
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        Calendar calendar = Calendar.getInstance();
+        Intent notificationIntent = new Intent(context, NotificationReceiver.class);
+        SharedPreferences sharedPreferences = getSharedPreferences(context);
+
+        SimpleDateFormat hour24 = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
+
+        int alarmCount = sharedPreferences.getInt("alarmCount", 0);
+        int day = calendar.get(Calendar.DAY_OF_WEEK) - 1;
+
+        Integer[] slots = {
+                timetable.sunday,
+                timetable.monday,
+                timetable.tuesday,
+                timetable.wednesday,
+                timetable.thursday,
+                timetable.friday,
+                timetable.saturday
+        };
+
+        Date today = dateFormat.parse(dateFormat.format(calendar.getTime()));
+        Date now = hour24.parse(hour24.format(calendar.getTime()));
+
+        for (int i = 0; i < slots.length; ++i) {
+            if (slots[i] == null) {
+                continue;
+            }
+
+            assert today != null;
+            Calendar alarm = Calendar.getInstance();
+            alarm.setTime(today);
+
+            if (i == day) {
+                Date startTime = hour24.parse(timetable.startTime);
+                assert startTime != null;
+
+                if (startTime.before(now)) {
+                    alarm.add(Calendar.DATE, 7);
+                }
+            } else if (i > day) {
+                alarm.add(Calendar.DATE, i - day);
+            } else {
+                alarm.add(Calendar.DATE, 7 - day + i);
+            }
+
+            alarm.set(Calendar.HOUR_OF_DAY, Integer.parseInt(timetable.startTime.split(":")[0]));
+            alarm.set(Calendar.MINUTE, Integer.parseInt(timetable.startTime.split(":")[1]));
+
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(context, alarmCount++, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
+            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, alarm.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
+
+            alarm.add(Calendar.MINUTE, -30);
+            pendingIntent = PendingIntent.getBroadcast(context, alarmCount++, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
+            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, alarm.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
+        }
+
+        sharedPreferences.edit().putInt("alarmCount", alarmCount).apply();
     }
 }
