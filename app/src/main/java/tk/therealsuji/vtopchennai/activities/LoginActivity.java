@@ -1,6 +1,7 @@
 package tk.therealsuji.vtopchennai.activities;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -16,28 +17,29 @@ import android.view.inputmethod.InputMethodManager;
 import android.webkit.WebView;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.color.MaterialColors;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import tk.therealsuji.vtopchennai.BuildConfig;
 import tk.therealsuji.vtopchennai.R;
+import tk.therealsuji.vtopchennai.fragments.ReCaptchaDialogFragment;
 import tk.therealsuji.vtopchennai.helpers.SettingsRepository;
 import tk.therealsuji.vtopchennai.services.VTOP;
 
 public class LoginActivity extends AppCompatActivity {
-    AlertDialog vtopDialog;
     boolean isBound;
     Context context;
-    Intent vtopIntent;
+    Dialog captchaDialog, semesterDialog;
+    Intent vtopServiceIntent;
+    ReCaptchaDialogFragment reCaptchaDialogFragment;
     SharedPreferences encryptedSharedPreferences, sharedPreferences;
     VTOP vtopService;
 
@@ -55,17 +57,15 @@ public class LoginActivity extends AppCompatActivity {
 
                 @Override
                 public void onRequestCaptcha(int captchaType, Bitmap bitmap, WebView webView) {
-                    MaterialAlertDialogBuilder captchaDialogBuilder = new MaterialAlertDialogBuilder(context)
-                            .setNegativeButton(R.string.cancel, (dialogInterface, i) -> dialogInterface.cancel())
-                            .setOnCancelListener(dialogInterface -> vtopService.endService(false))
-                            .setTitle(R.string.solve_captcha);
-
                     if (captchaType == VTOP.CAPTCHA_DEFAULT) {
-                        View captchaLayout = ((Activity) context).getLayoutInflater().inflate(R.layout.layout_download_captcha, null);
+                        View captchaLayout = ((Activity) context).getLayoutInflater().inflate(R.layout.layout_dialog_captcha_default, null);
                         ImageView captchaImage = captchaLayout.findViewById(R.id.captcha_image_view);
                         captchaImage.setImageBitmap(bitmap);
 
-                        vtopDialog = captchaDialogBuilder
+                        captchaDialog = new MaterialAlertDialogBuilder(context)
+                                .setNegativeButton(R.string.cancel, (dialogInterface, i) -> dialogInterface.cancel())
+                                .setOnCancelListener(dialogInterface -> vtopService.endService(false))
+                                .setTitle(R.string.solve_captcha)
                                 .setPositiveButton(R.string.submit, (dialogInterface, i) -> {
                                     TextView captchaText = captchaLayout.findViewById(R.id.captcha_edit_text);
                                     vtopService.signIn("captchaCheck=" + captchaText.getText());
@@ -91,49 +91,30 @@ public class LoginActivity extends AppCompatActivity {
                                 "    }" +
                                 "}, 500);" +
                                 "})();", value -> {
-                            ViewGroup webViewParent = (ViewGroup) webView.getParent();
-                            if (webViewParent != null) {
-                                webViewParent.removeView(webView);
-                            }
+                            reCaptchaDialogFragment = new ReCaptchaDialogFragment(webView);
 
-                            float pixelDensity = context.getResources().getDisplayMetrics().density;
-
-                            RelativeLayout container = new RelativeLayout(context);
-                            container.setPadding(
-                                    (int) (30 * pixelDensity),
-                                    (int) (10 * pixelDensity),
-                                    (int) (30 * pixelDensity),
-                                    0
-                            );
-
-                            ProgressBar loadingIndicator = new ProgressBar(context);
-                            RelativeLayout.LayoutParams loadingIndicatorParams = new RelativeLayout.LayoutParams(
-                                    RelativeLayout.LayoutParams.MATCH_PARENT,
-                                    RelativeLayout.LayoutParams.WRAP_CONTENT
-                            );
-                            loadingIndicator.setLayoutParams(loadingIndicatorParams);
-                            loadingIndicator.setPadding(0, (int) (10 * pixelDensity), 0, 0);
-
-                            container.addView(loadingIndicator);
-                            container.addView(webView);
-
-                            vtopDialog = captchaDialogBuilder
-                                    .setView(container)
-                                    .show();
+                            FragmentManager fragmentManager = getSupportFragmentManager();
+                            FragmentTransaction transaction = fragmentManager.beginTransaction();
+                            transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                            transaction.add(android.R.id.content, reCaptchaDialogFragment).addToBackStack(null).commit();
                         });
                     }
                 }
 
                 @Override
                 public void onCaptchaComplete() {
-                    if (vtopDialog != null) {
-                        vtopDialog.dismiss();
+                    if (captchaDialog != null) {
+                        captchaDialog.dismiss();
+                    }
+
+                    if (reCaptchaDialogFragment != null) {
+                        reCaptchaDialogFragment.dismiss();
                     }
                 }
 
                 @Override
                 public void onRequestSemester(String[] semesters) {
-                    vtopDialog = new MaterialAlertDialogBuilder(context)
+                    semesterDialog = new MaterialAlertDialogBuilder(context)
                             .setItems(semesters, (dialogInterface, i) -> vtopService.setSemester(semesters[i]))
                             .setNegativeButton(R.string.cancel, (dialogInterface, i) -> dialogInterface.cancel())
                             .setOnCancelListener(dialogInterface -> vtopService.endService(false))
@@ -143,10 +124,19 @@ public class LoginActivity extends AppCompatActivity {
 
                 @Override
                 public void onServiceEnd() {
-                    if (vtopDialog != null) {
-                        vtopDialog.dismiss();
-                        setLoading(false);
+                    if (captchaDialog != null) {
+                        captchaDialog.dismiss();
                     }
+
+                    if (reCaptchaDialogFragment != null) {
+                        reCaptchaDialogFragment.dismiss();
+                    }
+
+                    if (semesterDialog != null) {
+                        semesterDialog.dismiss();
+                    }
+
+                    setLoading(false);
                 }
 
                 @Override
@@ -175,8 +165,8 @@ public class LoginActivity extends AppCompatActivity {
         encryptedSharedPreferences.edit().putString("username", username).apply();
         encryptedSharedPreferences.edit().putString("password", password).apply();
 
-        bindService(this.vtopIntent, this.serviceConnection, 0);
-        ContextCompat.startForegroundService(this, this.vtopIntent);
+        bindService(this.vtopServiceIntent, this.serviceConnection, 0);
+        ContextCompat.startForegroundService(this, this.vtopServiceIntent);
     }
 
     private void hideKeyboard(View view) {
@@ -268,15 +258,15 @@ public class LoginActivity extends AppCompatActivity {
                     .show();
         }
 
-        this.vtopIntent = new Intent(this, VTOP.class);
-        this.vtopIntent.putExtra("colorPrimary", MaterialColors.getColor(this, R.attr.colorPrimary, 0));
+        this.vtopServiceIntent = new Intent(this, VTOP.class);
+        this.vtopServiceIntent.putExtra("colorPrimary", MaterialColors.getColor(this, R.attr.colorPrimary, 0));
     }
 
     @Override
     protected void onRestart() {
         super.onRestart();
 
-        bindService(this.vtopIntent, this.serviceConnection, 0);
+        bindService(this.vtopServiceIntent, this.serviceConnection, 0);
 
         if (!this.isBound && this.sharedPreferences.getBoolean("isSignedIn", false)) {
             this.startMainActivity();
@@ -287,8 +277,16 @@ public class LoginActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
 
-        if (this.vtopDialog != null) {
-            this.vtopDialog.dismiss();
+        if (this.semesterDialog != null) {
+            this.semesterDialog.cancel();
+        }
+
+        if (reCaptchaDialogFragment != null) {
+            reCaptchaDialogFragment.dismiss();
+        }
+
+        if (semesterDialog != null) {
+            semesterDialog.dismiss();
         }
 
         if (this.isBound) {
