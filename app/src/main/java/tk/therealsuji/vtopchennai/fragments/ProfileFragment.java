@@ -28,7 +28,7 @@ public class ProfileFragment extends Fragment {
         View profileFragment = inflater.inflate(R.layout.fragment_profile, container, false);
         float pixelDensity = this.getResources().getDisplayMetrics().density;
 
-        profileFragment.findViewById(R.id.header).setOnApplyWindowInsetsListener((view, windowInsets) -> {
+        profileFragment.findViewById(R.id.text_view_title).setOnApplyWindowInsetsListener((view, windowInsets) -> {
             ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) view.getLayoutParams();
             layoutParams.setMargins(
                     (int) (20 * pixelDensity),
@@ -41,7 +41,7 @@ public class ProfileFragment extends Fragment {
             return windowInsets.consumeSystemWindowInsets();
         });
 
-        RecyclerView profileGroups = profileFragment.findViewById(R.id.profile_groups);
+        RecyclerView profileGroups = profileFragment.findViewById(R.id.recycler_view_profile_groups);
         profileGroups.setAdapter(new ProfileGroupAdapter());
 
         return profileFragment;

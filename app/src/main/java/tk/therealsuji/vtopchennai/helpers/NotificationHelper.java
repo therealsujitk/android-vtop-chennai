@@ -81,17 +81,25 @@ public class NotificationHelper extends ContextWrapper {
         return manager;
     }
 
-    public NotificationCompat.Builder notifyApplication(String title, String message) {
+    public NotificationCompat.Builder notifyDownload(String title, String message) {
+        int colorPrimary = MaterialColors.getColor(this, R.attr.colorPrimary, 0);
+
         return new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID_APPLICATION)
-                .setContentTitle(title)
+                .setColor(colorPrimary)
                 .setContentText(message)
-                .setSmallIcon(R.drawable.ic_logo_light)
+                .setContentTitle(title)
+                .setSmallIcon(R.drawable.ic_refresh)
                 .setVisibility(NotificationCompat.VISIBILITY_PRIVATE);
     }
 
     public NotificationCompat.Builder notifyUpcoming(Timetable.AllData timetableItem) throws ParseException {
         Drawable largeIcon;
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, MainActivity.class), PendingIntent.FLAG_IMMUTABLE);
+        PendingIntent pendingIntent = PendingIntent.getActivity(
+                this,
+                0,
+                new Intent(this, MainActivity.class),
+                PendingIntent.FLAG_IMMUTABLE
+        );
         String title = "Upcoming: " +
                 SettingsRepository.getSystemFormattedTime(this, timetableItem.startTime) + " - " +
                 SettingsRepository.getSystemFormattedTime(this, timetableItem.endTime);
@@ -126,7 +134,12 @@ public class NotificationHelper extends ContextWrapper {
 
     public NotificationCompat.Builder notifyOngoing(Timetable.AllData timetableItem) throws ParseException {
         Drawable largeIcon;
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, MainActivity.class), PendingIntent.FLAG_IMMUTABLE);
+        PendingIntent pendingIntent = PendingIntent.getActivity(
+                this,
+                0,
+                new Intent(this, MainActivity.class),
+                PendingIntent.FLAG_IMMUTABLE
+        );
         String title = "Ongoing: " +
                 SettingsRepository.getSystemFormattedTime(this, timetableItem.startTime) + " - " +
                 SettingsRepository.getSystemFormattedTime(this, timetableItem.endTime);

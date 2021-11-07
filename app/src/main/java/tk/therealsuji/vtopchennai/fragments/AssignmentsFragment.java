@@ -26,7 +26,7 @@ public class AssignmentsFragment extends Fragment {
         View assignmentsFragment = inflater.inflate(R.layout.fragment_assignments, container, false);
         float pixelDensity = this.getResources().getDisplayMetrics().density;
 
-        assignmentsFragment.findViewById(R.id.header).setOnApplyWindowInsetsListener((view, windowInsets) -> {
+        assignmentsFragment.findViewById(R.id.text_view_title).setOnApplyWindowInsetsListener((view, windowInsets) -> {
             ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) view.getLayoutParams();
             layoutParams.setMargins(
                     (int) (20 * pixelDensity),

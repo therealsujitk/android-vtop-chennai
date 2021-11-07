@@ -2,17 +2,17 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/layout_login"
+    android:id="@+id/constraint_layout_login"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".activities.LoginActivity">
 
     <TextView
-        android:id="@+id/text_header"
+        android:id="@+id/text_view_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="40dp"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="125dp"
         android:layout_marginEnd="40dp"
         android:text="@string/login_header"
         android:textColor="?attr/colorPrimary"
@@ -23,7 +23,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/text_description"
+        android:id="@+id/text_view_description"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="40dp"
@@ -35,10 +35,10 @@
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/text_header" />
+        app:layout_constraintTop_toBottomOf="@+id/text_view_title" />
 
     <EditText
-        android:id="@+id/username"
+        android:id="@+id/edit_text_username"
         style="@style/Widget.VTOP.EditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -51,10 +51,10 @@
         android:inputType="textCapCharacters"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/text_description" />
+        app:layout_constraintTop_toBottomOf="@+id/text_view_description" />
 
     <EditText
-        android:id="@+id/password"
+        android:id="@+id/edit_text_password"
         style="@style/Widget.VTOP.EditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -67,10 +67,10 @@
         android:inputType="textPassword"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/username" />
+        app:layout_constraintTop_toBottomOf="@+id/edit_text_username" />
 
     <RelativeLayout
-        android:id="@+id/sign_in_button"
+        android:id="@+id/button_sign_in"
         style="@style/Widget.VTOP.Button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -81,10 +81,10 @@
         android:focusable="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/password">
+        app:layout_constraintTop_toBottomOf="@+id/edit_text_password">
 
         <TextView
-            android:id="@+id/sign_in_text"
+            android:id="@+id/text_view_sign_in"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/sign_in"
@@ -93,26 +93,27 @@
             android:textSize="18sp" />
 
         <ProgressBar
-            android:id="@+id/loading"
+            android:id="@+id/progress_bar_loading"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignStart="@id/sign_in_text"
-            android:layout_alignTop="@id/sign_in_text"
-            android:layout_alignEnd="@id/sign_in_text"
-            android:layout_alignBottom="@id/sign_in_text"
+            android:layout_alignStart="@id/text_view_sign_in"
+            android:layout_alignTop="@id/text_view_sign_in"
+            android:layout_alignEnd="@id/text_view_sign_in"
+            android:layout_alignBottom="@id/text_view_sign_in"
             android:indeterminateTint="?attr/colorOnPrimary"
             android:visibility="invisible" />
     </RelativeLayout>
 
     <Button
         android:id="@+id/button_privacy"
-        style="@style/Widget.AppCompat.Button.Borderless"
+        style="@style/Widget.Material3.Button.TextButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="10dp"
         android:padding="20dp"
         android:text="@string/privacy"
-        android:textAllCaps="false"
-        android:textColor="?attr/colorPrimary"
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

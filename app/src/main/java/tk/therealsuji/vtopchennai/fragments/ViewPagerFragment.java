@@ -136,7 +136,7 @@ public class ViewPagerFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View viewPagerFragment = inflater.inflate(R.layout.fragment_view_pager, container, false);
 
-        LinearLayout header = viewPagerFragment.findViewById(R.id.header);
+        LinearLayout header = viewPagerFragment.findViewById(R.id.linear_layout_header);
         header.setOnApplyWindowInsetsListener((view, windowInsets) -> {
             ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) view.getLayoutParams();
             layoutParams.setMargins(0, windowInsets.getSystemWindowInsetTop(), 0, 0);
@@ -157,8 +157,8 @@ public class ViewPagerFragment extends Fragment {
             contentType = arguments.getInt("content_type", 0);
         }
 
-        viewPagerFragment.findViewById(R.id.button_back).setOnClickListener(view -> requireActivity().getSupportFragmentManager().popBackStack());
-        ((TextView) viewPagerFragment.findViewById(R.id.text_title)).setText(getString(titleId));
+        viewPagerFragment.findViewById(R.id.image_button_back).setOnClickListener(view -> requireActivity().getSupportFragmentManager().popBackStack());
+        ((TextView) viewPagerFragment.findViewById(R.id.text_view_title)).setText(getString(titleId));
 
         switch (contentType) {
             case TYPE_COURSES:

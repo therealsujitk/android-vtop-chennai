@@ -34,7 +34,7 @@ public class MarksGroupAdapter extends RecyclerView.Adapter<MarksGroupAdapter.Vi
         marksGroup.setLayoutManager(new LinearLayoutManager(context));
         marksGroup.setNestedScrollingEnabled(false);
 
-        View courseTypes = ((View) parent.getParent()).findViewById(R.id.course_types);
+        View courseTypes = ((View) parent.getParent()).findViewById(R.id.chip_group_course_types);
         courseTypes.post(() -> marksGroup.setPadding(0, courseTypes.getMeasuredHeight(), 0, 0));
 
         return new ViewHolder(marksGroup);

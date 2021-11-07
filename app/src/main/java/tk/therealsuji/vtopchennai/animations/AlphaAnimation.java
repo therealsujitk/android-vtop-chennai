@@ -14,7 +14,7 @@ public class AlphaAnimation extends Animation {
         this.initialAlpha = view.getAlpha();
         this.view = view;
 
-        this.setDuration((long) (300 * Math.abs(this.finalAlpha - this.initialAlpha)));
+        this.setDuration((long) (200 * Math.abs(this.finalAlpha - this.initialAlpha)));
         this.setInterpolator(new LinearInterpolator());
     }
 

@@ -24,12 +24,10 @@ public class LauncherActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         DynamicColors.applyToActivitiesIfAvailable(this.getApplication());
 
-        final SharedPreferences sharedPreferences = SettingsRepository.getSharedPreferences(this.getApplicationContext());
-        String theme = sharedPreferences.getString("appearance", "system");
-
-        if (theme.equals("light")) {
+        int theme = SettingsRepository.getTheme(this.getApplicationContext());
+        if (theme == SettingsRepository.THEME_DAY) {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-        } else if (theme.equals("dark")) {
+        } else if (theme == SettingsRepository.THEME_NIGHT) {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
         } else {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
@@ -37,9 +35,7 @@ public class LauncherActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
 
-        boolean isSignedIn = sharedPreferences.getBoolean("isSignedIn", false);
-
-        if (isSignedIn) {
+        if (SettingsRepository.isSignedIn(this.getApplicationContext())) {
             startActivity(new Intent(LauncherActivity.this, MainActivity.class));
         } else {
             startActivity(new Intent(LauncherActivity.this, LoginActivity.class));
@@ -50,6 +46,7 @@ public class LauncherActivity extends AppCompatActivity {
          */
         new Thread(() -> {
             StringBuilder sb = new StringBuilder();
+            SharedPreferences sharedPreferences = SettingsRepository.getSharedPreferences(this.getApplicationContext());
             try {
                 URL url = new URL(SettingsRepository.APP_ABOUT_URL);
                 HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();

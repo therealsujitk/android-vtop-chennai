@@ -39,7 +39,7 @@ public class ReCaptchaDialogFragment extends DialogFragment {
         webViewParams.addRule(RelativeLayout.CENTER_IN_PARENT);
 
         webView.setLayoutParams(webViewParams);
-        ((RelativeLayout) dialogFragment.findViewById(R.id.container)).addView(webView);
+        ((RelativeLayout) dialogFragment.findViewById(R.id.relative_layout_container)).addView(webView);
 
         return dialogFragment;
     }

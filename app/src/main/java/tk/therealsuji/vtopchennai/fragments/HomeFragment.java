@@ -30,6 +30,10 @@ import tk.therealsuji.vtopchennai.widgets.InfoCard;
 
 public class HomeFragment extends Fragment {
 
+    public HomeFragment() {
+        // Required empty public constructor
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,7 +55,7 @@ public class HomeFragment extends Fragment {
         });
 
         appBarLayout.addOnOffsetChangedListener((appBarLayout1, verticalOffset) -> {
-            LinearLayout header = homeFragment.findViewById(R.id.header);
+            LinearLayout header = homeFragment.findViewById(R.id.linear_layout_header);
             float alpha = 1 - ((float) (-1 * verticalOffset) / header.getHeight());
 
             header.setAlpha(alpha);
@@ -60,7 +64,7 @@ public class HomeFragment extends Fragment {
         SharedPreferences sharedPreferences = SettingsRepository.getSharedPreferences(this.requireContext());
 
         try {
-            TextView greeting = homeFragment.findViewById(R.id.greeting);
+            TextView greeting = homeFragment.findViewById(R.id.text_view_greeting);
             SimpleDateFormat hour24 = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
             Calendar calendar = Calendar.getInstance();
 
@@ -80,9 +84,9 @@ public class HomeFragment extends Fragment {
         }
 
         String name = sharedPreferences.getString("name", getString(R.string.name));
-        ((TextView) homeFragment.findViewById(R.id.text_name)).setText(name);
+        ((TextView) homeFragment.findViewById(R.id.text_view_name)).setText(name);
 
-        View spotlightButton = homeFragment.findViewById(R.id.button_spotlight);
+        View spotlightButton = homeFragment.findViewById(R.id.image_button_spotlight);
         TooltipCompat.setTooltipText(spotlightButton, spotlightButton.getContentDescription());
         spotlightButton.setOnClickListener(view -> SettingsRepository.openRecyclerViewFragment(
                 this.requireActivity(),
@@ -90,15 +94,15 @@ public class HomeFragment extends Fragment {
                 RecyclerViewFragment.TYPE_SPOTLIGHT
         ));
 
-        InfoCard attendance = homeFragment.findViewById(R.id.card_attendance);
-        InfoCard credits = homeFragment.findViewById(R.id.card_credits);
-        InfoCard cgpa = homeFragment.findViewById(R.id.card_cgpa);
+        InfoCard attendance = homeFragment.findViewById(R.id.info_card_attendance);
+        InfoCard credits = homeFragment.findViewById(R.id.info_card_credits);
+        InfoCard cgpa = homeFragment.findViewById(R.id.info_card_cgpa);
 
         attendance.setValue(sharedPreferences.getInt("overall_attendance", 0) + "%");
         credits.setValue(String.valueOf(sharedPreferences.getInt("total_credits", 0)));
         cgpa.setValue(new DecimalFormat("#.00").format(sharedPreferences.getFloat("cgpa", 0)));
 
-        TabLayout days = homeFragment.findViewById(R.id.days);
+        TabLayout days = homeFragment.findViewById(R.id.tab_layout_days);
         String[] dayStrings = {
                 getString(R.string.sunday),
                 getString(R.string.monday),
@@ -109,7 +113,7 @@ public class HomeFragment extends Fragment {
                 getString(R.string.saturday)
         };
 
-        ViewPager2 timetable = homeFragment.findViewById(R.id.timetable);
+        ViewPager2 timetable = homeFragment.findViewById(R.id.view_pager_timetable);
 
         timetable.setAdapter(new TimetableAdapter());
         timetable.setCurrentItem(Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 1);

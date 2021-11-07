@@ -6,14 +6,14 @@
     android:orientation="vertical">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/mark_groups"
+        android:id="@+id/recycler_view_mark_groups"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
     <com.google.android.material.chip.ChipGroup
-        android:id="@+id/course_types"
+        android:id="@+id/chip_group_course_types"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"

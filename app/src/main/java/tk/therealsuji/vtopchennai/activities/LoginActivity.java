@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.view.View;
@@ -25,7 +24,6 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.google.android.material.color.MaterialColors;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import tk.therealsuji.vtopchennai.BuildConfig;
@@ -59,7 +57,7 @@ public class LoginActivity extends AppCompatActivity {
                 public void onRequestCaptcha(int captchaType, Bitmap bitmap, WebView webView) {
                     if (captchaType == VTOP.CAPTCHA_DEFAULT) {
                         View captchaLayout = ((Activity) context).getLayoutInflater().inflate(R.layout.layout_dialog_captcha_default, null);
-                        ImageView captchaImage = captchaLayout.findViewById(R.id.captcha_image_view);
+                        ImageView captchaImage = captchaLayout.findViewById(R.id.image_view_captcha);
                         captchaImage.setImageBitmap(bitmap);
 
                         captchaDialog = new MaterialAlertDialogBuilder(context)
@@ -67,7 +65,7 @@ public class LoginActivity extends AppCompatActivity {
                                 .setOnCancelListener(dialogInterface -> vtopService.endService(false))
                                 .setTitle(R.string.solve_captcha)
                                 .setPositiveButton(R.string.submit, (dialogInterface, i) -> {
-                                    TextView captchaText = captchaLayout.findViewById(R.id.captcha_edit_text);
+                                    TextView captchaText = captchaLayout.findViewById(R.id.edit_text_captcha);
                                     vtopService.signIn("captchaCheck=" + captchaText.getText());
                                 })
                                 .setView(captchaLayout)
@@ -156,8 +154,8 @@ public class LoginActivity extends AppCompatActivity {
     public void signIn() {
         hideKeyboard(this.getCurrentFocus());
 
-        EditText usernameView = findViewById(R.id.username);
-        EditText passwordView = findViewById(R.id.password);
+        EditText usernameView = findViewById(R.id.edit_text_username);
+        EditText passwordView = findViewById(R.id.edit_text_password);
 
         String username = usernameView.getText().toString();
         String password = passwordView.getText().toString();
@@ -185,19 +183,19 @@ public class LoginActivity extends AppCompatActivity {
 
     private void setLoading(boolean isLoading) {
         if (isLoading) {
-            findViewById(R.id.sign_in_text).setVisibility(View.INVISIBLE);
-            findViewById(R.id.loading).setVisibility(View.VISIBLE);
+            findViewById(R.id.text_view_sign_in).setVisibility(View.INVISIBLE);
+            findViewById(R.id.progress_bar_loading).setVisibility(View.VISIBLE);
 
-            findViewById(R.id.sign_in_button).setEnabled(false);
-            findViewById(R.id.username).setEnabled(false);
-            findViewById(R.id.password).setEnabled(false);
+            findViewById(R.id.button_sign_in).setEnabled(false);
+            findViewById(R.id.edit_text_username).setEnabled(false);
+            findViewById(R.id.edit_text_password).setEnabled(false);
         } else {
-            findViewById(R.id.sign_in_text).setVisibility(View.VISIBLE);
-            findViewById(R.id.loading).setVisibility(View.INVISIBLE);
+            findViewById(R.id.text_view_sign_in).setVisibility(View.VISIBLE);
+            findViewById(R.id.progress_bar_loading).setVisibility(View.INVISIBLE);
 
-            findViewById(R.id.sign_in_button).setEnabled(true);
-            findViewById(R.id.username).setEnabled(true);
-            findViewById(R.id.password).setEnabled(true);
+            findViewById(R.id.button_sign_in).setEnabled(true);
+            findViewById(R.id.edit_text_username).setEnabled(true);
+            findViewById(R.id.edit_text_password).setEnabled(true);
         }
     }
 
@@ -206,19 +204,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        int visibility = getWindow().getDecorView().getSystemUiVisibility();
-
-        if (SettingsRepository.getTheme(this) == SettingsRepository.THEME_DAY) {
-            visibility |= View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                visibility |= View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR;
-            }
-        }
-
-        getWindow().getDecorView().setSystemUiVisibility(visibility);
-
-        ConstraintLayout loginLayout = findViewById(R.id.layout_login);
+        ConstraintLayout loginLayout = findViewById(R.id.constraint_layout_login);
         loginLayout.setOnApplyWindowInsetsListener((view, windowInsets) -> {
             ViewGroup.MarginLayoutParams layoutParams = (ViewGroup.MarginLayoutParams) view.getLayoutParams();
             layoutParams.setMargins(
@@ -236,7 +222,7 @@ public class LoginActivity extends AppCompatActivity {
         this.encryptedSharedPreferences = SettingsRepository.getEncryptedSharedPreferences(this);
         this.sharedPreferences = SettingsRepository.getSharedPreferences(this);
 
-        findViewById(R.id.sign_in_button).setOnClickListener(view -> signIn());
+        findViewById(R.id.button_sign_in).setOnClickListener(view -> signIn());
         findViewById(R.id.button_privacy).setOnClickListener(view -> SettingsRepository.openWebViewActivity(
                 this,
                 getString(R.string.privacy),
@@ -244,7 +230,7 @@ public class LoginActivity extends AppCompatActivity {
         ));
 
         /*
-            Locally check for a new version (The actually checking is done in the SplashScreenActivity)
+            Locally check for a new version (The actually checking is done in the LauncherActivity)
          */
         int versionCode = BuildConfig.VERSION_CODE;
         int latestVersion = this.sharedPreferences.getInt("latest", versionCode);
@@ -259,7 +245,6 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         this.vtopServiceIntent = new Intent(this, VTOP.class);
-        this.vtopServiceIntent.putExtra("colorPrimary", MaterialColors.getColor(this, R.attr.colorPrimary, 0));
     }
 
     @Override

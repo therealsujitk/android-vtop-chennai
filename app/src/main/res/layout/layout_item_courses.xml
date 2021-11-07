@@ -19,19 +19,19 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/faculty"
+            android:id="@+id/text_view_faculty"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="16sp" />
 
         <TextView
-            android:id="@+id/venue"
+            android:id="@+id/text_view_venue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="16sp" />
 
         <com.google.android.material.chip.ChipGroup
-            android:id="@+id/slots"
+            android:id="@+id/chip_group_slots"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:chipSpacingVertical="0dp" />
@@ -48,7 +48,7 @@
             android:layout_height="wrap_content">
 
             <TextView
-                android:id="@+id/attendance_text"
+                android:id="@+id/text_view_attendance"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
@@ -60,7 +60,7 @@
                 android:textStyle="bold" />
 
             <ProgressBar
-                android:id="@+id/attendance_progress"
+                android:id="@+id/progress_bar_attendance"
                 style="@style/Widget.VTOP.CircularProgressBar"
                 android:layout_width="100dp"
                 android:layout_height="100dp"

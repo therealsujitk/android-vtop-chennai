@@ -107,10 +107,10 @@ public class ProfileItem extends LinearLayout {
                     SettingsRepository.APP_PRIVACY_URL
             )),
             new ItemData(R.string.send_feedback, R.drawable.ic_feedback, context -> {
-                View bottomSheetLayout = View.inflate(context, R.layout.layout_feedback_bottom_sheet, null);
-                bottomSheetLayout.findViewById(R.id.contact_developer).setOnClickListener(view -> SettingsRepository.openBrowser(context, SettingsRepository.DEVELOPER_BASE_URL));
-                bottomSheetLayout.findViewById(R.id.open_issue).setOnClickListener(view -> SettingsRepository.openBrowser(context, SettingsRepository.GITHUB_ISSUE_URL));
-                bottomSheetLayout.findViewById(R.id.request_feature).setOnClickListener(view -> SettingsRepository.openBrowser(context, SettingsRepository.GITHUB_FEATURE_URL));
+                View bottomSheetLayout = View.inflate(context, R.layout.layout_bottom_sheet_feedback, null);
+                bottomSheetLayout.findViewById(R.id.text_view_contact_developer).setOnClickListener(view -> SettingsRepository.openBrowser(context, SettingsRepository.DEVELOPER_BASE_URL));
+                bottomSheetLayout.findViewById(R.id.text_view_open_issue).setOnClickListener(view -> SettingsRepository.openBrowser(context, SettingsRepository.GITHUB_ISSUE_URL));
+                bottomSheetLayout.findViewById(R.id.text_view_request_feature).setOnClickListener(view -> SettingsRepository.openBrowser(context, SettingsRepository.GITHUB_FEATURE_URL));
 
                 BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(context);
                 bottomSheetDialog.setContentView(bottomSheetLayout);

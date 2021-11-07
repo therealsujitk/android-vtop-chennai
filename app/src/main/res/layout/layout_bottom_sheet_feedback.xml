@@ -16,7 +16,7 @@
         android:textStyle="bold" />
 
     <TextView
-        android:id="@+id/contact_developer"
+        android:id="@+id/text_view_contact_developer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?attr/selectableItemBackground"
@@ -30,7 +30,7 @@
         android:textSize="16sp" />
 
     <TextView
-        android:id="@+id/open_issue"
+        android:id="@+id/text_view_open_issue"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?attr/selectableItemBackground"
@@ -44,7 +44,7 @@
         android:textSize="16sp" />
 
     <TextView
-        android:id="@+id/request_feature"
+        android:id="@+id/text_view_request_feature"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?attr/selectableItemBackground"

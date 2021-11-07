@@ -10,7 +10,7 @@
     android:padding="20dp">
 
     <TextView
-        android:id="@+id/text_amount"
+        android:id="@+id/text_view_amount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="?attr/colorSecondary"
@@ -23,14 +23,14 @@
         android:layout_marginTop="8dp">
 
         <TextView
-            android:id="@+id/text_number"
+            android:id="@+id/text_view_receipt_number"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="?attr/colorSecondary"
             android:textSize="16sp" />
 
         <TextView
-            android:id="@+id/text_date"
+            android:id="@+id/text_view_date"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAlignment="textEnd"

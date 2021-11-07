@@ -56,11 +56,11 @@ public class MarksItemAdapter extends RecyclerView.Adapter<MarksItemAdapter.View
         }
 
         public void setMarksItem(Mark.AllData marksItem) {
-            LinearLayout markDetails = this.marksItem.findViewById(R.id.mark_details);
-            AppCompatTextView markTitle = this.marksItem.findViewById(R.id.mark_title);
-            AppCompatTextView scoreText = this.marksItem.findViewById(R.id.score_text);
-            ProgressBar scoreProgress = this.marksItem.findViewById(R.id.score_progress);
-            AppCompatTextView markType = this.marksItem.findViewById(R.id.mark_type);
+            LinearLayout markDetails = this.marksItem.findViewById(R.id.linear_layout_details);
+            AppCompatTextView markTitle = this.marksItem.findViewById(R.id.text_view_title);
+            AppCompatTextView scoreText = this.marksItem.findViewById(R.id.text_view_score);
+            ProgressBar scoreProgress = this.marksItem.findViewById(R.id.progress_bar_score);
+            AppCompatTextView markType = this.marksItem.findViewById(R.id.text_view_mark_type);
 
             markTitle.setText(marksItem.title);
 

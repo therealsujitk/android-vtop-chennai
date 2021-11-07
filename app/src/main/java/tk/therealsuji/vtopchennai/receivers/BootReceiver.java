@@ -16,6 +16,7 @@ import tk.therealsuji.vtopchennai.interfaces.TimetableDao;
 import tk.therealsuji.vtopchennai.models.Timetable;
 
 public class BootReceiver extends BroadcastReceiver {
+
     @Override
     public void onReceive(Context context, Intent intent) {
         if (!intent.getAction().equals("android.intent.action.BOOT_COMPLETED")) {
@@ -28,34 +29,32 @@ public class BootReceiver extends BroadcastReceiver {
             return;
         }
 
+        SettingsRepository.clearTimetableNotifications(context);
+
         AppDatabase appDatabase = AppDatabase.getInstance(context);
         TimetableDao timetableDao = appDatabase.timetableDao();
 
-        SettingsRepository.clearTimetableNotifications(context);
+        timetableDao
+                .getTimetable()
+                .subscribeOn(Schedulers.single())
+                .subscribe(new SingleObserver<List<Timetable>>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+                    }
 
-        for (int i = 0; i < 7; ++i) {
-            timetableDao
-                    .getTimetable()
-                    .subscribeOn(Schedulers.single())
-                    .subscribe(new SingleObserver<List<Timetable>>() {
-                        @Override
-                        public void onSubscribe(@NonNull Disposable d) {
-                        }
-
-                        @Override
-                        public void onSuccess(@NonNull List<Timetable> timetable) {
-                            for (int i = 0; i < timetable.size(); ++i) {
-                                try {
-                                    SettingsRepository.setTimetableNotifications(context, timetable.get(i));
-                                } catch (Exception ignored) {
-                                }
+                    @Override
+                    public void onSuccess(@NonNull List<Timetable> timetable) {
+                        for (int i = 0; i < timetable.size(); ++i) {
+                            try {
+                                SettingsRepository.setTimetableNotifications(context, timetable.get(i));
+                            } catch (Exception ignored) {
                             }
                         }
+                    }
 
-                        @Override
-                        public void onError(@NonNull Throwable e) {
-                        }
-                    });
-        }
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                    }
+                });
     }
 }

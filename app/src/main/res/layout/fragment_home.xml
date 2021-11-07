@@ -14,7 +14,7 @@
         app:elevation="0dp">
 
         <LinearLayout
-            android:id="@+id/header"
+            android:id="@+id/linear_layout_header"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -37,7 +37,7 @@
                     android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/greeting"
+                        android:id="@+id/text_view_greeting"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/morning_greeting"
@@ -46,7 +46,7 @@
                         android:textSize="15sp" />
 
                     <TextView
-                        android:id="@+id/text_name"
+                        android:id="@+id/text_view_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/name"
@@ -58,7 +58,7 @@
                 </LinearLayout>
 
                 <ImageButton
-                    android:id="@+id/button_spotlight"
+                    android:id="@+id/image_button_spotlight"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="?attr/selectableItemBackgroundBorderless"
@@ -83,21 +83,21 @@
                     android:paddingEnd="10dp">
 
                     <tk.therealsuji.vtopchennai.widgets.InfoCard
-                        android:id="@+id/card_attendance"
+                        android:id="@+id/info_card_attendance"
                         android:layout_width="150dp"
                         android:layout_height="150dp"
                         android:layout_margin="10dp"
                         app:key="@string/overall_attendance" />
 
                     <tk.therealsuji.vtopchennai.widgets.InfoCard
-                        android:id="@+id/card_credits"
+                        android:id="@+id/info_card_credits"
                         android:layout_width="150dp"
                         android:layout_height="150dp"
                         android:layout_margin="10dp"
                         app:key="@string/total_credits" />
 
                     <tk.therealsuji.vtopchennai.widgets.InfoCard
-                        android:id="@+id/card_cgpa"
+                        android:id="@+id/info_card_cgpa"
                         android:layout_width="150dp"
                         android:layout_height="150dp"
                         android:layout_margin="10dp"
@@ -110,7 +110,7 @@
         </LinearLayout>
 
         <com.google.android.material.tabs.TabLayout
-            android:id="@+id/days"
+            android:id="@+id/tab_layout_days"
             style="@style/Widget.VTOP.TabLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -122,9 +122,8 @@
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/timetable"
+        android:id="@+id/view_pager_timetable"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
-
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

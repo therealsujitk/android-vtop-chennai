@@ -114,8 +114,8 @@ public class CoursesItemAdapter extends RecyclerView.Adapter<CoursesItemAdapter.
         }
 
         public void setCourseTitle(String courseTitle, boolean lab, boolean project, boolean theory) {
-            TextView title = this.courseItem.findViewById(R.id.course_title);
-            ChipGroup courseTypes = this.courseItem.findViewById(R.id.course_types);
+            TextView title = this.courseItem.findViewById(R.id.text_view_course_title);
+            ChipGroup courseTypes = this.courseItem.findViewById(R.id.chip_group_course_types);
 
             title.setText(courseTitle);
 
@@ -145,13 +145,13 @@ public class CoursesItemAdapter extends RecyclerView.Adapter<CoursesItemAdapter.
         }
 
         public void setCourseItem(Course.AllData courseItem) {
-            TextView faculty = this.courseItem.findViewById(R.id.faculty);
-            TextView venue = this.courseItem.findViewById(R.id.venue);
-            TextView attendanceText = this.courseItem.findViewById(R.id.attendance_text);
+            TextView faculty = this.courseItem.findViewById(R.id.text_view_faculty);
+            TextView venue = this.courseItem.findViewById(R.id.text_view_venue);
+            TextView attendanceText = this.courseItem.findViewById(R.id.text_view_attendance);
 
-            ChipGroup slots = this.courseItem.findViewById(R.id.slots);
+            ChipGroup slots = this.courseItem.findViewById(R.id.chip_group_slots);
 
-            ProgressBar attendanceProgress = this.courseItem.findViewById(R.id.attendance_progress);
+            ProgressBar attendanceProgress = this.courseItem.findViewById(R.id.progress_bar_attendance);
 
             faculty.setText(Html.fromHtml(this.courseItem.getContext().getString(R.string.faculty, courseItem.faculty)));
             venue.setText(Html.fromHtml(this.courseItem.getContext().getString(R.string.venue, courseItem.venue)));

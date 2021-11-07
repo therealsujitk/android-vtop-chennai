@@ -1,11 +1,6 @@
 package tk.therealsuji.vtopchennai.activities;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.content.res.Configuration;
-import android.os.Build;
 import android.os.Bundle;
-import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.WindowCompat;
@@ -40,22 +35,7 @@ public class MainActivity extends AppCompatActivity {
 
         WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
 
-        SharedPreferences sharedPreferences = this.getSharedPreferences("tk.therealsuji.vtopchennai", Context.MODE_PRIVATE);
-        String appearance = sharedPreferences.getString("appearance", "system");
-        int visibility = getWindow().getDecorView().getSystemUiVisibility();
-
-        if (appearance.equals("light") || (appearance.equals("system") && (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_NO)) {
-            visibility |= View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                visibility |= View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR;
-            }
-        }
-
-        getWindow().getDecorView().setSystemUiVisibility(visibility);
-
         this.bottomNavigationView = findViewById(R.id.bottom_navigation);
-
         this.bottomNavigationView.setOnItemSelectedListener(item -> {
             Fragment selectedFragment;
 
@@ -86,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.main_body, selectedFragment)
+                    .replace(R.id.frame_layout_fragment_container, selectedFragment)
                     .commit();
 
             return true;

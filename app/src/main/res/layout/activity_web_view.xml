@@ -2,13 +2,13 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/layout_web_view"
+    android:id="@+id/constraint_layout_web_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".activities.WebViewActivity">
 
     <LinearLayout
-        android:id="@+id/header"
+        android:id="@+id/linear_layout_header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
@@ -17,7 +17,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageButton
-            android:id="@+id/button_back"
+            android:id="@+id/image_button_back"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="?attr/selectableItemBackgroundBorderless"
@@ -27,7 +27,7 @@
             app:tint="?attr/colorOnBackground" />
 
         <TextView
-            android:id="@+id/text_title"
+            android:id="@+id/text_view_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
@@ -43,6 +43,5 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/header" />
-
+        app:layout_constraintTop_toBottomOf="@+id/linear_layout_header" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -31,7 +31,7 @@ public class ResizeAnimation extends Animation {
         this.endValue = endValue;
         this.view = view;
 
-        this.setDuration(300L * Math.abs(this.width - this.endValue) / defaultValues.getInt("cardWidth"));
+        this.setDuration(200L * Math.abs(this.width - this.endValue) / defaultValues.getInt("cardWidth"));
         this.setInterpolator(new LinearInterpolator());
         ((View) this.view.getParent()).invalidate();    // Animations don't work unless this is present
     }

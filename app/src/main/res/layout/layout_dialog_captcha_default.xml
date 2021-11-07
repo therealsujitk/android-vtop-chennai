@@ -10,13 +10,13 @@
     tools:ignore="RtlSymmetry">
 
     <ImageView
-        android:id="@+id/captcha_image_view"
+        android:id="@+id/image_view_captcha"
         android:layout_width="match_parent"
         android:layout_height="45dp"
         android:contentDescription="@string/captcha_description" />
 
     <com.google.android.material.textfield.MaterialAutoCompleteTextView
-        android:id="@+id/captcha_edit_text"
+        android:id="@+id/edit_text_captcha"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"

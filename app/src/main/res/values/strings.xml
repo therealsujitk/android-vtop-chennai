@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">VTOP</string>
 
-
+    <!-- LoginActivity Strings -->
     <string name="login_header">Login</string>
     <string name="login_description">Sign in using your VTOP credentials</string>
     <string name="username">Username</string>
@@ -9,15 +9,22 @@
     <string name="sign_in">Sign In</string>
     <string name="privacy">Privacy Policy</string>
 
+    <!-- MainActivity Strings -->
+    <string name="home">Home</string>
+    <string name="performance">Performance</string>
+    <string name="assignments">Assignments</string>
+    <string name="profile">Profile</string>
 
+    <!-- HomeFragment Strings -->
     <string name="morning_greeting">Good Morning,</string>
     <string name="afternoon_greeting">Good Afternoon,</string>
     <string name="evening_greeting">Good Evening,</string>
+    <string name="name">JOHN DOE</string>
     <string name="spotlight">Spotlight</string>
-
-    <string name="cgpa">CGPA</string>
     <string name="overall_attendance">Overall Attendance</string>
-
+    <string name="total_credits">Overall Credits Earned</string>
+    <string name="cgpa">CGPA</string>
+    <string name="days">Days of the week</string>
     <string name="sunday">Sunday</string>
     <string name="monday">Monday</string>
     <string name="tuesday">Tuesday</string>
@@ -26,19 +33,40 @@
     <string name="friday">Friday</string>
     <string name="saturday">Saturday</string>
 
-    <string name="home">Home</string>
-    <string name="performance">Performance</string>
-    <string name="courses">Courses</string>
-    <string name="profile">Profile</string>
+    <!-- PerformanceFragment Strings -->
+    <string name="performance_header">Your Performance</string>
+    <string name="theory_weightage">Theory Weightage</string>
+    <string name="lab_weightage">Lab Weightage</string>
+    <string name="project_weightage">Project Weightage</string>
+    <string name="overall_course_score">Overall Course Score</string>
+    <string name="score">Your Score</string>
+    <string name="weightage">Weightage Score</string>
+    <string name="status">Status: %s</string>
+    <string name="average">Average: %f</string>
 
+    <!-- AssignmentsFragment Strings -->
+    <string name="assignments_header">Your Assignments</string>
 
+    <!-- ProfileFragment Strings -->
     <string name="profile_header">Your Profile</string>
+    <string name="personal">Personal</string>
+    <string name="application">Application</string>
+    <string name="courses">Courses</string>
+    <string name="receipts">Receipts</string>
+    <string name="staff">Staff</string>
+    <string name="switch_semester">Switch Semester</string>
+    <string name="faq">Frequently Asked Questions</string>
+    <string name="notifications">Notifications</string>
+    <string name="share">Share App</string>
 
-
+    <!-- Download Strings: Strings used while downloading data -->
+    <string name="vtop_service_description">Downloads data from VTOP.</string>
     <string name="solve_captcha">Solve the captcha</string>
     <string name="enter_captcha">Enter Captcha</string>
     <string name="captcha_description">Image that shows the captcha code.</string>
-    <string name="submit">Submit</string>
+    <string name="recaptcha">reCaptcha</string>
+    <string name="verifying_human">Verifying if you are human</string>
+    <string name="select_semester">Select a semester</string>
     <string name="sign_in_attempt">Attempting to sign you in</string>
     <string name="downloading_profile">Downloading Profile</string>
     <string name="downloading_timetable">Downloading Timetable</string>
@@ -50,66 +78,40 @@
     <string name="downloading_receipts">Downloading Receipts</string>
     <string name="completing_download">Completing download</string>
 
-
-    <string name="name">JOHN DOE</string>
-
-    <string name="lab">Lab</string>
-    <string name="project">Project</string>
-    <string name="theory">Theory</string>
-
+    <!-- Update Dialog Strings -->
     <string name="update_title">Update Available</string>
     <string name="update_message">A new version of VTOP Chennai has been released! The Update button bellow will take you to the download page.</string>
     <string name="update">Update</string>
 
-    <string name="receipts">Receipts</string>
-
+    <!-- Appearance Dialog Strings -->
     <string name="appearance">Appearance</string>
-    <string name="notifications">Notifications</string>
-    <string name="sign_out">Sign Out</string>
-
-    <string name="sign_out_text">Are you sure you want to sign out of this application? You can switch semesters without having to sign out.</string>
-    <string name="cancel">Cancel</string>
-
-
-    <string name="score">Your Score</string>
-    <string name="weightage">Weightage Score</string>
-    <string name="status">Status: %s</string>
-    <string name="average">Average: %f</string>
-
-
     <string name="light">Light</string>
     <string name="dark">Dark</string>
     <string name="system">Set by System</string>
 
-    <string name="personal">Personal</string>
-    <string name="application">Application</string>
-    <string name="days">Days of the week</string>
-    <string name="go_back">Go Back</string>
-    <string name="performance_header">Your Performance</string>
-    <string name="switch_semester">Switch Semester</string>
-    <string name="faq">Frequently Asked Questions</string>
-    <string name="send_feedback">Send Feedback</string>
-    <string name="select_semester">Select a semester</string>
-    <string name="vtop_service_description">Downloads data from VTOP.</string>
-    <string name="total_credits">Overall Credits Earned</string>
-    <string name="theory_weightage">Theory Weightage</string>
-    <string name="lab_weightage">Lab Weightage</string>
-    <string name="project_weightage">Project Weightage</string>
-    <string name="overall_course_score">Overall Course Score</string>
-    <string name="assignments">Assignments</string>
-    <string name="assignments_header">Your Assignments</string>
-    <string name="attendance">Attendance</string>
+    <!-- Sign Out Dialog Strings -->
+    <string name="sign_out">Sign Out</string>
+    <string name="sign_out_text">Are you sure you want to sign out of this application? You can switch semesters without having to sign out.</string>
+    <string name="cancel">Cancel</string>
 
-    <string name="faculty">Faculty: &lt;b>%s&lt;/b></string>
-    <string name="venue">Venue: &lt;b>%s&lt;/b></string>
+    <!-- Feedback BottomSheet Strings -->
+    <string name="send_feedback">Send Feedback</string>
     <string name="contact_developer">Contact the developer</string>
     <string name="open_issue">Open an issue</string>
     <string name="request_feature">Request a feature</string>
-    <string name="share">Share App</string>
+
+    <!-- Share Intent Strings -->
     <string name="share_subject">Get the VTOP Chennai android app</string>
     <string name="share_text">Visit %s to download the latest version of VTOP Chennai.</string>
     <string name="share_title">Share \"VTOP Chennai\" via</string>
-    <string name="staff">Staff</string>
-    <string name="recaptcha">reCaptcha</string>
-    <string name="verifying_human">Verifying if you are human</string>
+
+    <!-- Other Strings & Strings used in multiple locations -->
+    <string name="lab">Lab</string>
+    <string name="project">Project</string>
+    <string name="theory">Theory</string>
+    <string name="go_back">Go Back</string>
+    <string name="submit">Submit</string>
+    <string name="faculty">Faculty: &lt;b>%s&lt;/b></string>
+    <string name="venue">Venue: &lt;b>%s&lt;/b></string>
+    <string name="attendance">Attendance</string>
 </resources>

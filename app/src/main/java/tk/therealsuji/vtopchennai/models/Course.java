@@ -30,6 +30,15 @@ public class Course {
     @ColumnInfo(name = "faculty")
     public String faculty;
 
+    @Ignore
+    public static final int TYPE_LAB = 1;
+
+    @Ignore
+    public static final int TYPE_PROJECT = 2;
+
+    @Ignore
+    public static final int TYPE_THEORY = 3;
+
     public static class AllData {
         public String courseTitle;
         public String courseCode;

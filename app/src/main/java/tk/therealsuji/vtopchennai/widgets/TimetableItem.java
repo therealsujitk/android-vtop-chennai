@@ -287,7 +287,7 @@ public class TimetableItem extends RelativeLayout {
     public void setOnClickListener(int slotId) {
         this.classProgress.setOnClickListener(view -> {
             BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(this.getContext());
-            View bottomSheetLayout = View.inflate(this.getContext(), R.layout.layout_timetable_item_bottom_sheet, null);
+            View bottomSheetLayout = View.inflate(this.getContext(), R.layout.layout_bottom_sheet_course_info, null);
             bottomSheetDialog.setContentView(bottomSheetLayout);
             bottomSheetDialog.show();
 
@@ -305,16 +305,16 @@ public class TimetableItem extends RelativeLayout {
 
                         @Override
                         public void onSuccess(@NonNull Course.AllData course) {
-                            AppCompatTextView courseTitle = bottomSheetLayout.findViewById(R.id.course_title);
-                            AppCompatTextView courseCode = bottomSheetLayout.findViewById(R.id.course_code);
-                            AppCompatTextView faculty = bottomSheetLayout.findViewById(R.id.faculty);
-                            AppCompatTextView venue = bottomSheetLayout.findViewById(R.id.venue);
-                            AppCompatTextView attendanceText = bottomSheetLayout.findViewById(R.id.attendance_text);
+                            AppCompatTextView courseTitle = bottomSheetLayout.findViewById(R.id.text_view_course_title);
+                            AppCompatTextView courseCode = bottomSheetLayout.findViewById(R.id.text_view_course_code);
+                            AppCompatTextView faculty = bottomSheetLayout.findViewById(R.id.text_view_faculty);
+                            AppCompatTextView venue = bottomSheetLayout.findViewById(R.id.text_view_venue);
+                            AppCompatTextView attendanceText = bottomSheetLayout.findViewById(R.id.text_view_attendance);
 
-                            Chip courseType = bottomSheetLayout.findViewById(R.id.course_type);
-                            Chip slot = bottomSheetLayout.findViewById(R.id.slot);
+                            Chip courseType = bottomSheetLayout.findViewById(R.id.chip_course_type);
+                            Chip slot = bottomSheetLayout.findViewById(R.id.chip_slot);
 
-                            ProgressBar attendanceProgress = bottomSheetLayout.findViewById(R.id.attendance_progress);
+                            ProgressBar attendanceProgress = bottomSheetLayout.findViewById(R.id.progress_bar_attendance);
 
                             courseTitle.setText(course.courseTitle);
                             courseCode.setText(course.courseCode);
@@ -335,8 +335,8 @@ public class TimetableItem extends RelativeLayout {
                             attendanceText.setText(new DecimalFormat("#'%'").format(course.attendancePercentage));
                             attendanceProgress.setProgress(course.attendancePercentage);
 
-                            bottomSheetLayout.findViewById(R.id.progress_bar).setVisibility(GONE);
-                            bottomSheetLayout.findViewById(R.id.layout_container).setVisibility(VISIBLE);
+                            bottomSheetLayout.findViewById(R.id.progress_bar_loading).setVisibility(GONE);
+                            bottomSheetLayout.findViewById(R.id.linear_layout_container).setVisibility(VISIBLE);
                         }
 
                         @Override

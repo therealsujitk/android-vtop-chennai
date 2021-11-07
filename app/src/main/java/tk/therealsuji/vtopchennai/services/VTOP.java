@@ -70,10 +70,6 @@ public class VTOP extends Service {
     public static final int CAPTCHA_DEFAULT = 0;
     public static final int CAPTCHA_GRECATPCHA = 1;
 
-    public static final int COURSE_LAB = 1;
-    public static final int COURSE_PROJECT = 2;
-    public static final int COURSE_THEORY = 3;
-
     private static final String END_SERVICE_ACTION = "END_SERVICE_ACTION";
 
     AppDatabase appDatabase;
@@ -110,7 +106,7 @@ public class VTOP extends Service {
         NotificationHelper notificationHelper = new NotificationHelper(getApplicationContext());
         this.notificationManager = notificationHelper.getManager();
 
-        this.notification = notificationHelper.notifyApplication(null, null);
+        this.notification = notificationHelper.notifyDownload(null, null);
         this.notification.addAction(R.drawable.ic_close, getString(R.string.cancel), endServicePendingIntent);
         this.notification.setOngoing(true);
         this.notification.setProgress(0, 0, true);
@@ -133,7 +129,6 @@ public class VTOP extends Service {
             this.endService(false);
             this.notificationManager.cancel(SettingsRepository.NOTIFICATION_ID_VTOP_DOWNLOAD);  // In case the notification isn't removed for some reason
         } else {
-            this.notification.setColor(intent.getExtras().getInt("colorPrimary"));
             this.startForeground(SettingsRepository.NOTIFICATION_ID_VTOP_DOWNLOAD, this.notification.build());
 
             this.counter = 0;
@@ -998,23 +993,23 @@ public class VTOP extends Service {
 
                     lab.startTime = this.getStringValue(labObject, "start_time");
                     lab.endTime = this.getStringValue(labObject, "end_time");
-                    lab.sunday = this.getSlotId(labObject.getString("sunday"), COURSE_LAB);
-                    lab.monday = this.getSlotId(labObject.getString("monday"), COURSE_LAB);
-                    lab.tuesday = this.getSlotId(labObject.getString("tuesday"), COURSE_LAB);
-                    lab.wednesday = this.getSlotId(labObject.getString("wednesday"), COURSE_LAB);
-                    lab.thursday = this.getSlotId(labObject.getString("thursday"), COURSE_LAB);
-                    lab.friday = this.getSlotId(labObject.getString("friday"), COURSE_LAB);
-                    lab.saturday = this.getSlotId(labObject.getString("saturday"), COURSE_LAB);
+                    lab.sunday = this.getSlotId(labObject.getString("sunday"), Course.TYPE_LAB);
+                    lab.monday = this.getSlotId(labObject.getString("monday"), Course.TYPE_LAB);
+                    lab.tuesday = this.getSlotId(labObject.getString("tuesday"), Course.TYPE_LAB);
+                    lab.wednesday = this.getSlotId(labObject.getString("wednesday"), Course.TYPE_LAB);
+                    lab.thursday = this.getSlotId(labObject.getString("thursday"), Course.TYPE_LAB);
+                    lab.friday = this.getSlotId(labObject.getString("friday"), Course.TYPE_LAB);
+                    lab.saturday = this.getSlotId(labObject.getString("saturday"), Course.TYPE_LAB);
 
                     theory.startTime = this.getStringValue(theoryObject, "start_time");
                     theory.endTime = this.getStringValue(theoryObject, "end_time");
-                    theory.sunday = this.getSlotId(theoryObject.getString("sunday"), COURSE_THEORY);
-                    theory.monday = this.getSlotId(theoryObject.getString("monday"), COURSE_THEORY);
-                    theory.tuesday = this.getSlotId(theoryObject.getString("tuesday"), COURSE_THEORY);
-                    theory.wednesday = this.getSlotId(theoryObject.getString("wednesday"), COURSE_THEORY);
-                    theory.thursday = this.getSlotId(theoryObject.getString("thursday"), COURSE_THEORY);
-                    theory.friday = this.getSlotId(theoryObject.getString("friday"), COURSE_THEORY);
-                    theory.saturday = this.getSlotId(theoryObject.getString("saturday"), COURSE_THEORY);
+                    theory.sunday = this.getSlotId(theoryObject.getString("sunday"), Course.TYPE_THEORY);
+                    theory.monday = this.getSlotId(theoryObject.getString("monday"), Course.TYPE_THEORY);
+                    theory.tuesday = this.getSlotId(theoryObject.getString("tuesday"), Course.TYPE_THEORY);
+                    theory.wednesday = this.getSlotId(theoryObject.getString("wednesday"), Course.TYPE_THEORY);
+                    theory.thursday = this.getSlotId(theoryObject.getString("thursday"), Course.TYPE_THEORY);
+                    theory.friday = this.getSlotId(theoryObject.getString("friday"), Course.TYPE_THEORY);
+                    theory.saturday = this.getSlotId(theoryObject.getString("saturday"), Course.TYPE_THEORY);
 
                     /*
                         Formatting time in 24-hour in-case it's given in 12-hour format because VIT
@@ -1172,10 +1167,10 @@ public class VTOP extends Service {
                     JSONObject attendanceObject = attendanceArray.getJSONObject(i);
                     Attendance attendanceItem = new Attendance();
 
-                    int courseType = COURSE_THEORY;
+                    int courseType = Course.TYPE_THEORY;
 
                     if (attendanceObject.getString("course_type").toLowerCase().contains("lab")) {
-                        courseType = COURSE_LAB;
+                        courseType = Course.TYPE_LAB;
                     }
 
                     attendanceItem.courseId = this.getCourseId(attendanceObject.getString("slot"), courseType);
@@ -1331,12 +1326,12 @@ public class VTOP extends Service {
                     JSONObject markObject = marksArray.getJSONObject(i);
                     Mark mark = new Mark();
 
-                    int courseType = COURSE_THEORY;
+                    int courseType = Course.TYPE_THEORY;
 
                     if (markObject.getString("course_type").toLowerCase().contains("lab")) {
-                        courseType = COURSE_LAB;
+                        courseType = Course.TYPE_LAB;
                     } else if (markObject.getString("course_type").toLowerCase().contains("project")) {
-                        courseType = COURSE_PROJECT;
+                        courseType = Course.TYPE_PROJECT;
                     }
 
                     mark.courseId = this.getCourseId(markObject.getString("slot"), courseType);
@@ -2047,13 +2042,13 @@ public class VTOP extends Service {
      */
     private Integer getSlotId(String slot, int courseType) {
         switch (courseType) {
-            case COURSE_LAB:
+            case Course.TYPE_LAB:
                 if (!this.labSlots.containsKey(slot)) {
                     return null;
                 }
 
                 return Objects.requireNonNull(this.labSlots.get(slot)).id;
-            case COURSE_PROJECT:
+            case Course.TYPE_PROJECT:
                 if (!this.projectSlots.containsKey(slot)) {
                     return null;
                 }
@@ -2076,13 +2071,13 @@ public class VTOP extends Service {
      */
     private Integer getCourseId(String slot, int courseType) {
         switch (courseType) {
-            case COURSE_LAB:
+            case Course.TYPE_LAB:
                 if (!this.labSlots.containsKey(slot)) {
                     return null;
                 }
 
                 return Objects.requireNonNull(this.labSlots.get(slot)).courseId;
-            case COURSE_PROJECT:
+            case Course.TYPE_PROJECT:
                 if (!this.projectSlots.containsKey(slot)) {
                     return null;
                 }
@@ -2105,13 +2100,13 @@ public class VTOP extends Service {
      */
     private Integer getCourseCredits(Integer courseId, int courseType) {
         switch (courseType) {
-            case COURSE_LAB:
+            case Course.TYPE_LAB:
                 if (!this.labCourses.containsKey(courseId)) {
                     return null;
                 }
 
                 return Objects.requireNonNull(this.labCourses.get(courseId)).credits;
-            case COURSE_PROJECT:
+            case Course.TYPE_PROJECT:
                 if (!this.projectCourses.containsKey(courseId)) {
                     return null;
                 }
@@ -2134,13 +2129,13 @@ public class VTOP extends Service {
      */
     private String getCourseCode(Integer courseId, int courseType) {
         switch (courseType) {
-            case COURSE_LAB:
+            case Course.TYPE_LAB:
                 if (!this.labCourses.containsKey(courseId)) {
                     return null;
                 }
 
                 return Objects.requireNonNull(this.labCourses.get(courseId)).code;
-            case COURSE_PROJECT:
+            case Course.TYPE_PROJECT:
                 if (!this.projectCourses.containsKey(courseId)) {
                     return null;
                 }

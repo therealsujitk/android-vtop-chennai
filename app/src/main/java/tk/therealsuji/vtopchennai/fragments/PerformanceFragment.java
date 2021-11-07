@@ -56,7 +56,7 @@ public class PerformanceFragment extends Fragment {
         });
 
         appBarLayout.addOnOffsetChangedListener((appBarLayout1, verticalOffset) -> {
-            LinearLayout header = performanceFragment.findViewById(R.id.header);
+            LinearLayout header = performanceFragment.findViewById(R.id.linear_layout_header);
             float alpha = 1 - ((float) (-1 * verticalOffset) / header.getHeight());
 
             header.setAlpha(alpha);
@@ -64,8 +64,8 @@ public class PerformanceFragment extends Fragment {
 
         float pixelDensity = this.getResources().getDisplayMetrics().density;
 
-        TabLayout courseTabs = performanceFragment.findViewById(R.id.courses);
-        ViewPager2 marks = performanceFragment.findViewById(R.id.marks);
+        TabLayout courseTabs = performanceFragment.findViewById(R.id.tab_layout_courses);
+        ViewPager2 marks = performanceFragment.findViewById(R.id.view_pager_marks);
 
         AppDatabase appDatabase = AppDatabase.getInstance(requireActivity().getApplicationContext());
         MarksDao marksDao = appDatabase.marksDao();
@@ -106,10 +106,10 @@ public class PerformanceFragment extends Fragment {
                             }
                         }
 
-                        PerformanceCard overall = performanceFragment.findViewById(R.id.overall);
-                        PerformanceCard theory = performanceFragment.findViewById(R.id.theory);
-                        PerformanceCard project = performanceFragment.findViewById(R.id.project);
-                        PerformanceCard lab = performanceFragment.findViewById(R.id.lab);
+                        PerformanceCard overall = performanceFragment.findViewById(R.id.performance_card_overall);
+                        PerformanceCard theory = performanceFragment.findViewById(R.id.performance_card_theory);
+                        PerformanceCard project = performanceFragment.findViewById(R.id.performance_card_project);
+                        PerformanceCard lab = performanceFragment.findViewById(R.id.performance_card_lab);
 
 
                         marks.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {

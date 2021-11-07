@@ -26,7 +26,7 @@ public class StaffItemAdapter extends RecyclerView.Adapter<StaffItemAdapter.View
     public StaffItemAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LinearLayout staffItem = (LinearLayout) LayoutInflater
                 .from(parent.getContext())
-                .inflate(R.layout.layout_staff_item, parent, false);
+                .inflate(R.layout.layout_item_staff, parent, false);
 
         return new ViewHolder(staffItem);
     }
@@ -51,8 +51,8 @@ public class StaffItemAdapter extends RecyclerView.Adapter<StaffItemAdapter.View
         }
 
         public void setStaffItem(Staff staffItem) {
-            TextView key = this.staffItem.findViewById(R.id.text_key);
-            TextView value = this.staffItem.findViewById(R.id.text_value);
+            TextView key = this.staffItem.findViewById(R.id.text_view_key);
+            TextView value = this.staffItem.findViewById(R.id.text_view_value);
 
             key.setText(staffItem.key);
             value.setText(staffItem.value);

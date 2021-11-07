@@ -7,8 +7,8 @@
             <corners
                 android:bottomLeftRadius="10dp"
                 android:bottomRightRadius="10dp"
-                android:topLeftRadius="30dp"
-                android:topRightRadius="30dp" />
+                android:topLeftRadius="@dimen/widget_corner_radius"
+                android:topRightRadius="@dimen/widget_corner_radius" />
         </shape>
     </item>
 </ripple>

@@ -20,7 +20,7 @@ import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import tk.therealsuji.vtopchennai.R;
 import tk.therealsuji.vtopchennai.activities.MainActivity;
-import tk.therealsuji.vtopchennai.adapters.ReceiptsAdapter;
+import tk.therealsuji.vtopchennai.adapters.ReceiptsItemAdapter;
 import tk.therealsuji.vtopchennai.adapters.SpotlightGroupAdapter;
 import tk.therealsuji.vtopchennai.helpers.AppDatabase;
 import tk.therealsuji.vtopchennai.interfaces.ReceiptsDao;
@@ -58,7 +58,7 @@ public class RecyclerViewFragment extends Fragment {
 
                     @Override
                     public void onSuccess(@NonNull List<Receipt> receipts) {
-                        recyclerView.setAdapter(new ReceiptsAdapter(receipts));
+                        recyclerView.setAdapter(new ReceiptsItemAdapter(receipts));
                     }
 
                     @Override
@@ -89,7 +89,7 @@ public class RecyclerViewFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View recyclerViewFragment = inflater.inflate(R.layout.fragment_recycler_view, container, false);
 
-        LinearLayout header = recyclerViewFragment.findViewById(R.id.header);
+        LinearLayout header = recyclerViewFragment.findViewById(R.id.linear_layout_header);
         header.setOnApplyWindowInsetsListener((view, windowInsets) -> {
             ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) view.getLayoutParams();
             layoutParams.setMargins(0, windowInsets.getSystemWindowInsetTop(), 0, 0);
@@ -109,8 +109,8 @@ public class RecyclerViewFragment extends Fragment {
             contentType = arguments.getInt("content_type", 0);
         }
 
-        recyclerViewFragment.findViewById(R.id.button_back).setOnClickListener(view -> requireActivity().getSupportFragmentManager().popBackStack());
-        ((TextView) recyclerViewFragment.findViewById(R.id.text_title)).setText(getString(titleId));
+        recyclerViewFragment.findViewById(R.id.image_button_back).setOnClickListener(view -> requireActivity().getSupportFragmentManager().popBackStack());
+        ((TextView) recyclerViewFragment.findViewById(R.id.text_view_title)).setText(getString(titleId));
 
         switch (contentType) {
             case TYPE_ATTENDANCE:

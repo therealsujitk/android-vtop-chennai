@@ -88,8 +88,8 @@ public class MarksAdapter extends RecyclerView.Adapter<MarksAdapter.ViewHolder> 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            this.courseTypes = itemView.findViewById(R.id.course_types);
-            this.markGroups = itemView.findViewById(R.id.mark_groups);
+            this.courseTypes = itemView.findViewById(R.id.chip_group_course_types);
+            this.markGroups = itemView.findViewById(R.id.recycler_view_mark_groups);
 
             this.markGroups.addOnScrollListener(new RecyclerView.OnScrollListener() {
                 @Override

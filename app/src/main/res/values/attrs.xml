@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <attr name="title" format="string" />
 
     <declare-styleable name="InfoCard">
         <attr name="key" format="string" />
@@ -8,7 +7,7 @@
     </declare-styleable>
 
     <declare-styleable name="PerformanceCard">
-        <attr name="title" />
+        <attr name="title" format="string" />
         <attr name="score" format="float" />
         <attr name="total" format="float" />
     </declare-styleable>

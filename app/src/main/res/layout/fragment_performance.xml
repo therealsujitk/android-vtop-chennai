@@ -14,7 +14,7 @@
         app:elevation="0dp">
 
         <LinearLayout
-            android:id="@+id/header"
+            android:id="@+id/linear_layout_header"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -44,7 +44,7 @@
                     android:padding="10dp">
 
                     <tk.therealsuji.vtopchennai.widgets.PerformanceCard
-                        android:id="@+id/overall"
+                        android:id="@+id/performance_card_overall"
                         android:layout_width="140dp"
                         android:layout_height="match_parent"
                         android:layout_marginStart="10dp"
@@ -52,7 +52,7 @@
                         app:title="@string/overall_course_score" />
 
                     <tk.therealsuji.vtopchennai.widgets.PerformanceCard
-                        android:id="@+id/theory"
+                        android:id="@+id/performance_card_theory"
                         android:layout_width="140dp"
                         android:layout_height="match_parent"
                         android:layout_marginStart="10dp"
@@ -60,7 +60,7 @@
                         app:title="@string/theory_weightage" />
 
                     <tk.therealsuji.vtopchennai.widgets.PerformanceCard
-                        android:id="@+id/project"
+                        android:id="@+id/performance_card_project"
                         android:layout_width="140dp"
                         android:layout_height="match_parent"
                         android:layout_marginStart="10dp"
@@ -68,7 +68,7 @@
                         app:title="@string/project_weightage" />
 
                     <tk.therealsuji.vtopchennai.widgets.PerformanceCard
-                        android:id="@+id/lab"
+                        android:id="@+id/performance_card_lab"
                         android:layout_width="140dp"
                         android:layout_height="match_parent"
                         android:layout_marginStart="10dp"
@@ -79,7 +79,7 @@
         </LinearLayout>
 
         <com.google.android.material.tabs.TabLayout
-            android:id="@+id/courses"
+            android:id="@+id/tab_layout_courses"
             style="@style/Widget.VTOP.TabLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -89,7 +89,7 @@
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/marks"
+        android:id="@+id/view_pager_marks"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
