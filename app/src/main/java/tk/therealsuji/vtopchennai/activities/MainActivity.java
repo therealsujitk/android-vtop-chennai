@@ -1,6 +1,8 @@
 package tk.therealsuji.vtopchennai.activities;
 
+import android.os.Build;
 import android.os.Bundle;
+import android.view.WindowManager;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.WindowCompat;
@@ -21,11 +23,23 @@ public class MainActivity extends AppCompatActivity {
     public void hideBottomNavigationView() {
         this.bottomNavigationView.clearAnimation();
         this.bottomNavigationView.animate().translationY(bottomNavigationView.getMeasuredHeight());
+
+        int gestureLeft = 0;
+
+        if (Build.VERSION.SDK_INT >= 29) {
+            gestureLeft = this.getWindow().getDecorView().getRootWindowInsets().getSystemGestureInsets().left;
+        }
+
+        if (gestureLeft == 0) {
+            this.getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+        }
     }
 
     public void showBottomNavigationView() {
         this.bottomNavigationView.clearAnimation();
         this.bottomNavigationView.animate().translationY(0);
+
+        this.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
     }
 
     @Override
