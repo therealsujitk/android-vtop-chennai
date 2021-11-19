@@ -1,5 +1,6 @@
 package tk.therealsuji.vtopchennai.fragments;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -85,9 +86,12 @@ public class RecyclerViewFragment extends Fragment {
         });
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View recyclerViewFragment = inflater.inflate(R.layout.fragment_recycler_view, container, false);
+        recyclerViewFragment.getRootView().setBackgroundColor(requireContext().getColor(R.color.secondary_container_95));
+        recyclerViewFragment.getRootView().setOnTouchListener((view, motionEvent) -> true);
 
         LinearLayout header = recyclerViewFragment.findViewById(R.id.linear_layout_header);
         header.setOnApplyWindowInsetsListener((view, windowInsets) -> {

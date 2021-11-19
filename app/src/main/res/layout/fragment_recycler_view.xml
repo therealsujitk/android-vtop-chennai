@@ -4,9 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/secondary_container_95"
-    android:clickable="true"
-    android:focusable="true"
     tools:context=".fragments.RecyclerViewFragment">
 
     <LinearLayout

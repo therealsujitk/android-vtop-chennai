@@ -1,5 +1,6 @@
 package tk.therealsuji.vtopchennai.fragments;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -60,7 +61,7 @@ public class ViewPagerFragment extends Fragment {
                         viewPager.setAdapter(new StaffAdapter(staffTypes));
 
                         new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {
-                            tab.setText(staffTypes.get(position));
+                            tab.setText(staffTypes.get(position).toUpperCase());
                             TooltipCompat.setTooltipText(tab.view, null);
                         }).attach();
 
@@ -132,9 +133,12 @@ public class ViewPagerFragment extends Fragment {
                 });
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View viewPagerFragment = inflater.inflate(R.layout.fragment_view_pager, container, false);
+        viewPagerFragment.getRootView().setBackgroundColor(requireContext().getColor(R.color.secondary_container_95));
+        viewPagerFragment.getRootView().setOnTouchListener((view, motionEvent) -> true);
 
         LinearLayout header = viewPagerFragment.findViewById(R.id.linear_layout_header);
         header.setOnApplyWindowInsetsListener((view, windowInsets) -> {
