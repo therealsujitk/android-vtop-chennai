@@ -15,6 +15,7 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.SingleObserver;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
+import tk.therealsuji.vtopchennai.activities.MainActivity;
 import tk.therealsuji.vtopchennai.helpers.AppDatabase;
 import tk.therealsuji.vtopchennai.interfaces.StaffDao;
 import tk.therealsuji.vtopchennai.models.Staff;
@@ -40,6 +41,13 @@ public class StaffAdapter extends RecyclerView.Adapter<StaffAdapter.ViewHolder> 
         );
         staffView.setLayoutParams(staffViewParams);
         staffView.setLayoutManager(new LinearLayoutManager(context));
+        staffView.setClipToPadding(false);
+        staffView.setPadding(
+                0,
+                0,
+                0,
+                ((MainActivity) context).getSystemNavigationPadding()
+        );
 
         return new ViewHolder(staffView);
     }

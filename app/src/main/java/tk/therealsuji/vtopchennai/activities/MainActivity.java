@@ -20,6 +20,13 @@ public class MainActivity extends AppCompatActivity {
     BottomNavigationView bottomNavigationView;
     Fragment homeFragment, performanceFragment, assignmentsFragment, profileFragment;
 
+    public int getSystemNavigationPadding() {
+        int systemNavigationHeight = this.getWindow().getDecorView().getRootWindowInsets().getSystemWindowInsetBottom();
+        int extraPadding = (int) (20 * this.getResources().getDisplayMetrics().density);
+
+        return systemNavigationHeight + extraPadding;
+    }
+
     public void hideBottomNavigationView() {
         this.bottomNavigationView.clearAnimation();
         this.bottomNavigationView.animate().translationY(bottomNavigationView.getMeasuredHeight());

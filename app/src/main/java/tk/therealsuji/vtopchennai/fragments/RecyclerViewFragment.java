@@ -105,6 +105,13 @@ public class RecyclerViewFragment extends Fragment {
         this.recyclerView = recyclerViewFragment.findViewById(R.id.recycler_view);
         this.appDatabase = AppDatabase.getInstance(this.requireActivity().getApplicationContext());
 
+        this.recyclerView.setPadding(
+                0,
+                0,
+                0,
+                ((MainActivity) this.requireActivity()).getSystemNavigationPadding()
+        );
+
         int titleId = 0, contentType = 0;
         Bundle arguments = this.getArguments();
 
