@@ -46,7 +46,7 @@
         android:layout_marginTop="75dp"
         android:layout_marginEnd="40dp"
         android:autofillHints="Enter your VTOP username"
-        android:drawableStart="@drawable/ic_profile"
+        android:drawableStart="@drawable/ic_profile_filled"
         android:hint="@string/username"
         android:inputType="textCapCharacters"
         app:layout_constraintEnd_toEndOf="parent"
