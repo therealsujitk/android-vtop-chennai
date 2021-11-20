@@ -136,13 +136,13 @@ public class PerformanceCard extends LinearLayout {
         this.title.setText(title);
     }
 
-    public void setScore(Double score, Double total) {
+    public void setScore(Double score, Double max) {
         score = Math.ceil(score);
 
         this.scoreProgress.setProgress(score.intValue(), true);
-        this.scoreProgress.setMax(total.intValue());
+        this.scoreProgress.setSecondaryProgress(max.intValue());
 
-        String scoreText = (total == 100) ? score.intValue() + "%" : score.intValue() + " / " + total.intValue();
+        String scoreText = (max == 100) ? score.intValue() + "%" : score.intValue() + " / " + max.intValue();
         this.scoreText.setText(scoreText);
     }
 

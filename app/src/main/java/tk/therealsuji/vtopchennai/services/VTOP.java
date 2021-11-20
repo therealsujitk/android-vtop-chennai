@@ -1351,7 +1351,7 @@ public class VTOP extends Service {
                     }
 
                     Objects.requireNonNull(this.cumulativeMarks.get(courseCode)).courseCode = courseCode;
-                    Objects.requireNonNull(this.cumulativeMarks.get(courseCode)).addWeightage(mark.weightage, courseType, courseCredits);
+                    Objects.requireNonNull(this.cumulativeMarks.get(courseCode)).addWeightage(mark.weightage, mark.maxWeightage, courseType, courseCredits);
 
                     marks.add(mark);
                 }
@@ -1361,16 +1361,23 @@ public class VTOP extends Service {
                     Double labTotal = cumulativeMark.getValue().labTotal;
                     Double projectTotal = cumulativeMark.getValue().projectTotal;
 
+                    Double theoryMax = cumulativeMark.getValue().theoryMax;
+                    Double labMax = cumulativeMark.getValue().labMax;
+                    Double projectMax = cumulativeMark.getValue().projectMax;
+
                     if (theoryTotal == null) {
                         theoryTotal = (double) 0;
+                        theoryMax = (double) 0;
                     }
 
                     if (labTotal == null) {
                         labTotal = (double) 0;
+                        labMax = (double) 0;
                     }
 
                     if (projectTotal == null) {
                         projectTotal = (double) 0;
+                        projectMax = (double) 0;
                     }
 
                     int theoryCredits = cumulativeMark.getValue().theoryCredits;
@@ -1378,9 +1385,13 @@ public class VTOP extends Service {
                     int projectCredits = cumulativeMark.getValue().projectCredits;
 
                     double grandTotal = (theoryTotal * theoryCredits + labTotal * labCredits + projectTotal * projectCredits);
+                    double grandMax = (theoryMax * theoryCredits + labMax * labCredits + projectMax * projectCredits);
+
                     grandTotal /= theoryCredits + labCredits + projectCredits;
+                    grandMax /= theoryCredits + labCredits + projectCredits;
 
                     Objects.requireNonNull(this.cumulativeMarks.get(cumulativeMark.getKey())).grandTotal = grandTotal;
+                    Objects.requireNonNull(this.cumulativeMarks.get(cumulativeMark.getKey())).grandMax = grandMax;
                 }
 
                 MarksDao marksDao = appDatabase.marksDao();

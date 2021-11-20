@@ -136,7 +136,7 @@ public class PerformanceFragment extends Fragment {
                                                 if (cumulativeMark.grandTotal != null) {
                                                     overall.show();
                                                     overall.setIndeterminate(false);
-                                                    overall.setScore(cumulativeMark.grandTotal, 100.0);
+                                                    overall.setScore(cumulativeMark.grandTotal, cumulativeMark.grandMax);
                                                 } else {
                                                     overall.hide();
                                                 }
@@ -144,7 +144,7 @@ public class PerformanceFragment extends Fragment {
                                                 if (cumulativeMark.theoryTotal != null) {
                                                     theory.show();
                                                     theory.setIndeterminate(false);
-                                                    theory.setScore(cumulativeMark.theoryTotal, 100.0);
+                                                    theory.setScore(cumulativeMark.theoryTotal, cumulativeMark.theoryMax);
                                                 } else {
                                                     theory.hide();
                                                 }
@@ -152,7 +152,7 @@ public class PerformanceFragment extends Fragment {
                                                 if (cumulativeMark.projectTotal != null) {
                                                     project.show();
                                                     project.setIndeterminate(false);
-                                                    project.setScore(cumulativeMark.projectTotal, 100.0);
+                                                    project.setScore(cumulativeMark.projectTotal, cumulativeMark.projectMax);
                                                 } else {
                                                     project.hide();
                                                 }
@@ -160,7 +160,7 @@ public class PerformanceFragment extends Fragment {
                                                 if (cumulativeMark.labTotal != null) {
                                                     lab.show();
                                                     lab.setIndeterminate(false);
-                                                    lab.setScore(cumulativeMark.labTotal, 100.0);
+                                                    lab.setScore(cumulativeMark.labTotal, cumulativeMark.labMax);
                                                 } else {
                                                     lab.hide();
                                                 }
