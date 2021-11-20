@@ -25,7 +25,6 @@ import java.util.Date;
 import java.util.Locale;
 
 import tk.therealsuji.vtopchennai.R;
-import tk.therealsuji.vtopchennai.activities.MainActivity;
 import tk.therealsuji.vtopchennai.adapters.TimetableAdapter;
 import tk.therealsuji.vtopchennai.helpers.SettingsRepository;
 import tk.therealsuji.vtopchennai.widgets.InfoCard;
@@ -59,7 +58,7 @@ public class HomeFragment extends Fragment {
                     0,
                     0,
                     0,
-                    windowInsets.getSystemWindowInsetTop() + ((MainActivity) context).getBottomNavigationHeight()
+                    windowInsets.getSystemWindowInsetTop()
             );
 
             return windowInsets.consumeSystemWindowInsets();

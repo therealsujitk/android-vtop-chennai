@@ -13,7 +13,6 @@ import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatDelegate;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
@@ -23,6 +22,8 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import tk.therealsuji.vtopchennai.R;
 import tk.therealsuji.vtopchennai.activities.LoginActivity;
+import tk.therealsuji.vtopchennai.activities.MainActivity;
+import tk.therealsuji.vtopchennai.adapters.AnnouncementItemAdapter;
 import tk.therealsuji.vtopchennai.adapters.ProfileGroupAdapter;
 import tk.therealsuji.vtopchennai.helpers.SettingsRepository;
 
@@ -158,20 +159,25 @@ public class ProfileFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View profileFragment = inflater.inflate(R.layout.fragment_profile, container, false);
-        float pixelDensity = this.getResources().getDisplayMetrics().density;
+        Context context = this.requireContext();
 
-        profileFragment.findViewById(R.id.text_view_title).setOnApplyWindowInsetsListener((view, windowInsets) -> {
-            ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) view.getLayoutParams();
-            layoutParams.setMargins(
-                    (int) (20 * pixelDensity),
-                    (int) (20 * pixelDensity + windowInsets.getSystemWindowInsetTop()),
-                    (int) (20 * pixelDensity),
-                    (int) (20 * pixelDensity)
+        profileFragment.findViewById(R.id.app_bar).setOnApplyWindowInsetsListener((view, windowInsets) -> {
+            view.setPadding(
+                    0,
+                    windowInsets.getSystemWindowInsetTop(),
+                    0,
+                    0
             );
-            view.setLayoutParams(layoutParams);
 
             return windowInsets.consumeSystemWindowInsets();
         });
+
+        profileFragment.findViewById(R.id.nested_scroll_view_profile).setPadding(
+                0,
+                0,
+                0,
+                ((MainActivity) context).getBottomNavigationPadding()
+        );
 
         RecyclerView announcements = profileFragment.findViewById(R.id.recycler_view_announcements);
         RecyclerView profileGroups = profileFragment.findViewById(R.id.recycler_view_profile_groups);

@@ -166,6 +166,13 @@ public class TimetableItem extends RelativeLayout {
         container.addView(classInfo);
         container.addView(moreInfo);
 
+        this.setPadding(
+                (int) (30 * pixelDensity),
+                (int) (10 * pixelDensity),
+                (int) (30 * pixelDensity),
+                0
+        );
+
         this.addView(this.classProgress);
         this.addView(container);
     }
