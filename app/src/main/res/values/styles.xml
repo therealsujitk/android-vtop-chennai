@@ -43,6 +43,13 @@
         <item name="tabUnboundedRipple">true</item>
     </style>
 
+    <style name="Widget.VTOP.TimetableItemProgress" parent="Widget.AppCompat.ProgressBar.Horizontal">
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+        <item name="android:indeterminateOnly">false</item>
+        <item name="android:progressDrawable">@drawable/background_timetable_item</item>
+    </style>
+
     <style name="Widget.VTOP.CircularProgressBar" parent="Widget.AppCompat.ProgressBar">
         <item name="android:indeterminateOnly">false</item>
         <item name="android:progressDrawable">@drawable/background_circular_progress_bar</item>

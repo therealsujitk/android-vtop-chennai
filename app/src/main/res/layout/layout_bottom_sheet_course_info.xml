@@ -28,6 +28,7 @@
             android:id="@+id/text_view_course_code"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
             android:textSize="16sp"
             android:textStyle="bold" />
 
@@ -57,20 +58,10 @@
                     android:layout_height="wrap_content"
                     android:textSize="16sp" />
 
-                <com.google.android.material.chip.ChipGroup
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_slot"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
-
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/chip_course_type"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
-
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/chip_slot"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
-                </com.google.android.material.chip.ChipGroup>
+                    android:layout_height="wrap_content" />
             </LinearLayout>
 
             <LinearLayout

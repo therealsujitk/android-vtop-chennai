@@ -20,7 +20,6 @@ import tk.therealsuji.vtopchennai.activities.MainActivity;
 import tk.therealsuji.vtopchennai.helpers.AppDatabase;
 import tk.therealsuji.vtopchennai.interfaces.TimetableDao;
 import tk.therealsuji.vtopchennai.models.Timetable;
-import tk.therealsuji.vtopchennai.widgets.TimetableItem;
 
 public class TimetableAdapter extends RecyclerView.Adapter<TimetableAdapter.ViewHolder> {
     Context applicationContext;
@@ -70,12 +69,12 @@ public class TimetableAdapter extends RecyclerView.Adapter<TimetableAdapter.View
                     @Override
                     public void onSuccess(@io.reactivex.rxjava3.annotations.NonNull List<Timetable.AllData> timetable) {
                         int dayOfWeek = Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 1;
-                        int status = TimetableItem.STATUS_FUTURE;
+                        int status = TimetableItemAdapter.STATUS_FUTURE;
 
                         if (day < dayOfWeek) {
-                            status = TimetableItem.STATUS_PAST;
+                            status = TimetableItemAdapter.STATUS_PAST;
                         } else if (day == dayOfWeek) {
-                            status = TimetableItem.STATUS_PRESENT;
+                            status = TimetableItemAdapter.STATUS_PRESENT;
                         }
 
                         timetableView.setAdapter(new TimetableItemAdapter(timetable, status));
