@@ -157,14 +157,23 @@ public class NotificationHelper extends ContextWrapper {
         largeIcon = DrawableCompat.wrap(largeIcon);
         DrawableCompat.setTint(largeIcon, colorPrimary);
 
+        Calendar calendarStart = Calendar.getInstance();
+        calendarStart.set(Calendar.HOUR_OF_DAY, Integer.parseInt(timetableItem.startTime.split(":")[0]));
+        calendarStart.set(Calendar.MINUTE, Integer.parseInt(timetableItem.startTime.split(":")[1]));
+
+        Calendar calendarEnd = Calendar.getInstance();
+        calendarStart.set(Calendar.HOUR_OF_DAY, Integer.parseInt(timetableItem.endTime.split(":")[0]));
+        calendarStart.set(Calendar.MINUTE, Integer.parseInt(timetableItem.endTime.split(":")[1]));
+
         return new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID_ONGOING)
                 .setColor(colorPrimary)
                 .setContentIntent(pendingIntent)
                 .setContentText(message)
                 .setContentTitle(title)
                 .setLargeIcon(SettingsRepository.getBitmapFromVectorDrawable(largeIcon))
-                .setShowWhen(false)
                 .setSmallIcon(R.drawable.ic_timetable)
-                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
+                .setTimeoutAfter(calendarEnd.getTimeInMillis() - calendarStart.getTimeInMillis())
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                .setWhen(calendarStart.getTimeInMillis());
     }
 }
