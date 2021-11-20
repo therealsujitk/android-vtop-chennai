@@ -38,12 +38,12 @@ public class TimetableItemAdapter extends RecyclerView.Adapter<TimetableItemAdap
         holder.setTimetableItem(timetable.get(position));
 
         int left = (int) (30 * pixelDensity);
-        int top = (int) (5 * pixelDensity);
+        int top = (int) (10 * pixelDensity);
         int right = (int) (30 * pixelDensity);
-        int bottom = (int) (5 * pixelDensity);
+        int bottom = (int) (0 * pixelDensity);
 
-        if (position == 0) {
-            top = (int) (10 * pixelDensity);
+        if (position == this.timetable.size() - 1) {
+            bottom = (int) (20 * pixelDensity);
         }
 
         holder.setPadding(left, top, right, bottom);

@@ -1,5 +1,6 @@
 package tk.therealsuji.vtopchennai.fragments;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -24,6 +25,7 @@ import java.util.Date;
 import java.util.Locale;
 
 import tk.therealsuji.vtopchennai.R;
+import tk.therealsuji.vtopchennai.activities.MainActivity;
 import tk.therealsuji.vtopchennai.adapters.TimetableAdapter;
 import tk.therealsuji.vtopchennai.helpers.SettingsRepository;
 import tk.therealsuji.vtopchennai.widgets.InfoCard;
@@ -44,12 +46,21 @@ public class HomeFragment extends Fragment {
         View homeFragment = inflater.inflate(R.layout.fragment_home, container, false);
         float pixelDensity = this.getResources().getDisplayMetrics().density;
 
+        Context context = this.requireContext();
         AppBarLayout appBarLayout = homeFragment.findViewById(R.id.app_bar);
+        ViewPager2 timetable = homeFragment.findViewById(R.id.view_pager_timetable);
 
         appBarLayout.setOnApplyWindowInsetsListener((view, windowInsets) -> {
             CoordinatorLayout.LayoutParams layoutParams = (CoordinatorLayout.LayoutParams) view.getLayoutParams();
             layoutParams.setMargins(0, windowInsets.getSystemWindowInsetTop(), 0, 0);
             view.setLayoutParams(layoutParams);
+
+            timetable.setPadding(
+                    0,
+                    0,
+                    0,
+                    windowInsets.getSystemWindowInsetTop() + ((MainActivity) context).getBottomNavigationHeight()
+            );
 
             return windowInsets.consumeSystemWindowInsets();
         });
@@ -112,8 +123,6 @@ public class HomeFragment extends Fragment {
                 getString(R.string.friday),
                 getString(R.string.saturday)
         };
-
-        ViewPager2 timetable = homeFragment.findViewById(R.id.view_pager_timetable);
 
         timetable.setAdapter(new TimetableAdapter());
         timetable.setCurrentItem(Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 1);

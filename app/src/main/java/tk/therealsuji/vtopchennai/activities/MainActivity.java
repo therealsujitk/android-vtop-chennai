@@ -27,6 +27,10 @@ public class MainActivity extends AppCompatActivity {
         return systemNavigationHeight + extraPadding;
     }
 
+    public int getBottomNavigationHeight() {
+        return this.bottomNavigationView.getMeasuredHeight();
+    }
+
     public void hideBottomNavigationView() {
         this.bottomNavigationView.clearAnimation();
         this.bottomNavigationView.animate().translationY(bottomNavigationView.getMeasuredHeight());
