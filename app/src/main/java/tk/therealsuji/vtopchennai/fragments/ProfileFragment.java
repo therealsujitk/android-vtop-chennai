@@ -9,6 +9,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.DrawableRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
@@ -139,28 +142,17 @@ public class ProfileFragment extends Fragment {
             APPLICATION_PROFILE_ITEMS
     };
 
-    public static class ItemData {
-        public final int titleId, iconId;
-        public final OnClickListener onClickListener;
-
-        public ItemData(int titleId, int iconId, OnClickListener onClickListener) {
-            this.titleId = titleId;
-            this.iconId = iconId;
-            this.onClickListener = onClickListener;
-        }
-
-        public interface OnClickListener {
-            void onClick(Context context);
-        }
-    }
+    public static final AnnouncementItemData[] ANNOUNCEMENT_ITEMS = {
+            new AnnouncementItemData(
+                    R.drawable.ic_whats_new,
+                    "VIT Student is now Open Source!",
+                    "Click to view the source code.",
+                    context -> SettingsRepository.openBrowser(context, SettingsRepository.GITHUB_BASE_URL)
+            )
+    };
 
     public ProfileFragment() {
         // Required empty public constructor
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
     }
 
     @Override
@@ -181,9 +173,40 @@ public class ProfileFragment extends Fragment {
             return windowInsets.consumeSystemWindowInsets();
         });
 
+        RecyclerView announcements = profileFragment.findViewById(R.id.recycler_view_announcements);
         RecyclerView profileGroups = profileFragment.findViewById(R.id.recycler_view_profile_groups);
+
+        announcements.setAdapter(new AnnouncementItemAdapter());
         profileGroups.setAdapter(new ProfileGroupAdapter());
 
         return profileFragment;
+    }
+
+    public interface OnClickListener {
+        void onClick(Context context);
+    }
+
+    public static class ItemData {
+        public final int titleId, iconId;
+        public final OnClickListener onClickListener;
+
+        public ItemData(@StringRes int titleId, @DrawableRes int iconId, @NonNull OnClickListener onClickListener) {
+            this.titleId = titleId;
+            this.iconId = iconId;
+            this.onClickListener = onClickListener;
+        }
+    }
+
+    public static class AnnouncementItemData {
+        public final int iconId;
+        public final String title, description;
+        public final OnClickListener onClickListener;
+
+        public AnnouncementItemData(@DrawableRes int iconId, String title, String description, OnClickListener onClickListener) {
+            this.iconId = iconId;
+            this.title = title;
+            this.description = description;
+            this.onClickListener = onClickListener;
+        }
     }
 }
