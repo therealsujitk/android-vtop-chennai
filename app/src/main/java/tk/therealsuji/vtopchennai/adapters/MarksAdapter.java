@@ -8,6 +8,7 @@ import android.widget.RelativeLayout;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.chip.Chip;
@@ -132,7 +133,17 @@ public class MarksAdapter extends RecyclerView.Adapter<MarksAdapter.ViewHolder> 
                 }
 
                 int scrollPosition = i;
-                chip.setOnClickListener(view -> this.markGroups.smoothScrollToPosition(scrollPosition));
+                chip.setOnClickListener(view -> {
+                    RecyclerView.SmoothScroller smoothScroller = new LinearSmoothScroller(this.markGroups.getContext()) {
+                        @Override
+                        protected int getVerticalSnapPreference() {
+                            return LinearSmoothScroller.SNAP_TO_START;
+                        }
+                    };
+
+                    smoothScroller.setTargetPosition(scrollPosition);
+                    Objects.requireNonNull(this.markGroups.getLayoutManager()).startSmoothScroll(smoothScroller);
+                });
 
                 this.courseTypes.addView(chip);
             }
