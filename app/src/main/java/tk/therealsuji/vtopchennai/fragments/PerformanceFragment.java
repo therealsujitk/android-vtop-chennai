@@ -46,11 +46,19 @@ public class PerformanceFragment extends Fragment {
         View performanceFragment = inflater.inflate(R.layout.fragment_performance, container, false);
 
         AppBarLayout appBarLayout = performanceFragment.findViewById(R.id.app_bar);
+        ViewPager2 marks = performanceFragment.findViewById(R.id.view_pager_marks);
 
         appBarLayout.setOnApplyWindowInsetsListener((view, windowInsets) -> {
             CoordinatorLayout.LayoutParams layoutParams = (CoordinatorLayout.LayoutParams) view.getLayoutParams();
             layoutParams.setMargins(0, windowInsets.getSystemWindowInsetTop(), 0, 0);
             view.setLayoutParams(layoutParams);
+
+            marks.setPadding(
+                    0,
+                    0,
+                    0,
+                    windowInsets.getSystemWindowInsetTop()
+            );
 
             return windowInsets;
         });
@@ -65,7 +73,6 @@ public class PerformanceFragment extends Fragment {
         float pixelDensity = this.getResources().getDisplayMetrics().density;
 
         TabLayout courseTabs = performanceFragment.findViewById(R.id.tab_layout_courses);
-        ViewPager2 marks = performanceFragment.findViewById(R.id.view_pager_marks);
 
         AppDatabase appDatabase = AppDatabase.getInstance(requireActivity().getApplicationContext());
         MarksDao marksDao = appDatabase.marksDao();

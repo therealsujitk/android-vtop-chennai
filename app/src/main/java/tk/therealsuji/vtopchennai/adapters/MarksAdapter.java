@@ -25,13 +25,14 @@ import io.reactivex.rxjava3.core.SingleObserver;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import tk.therealsuji.vtopchennai.R;
+import tk.therealsuji.vtopchennai.activities.MainActivity;
 import tk.therealsuji.vtopchennai.helpers.AppDatabase;
 import tk.therealsuji.vtopchennai.interfaces.MarksDao;
 import tk.therealsuji.vtopchennai.models.Course;
 import tk.therealsuji.vtopchennai.models.Mark;
 
 public class MarksAdapter extends RecyclerView.Adapter<MarksAdapter.ViewHolder> {
-    Context context;
+    Context applicationContext;
     List<Course> courses;
 
     public MarksAdapter(List<Course> courses) {
@@ -41,17 +42,25 @@ public class MarksAdapter extends RecyclerView.Adapter<MarksAdapter.ViewHolder> 
     @NonNull
     @Override
     public MarksAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        this.context = parent.getContext();
-        RelativeLayout marks = (RelativeLayout) LayoutInflater
+        Context context = parent.getContext();
+        this.applicationContext = context.getApplicationContext();
+
+        RelativeLayout marksView = (RelativeLayout) LayoutInflater
                 .from(parent.getContext())
                 .inflate(R.layout.layout_marks, parent, false);
+        marksView.findViewById(R.id.recycler_view_mark_groups).setPadding(
+                0,
+                0,
+                0,
+                ((MainActivity) context).getBottomNavigationPadding()
+        );
 
-        return new ViewHolder(marks);
+        return new ViewHolder(marksView);
     }
 
     @Override
     public void onBindViewHolder(@NonNull MarksAdapter.ViewHolder holder, int position) {
-        AppDatabase appDatabase = AppDatabase.getInstance(context.getApplicationContext());
+        AppDatabase appDatabase = AppDatabase.getInstance(this.applicationContext);
         MarksDao marksDao = appDatabase.marksDao();
         Course course = courses.get(position);
 

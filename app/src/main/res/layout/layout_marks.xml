@@ -9,8 +9,8 @@
         android:id="@+id/recycler_view_mark_groups"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+        android:clipToPadding="false"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
     <com.google.android.material.chip.ChipGroup
         android:id="@+id/chip_group_course_types"
