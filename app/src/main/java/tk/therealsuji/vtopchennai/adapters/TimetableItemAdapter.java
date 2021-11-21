@@ -3,7 +3,6 @@ package tk.therealsuji.vtopchennai.adapters;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.os.Build;
 import android.os.Handler;
 import android.text.Html;
 import android.view.LayoutInflater;
@@ -135,8 +134,8 @@ public class TimetableItemAdapter extends RecyclerView.Adapter<TimetableItemAdap
 
                             courseTitle.setText(course.courseTitle);
                             courseCode.setText(course.courseCode);
-                            faculty.setText(Html.fromHtml(context.getString(R.string.faculty, course.faculty)));
-                            venue.setText(Html.fromHtml(context.getString(R.string.venue, course.venue)));
+                            faculty.setText(Html.fromHtml(context.getString(R.string.faculty, course.faculty), Html.FROM_HTML_MODE_LEGACY));
+                            venue.setText(Html.fromHtml(context.getString(R.string.venue, course.venue), Html.FROM_HTML_MODE_LEGACY));
 
                             if (course.courseType.equals("lab")) {
                                 slot.setChipIconResource(R.drawable.ic_lab);
@@ -220,13 +219,7 @@ public class TimetableItemAdapter extends RecyclerView.Adapter<TimetableItemAdap
 
         private void setClassProgressComplete(long duration) {
             int minutes = (int) duration / (1000 * 60);
-
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                this.classProgress.setProgress(minutes, true);
-            } else {
-                this.classProgress.setProgress(minutes);
-            }
+            this.classProgress.setProgress(minutes, true);
         }
 
         private void setMaxClassProgress(long duration) {
