@@ -142,7 +142,7 @@ public class PerformanceCard extends LinearLayout {
         this.scoreProgress.setProgress(score.intValue(), true);
         this.scoreProgress.setSecondaryProgress(max.intValue());
 
-        String scoreText = (max == 100) ? score.intValue() + "%" : score.intValue() + " / " + max.intValue();
+        String scoreText = (max >= 100) ? score.intValue() + "%" : score.intValue() + " / " + max.intValue();
         this.scoreText.setText(scoreText);
     }
 
