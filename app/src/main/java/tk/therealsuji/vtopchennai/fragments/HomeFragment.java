@@ -1,6 +1,5 @@
 package tk.therealsuji.vtopchennai.fragments;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -45,7 +44,6 @@ public class HomeFragment extends Fragment {
         View homeFragment = inflater.inflate(R.layout.fragment_home, container, false);
         float pixelDensity = this.getResources().getDisplayMetrics().density;
 
-        Context context = this.requireContext();
         AppBarLayout appBarLayout = homeFragment.findViewById(R.id.app_bar);
         ViewPager2 timetable = homeFragment.findViewById(R.id.view_pager_timetable);
 
@@ -61,7 +59,7 @@ public class HomeFragment extends Fragment {
                     windowInsets.getSystemWindowInsetTop()
             );
 
-            return windowInsets.consumeSystemWindowInsets();
+            return windowInsets;
         });
 
         appBarLayout.addOnOffsetChangedListener((appBarLayout1, verticalOffset) -> {

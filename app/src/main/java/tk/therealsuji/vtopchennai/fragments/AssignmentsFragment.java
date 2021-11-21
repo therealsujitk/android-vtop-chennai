@@ -36,7 +36,7 @@ public class AssignmentsFragment extends Fragment {
             );
             view.setLayoutParams(layoutParams);
 
-            return windowInsets.consumeSystemWindowInsets();
+            return windowInsets;
         });
 
         return assignmentsFragment;

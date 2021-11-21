@@ -169,7 +169,7 @@ public class ProfileFragment extends Fragment {
                     0
             );
 
-            return windowInsets.consumeSystemWindowInsets();
+            return windowInsets;
         });
 
         profileFragment.findViewById(R.id.nested_scroll_view_profile).setPadding(

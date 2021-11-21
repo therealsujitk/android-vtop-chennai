@@ -52,7 +52,7 @@ public class PerformanceFragment extends Fragment {
             layoutParams.setMargins(0, windowInsets.getSystemWindowInsetTop(), 0, 0);
             view.setLayoutParams(layoutParams);
 
-            return windowInsets.consumeSystemWindowInsets();
+            return windowInsets;
         });
 
         appBarLayout.addOnOffsetChangedListener((appBarLayout1, verticalOffset) -> {
