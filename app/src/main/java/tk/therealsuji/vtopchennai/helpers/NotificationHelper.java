@@ -162,8 +162,8 @@ public class NotificationHelper extends ContextWrapper {
         calendarStart.set(Calendar.MINUTE, Integer.parseInt(timetableItem.startTime.split(":")[1]));
 
         Calendar calendarEnd = Calendar.getInstance();
-        calendarStart.set(Calendar.HOUR_OF_DAY, Integer.parseInt(timetableItem.endTime.split(":")[0]));
-        calendarStart.set(Calendar.MINUTE, Integer.parseInt(timetableItem.endTime.split(":")[1]));
+        calendarEnd.set(Calendar.HOUR_OF_DAY, Integer.parseInt(timetableItem.endTime.split(":")[0]));
+        calendarEnd.set(Calendar.MINUTE, Integer.parseInt(timetableItem.endTime.split(":")[1]));
 
         return new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID_ONGOING)
                 .setColor(colorPrimary)
