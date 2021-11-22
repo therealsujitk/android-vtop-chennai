@@ -8,8 +8,8 @@ android {
         applicationId "tk.therealsuji.vtopchennai"
         minSdkVersion 24
         targetSdkVersion 31
-        versionCode 18
-        versionName "3.2.2"
+        versionCode 19
+        versionName "4.0.0-beta"
     }
 
     buildTypes {
