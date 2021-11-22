@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="tk.therealsuji.vtopchennai">
 
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission
@@ -15,206 +16,54 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme"
+        android:theme="@style/Theme.VTOP"
         android:usesCleartextTraffic="true"
         tools:ignore="AllowBackup">
+
         <activity
-            android:name=".SplashScreenActivity"
+            android:name=".activities.LauncherActivity"
             android:configChanges="orientation|keyboardHidden"
-            android:exported="true"
-            android:screenOrientation="sensorPortrait"
-            android:theme="@style/SplashScreen">
+            android:exported="true">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
-            android:name=".LoginActivity"
+            android:name=".activities.LoginActivity"
             android:configChanges="orientation|keyboardHidden"
-            android:label="Login"
-            android:screenOrientation="sensorPortrait"
-            android:theme="@style/AppTheme.NoActionBar"
+            android:theme="@style/Theme.VTOP.Login"
             android:windowSoftInputMode="adjustPan" />
-        <activity
-            android:name=".PrivacyActivity"
-            android:configChanges="orientation|keyboardHidden"
-            android:label="Privacy Policy"
-            android:screenOrientation="sensorPortrait">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".PrivacyActivity" />
-        </activity>
-        <activity
-            android:name=".HomeActivity"
-            android:configChanges="orientation|keyboardHidden"
-            android:label="Home"
-            android:screenOrientation="sensorPortrait"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".TimetableActivity"
-            android:configChanges="orientation|keyboardHidden"
-            android:label="Timetable"
-            android:exported="true"
-            android:screenOrientation="sensorPortrait">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".TimetableActivity" />
 
-            <intent-filter>
-                <action android:name="tk.therealsuji.vtopchennai.LAUNCH_TIMETABLE" />
+        <activity
+            android:name=".activities.MainActivity"
+            android:exported="true" />
 
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
         <activity
-            android:name=".AttendanceActivity"
-            android:configChanges="orientation|keyboardHidden"
-            android:label="Attendance"
-            android:screenOrientation="sensorPortrait">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".AttendanceActivity" />
-        </activity>
-        <activity
-            android:name=".MessagesActivity"
-            android:configChanges="orientation|keyboardHidden"
-            android:label="Class Messages"
-            android:screenOrientation="sensorPortrait">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MessagesActivity" />
-        </activity>
-        <activity
-            android:name=".CoursesActivity"
-            android:configChanges="orientation|keyboardHidden"
-            android:label="Courses"
-            android:screenOrientation="sensorPortrait">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".CoursesActivity" />
-        </activity>
-        <activity
-            android:name=".ExamsActivity"
-            android:configChanges="orientation|keyboardHidden"
-            android:label="Exam Schedule"
-            android:screenOrientation="sensorPortrait">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ExamsActivity" />
-        </activity>
-        <activity
-            android:name=".MarksActivity"
-            android:configChanges="orientation|keyboardHidden"
-            android:label="Marks"
-            android:screenOrientation="sensorPortrait"
-            android:theme="@style/AppTheme.MarksTheme">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MarksActivity" />
-        </activity>
-        <activity
-            android:name=".GradesActivity"
-            android:configChanges="orientation|keyboardHidden"
-            android:label="Grades"
-            android:screenOrientation="sensorPortrait">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".GradesActivity" />
-        </activity>
-        <activity
-            android:name=".GradeHistoryActivity"
-            android:configChanges="orientation|keyboardHidden"
-            android:label="Grade History"
-            android:screenOrientation="sensorPortrait">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".GradeHistoryActivity" />
-        </activity>
-        <activity
-            android:name=".SpotlightActivity"
-            android:configChanges="orientation|keyboardHidden"
-            android:label="Spotlight"
-            android:screenOrientation="sensorPortrait">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".SpotlightActivity" />
-        </activity>
-        <activity
-            android:name=".DirectionsActivity"
-            android:configChanges="orientation|keyboardHidden"
-            android:label="Directions"
-            android:screenOrientation="sensorPortrait">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".DirectionsActivity" />
-        </activity>
-        <activity
-            android:name=".CampusMapActivity"
-            android:configChanges="orientation|keyboardHidden"
-            android:label="Campus Map"
-            android:screenOrientation="sensorPortrait">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".CampusMapActivity" />
-        </activity>
-        <activity
-            android:name=".StaffActivity"
-            android:configChanges="orientation|keyboardHidden"
-            android:label="Staff"
-            android:exported="false">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".StaffActivity" />
-        </activity>
-        <activity
-            android:name=".ProctorMessagesActivity"
-            android:configChanges="orientation|keyboardHidden"
-            android:label="Proctor Messages"
-            android:screenOrientation="sensorPortrait">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ProctorMessagesActivity" />
-        </activity>
-        <activity
-            android:name=".ReceiptsActivity"
-            android:configChanges="orientation|keyboardHidden"
-            android:label="Payment Receipts"
-            android:screenOrientation="sensorPortrait">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ReceiptsActivity" />
-        </activity>
-        <activity
-            android:name=".ReportBugActivity"
-            android:configChanges="orientation|keyboardHidden"
-            android:label="Report Bug"
-            android:exported="true"
-            android:screenOrientation="sensorPortrait">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ReportBugActivity" />
+            android:name=".activities.WebViewActivity"
+            android:exported="true" />
 
-            <intent-filter>
-                <action android:name="tk.therealsuji.vtopchennai.LAUNCH_REPORT_BUG" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
+        <service
+            android:name=".services.VTOP"
+            android:description="@string/vtop_service_description"
+            android:foregroundServiceType="dataSync"
+            android:label="VTOP" />
 
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
 
-        <receiver android:name=".NotificationReceiver" />
+        <receiver android:name=".receivers.NotificationReceiver" />
+
         <receiver
-            android:name=".BootReceiver"
+            android:name=".receivers.BootReceiver"
             android:exported="true">
+
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
     </application>
-
 </manifest>

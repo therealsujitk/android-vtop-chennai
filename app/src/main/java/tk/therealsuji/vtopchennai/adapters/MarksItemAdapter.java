@@ -1,0 +1,123 @@
+package tk.therealsuji.vtopchennai.adapters;
+
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatTextView;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.chip.Chip;
+
+import java.text.DecimalFormat;
+import java.util.List;
+
+import tk.therealsuji.vtopchennai.R;
+import tk.therealsuji.vtopchennai.models.Mark;
+
+public class MarksItemAdapter extends RecyclerView.Adapter<MarksItemAdapter.ViewHolder> {
+    float pixelDensity;
+
+    List<Mark.AllData> marks;
+
+    public MarksItemAdapter(List<Mark.AllData> marks) {
+        this.marks = marks;
+    }
+
+    @NonNull
+    @Override
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        LinearLayout marksItem = (LinearLayout) LayoutInflater
+                .from(parent.getContext())
+                .inflate(R.layout.layout_item_marks, parent, false);
+
+        return new ViewHolder(marksItem);
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        holder.setMarksItem(marks.get(position));
+    }
+
+    @Override
+    public int getItemCount() {
+        return marks.size();
+    }
+
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+        LinearLayout marksItem;
+
+        public ViewHolder(@NonNull View itemView) {
+            super(itemView);
+            this.marksItem = (LinearLayout) itemView;
+        }
+
+        public void setMarksItem(Mark.AllData marksItem) {
+            LinearLayout markDetails = this.marksItem.findViewById(R.id.linear_layout_details);
+            AppCompatTextView markTitle = this.marksItem.findViewById(R.id.text_view_title);
+            AppCompatTextView scoreText = this.marksItem.findViewById(R.id.text_view_score);
+            ProgressBar scoreProgress = this.marksItem.findViewById(R.id.progress_bar_score);
+            AppCompatTextView markType = this.marksItem.findViewById(R.id.text_view_mark_type);
+
+            markTitle.setText(marksItem.title);
+
+            if (marksItem.score != null && marksItem.maxScore != null && marksItem.weightage != null && marksItem.maxWeightage != null) {
+                String markTypeScore = this.marksItem.getContext().getString(R.string.score);
+                String score = new DecimalFormat("#.##").format(marksItem.score) + "/" + new DecimalFormat("#.##").format(marksItem.maxScore);
+                String weightage = new DecimalFormat("#.##").format(marksItem.weightage) + "/" + new DecimalFormat("#.##").format(marksItem.maxWeightage);
+
+                scoreText.setText(score);
+                scoreProgress.setProgress(marksItem.score.intValue());
+                scoreProgress.setMax(marksItem.maxScore.intValue());
+
+                scoreText.setOnClickListener(view -> {
+                    if (markType.getText().equals(markTypeScore)) {
+                        scoreText.setText(weightage);
+                        markType.setText(R.string.weightage);
+                    } else {
+                        scoreText.setText(score);
+                        markType.setText(R.string.score);
+                    }
+                });
+            }
+
+            if (marksItem.average != null) {
+                markDetails.addView(this.createTextView(this.marksItem.getContext().getString(R.string.average, marksItem.average)));
+            }
+
+            if (marksItem.status != null) {
+                markDetails.addView(this.createTextView(this.marksItem.getContext().getString(R.string.status, marksItem.status)));
+            }
+
+            Chip courseType = new Chip(this.marksItem.getContext());
+            courseType.setLayoutParams(new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+            ));
+
+            if (marksItem.courseType.equals("lab")) {
+                courseType.setChipIconResource(R.drawable.ic_lab);
+                courseType.setText(R.string.lab);
+            } else if (marksItem.courseType.equals("project")) {
+                courseType.setChipIconResource(R.drawable.ic_project);
+                courseType.setText(R.string.project);
+            } else {
+                courseType.setChipIconResource(R.drawable.ic_theory);
+                courseType.setText(R.string.theory);
+            }
+
+            markDetails.addView(courseType);
+        }
+
+        AppCompatTextView createTextView(String text) {
+            AppCompatTextView textView = new AppCompatTextView(this.marksItem.getContext());
+            textView.setText(text);
+            textView.setTextSize(16);
+
+            return textView;
+        }
+    }
+}

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <style name="Base.Theme.VTOP" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="android:forceDarkAllowed" tools:targetApi="q">false</item>
+
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">true</item>
+        <item name="android:enforceStatusBarContrast" tools:targetApi="q">false</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:enforceNavigationBarContrast" tools:targetApi="q">false</item>
+        <item name="android:fontFamily">@font/rubik</item>
+    </style>
+
+    <style name="Theme.VTOP" parent="Base.Theme.VTOP">
+        <item name="android:windowBackground">?android:colorBackground</item>
+
+        <item name="bottomNavigationStyle">@style/Widget.VTOP.BottomNavigationView</item>
+        <item name="chipStyle">@style/Widget.VTOP.Chip</item>
+    </style>
+
+    <style name="Theme.VTOP.Login" parent="Base.Theme.VTOP">
+        <item name="android:windowBackground">?attr/colorPrimaryContainer</item>
+    </style>
+</resources>

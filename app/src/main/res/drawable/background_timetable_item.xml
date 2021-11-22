@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="?attr/colorControlHighlight">
+    <item android:id="@android:id/background">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/secondary_container_50" />
+            <corners android:radius="@dimen/widget_corner_radius" />
+        </shape>
+    </item>
+
+    <item android:id="@android:id/progress">
+        <clip>
+            <shape android:shape="rectangle">
+                <solid android:color="@color/secondary_container_75" />
+                <corners android:radius="@dimen/widget_corner_radius" />
+            </shape>
+        </clip>
+    </item>
+</ripple>
