@@ -17,30 +17,26 @@ import tk.therealsuji.vtopchennai.adapters.SpotlightItemAdapter;
 import tk.therealsuji.vtopchennai.models.Spotlight;
 
 public class SpotlightGroup extends LinearLayout {
-    SpotlightItemAdapter spotlightItemAdapter;
     AppCompatTextView category;
-    Context context;
     RecyclerView announcements;
 
     public SpotlightGroup(Context context) {
         super(context);
-
-        this.context = context;
         this.initialize();
     }
 
     void initialize() {
-        float pixelDensity = context.getResources().getDisplayMetrics().density;
+        float pixelDensity = this.getContext().getResources().getDisplayMetrics().density;
 
         TypedValue colorSecondary = new TypedValue();
         getContext().getTheme().resolveAttribute(R.attr.colorSecondary, colorSecondary, true);
 
-        this.category = new AppCompatTextView(this.context);
+        this.category = new AppCompatTextView(this.getContext());
         this.category.setPadding(
                 (int) (40 * pixelDensity),
                 (int) (10 * pixelDensity),
                 (int) (40 * pixelDensity),
-                (int) (10 * pixelDensity)
+                (int) (1 * pixelDensity)
         );
         this.category.setTextColor(colorSecondary.data);
         this.category.setTextSize(15);
@@ -48,15 +44,13 @@ public class SpotlightGroup extends LinearLayout {
 
         this.addView(this.category);
 
-        this.announcements = new RecyclerView(this.context);
+        this.announcements = new RecyclerView(this.getContext());
         RecyclerView.LayoutParams announcementsParams = new RecyclerView.LayoutParams(
                 RecyclerView.LayoutParams.MATCH_PARENT,
                 RecyclerView.LayoutParams.WRAP_CONTENT
         );
         this.announcements.setLayoutParams(announcementsParams);
-        this.announcements.setLayoutManager(new LinearLayoutManager(this.context));
-        this.spotlightItemAdapter = new SpotlightItemAdapter(this.context);
-        this.announcements.setAdapter(this.spotlightItemAdapter);
+        this.announcements.setLayoutManager(new LinearLayoutManager(this.getContext()));
 
         this.addView(this.announcements);
 
@@ -70,6 +64,6 @@ public class SpotlightGroup extends LinearLayout {
 
     public void setSpotlightSection(String category, List<Spotlight> announcements) {
         this.category.setText(category);
-        this.spotlightItemAdapter.setAnnouncements(announcements);
+        this.announcements.setAdapter(new SpotlightItemAdapter(announcements));
     }
 }

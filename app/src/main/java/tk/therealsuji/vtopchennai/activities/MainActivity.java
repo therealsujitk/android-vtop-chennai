@@ -3,7 +3,10 @@ package tk.therealsuji.vtopchennai.activities;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.WindowManager;
+import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.WindowCompat;
 import androidx.fragment.app.Fragment;
@@ -19,6 +22,19 @@ import tk.therealsuji.vtopchennai.fragments.ProfileFragment;
 public class MainActivity extends AppCompatActivity {
     BottomNavigationView bottomNavigationView;
     Fragment homeFragment, performanceFragment, assignmentsFragment, profileFragment;
+
+    ActivityResultLauncher<String> requestPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+                if (isGranted) {
+                    Toast.makeText(this, R.string.permission_granted, Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(this, R.string.permission_denied, Toast.LENGTH_SHORT).show();
+                }
+            });
+
+    public ActivityResultLauncher<String> getRequestPermissionLauncher() {
+        return this.requestPermissionLauncher;
+    }
 
     public int getSystemNavigationPadding() {
         int systemNavigationHeight = this.getWindow().getDecorView().getRootWindowInsets().getSystemWindowInsetBottom();
