@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?><!DOCTYPE resources [<!ENTITY app_name "VIT Student">]>
+
 <resources>
-    <string name="app_name">VTOP</string>
+    <string name="app_name">&app_name;</string>
 
     <!-- LoginActivity Strings -->
     <string name="login_header">Login</string>
@@ -80,7 +82,7 @@
 
     <!-- Update Dialog Strings -->
     <string name="update_title">Update Available</string>
-    <string name="update_message">A new version of VTOP Chennai has been released! The Update button bellow will take you to the download page.</string>
+    <string name="update_message">A new version of &app_name; has been released! The Update button bellow will take you to the download page.</string>
     <string name="update">Update</string>
 
     <!-- Appearance Dialog Strings -->
@@ -101,9 +103,9 @@
     <string name="request_feature">Request a feature</string>
 
     <!-- Share Intent Strings -->
-    <string name="share_subject">Get the VTOP Chennai android app</string>
-    <string name="share_text">Visit %s to download the latest version of VTOP Chennai.</string>
-    <string name="share_title">Share \"VTOP Chennai\" via</string>
+    <string name="share_subject">Get the &app_name; android app</string>
+    <string name="share_text">Visit %s to download the latest version of &app_name;.</string>
+    <string name="share_title">Share \"&app_name;\" via</string>
 
     <!-- Other Strings & Strings used in multiple locations -->
     <string name="lab">Lab</string>
