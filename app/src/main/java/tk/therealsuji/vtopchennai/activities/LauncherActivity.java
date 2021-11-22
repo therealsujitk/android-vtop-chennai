@@ -16,6 +16,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import tk.therealsuji.vtopchennai.BuildConfig;
 import tk.therealsuji.vtopchennai.helpers.SettingsRepository;
 
 public class LauncherActivity extends AppCompatActivity {
@@ -48,7 +49,7 @@ public class LauncherActivity extends AppCompatActivity {
             StringBuilder sb = new StringBuilder();
             SharedPreferences sharedPreferences = SettingsRepository.getSharedPreferences(this.getApplicationContext());
             try {
-                URL url = new URL(SettingsRepository.APP_ABOUT_URL);
+                URL url = new URL(SettingsRepository.APP_ABOUT_URL + "?v=" + BuildConfig.VERSION_NAME);
                 HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
                 InputStream in = httpURLConnection.getInputStream();
                 InputStreamReader reader = new InputStreamReader(in);
