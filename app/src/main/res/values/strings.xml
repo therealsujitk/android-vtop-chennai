@@ -48,6 +48,7 @@
 
     <!-- AssignmentsFragment Strings -->
     <string name="assignments_header">Your Assignments</string>
+    <string name="moodle_sign_in_text">You are not signed in to Moodle. Click the button below to sign in.</string>
 
     <!-- ProfileFragment Strings -->
     <string name="profile_header">Your Profile</string>
