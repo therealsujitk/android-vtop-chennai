@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import tk.therealsuji.vtopchennai.R;
 import tk.therealsuji.vtopchennai.activities.MainActivity;
@@ -53,6 +55,15 @@ public class AssignmentsFragment extends Fragment {
                     0,
                     ((MainActivity) this.requireActivity()).getBottomNavigationPadding()
             );
+
+            assignmentsFragment.findViewById(R.id.button_sign_in).setOnClickListener(view -> {
+                MoodleLoginDialogFragment moodleLoginDialogFragment = new MoodleLoginDialogFragment();
+
+                FragmentManager fragmentManager = this.requireActivity().getSupportFragmentManager();
+                FragmentTransaction transaction = fragmentManager.beginTransaction();
+                transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                transaction.add(android.R.id.content, moodleLoginDialogFragment).addToBackStack(null).commit();
+            });
         }
 
         return assignmentsFragment;
