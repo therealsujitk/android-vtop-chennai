@@ -86,8 +86,6 @@ public class MoodleLoginDialogFragment extends DialogFragment {
         this.signIn = dialogFragment.findViewById(R.id.button_sign_in);
 
         this.username.setInputType(InputType.TYPE_CLASS_TEXT);
-
-        SettingsRepository.trustAllCertificates();
         this.signIn.setOnClickListener(view -> this.signIn());
 
         return dialogFragment;

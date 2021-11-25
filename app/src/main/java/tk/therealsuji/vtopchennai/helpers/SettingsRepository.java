@@ -54,6 +54,7 @@ public class SettingsRepository {
 
     public static final String MOODLE_BASE_URL = "https://lms.vit.ac.in";
     public static final String MOODLE_LOGIN_URL = MOODLE_BASE_URL + "/login/token.php";
+    public static final String MOODLE_WEBSERVICE_URL = MOODLE_BASE_URL + "/webservice/rest/server.php";
 
     public static final String VTOP_BASE_URL = "https://vtopcc.vit.ac.in/vtop";
 
