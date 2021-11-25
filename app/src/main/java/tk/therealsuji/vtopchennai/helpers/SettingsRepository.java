@@ -1,5 +1,6 @@
 package tk.therealsuji.vtopchennai.helpers;
 
+import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -17,12 +18,19 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.security.crypto.EncryptedSharedPreferences;
 import androidx.security.crypto.MasterKey;
 
+import java.security.SecureRandom;
+import java.security.cert.X509Certificate;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Objects;
+
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
 import tk.therealsuji.vtopchennai.R;
 import tk.therealsuji.vtopchennai.activities.MainActivity;
@@ -43,6 +51,9 @@ public class SettingsRepository {
     public static final String GITHUB_BASE_URL = "https://github.com/therealsujitk/android-vtop-chennai";
     public static final String GITHUB_FEATURE_URL = GITHUB_BASE_URL + "/issues";
     public static final String GITHUB_ISSUE_URL = GITHUB_BASE_URL + "/issues";
+
+    public static final String MOODLE_BASE_URL = "https://lms.vit.ac.in";
+    public static final String MOODLE_LOGIN_URL = MOODLE_BASE_URL + "/login/token.php";
 
     public static final String VTOP_BASE_URL = "https://vtopcc.vit.ac.in/vtop";
 
@@ -250,5 +261,38 @@ public class SettingsRepository {
         }
 
         sharedPreferences.edit().putInt("alarmCount", alarmCount).apply();
+    }
+
+    /**
+     * WARNING: This function has to be removed as soon as possible. Accepting all
+     * certificates can lead to attacks. Since this application only makes requests
+     * to a select number of trusted domains, it can still be used in production.
+     */
+    @Deprecated
+    @SuppressLint({"BadHostnameVerifier", "CustomX509TrustManager", "TrustAllX509TrustManager"})
+    public static void trustAllCertificates() {
+        try {
+            TrustManager[] trustAllCertificates = new TrustManager[]{
+                    new X509TrustManager() {
+                        @Override
+                        public void checkClientTrusted(java.security.cert.X509Certificate[] x509Certificates, String s) {
+                        }
+
+                        @Override
+                        public void checkServerTrusted(java.security.cert.X509Certificate[] x509Certificates, String s) {
+                        }
+
+                        public X509Certificate[] getAcceptedIssuers() {
+                            return new X509Certificate[0];
+                        }
+                    }
+            };
+
+            SSLContext sslContext = SSLContext.getInstance("SSL");
+            sslContext.init(null, trustAllCertificates, new SecureRandom());
+            HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.getSocketFactory());
+            HttpsURLConnection.setDefaultHostnameVerifier((arg0, arg1) -> true);
+        } catch (Exception ignored) {
+        }
     }
 }
