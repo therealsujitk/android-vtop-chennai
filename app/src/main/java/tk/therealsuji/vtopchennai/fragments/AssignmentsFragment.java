@@ -151,6 +151,10 @@ public class AssignmentsFragment extends Fragment {
                             String course = courseObject.getString("fullname");
                             boolean hasAssignments = false;
 
+                            course = course.replaceAll("\\(", " (");
+                            course = course.replaceAll("\\)", ") ");
+                            course = course.trim().replaceAll(" +", " ");
+
                             for (int j = 0; j < assignmentsArray.length(); ++j) {
                                 JSONObject assignmentObject = assignmentsArray.getJSONObject(j);
 
