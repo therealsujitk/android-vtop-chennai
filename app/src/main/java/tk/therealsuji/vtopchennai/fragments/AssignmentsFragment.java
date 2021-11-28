@@ -11,6 +11,7 @@ import android.widget.LinearLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -29,6 +30,7 @@ import java.util.Map;
 
 import tk.therealsuji.vtopchennai.R;
 import tk.therealsuji.vtopchennai.activities.MainActivity;
+import tk.therealsuji.vtopchennai.adapters.AssignmentsGroupAdapter;
 import tk.therealsuji.vtopchennai.helpers.SettingsRepository;
 import tk.therealsuji.vtopchennai.models.Assignment;
 
@@ -36,6 +38,7 @@ public class AssignmentsFragment extends Fragment {
     int moodleUserId;
     List<Assignment> assignments;
     String moodleToken;
+    RecyclerView assignmentGroups;
     RequestQueue requestQueue;
 
     public AssignmentsFragment() {
@@ -261,6 +264,10 @@ public class AssignmentsFragment extends Fragment {
     }
 
     private void displayAssignments() {
+        try {
+            this.assignmentGroups.setAdapter(new AssignmentsGroupAdapter(this.assignments));
+        } catch (Exception ignored) {
+        }
     }
 
     @Override
@@ -284,7 +291,16 @@ public class AssignmentsFragment extends Fragment {
 
         if (!this.moodleToken.equals("")) {
             this.requestQueue = Volley.newRequestQueue(this.requireContext().getApplicationContext());
+            this.assignmentGroups = assignmentsFragment.findViewById(R.id.recycler_view_assignment_groups);
             this.assignments = new ArrayList<>();
+
+            this.assignmentGroups.setPadding(
+                    0,
+                    0,
+                    0,
+                    ((MainActivity) this.requireActivity()).getBottomNavigationPadding()
+            );
+
             this.getUserId();
         } else {
             LinearLayout signInContainer = assignmentsFragment.findViewById(R.id.linear_layout_container);
