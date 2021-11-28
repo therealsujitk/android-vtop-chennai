@@ -50,6 +50,13 @@
     <string name="assignments_header">Your Assignments</string>
     <string name="moodle_sign_in_text">You are not signed in to Moodle. Click the button below to sign in.</string>
     <string name="moodle_login_description">Sign in using your Moodle credentials</string>
+    <string name="due_date">Due date: &lt;b>%s, %s&lt;/b></string>
+    <string name="assignment_due">This assignment is due in &lt;b>%s&lt;/b>.</string>
+    <string name="assignment_overdue">This assignment is overdue by &lt;b>%s&lt;/b>.</string>
+    <string name="late_submission">This assignment allows late submission for &lt;b>%s&lt;/b> after the deadline.</string>
+    <string name="no_late_submission">This assignment does not entertain late submission.</string>
+    <string name="your_submissions">Your Submissions</string>
+    <string name="no_submissions">No Submissions</string>
 
     <!-- ProfileFragment Strings -->
     <string name="profile_header">Your Profile</string>

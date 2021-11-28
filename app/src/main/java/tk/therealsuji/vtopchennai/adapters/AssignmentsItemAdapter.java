@@ -1,5 +1,6 @@
 package tk.therealsuji.vtopchennai.adapters;
 
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,6 +9,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.Calendar;
@@ -15,6 +17,8 @@ import java.util.Comparator;
 import java.util.List;
 
 import tk.therealsuji.vtopchennai.R;
+import tk.therealsuji.vtopchennai.activities.MainActivity;
+import tk.therealsuji.vtopchennai.fragments.AssignmentsViewFragment;
 import tk.therealsuji.vtopchennai.models.Assignment;
 
 public class AssignmentsItemAdapter extends RecyclerView.Adapter<AssignmentsItemAdapter.ViewHolder> {
@@ -64,6 +68,24 @@ public class AssignmentsItemAdapter extends RecyclerView.Adapter<AssignmentsItem
             if (assignmentsItem.dueDate.before(Calendar.getInstance().getTime())) {
                 pastDue.setVisibility(View.VISIBLE);
             }
+
+            this.assignmentsItem.setOnClickListener(view -> {
+                AssignmentsViewFragment assignmentsViewFragment = new AssignmentsViewFragment();
+                FragmentActivity fragmentActivity = (FragmentActivity) this.assignmentsItem.getContext();
+
+                Bundle bundle = new Bundle();
+                bundle.putParcelable("assignment", assignmentsItem);
+
+                assignmentsViewFragment.setArguments(bundle);
+
+                fragmentActivity.getSupportFragmentManager().beginTransaction()
+                        .setCustomAnimations(R.anim.slide_in_right, 0, 0, R.anim.slide_out_right)
+                        .add(R.id.frame_layout_fragment_container, assignmentsViewFragment)
+                        .addToBackStack(null)
+                        .commit();
+
+                ((MainActivity) fragmentActivity).hideBottomNavigationView();
+            });
         }
     }
 }

@@ -159,17 +159,21 @@ public class AssignmentsFragment extends Fragment {
                                 JSONObject assignmentObject = assignmentsArray.getJSONObject(j);
 
                                 Date dueDate = new Date(assignmentObject.getLong("duedate") * 1000);
-                                Date cutoffDate = new Date(assignmentObject.getLong("duedate") * 1000);
+                                Date cutoffDate = (assignmentObject.getLong("cutoffdate") != 0)
+                                        ? new Date(assignmentObject.getLong("cutoffdate") * 1000)
+                                        : null;
 
                                 if (dueDate.before(dueLimit)) {
                                     continue;
                                 }
 
+                                int id = assignmentObject.getInt("id");
                                 int activityId = assignmentObject.getInt("cmid");
                                 String title = assignmentObject.getString("name");
                                 String intro = assignmentObject.getString("intro");
 
                                 Assignment assignment = new Assignment();
+                                assignment.id = id;
                                 assignment.activityId = activityId;
                                 assignment.course = course;
                                 assignment.title = title;
@@ -185,6 +189,7 @@ public class AssignmentsFragment extends Fragment {
 
                                     Assignment.Attachment attachment = new Assignment.Attachment();
                                     attachment.name = attachmentObject.getString("filename");
+                                    attachment.mimetype = attachmentObject.getString("mimetype");
                                     attachment.url = attachmentObject.getString("fileurl");
                                     attachment.size = attachmentObject.getInt("filesize");
 

@@ -1,7 +1,10 @@
 package tk.therealsuji.vtopchennai.helpers;
 
+import static android.content.Context.DOWNLOAD_SERVICE;
+
 import android.annotation.SuppressLint;
 import android.app.AlarmManager;
+import android.app.DownloadManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -12,7 +15,10 @@ import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.text.Html;
 import android.text.format.DateFormat;
+import android.widget.Toast;
 
 import androidx.fragment.app.FragmentActivity;
 import androidx.security.crypto.EncryptedSharedPreferences;
@@ -158,6 +164,20 @@ public class SettingsRepository {
     public static void openBrowser(Context context, String url) {
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
         context.startActivity(intent);
+    }
+
+    public static void downloadFile(Context context, String fileName, String mimetype, Uri uri) {
+        Toast.makeText(context, Html.fromHtml(context.getString(R.string.downloading_file, fileName), Html.FROM_HTML_MODE_LEGACY), Toast.LENGTH_SHORT).show();
+
+        DownloadManager.Request request = new DownloadManager.Request(uri);
+        request.allowScanningByMediaScanner();
+        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "Moodle/" + fileName);
+        request.setMimeType(mimetype);
+        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE | DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+        request.setTitle(fileName);
+
+        DownloadManager downloadManager = (DownloadManager) context.getSystemService(DOWNLOAD_SERVICE);
+        downloadManager.enqueue(request);
     }
 
     public static String getSystemFormattedTime(Context context, String time) throws ParseException {
