@@ -128,6 +128,7 @@ public class NotificationHelper extends ContextWrapper {
                 .setContentTitle(title)
                 .setSmallIcon(R.drawable.ic_timetable)
                 .setLargeIcon(SettingsRepository.getBitmapFromVectorDrawable(largeIcon))
+                .setTimeoutAfter(0)     // Resetting the timeout duration
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setWhen(calendar.getTimeInMillis());
     }
