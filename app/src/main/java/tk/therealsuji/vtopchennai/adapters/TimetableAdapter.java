@@ -16,7 +16,6 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.SingleObserver;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
-import tk.therealsuji.vtopchennai.activities.MainActivity;
 import tk.therealsuji.vtopchennai.helpers.AppDatabase;
 import tk.therealsuji.vtopchennai.interfaces.TimetableDao;
 import tk.therealsuji.vtopchennai.models.Timetable;
@@ -38,12 +37,6 @@ public class TimetableAdapter extends RecyclerView.Adapter<TimetableAdapter.View
         timetableView.setLayoutParams(timetableParams);
         timetableView.setLayoutManager(new LinearLayoutManager(context));
         timetableView.setClipToPadding(false);
-        timetableView.setPadding(
-                0,
-                0,
-                0,
-                ((MainActivity) context).getBottomNavigationPadding()
-        );
 
         return new ViewHolder(timetableView);
     }

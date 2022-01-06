@@ -15,7 +15,6 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.SingleObserver;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
-import tk.therealsuji.vtopchennai.activities.MainActivity;
 import tk.therealsuji.vtopchennai.helpers.AppDatabase;
 import tk.therealsuji.vtopchennai.interfaces.CoursesDao;
 import tk.therealsuji.vtopchennai.models.Course;
@@ -42,12 +41,6 @@ public class CoursesAdapter extends RecyclerView.Adapter<CoursesAdapter.ViewHold
         courseView.setLayoutParams(courseViewParams);
         courseView.setLayoutManager(new LinearLayoutManager(context));
         courseView.setClipToPadding(false);
-        courseView.setPadding(
-                0,
-                0,
-                0,
-                ((MainActivity) context).getSystemNavigationPadding()
-        );
 
         return new ViewHolder(courseView);
     }

@@ -25,7 +25,6 @@ import io.reactivex.rxjava3.core.SingleObserver;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import tk.therealsuji.vtopchennai.R;
-import tk.therealsuji.vtopchennai.activities.MainActivity;
 import tk.therealsuji.vtopchennai.helpers.AppDatabase;
 import tk.therealsuji.vtopchennai.interfaces.MarksDao;
 import tk.therealsuji.vtopchennai.models.Course;
@@ -48,12 +47,6 @@ public class MarksAdapter extends RecyclerView.Adapter<MarksAdapter.ViewHolder> 
         RelativeLayout marksView = (RelativeLayout) LayoutInflater
                 .from(parent.getContext())
                 .inflate(R.layout.layout_marks, parent, false);
-        marksView.findViewById(R.id.recycler_view_mark_groups).setPadding(
-                0,
-                0,
-                0,
-                ((MainActivity) context).getBottomNavigationPadding()
-        );
 
         return new ViewHolder(marksView);
     }

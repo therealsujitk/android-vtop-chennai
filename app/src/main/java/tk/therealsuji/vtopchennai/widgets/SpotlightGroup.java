@@ -36,7 +36,7 @@ public class SpotlightGroup extends LinearLayout {
                 (int) (40 * pixelDensity),
                 (int) (10 * pixelDensity),
                 (int) (40 * pixelDensity),
-                (int) (1 * pixelDensity)
+                (int) (6 * pixelDensity)
         );
         this.category.setTextColor(colorSecondary.data);
         this.category.setTextSize(15);
@@ -60,6 +60,12 @@ public class SpotlightGroup extends LinearLayout {
         );
         this.setLayoutParams(params);
         this.setOrientation(VERTICAL);
+        this.setPadding(
+                0,
+                0,
+                0,
+                (int) (5 * pixelDensity)
+        );
     }
 
     public void setSpotlightSection(String category, List<Spotlight> announcements) {

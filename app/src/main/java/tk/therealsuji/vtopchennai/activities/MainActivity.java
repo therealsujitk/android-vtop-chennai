@@ -1,5 +1,6 @@
 package tk.therealsuji.vtopchennai.activities;
 
+import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.WindowManager;
@@ -7,6 +8,7 @@ import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.WindowCompat;
 import androidx.fragment.app.Fragment;
@@ -21,7 +23,11 @@ import tk.therealsuji.vtopchennai.fragments.ProfileFragment;
 
 public class MainActivity extends AppCompatActivity {
     BottomNavigationView bottomNavigationView;
-    Fragment homeFragment, performanceFragment, assignmentsFragment, profileFragment;
+
+    static final String HOME_FRAGMENT_TAG = "HOME_FRAGMENT_TAG";
+    static final String PERFORMANCE_FRAGMENT_TAG = "PERFORMANCE_FRAGMENT_TAG";
+    static final String ASSIGNMENTS_FRAGMENT_TAG = "ASSIGNMENTS_FRAGMENT_TAG";
+    static final String PROFILE_FRAGMENT_TAG = "PROFILE_FRAGMENT_TAG";
 
     ActivityResultLauncher<String> requestPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
@@ -34,20 +40,6 @@ public class MainActivity extends AppCompatActivity {
 
     public ActivityResultLauncher<String> getRequestPermissionLauncher() {
         return this.requestPermissionLauncher;
-    }
-
-    public int getSystemNavigationPadding() {
-        int systemNavigationHeight = this.getWindow().getDecorView().getRootWindowInsets().getSystemWindowInsetBottom();
-        int extraPadding = (int) (20 * this.getResources().getDisplayMetrics().density);
-
-        return systemNavigationHeight + extraPadding;
-    }
-
-    public int getBottomNavigationPadding() {
-        int bottomNavigationHeight = this.bottomNavigationView.getMeasuredHeight();
-        int extraPadding = (int) (20 * this.getResources().getDisplayMetrics().density);
-
-        return bottomNavigationHeight + extraPadding;
     }
 
     public void hideBottomNavigationView() {
@@ -80,42 +72,97 @@ public class MainActivity extends AppCompatActivity {
         WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
 
         this.bottomNavigationView = findViewById(R.id.bottom_navigation);
+        this.bottomNavigationView.setOnApplyWindowInsetsListener((view, windowInsets) -> {
+            view.setPadding(
+                    windowInsets.getSystemWindowInsetLeft(),
+                    0,
+                    windowInsets.getSystemWindowInsetRight(),
+                    windowInsets.getSystemWindowInsetBottom()
+            );
+
+            bottomNavigationView.post(() -> {
+                Bundle customInsets = new Bundle();
+                customInsets.putInt("bottomNavigationHeight", bottomNavigationView.getMeasuredHeight());
+                customInsets.putInt("systemNavigationHeight", windowInsets.getSystemWindowInsetBottom());
+
+                getSupportFragmentManager().setFragmentResult("customInsets", customInsets);
+            });
+
+            return windowInsets;
+        });
+
+        getSupportFragmentManager().setFragmentResultListener("bottomNavigationVisibility", this, (requestKey, result) -> {
+            if (result.getBoolean("isVisible")) {
+                this.showBottomNavigationView();
+            } else {
+                this.hideBottomNavigationView();
+            }
+        });
+
         this.bottomNavigationView.setOnItemSelectedListener(item -> {
             Fragment selectedFragment;
+            String selectedFragmentTag;
 
             if (item.getItemId() == R.id.item_performance) {
-                if (this.performanceFragment == null) {
-                    this.performanceFragment = new PerformanceFragment();
-                }
+                selectedFragmentTag = PERFORMANCE_FRAGMENT_TAG;
+                selectedFragment = getSupportFragmentManager().findFragmentByTag(selectedFragmentTag);
 
-                selectedFragment = this.performanceFragment;
+                if (selectedFragment == null) {
+                    selectedFragment = new PerformanceFragment();
+                }
             } else if (item.getItemId() == R.id.item_assignments) {
-                if (this.assignmentsFragment == null) {
-                    this.assignmentsFragment = new AssignmentsFragment();
-                }
+                selectedFragmentTag = ASSIGNMENTS_FRAGMENT_TAG;
+                selectedFragment = getSupportFragmentManager().findFragmentByTag(selectedFragmentTag);
 
-                selectedFragment = this.assignmentsFragment;
+                if (selectedFragment == null) {
+                    selectedFragment = new AssignmentsFragment();
+                }
             } else if (item.getItemId() == R.id.item_profile) {
-                if (this.profileFragment == null) {
-                    this.profileFragment = new ProfileFragment();
-                }
+                selectedFragmentTag = PROFILE_FRAGMENT_TAG;
+                selectedFragment = getSupportFragmentManager().findFragmentByTag(selectedFragmentTag);
 
-                selectedFragment = this.profileFragment;
+                if (selectedFragment == null) {
+                    selectedFragment = new ProfileFragment();
+                }
             } else {
-                if (this.homeFragment == null) {
-                    this.homeFragment = new HomeFragment();
-                }
+                selectedFragmentTag = HOME_FRAGMENT_TAG;
+                selectedFragment = getSupportFragmentManager().findFragmentByTag(selectedFragmentTag);
 
-                selectedFragment = this.homeFragment;
+                if (selectedFragment == null) {
+                    selectedFragment = new HomeFragment();
+                }
             }
 
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.frame_layout_fragment_container, selectedFragment)
+                    .replace(R.id.frame_layout_fragment_container, selectedFragment, selectedFragmentTag)
                     .commit();
 
             return true;
         });
 
-        this.bottomNavigationView.setSelectedItemId(R.id.item_home);
+        int selectedItem = R.id.item_home;
+
+        if (savedInstanceState != null) {
+            selectedItem = savedInstanceState.getInt("selectedItem");
+        }
+
+        this.bottomNavigationView.setSelectedItemId(selectedItem);
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt("selectedItem", this.bottomNavigationView.getSelectedItemId());
+    }
+
+    @Override
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        this.bottomNavigationView.post(() -> {
+            if (this.bottomNavigationView.getTranslationY() != 0) {
+                this.hideBottomNavigationView();
+            }
+        });
     }
 }

@@ -1,5 +1,6 @@
 package tk.therealsuji.vtopchennai.adapters;
 
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,8 +20,6 @@ import tk.therealsuji.vtopchennai.R;
 import tk.therealsuji.vtopchennai.models.Mark;
 
 public class MarksItemAdapter extends RecyclerView.Adapter<MarksItemAdapter.ViewHolder> {
-    float pixelDensity;
-
     List<Mark.AllData> marks;
 
     public MarksItemAdapter(List<Mark.AllData> marks) {
@@ -66,8 +65,8 @@ public class MarksItemAdapter extends RecyclerView.Adapter<MarksItemAdapter.View
 
             if (marksItem.score != null && marksItem.maxScore != null && marksItem.weightage != null && marksItem.maxWeightage != null) {
                 String markTypeScore = this.marksItem.getContext().getString(R.string.score);
-                String score = new DecimalFormat("#.##").format(marksItem.score) + "/" + new DecimalFormat("#.##").format(marksItem.maxScore);
-                String weightage = new DecimalFormat("#.##").format(marksItem.weightage) + "/" + new DecimalFormat("#.##").format(marksItem.maxWeightage);
+                String score = new DecimalFormat("#.#").format(marksItem.score) + "/" + new DecimalFormat("#.#").format(marksItem.maxScore);
+                String weightage = new DecimalFormat("#.#").format(marksItem.weightage) + "/" + new DecimalFormat("#.#").format(marksItem.maxWeightage);
 
                 scoreText.setText(score);
                 scoreProgress.setProgress(marksItem.score.intValue());
@@ -114,7 +113,7 @@ public class MarksItemAdapter extends RecyclerView.Adapter<MarksItemAdapter.View
 
         AppCompatTextView createTextView(String text) {
             AppCompatTextView textView = new AppCompatTextView(this.marksItem.getContext());
-            textView.setText(text);
+            textView.setText(Html.fromHtml(text, Html.FROM_HTML_MODE_LEGACY));
             textView.setTextSize(16);
 
             return textView;

@@ -5,9 +5,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 import androidx.appcompat.widget.TooltipCompat;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
 
@@ -49,15 +49,11 @@ public class PerformanceFragment extends Fragment {
         ViewPager2 marks = performanceFragment.findViewById(R.id.view_pager_marks);
 
         appBarLayout.setOnApplyWindowInsetsListener((view, windowInsets) -> {
-            CoordinatorLayout.LayoutParams layoutParams = (CoordinatorLayout.LayoutParams) view.getLayoutParams();
-            layoutParams.setMargins(0, windowInsets.getSystemWindowInsetTop(), 0, 0);
-            view.setLayoutParams(layoutParams);
-
-            marks.setPadding(
-                    0,
-                    0,
-                    0,
-                    windowInsets.getSystemWindowInsetTop()
+            view.setPadding(
+                    windowInsets.getSystemWindowInsetLeft(),
+                    windowInsets.getSystemWindowInsetTop(),
+                    windowInsets.getSystemWindowInsetRight(),
+                    0
             );
 
             return windowInsets;
@@ -70,7 +66,26 @@ public class PerformanceFragment extends Fragment {
             header.setAlpha(alpha);
         });
 
+        marks.setOnApplyWindowInsetsListener((view, windowInsets) -> {
+            view.setPadding(
+                    windowInsets.getSystemWindowInsetLeft(),
+                    0,
+                    windowInsets.getSystemWindowInsetRight(),
+                    0
+            );
+
+            return windowInsets;
+        });
+
         float pixelDensity = this.getResources().getDisplayMetrics().density;
+
+        getParentFragmentManager().setFragmentResultListener("customInsets", this, (requestKey, result) -> {
+            int bottomNavigationHeight = result.getInt("bottomNavigationHeight");
+            marks.setPageTransformer((page, position) -> {
+                // Setting padding to the RecyclerView child inside the RelativeLayout
+                ((RelativeLayout) page).getChildAt(0).setPadding(0, 0, 0, (int) (bottomNavigationHeight + 20 * pixelDensity));
+            });
+        });
 
         TabLayout courseTabs = performanceFragment.findViewById(R.id.tab_layout_courses);
 

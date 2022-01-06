@@ -9,7 +9,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.widget.TooltipCompat;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
 
@@ -48,15 +47,11 @@ public class HomeFragment extends Fragment {
         ViewPager2 timetable = homeFragment.findViewById(R.id.view_pager_timetable);
 
         appBarLayout.setOnApplyWindowInsetsListener((view, windowInsets) -> {
-            CoordinatorLayout.LayoutParams layoutParams = (CoordinatorLayout.LayoutParams) view.getLayoutParams();
-            layoutParams.setMargins(0, windowInsets.getSystemWindowInsetTop(), 0, 0);
-            view.setLayoutParams(layoutParams);
-
-            timetable.setPadding(
-                    0,
-                    0,
-                    0,
-                    windowInsets.getSystemWindowInsetTop()
+            view.setPadding(
+                    windowInsets.getSystemWindowInsetLeft(),
+                    windowInsets.getSystemWindowInsetTop(),
+                    windowInsets.getSystemWindowInsetRight(),
+                    0
             );
 
             return windowInsets;
@@ -64,9 +59,20 @@ public class HomeFragment extends Fragment {
 
         appBarLayout.addOnOffsetChangedListener((appBarLayout1, verticalOffset) -> {
             LinearLayout header = homeFragment.findViewById(R.id.linear_layout_header);
-            float alpha = 1 - ((float) (-1 * verticalOffset) / header.getHeight());
 
+            float alpha = 1 - ((float) (-1 * verticalOffset) / header.getHeight());
             header.setAlpha(alpha);
+        });
+
+        timetable.setOnApplyWindowInsetsListener((view, windowInsets) -> {
+            view.setPadding(
+                    windowInsets.getSystemWindowInsetLeft(),
+                    0,
+                    windowInsets.getSystemWindowInsetRight(),
+                    0
+            );
+
+            return windowInsets;
         });
 
         SharedPreferences sharedPreferences = SettingsRepository.getSharedPreferences(this.requireContext());
@@ -121,6 +127,10 @@ public class HomeFragment extends Fragment {
                 getString(R.string.saturday)
         };
 
+        getParentFragmentManager().setFragmentResultListener("customInsets", this, (requestKey, result) -> {
+            int bottomNavigationHeight = result.getInt("bottomNavigationHeight");
+            timetable.setPageTransformer((page, position) -> page.setPadding(0, 0, 0, (int) (bottomNavigationHeight + 20 * pixelDensity)));
+        });
         timetable.setAdapter(new TimetableAdapter());
         timetable.setCurrentItem(Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 1);
 

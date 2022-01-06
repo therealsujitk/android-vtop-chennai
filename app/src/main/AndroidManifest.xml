@@ -22,7 +22,7 @@
 
         <activity
             android:name=".activities.LauncherActivity"
-            android:configChanges="orientation|keyboardHidden"
+            android:configChanges="orientation|screenSize|keyboardHidden"
             android:exported="true">
 
             <intent-filter>
@@ -33,12 +33,13 @@
 
         <activity
             android:name=".activities.LoginActivity"
-            android:configChanges="orientation|keyboardHidden"
+            android:configChanges="orientation|screenSize|keyboardHidden"
             android:theme="@style/Theme.VTOP.Login"
             android:windowSoftInputMode="adjustPan" />
 
         <activity
             android:name=".activities.MainActivity"
+            android:configChanges="orientation|screenSize"
             android:exported="true" />
 
         <activity

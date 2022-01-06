@@ -42,12 +42,17 @@
                 android:id="@+id/text_view_score"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignStart="@id/progress_bar_score"
+                android:layout_alignTop="@id/progress_bar_score"
+                android:layout_alignEnd="@id/progress_bar_score"
+                android:layout_alignBottom="@id/progress_bar_score"
                 android:layout_centerInParent="true"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:clickable="true"
                 android:focusable="true"
+                android:gravity="center"
                 android:padding="10dp"
-                android:textSize="18sp"
+                android:textSize="17sp"
                 android:textStyle="bold" />
 
             <ProgressBar

@@ -41,10 +41,10 @@
     <string name="lab_weightage">Lab Weightage</string>
     <string name="project_weightage">Project Weightage</string>
     <string name="overall_course_score">Overall Course Score</string>
-    <string name="score">Your Score</string>
-    <string name="weightage">Weightage Score</string>
-    <string name="status">Status: %s</string>
-    <string name="average">Average: %f</string>
+    <string name="score">Score</string>
+    <string name="weightage">Weightage</string>
+    <string name="status">Status: &lt;b>%s&lt;/b></string>
+    <string name="average">Average: &lt;b>%f&lt;/b></string>
 
     <!-- AssignmentsFragment Strings -->
     <string name="assignments_header">Your Assignments</string>

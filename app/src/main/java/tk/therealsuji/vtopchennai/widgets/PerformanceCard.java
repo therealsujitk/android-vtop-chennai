@@ -115,7 +115,7 @@ public class PerformanceCard extends LinearLayout {
         scoreTextParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
         this.scoreText.setLayoutParams(scoreTextParams);
         this.scoreText.setTextColor(colorPrimary.data);
-        this.scoreText.setTextSize(16);
+        this.scoreText.setTextSize(17);
         this.scoreText.setTypeface(this.scoreText.getTypeface(), Typeface.BOLD);
 
         container.addView(this.scoreProgress);
@@ -142,7 +142,7 @@ public class PerformanceCard extends LinearLayout {
         this.scoreProgress.setProgress(score.intValue(), true);
         this.scoreProgress.setSecondaryProgress(max.intValue());
 
-        String scoreText = (max >= 100) ? score.intValue() + "%" : score.intValue() + " / " + max.intValue();
+        String scoreText = (max >= 100) ? score.intValue() + "%" : score.intValue() + "/" + max.intValue();
         this.scoreText.setText(scoreText);
     }
 

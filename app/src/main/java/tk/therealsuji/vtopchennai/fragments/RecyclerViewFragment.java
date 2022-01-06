@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -20,7 +20,6 @@ import io.reactivex.rxjava3.core.SingleObserver;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import tk.therealsuji.vtopchennai.R;
-import tk.therealsuji.vtopchennai.activities.MainActivity;
 import tk.therealsuji.vtopchennai.adapters.ReceiptsItemAdapter;
 import tk.therealsuji.vtopchennai.adapters.SpotlightGroupAdapter;
 import tk.therealsuji.vtopchennai.helpers.AppDatabase;
@@ -86,6 +85,15 @@ public class RecyclerViewFragment extends Fragment {
         });
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        Bundle bottomNavigationVisibility = new Bundle();
+        bottomNavigationVisibility.putBoolean("isVisible", false);
+        getParentFragmentManager().setFragmentResult("bottomNavigationVisibility", bottomNavigationVisibility);
+    }
+
     @SuppressLint("ClickableViewAccessibility")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -94,23 +102,43 @@ public class RecyclerViewFragment extends Fragment {
         recyclerViewFragment.getRootView().setOnTouchListener((view, motionEvent) -> true);
 
         LinearLayout header = recyclerViewFragment.findViewById(R.id.linear_layout_header);
-        header.setOnApplyWindowInsetsListener((view, windowInsets) -> {
-            ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) view.getLayoutParams();
-            layoutParams.setMargins(0, windowInsets.getSystemWindowInsetTop(), 0, 0);
-            view.setLayoutParams(layoutParams);
+        this.recyclerView = recyclerViewFragment.findViewById(R.id.recycler_view);
 
-            return windowInsets.consumeSystemWindowInsets();
+        header.setOnApplyWindowInsetsListener((view, windowInsets) -> {
+            view.setPaddingRelative(
+                    windowInsets.getSystemWindowInsetLeft(),
+                    windowInsets.getSystemWindowInsetTop(),
+                    windowInsets.getSystemWindowInsetRight(),
+                    0
+            );
+
+            return windowInsets;
         });
 
-        this.recyclerView = recyclerViewFragment.findViewById(R.id.recycler_view);
+        this.recyclerView.setOnApplyWindowInsetsListener((view, windowInsets) -> {
+            view.setPaddingRelative(
+                    windowInsets.getSystemWindowInsetLeft(),
+                    0,
+                    windowInsets.getSystemWindowInsetRight(),
+                    view.getPaddingBottom()
+            );
+
+            return windowInsets;
+        });
+
         this.appDatabase = AppDatabase.getInstance(this.requireActivity().getApplicationContext());
 
-        this.recyclerView.setPadding(
-                0,
-                0,
-                0,
-                ((MainActivity) this.requireActivity()).getSystemNavigationPadding()
-        );
+        getParentFragmentManager().setFragmentResultListener("customInsets", this, (requestKey, result) -> {
+            int systemNavigationHeight = result.getInt("systemNavigationHeight");
+            float pixelDensity = getResources().getDisplayMetrics().density;
+
+            this.recyclerView.setPaddingRelative(
+                    this.recyclerView.getPaddingStart(),
+                    0,
+                    this.recyclerView.getPaddingEnd(),
+                    (int) (systemNavigationHeight + 20 * pixelDensity)
+            );
+        });
 
         int titleId = 0, contentType = 0;
         Bundle arguments = this.getArguments();
@@ -142,6 +170,8 @@ public class RecyclerViewFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
 
-        ((MainActivity) this.requireActivity()).showBottomNavigationView();
+        Bundle bottomNavigationVisibility = new Bundle();
+        bottomNavigationVisibility.putBoolean("isVisible", true);
+        getParentFragmentManager().setFragmentResult("bottomNavigationVisibility", bottomNavigationVisibility);
     }
 }
