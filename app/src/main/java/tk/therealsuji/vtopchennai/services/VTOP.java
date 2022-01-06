@@ -743,12 +743,13 @@ public class VTOP extends Service {
                 "        while (courseIndex < cells.length && creditsIndex < cells.length && slotVenueIndex < cells.length && facultyIndex < cells.length) {" +
                 "            var course = {};" +
                 "            var rawCourse = cells[courseIndex].innerText.replace(/\\t/g,'').replace(/\\n/g,' ');" +
+                "            var rawCourseType = rawCourse.split('(').slice(-1)[0].toLowerCase();" +
                 "            var rawCredits = cells[creditsIndex].innerText.replace(/\\t/g,'').replace(/\\n/g,' ').trim().split(' ');" +
                 "            var rawSlotVenue = cells[slotVenueIndex].innerText.replace(/\\t/g,'').replace(/\\n/g,'').split('-');" +
                 "            var rawFaculty = cells[facultyIndex].innerText.replace(/\\t/g,'').replace(/\\n/g,'').split('-');" +
                 "            course.code = rawCourse.split('-')[0].trim();" +
                 "            course.title = rawCourse.split('-').slice(1).join('-').split('(')[0].trim();" +
-                "            course.type = (rawCourse.toLowerCase().includes('lab')) ? 'lab' : ((rawCourse.toLowerCase().includes('project')) ? 'project' : 'theory');" +
+                "            course.type = (rawCourseType.includes('lab')) ? 'lab' : ((rawCourseType.includes('project')) ? 'project' : 'theory');" +
                 "            course.credits = parseInt(rawCredits[rawCredits.length - 1]) || 0;" +
                 "            course.slots = rawSlotVenue[0].trim().split('+');" +
                 "            course.venue = rawSlotVenue.slice(1, rawSlotVenue.length).join(' - ').trim();" +
