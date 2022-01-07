@@ -107,6 +107,9 @@
     <string name="share_text">Visit %s to download the latest version of &app_name;.</string>
     <string name="share_title">Share \"&app_name;\" via</string>
 
+    <!-- Empty State String -->
+    <string name="no_data">There\'s nothing here :(</string>
+
     <!-- Other Strings & Strings used in multiple locations -->
     <string name="lab">Lab</string>
     <string name="project">Project</string>

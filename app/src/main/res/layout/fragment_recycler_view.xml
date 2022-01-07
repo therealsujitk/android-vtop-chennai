@@ -47,4 +47,18 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linear_layout_header" />
 
+    <TextView
+        android:id="@+id/text_view_no_data"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:drawablePadding="20dp"
+        android:text="@string/no_data"
+        android:textAlignment="center"
+        android:textSize="20sp"
+        android:visibility="gone"
+        app:drawableTopCompat="@drawable/image_no_data"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linear_layout_header" />
 </androidx.constraintlayout.widget.ConstraintLayout>

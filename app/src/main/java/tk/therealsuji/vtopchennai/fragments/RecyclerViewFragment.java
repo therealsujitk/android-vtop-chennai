@@ -5,12 +5,12 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.room.rxjava3.EmptyResultSetException;
 
 import java.util.List;
 
@@ -29,19 +29,15 @@ import tk.therealsuji.vtopchennai.models.Receipt;
 import tk.therealsuji.vtopchennai.models.Spotlight;
 
 public class RecyclerViewFragment extends Fragment {
-    public static final int TYPE_ATTENDANCE = 1;
-    public static final int TYPE_RECEIPTS = 2;
-    public static final int TYPE_SPOTLIGHT = 3;
+    public static final int TYPE_RECEIPTS = 1;
+    public static final int TYPE_SPOTLIGHT = 2;
 
     AppDatabase appDatabase;
     RecyclerView recyclerView;
+    View noData;
 
     public RecyclerViewFragment() {
         // Required empty public constructor
-    }
-
-    private void attachAttendance() {
-
     }
 
     private void attachReceipts() {
@@ -58,6 +54,11 @@ public class RecyclerViewFragment extends Fragment {
 
                     @Override
                     public void onSuccess(@NonNull List<Receipt> receipts) {
+                        if (receipts.size() == 0) {
+                            displayNoData();
+                            return;
+                        }
+
                         recyclerView.setAdapter(new ReceiptsItemAdapter(receipts));
                     }
 
@@ -76,13 +77,26 @@ public class RecyclerViewFragment extends Fragment {
 
             @Override
             public void onSuccess(@NonNull List<Spotlight> spotlight) {
+                if (spotlight.size() == 0) {
+                    displayNoData();
+                    return;
+                }
+
                 recyclerView.setAdapter(new SpotlightGroupAdapter(spotlight));
             }
 
             @Override
             public void onError(@NonNull Throwable e) {
+                if (e.getClass() == EmptyResultSetException.class) {
+                    displayNoData();
+                }
             }
         });
+    }
+
+    private void displayNoData() {
+        this.recyclerView.setVisibility(View.GONE);
+        this.noData.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -101,7 +115,8 @@ public class RecyclerViewFragment extends Fragment {
         recyclerViewFragment.getRootView().setBackgroundColor(requireContext().getColor(R.color.secondary_container_95));
         recyclerViewFragment.getRootView().setOnTouchListener((view, motionEvent) -> true);
 
-        LinearLayout header = recyclerViewFragment.findViewById(R.id.linear_layout_header);
+        View header = recyclerViewFragment.findViewById(R.id.linear_layout_header);
+        this.noData = recyclerViewFragment.findViewById(R.id.text_view_no_data);
         this.recyclerView = recyclerViewFragment.findViewById(R.id.recycler_view);
         this.appDatabase = AppDatabase.getInstance(this.requireActivity().getApplicationContext());
 
@@ -117,6 +132,13 @@ public class RecyclerViewFragment extends Fragment {
                     systemWindowInsetTop,
                     systemWindowInsetRight,
                     0
+            );
+
+            this.noData.setPaddingRelative(
+                    systemWindowInsetLeft,
+                    0,
+                    systemWindowInsetRight,
+                    (int) (systemWindowInsetBottom + 30 * pixelDensity)
             );
 
             this.recyclerView.setPaddingRelative(
@@ -139,9 +161,6 @@ public class RecyclerViewFragment extends Fragment {
         ((TextView) recyclerViewFragment.findViewById(R.id.text_view_title)).setText(getString(titleId));
 
         switch (contentType) {
-            case TYPE_ATTENDANCE:
-                this.attachAttendance();
-                break;
             case TYPE_RECEIPTS:
                 this.attachReceipts();
                 break;
