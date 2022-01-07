@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void hideBottomNavigationView() {
         this.bottomNavigationView.clearAnimation();
-        this.bottomNavigationView.animate().translationY(bottomNavigationView.getMeasuredHeight());
+        this.bottomNavigationView.post(() -> this.bottomNavigationView.animate().translationY(bottomNavigationView.getMeasuredHeight()));
 
         int gestureLeft = 0;
 
@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void showBottomNavigationView() {
         this.bottomNavigationView.clearAnimation();
-        this.bottomNavigationView.animate().translationY(0);
+        this.bottomNavigationView.post(() -> this.bottomNavigationView.animate().translationY(0));
 
         this.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
     }
@@ -72,24 +72,36 @@ public class MainActivity extends AppCompatActivity {
         WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
 
         this.bottomNavigationView = findViewById(R.id.bottom_navigation);
-        this.bottomNavigationView.setOnApplyWindowInsetsListener((view, windowInsets) -> {
-            view.setPadding(
-                    windowInsets.getSystemWindowInsetLeft(),
-                    0,
-                    windowInsets.getSystemWindowInsetRight(),
-                    windowInsets.getSystemWindowInsetBottom()
-            );
 
-            bottomNavigationView.post(() -> {
-                Bundle customInsets = new Bundle();
-                customInsets.putInt("bottomNavigationHeight", bottomNavigationView.getMeasuredHeight());
-                customInsets.putInt("systemNavigationHeight", windowInsets.getSystemWindowInsetBottom());
+        Bundle customInsets = new Bundle();
+        customInsets.putInt("systemWindowInsetLeft", 0);
+        customInsets.putInt("systemWindowInsetTop", 0);
+        customInsets.putInt("systemWindowInsetRight", 0);
+        customInsets.putInt("systemWindowInsetBottom", 0);
+        customInsets.putInt("bottomNavigationHeight", 0);
 
-                getSupportFragmentManager().setFragmentResult("customInsets", customInsets);
-            });
+        findViewById(R.id.frame_layout_fragment_container)
+                .setOnApplyWindowInsetsListener((view, windowInsets) -> {
+                    int systemWindowInsetLeft = windowInsets.getSystemWindowInsetLeft();
+                    int systemWindowInsetTop = windowInsets.getSystemWindowInsetTop();
+                    int systemWindowInsetRight = windowInsets.getSystemWindowInsetRight();
+                    int systemWindowInsetBottom = windowInsets.getSystemWindowInsetBottom();
 
-            return windowInsets;
-        });
+                    customInsets.putInt("systemWindowInsetLeft", systemWindowInsetLeft);
+                    customInsets.putInt("systemWindowInsetTop", systemWindowInsetTop);
+                    customInsets.putInt("systemWindowInsetRight", systemWindowInsetRight);
+                    customInsets.putInt("systemWindowInsetBottom", systemWindowInsetBottom);
+
+                    getSupportFragmentManager().setFragmentResult("customInsets", customInsets);
+
+                    // Send the bottom navigation height to all fragments when ready
+                    bottomNavigationView.post(() -> {
+                        customInsets.putInt("bottomNavigationHeight", bottomNavigationView.getMeasuredHeight());
+                        getSupportFragmentManager().setFragmentResult("customInsets", customInsets);
+                    });
+
+                    return windowInsets;
+                });
 
         getSupportFragmentManager().setFragmentResultListener("bottomNavigationVisibility", this, (requestKey, result) -> {
             if (result.getBoolean("isVisible")) {
@@ -159,10 +171,8 @@ public class MainActivity extends AppCompatActivity {
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
 
-        this.bottomNavigationView.post(() -> {
-            if (this.bottomNavigationView.getTranslationY() != 0) {
-                this.hideBottomNavigationView();
-            }
-        });
+        if (this.bottomNavigationView.getTranslationY() != 0) {
+            this.hideBottomNavigationView();
+        }
     }
 }

@@ -46,15 +46,28 @@ public class HomeFragment extends Fragment {
         AppBarLayout appBarLayout = homeFragment.findViewById(R.id.app_bar);
         ViewPager2 timetable = homeFragment.findViewById(R.id.view_pager_timetable);
 
-        appBarLayout.setOnApplyWindowInsetsListener((view, windowInsets) -> {
-            view.setPadding(
-                    windowInsets.getSystemWindowInsetLeft(),
-                    windowInsets.getSystemWindowInsetTop(),
-                    windowInsets.getSystemWindowInsetRight(),
+        getParentFragmentManager().setFragmentResultListener("customInsets", this, (requestKey, result) -> {
+            int systemWindowInsetLeft = result.getInt("systemWindowInsetLeft");
+            int systemWindowInsetTop = result.getInt("systemWindowInsetTop");
+            int systemWindowInsetRight = result.getInt("systemWindowInsetRight");
+            int bottomNavigationHeight = result.getInt("bottomNavigationHeight");
+
+            appBarLayout.setPadding(
+                    systemWindowInsetLeft,
+                    systemWindowInsetTop,
+                    systemWindowInsetRight,
                     0
             );
 
-            return windowInsets;
+            timetable.setPageTransformer((page, position) -> page.setPadding(
+                    systemWindowInsetLeft,
+                    0,
+                    systemWindowInsetRight,
+                    (int) (bottomNavigationHeight + 20 * pixelDensity)
+            ));
+
+            // Only one listener can be added per requestKey, so we create a duplicate
+            getParentFragmentManager().setFragmentResult("customInsets2", result);
         });
 
         appBarLayout.addOnOffsetChangedListener((appBarLayout1, verticalOffset) -> {
@@ -62,17 +75,6 @@ public class HomeFragment extends Fragment {
 
             float alpha = 1 - ((float) (-1 * verticalOffset) / header.getHeight());
             header.setAlpha(alpha);
-        });
-
-        timetable.setOnApplyWindowInsetsListener((view, windowInsets) -> {
-            view.setPadding(
-                    windowInsets.getSystemWindowInsetLeft(),
-                    0,
-                    windowInsets.getSystemWindowInsetRight(),
-                    0
-            );
-
-            return windowInsets;
         });
 
         SharedPreferences sharedPreferences = SettingsRepository.getSharedPreferences(this.requireContext());
@@ -127,10 +129,6 @@ public class HomeFragment extends Fragment {
                 getString(R.string.saturday)
         };
 
-        getParentFragmentManager().setFragmentResultListener("customInsets", this, (requestKey, result) -> {
-            int bottomNavigationHeight = result.getInt("bottomNavigationHeight");
-            timetable.setPageTransformer((page, position) -> page.setPadding(0, 0, 0, (int) (bottomNavigationHeight + 20 * pixelDensity)));
-        });
         timetable.setAdapter(new TimetableAdapter());
         timetable.setCurrentItem(Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 1);
 

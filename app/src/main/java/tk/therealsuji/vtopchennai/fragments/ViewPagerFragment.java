@@ -151,21 +151,26 @@ public class ViewPagerFragment extends Fragment {
         this.tabLayout = viewPagerFragment.findViewById(R.id.tab_layout);
         this.viewPager = viewPagerFragment.findViewById(R.id.view_pager);
 
-        viewPagerFragment.setOnApplyWindowInsetsListener((view, windowInsets) -> {
-            view.setPaddingRelative(
-                    windowInsets.getSystemWindowInsetLeft(),
-                    windowInsets.getStableInsetTop(),
-                    windowInsets.getSystemWindowInsetRight(),
+        getParentFragmentManager().setFragmentResultListener("customInsets2", this, (requestKey, result) -> {
+            int systemWindowInsetLeft = result.getInt("systemWindowInsetLeft");
+            int systemWindowInsetTop = result.getInt("systemWindowInsetTop");
+            int systemWindowInsetRight = result.getInt("systemWindowInsetRight");
+            int systemWindowInsetBottom = result.getInt("systemWindowInsetBottom");
+            float pixelDensity = this.getResources().getDisplayMetrics().density;
+
+            viewPagerFragment.setPaddingRelative(
+                    systemWindowInsetLeft,
+                    systemWindowInsetTop,
+                    systemWindowInsetRight,
                     0
             );
 
-            return windowInsets;
-        });
-
-        getParentFragmentManager().setFragmentResultListener("customInsets", this, (requestKey, result) -> {
-            int systemNavigationHeight = result.getInt("systemNavigationHeight");
-            float pixelDensity = this.getResources().getDisplayMetrics().density;
-            this.viewPager.setPageTransformer((page, position) -> page.setPadding(0, 0, 0, (int) (systemNavigationHeight + 20 * pixelDensity)));
+            this.viewPager.setPageTransformer((page, position) -> page.setPadding(
+                    0,
+                    0,
+                    0,
+                    (int) (systemWindowInsetBottom + 20 * pixelDensity)
+            ));
         });
 
         int titleId = 0, contentType = 0;

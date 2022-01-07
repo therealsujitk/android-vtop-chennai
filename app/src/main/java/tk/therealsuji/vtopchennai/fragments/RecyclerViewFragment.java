@@ -103,40 +103,27 @@ public class RecyclerViewFragment extends Fragment {
 
         LinearLayout header = recyclerViewFragment.findViewById(R.id.linear_layout_header);
         this.recyclerView = recyclerViewFragment.findViewById(R.id.recycler_view);
+        this.appDatabase = AppDatabase.getInstance(this.requireActivity().getApplicationContext());
 
-        header.setOnApplyWindowInsetsListener((view, windowInsets) -> {
-            view.setPaddingRelative(
-                    windowInsets.getSystemWindowInsetLeft(),
-                    windowInsets.getSystemWindowInsetTop(),
-                    windowInsets.getSystemWindowInsetRight(),
+        getParentFragmentManager().setFragmentResultListener("customInsets2", this, (requestKey, result) -> {
+            int systemWindowInsetLeft = result.getInt("systemWindowInsetLeft");
+            int systemWindowInsetTop = result.getInt("systemWindowInsetTop");
+            int systemWindowInsetRight = result.getInt("systemWindowInsetRight");
+            int systemWindowInsetBottom = result.getInt("systemWindowInsetBottom");
+            float pixelDensity = getResources().getDisplayMetrics().density;
+
+            header.setPaddingRelative(
+                    systemWindowInsetLeft,
+                    systemWindowInsetTop,
+                    systemWindowInsetRight,
                     0
             );
 
-            return windowInsets;
-        });
-
-        this.recyclerView.setOnApplyWindowInsetsListener((view, windowInsets) -> {
-            view.setPaddingRelative(
-                    windowInsets.getSystemWindowInsetLeft(),
-                    0,
-                    windowInsets.getSystemWindowInsetRight(),
-                    view.getPaddingBottom()
-            );
-
-            return windowInsets;
-        });
-
-        this.appDatabase = AppDatabase.getInstance(this.requireActivity().getApplicationContext());
-
-        getParentFragmentManager().setFragmentResultListener("customInsets", this, (requestKey, result) -> {
-            int systemNavigationHeight = result.getInt("systemNavigationHeight");
-            float pixelDensity = getResources().getDisplayMetrics().density;
-
             this.recyclerView.setPaddingRelative(
-                    this.recyclerView.getPaddingStart(),
+                    systemWindowInsetLeft,
                     0,
-                    this.recyclerView.getPaddingEnd(),
-                    (int) (systemNavigationHeight + 20 * pixelDensity)
+                    systemWindowInsetRight,
+                    (int) (systemWindowInsetBottom + 20 * pixelDensity)
             );
         });
 

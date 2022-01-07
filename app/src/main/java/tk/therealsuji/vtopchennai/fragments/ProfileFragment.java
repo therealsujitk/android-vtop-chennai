@@ -159,41 +159,32 @@ public class ProfileFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View profileFragment = inflater.inflate(R.layout.fragment_profile, container, false);
 
-        View appBar = profileFragment.findViewById(R.id.app_bar);
+        View appBarLayout = profileFragment.findViewById(R.id.app_bar);
         View profileView = profileFragment.findViewById(R.id.nested_scroll_view_profile);
 
-        appBar.setOnApplyWindowInsetsListener((view, windowInsets) -> {
-            view.setPadding(
-                    windowInsets.getSystemWindowInsetLeft(),
-                    windowInsets.getSystemWindowInsetTop(),
-                    windowInsets.getSystemWindowInsetRight(),
-                    0
-            );
-
-            return windowInsets;
-        });
-
-        profileView.setOnApplyWindowInsetsListener((view, windowInsets) -> {
-            view.setPaddingRelative(
-                    windowInsets.getSystemWindowInsetLeft(),
-                    0,
-                    windowInsets.getSystemWindowInsetRight(),
-                    view.getPaddingBottom()
-            );
-
-            return windowInsets;
-        });
-
         getParentFragmentManager().setFragmentResultListener("customInsets", this, (requestKey, result) -> {
+            int systemWindowInsetLeft = result.getInt("systemWindowInsetLeft");
+            int systemWindowInsetTop = result.getInt("systemWindowInsetTop");
+            int systemWindowInsetRight = result.getInt("systemWindowInsetRight");
             int bottomNavigationHeight = result.getInt("bottomNavigationHeight");
             float pixelDensity = getResources().getDisplayMetrics().density;
 
+            appBarLayout.setPadding(
+                    systemWindowInsetLeft,
+                    systemWindowInsetTop,
+                    systemWindowInsetRight,
+                    0
+            );
+
             profileView.setPaddingRelative(
-                    profileView.getPaddingStart(),
+                    systemWindowInsetLeft,
                     0,
-                    profileView.getPaddingEnd(),
+                    systemWindowInsetRight,
                     (int) (bottomNavigationHeight + 20 * pixelDensity)
             );
+
+            // Only one listener can be added per requestKey, so we create a duplicate
+            getParentFragmentManager().setFragmentResult("customInsets2", result);
         });
 
         RecyclerView announcements = profileFragment.findViewById(R.id.recycler_view_announcements);

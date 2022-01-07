@@ -48,15 +48,30 @@ public class PerformanceFragment extends Fragment {
         AppBarLayout appBarLayout = performanceFragment.findViewById(R.id.app_bar);
         ViewPager2 marks = performanceFragment.findViewById(R.id.view_pager_marks);
 
-        appBarLayout.setOnApplyWindowInsetsListener((view, windowInsets) -> {
-            view.setPadding(
-                    windowInsets.getSystemWindowInsetLeft(),
-                    windowInsets.getSystemWindowInsetTop(),
-                    windowInsets.getSystemWindowInsetRight(),
+        float pixelDensity = this.getResources().getDisplayMetrics().density;
+
+        getParentFragmentManager().setFragmentResultListener("customInsets", this, (requestKey, result) -> {
+            int systemWindowInsetLeft = result.getInt("systemWindowInsetLeft");
+            int systemWindowInsetTop = result.getInt("systemWindowInsetTop");
+            int systemWindowInsetRight = result.getInt("systemWindowInsetRight");
+            int bottomNavigationHeight = result.getInt("bottomNavigationHeight");
+
+            appBarLayout.setPadding(
+                    systemWindowInsetLeft,
+                    systemWindowInsetTop,
+                    systemWindowInsetRight,
                     0
             );
 
-            return windowInsets;
+            marks.setPageTransformer((page, position) -> {
+                // Setting padding to the RecyclerView child inside the RelativeLayout
+                ((RelativeLayout) page).getChildAt(0).setPadding(
+                        systemWindowInsetLeft,
+                        0,
+                        systemWindowInsetRight,
+                        (int) (bottomNavigationHeight + 20 * pixelDensity)
+                );
+            });
         });
 
         appBarLayout.addOnOffsetChangedListener((appBarLayout1, verticalOffset) -> {
@@ -64,27 +79,6 @@ public class PerformanceFragment extends Fragment {
             float alpha = 1 - ((float) (-1 * verticalOffset) / header.getHeight());
 
             header.setAlpha(alpha);
-        });
-
-        marks.setOnApplyWindowInsetsListener((view, windowInsets) -> {
-            view.setPadding(
-                    windowInsets.getSystemWindowInsetLeft(),
-                    0,
-                    windowInsets.getSystemWindowInsetRight(),
-                    0
-            );
-
-            return windowInsets;
-        });
-
-        float pixelDensity = this.getResources().getDisplayMetrics().density;
-
-        getParentFragmentManager().setFragmentResultListener("customInsets", this, (requestKey, result) -> {
-            int bottomNavigationHeight = result.getInt("bottomNavigationHeight");
-            marks.setPageTransformer((page, position) -> {
-                // Setting padding to the RecyclerView child inside the RelativeLayout
-                ((RelativeLayout) page).getChildAt(0).setPadding(0, 0, 0, (int) (bottomNavigationHeight + 20 * pixelDensity));
-            });
         });
 
         TabLayout courseTabs = performanceFragment.findViewById(R.id.tab_layout_courses);
