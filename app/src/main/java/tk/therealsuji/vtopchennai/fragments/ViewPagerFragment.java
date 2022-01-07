@@ -36,6 +36,7 @@ public class ViewPagerFragment extends Fragment {
     AppDatabase appDatabase;
     TabLayout tabLayout;
     ViewPager2 viewPager;
+    View noData;
 
     public ViewPagerFragment() {
         // Required empty public constructor
@@ -56,6 +57,11 @@ public class ViewPagerFragment extends Fragment {
 
                     @Override
                     public void onSuccess(@NonNull List<String> staffTypes) {
+                        if (staffTypes.size() == 0) {
+                            displayNoData();
+                            return;
+                        }
+
                         viewPager.setAdapter(new StaffAdapter(staffTypes));
 
                         new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {
@@ -101,6 +107,11 @@ public class ViewPagerFragment extends Fragment {
 
                     @Override
                     public void onSuccess(@NonNull List<String> courseCodes) {
+                        if (courseCodes.size() == 0) {
+                            displayNoData();
+                            return;
+                        }
+
                         viewPager.setAdapter(new CoursesAdapter(courseCodes));
 
                         new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {
@@ -131,6 +142,12 @@ public class ViewPagerFragment extends Fragment {
                 });
     }
 
+    private void displayNoData() {
+        this.tabLayout.setVisibility(View.GONE);
+        this.viewPager.setVisibility(View.GONE);
+        this.noData.setVisibility(View.VISIBLE);
+    }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -148,6 +165,7 @@ public class ViewPagerFragment extends Fragment {
         viewPagerFragment.getRootView().setOnTouchListener((view, motionEvent) -> true);
 
         this.appDatabase = AppDatabase.getInstance(this.requireActivity().getApplicationContext());
+        this.noData = viewPagerFragment.findViewById(R.id.text_view_no_data);
         this.tabLayout = viewPagerFragment.findViewById(R.id.tab_layout);
         this.viewPager = viewPagerFragment.findViewById(R.id.view_pager);
 
@@ -163,6 +181,13 @@ public class ViewPagerFragment extends Fragment {
                     systemWindowInsetTop,
                     systemWindowInsetRight,
                     0
+            );
+
+            this.noData.setPaddingRelative(
+                    systemWindowInsetLeft,
+                    0,
+                    systemWindowInsetRight,
+                    (int) (systemWindowInsetBottom + 30 * pixelDensity)
             );
 
             this.viewPager.setPageTransformer((page, position) -> page.setPadding(

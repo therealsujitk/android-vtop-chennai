@@ -49,13 +49,8 @@
 
     <TextView
         android:id="@+id/text_view_no_data"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:drawablePadding="20dp"
+        style="@style/Widget.VTOP.EmptyState"
         android:text="@string/no_data"
-        android:textAlignment="center"
-        android:textSize="20sp"
-        android:visibility="gone"
         app:drawableTopCompat="@drawable/image_no_data"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
