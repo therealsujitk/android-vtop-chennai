@@ -5,9 +5,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 
 import androidx.appcompat.widget.TooltipCompat;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
 
@@ -16,6 +16,7 @@ import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
 import java.util.List;
+import java.util.Objects;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.annotations.NonNull;
@@ -23,6 +24,7 @@ import io.reactivex.rxjava3.core.SingleObserver;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import tk.therealsuji.vtopchennai.R;
+import tk.therealsuji.vtopchennai.adapters.EmptyStateAdapter;
 import tk.therealsuji.vtopchennai.adapters.MarksAdapter;
 import tk.therealsuji.vtopchennai.helpers.AppDatabase;
 import tk.therealsuji.vtopchennai.interfaces.MarksDao;
@@ -46,6 +48,7 @@ public class PerformanceFragment extends Fragment {
         View performanceFragment = inflater.inflate(R.layout.fragment_performance, container, false);
 
         AppBarLayout appBarLayout = performanceFragment.findViewById(R.id.app_bar);
+        LinearLayout header = performanceFragment.findViewById(R.id.linear_layout_header);
         ViewPager2 marks = performanceFragment.findViewById(R.id.view_pager_marks);
 
         float pixelDensity = this.getResources().getDisplayMetrics().density;
@@ -64,20 +67,23 @@ public class PerformanceFragment extends Fragment {
             );
 
             marks.setPageTransformer((page, position) -> {
+                int headerOffset = 0;
+                if (page.findViewById(R.id.text_view_no_data) != null) {
+                    headerOffset = header.getMeasuredHeight();
+                }
+
                 // Setting padding to the RecyclerView child inside the RelativeLayout
-                ((RelativeLayout) page).getChildAt(0).setPadding(
+                ((ViewGroup) page).getChildAt(0).setPadding(
                         systemWindowInsetLeft,
                         0,
                         systemWindowInsetRight,
-                        (int) (bottomNavigationHeight + 20 * pixelDensity)
+                        (int) (bottomNavigationHeight + 20 * pixelDensity + headerOffset)
                 );
             });
         });
 
         appBarLayout.addOnOffsetChangedListener((appBarLayout1, verticalOffset) -> {
-            LinearLayout header = performanceFragment.findViewById(R.id.linear_layout_header);
             float alpha = 1 - ((float) (-1 * verticalOffset) / header.getHeight());
-
             header.setAlpha(alpha);
         });
 
@@ -97,6 +103,26 @@ public class PerformanceFragment extends Fragment {
 
                     @Override
                     public void onSuccess(@NonNull List<Course> courses) {
+                        if (courses.size() == 0) {
+                            marks.setAdapter(new EmptyStateAdapter(EmptyStateAdapter.TYPE_PERFORMANCE));
+                            marks.getChildAt(0).setOverScrollMode(View.OVER_SCROLL_NEVER);
+
+                            // Disable app bar scrolling behaviour
+                            CoordinatorLayout.LayoutParams layoutParams = (CoordinatorLayout.LayoutParams) appBarLayout.getLayoutParams();
+                            AppBarLayout.Behavior behavior = (AppBarLayout.Behavior) layoutParams.getBehavior();
+                            Objects.requireNonNull(behavior).setDragCallback(new AppBarLayout.Behavior.DragCallback() {
+                                @Override
+                                public boolean canDrag(@androidx.annotation.NonNull AppBarLayout appBarLayout) {
+                                    return false;
+                                }
+                            });
+
+                            return;
+                        }
+
+                        performanceFragment.findViewById(R.id.horizontal_scroll_view_performance_cards).setVisibility(View.VISIBLE);
+                        courseTabs.setVisibility(View.VISIBLE);
+
                         marks.setAdapter(new MarksAdapter(courses));
                         new TabLayoutMediator(courseTabs, marks, (tab, position) -> {
                             Course course = courses.get(position);

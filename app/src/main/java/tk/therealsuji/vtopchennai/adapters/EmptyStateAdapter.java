@@ -14,6 +14,8 @@ import tk.therealsuji.vtopchennai.R;
 
 public class EmptyStateAdapter extends RecyclerView.Adapter<EmptyStateAdapter.ViewHolder> {
     public static final int TYPE_TIMETABLE = 1;
+    public static final int TYPE_PERFORMANCE = 2;
+
     final int type;
 
     public EmptyStateAdapter(int type) {
@@ -35,6 +37,9 @@ public class EmptyStateAdapter extends RecyclerView.Adapter<EmptyStateAdapter.Vi
         if (this.type == TYPE_TIMETABLE) {
             holder.setImage(R.drawable.image_no_classes);
             holder.setText(R.string.no_classes);
+        } else if (this.type == TYPE_PERFORMANCE) {
+            holder.setImage(R.drawable.image_no_marks);
+            holder.setText(R.string.no_marks);
         }
     }
 
