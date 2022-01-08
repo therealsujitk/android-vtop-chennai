@@ -108,6 +108,7 @@
     <string name="share_title">Share \"&app_name;\" via</string>
 
     <!-- Empty State String -->
+    <string name="no_classes">Looks like you have the day off :)</string>
     <string name="no_data">There\'s nothing here :(</string>
 
     <!-- Other Strings & Strings used in multiple locations -->

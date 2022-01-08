@@ -61,6 +61,11 @@ public class TimetableAdapter extends RecyclerView.Adapter<TimetableAdapter.View
 
                     @Override
                     public void onSuccess(@io.reactivex.rxjava3.annotations.NonNull List<Timetable.AllData> timetable) {
+                        if (timetable.size() == 0) {
+                            timetableView.setAdapter(new EmptyStateAdapter(EmptyStateAdapter.TYPE_TIMETABLE));
+                            return;
+                        }
+
                         int dayOfWeek = Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 1;
                         int status = TimetableItemAdapter.STATUS_FUTURE;
 
