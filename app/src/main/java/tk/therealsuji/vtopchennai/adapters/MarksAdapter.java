@@ -69,11 +69,12 @@ public class MarksAdapter extends RecyclerView.Adapter<MarksAdapter.ViewHolder> 
                     @Override
                     public void onSuccess(@io.reactivex.rxjava3.annotations.NonNull List<Mark.AllData> marks) {
                         holder.segregateMarks(marks);
-                        holder.setAdapter();
+                        holder.displayMarks();
                     }
 
                     @Override
                     public void onError(@io.reactivex.rxjava3.annotations.NonNull Throwable e) {
+                        holder.displayError("Error: " + e.getLocalizedMessage());
                     }
                 });
     }
@@ -168,8 +169,12 @@ public class MarksAdapter extends RecyclerView.Adapter<MarksAdapter.ViewHolder> 
             this.addChips();
         }
 
-        public void setAdapter() {
+        public void displayMarks() {
             this.markGroups.setAdapter(new MarksGroupAdapter(new ArrayList<>(this.marks.values())));
+        }
+
+        public void displayError(String errorMessage) {
+            this.markGroups.setAdapter(new EmptyStateAdapter(EmptyStateAdapter.TYPE_ERROR, errorMessage));
         }
     }
 }

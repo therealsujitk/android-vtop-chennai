@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import androidx.appcompat.widget.TooltipCompat;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
@@ -33,23 +34,37 @@ import tk.therealsuji.vtopchennai.models.CumulativeMark;
 import tk.therealsuji.vtopchennai.widgets.PerformanceCard;
 
 public class PerformanceFragment extends Fragment {
+    AppBarLayout appBarLayout;
+    ViewPager2 marks;
+    View performanceCards;
 
     public PerformanceFragment() {
         // Required empty public constructor
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    private void displayEmptyState(int type, String message) {
+        this.marks.setAdapter(new EmptyStateAdapter(type, message));
+        this.marks.getChildAt(0).setOverScrollMode(View.OVER_SCROLL_NEVER);
+
+        // Disable app bar scrolling behaviour
+        CoordinatorLayout.LayoutParams layoutParams = (CoordinatorLayout.LayoutParams) this.appBarLayout.getLayoutParams();
+        AppBarLayout.Behavior behavior = (AppBarLayout.Behavior) layoutParams.getBehavior();
+        Objects.requireNonNull(behavior).setDragCallback(new AppBarLayout.Behavior.DragCallback() {
+            @Override
+            public boolean canDrag(@androidx.annotation.NonNull AppBarLayout appBarLayout) {
+                return false;
+            }
+        });
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View performanceFragment = inflater.inflate(R.layout.fragment_performance, container, false);
 
-        AppBarLayout appBarLayout = performanceFragment.findViewById(R.id.app_bar);
+        this.appBarLayout = performanceFragment.findViewById(R.id.app_bar);
+        this.marks = performanceFragment.findViewById(R.id.view_pager_marks);
+        this.performanceCards = performanceFragment.findViewById(R.id.horizontal_scroll_view_performance_cards);
         LinearLayout header = performanceFragment.findViewById(R.id.linear_layout_header);
-        ViewPager2 marks = performanceFragment.findViewById(R.id.view_pager_marks);
 
         float pixelDensity = this.getResources().getDisplayMetrics().density;
 
@@ -59,16 +74,16 @@ public class PerformanceFragment extends Fragment {
             int systemWindowInsetRight = result.getInt("systemWindowInsetRight");
             int bottomNavigationHeight = result.getInt("bottomNavigationHeight");
 
-            appBarLayout.setPadding(
+            this.appBarLayout.setPadding(
                     systemWindowInsetLeft,
                     systemWindowInsetTop,
                     systemWindowInsetRight,
                     0
             );
 
-            marks.setPageTransformer((page, position) -> {
+            this.marks.setPageTransformer((page, position) -> {
                 int headerOffset = 0;
-                if (page.findViewById(R.id.text_view_no_data) != null) {
+                if (this.performanceCards.getVisibility() != View.VISIBLE && page.findViewById(R.id.text_view_no_data) != null) {
                     headerOffset = header.getMeasuredHeight();
                 }
 
@@ -82,7 +97,7 @@ public class PerformanceFragment extends Fragment {
             });
         });
 
-        appBarLayout.addOnOffsetChangedListener((appBarLayout1, verticalOffset) -> {
+        this.appBarLayout.addOnOffsetChangedListener((appBarLayout1, verticalOffset) -> {
             float alpha = 1 - ((float) (-1 * verticalOffset) / header.getHeight());
             header.setAlpha(alpha);
         });
@@ -104,23 +119,11 @@ public class PerformanceFragment extends Fragment {
                     @Override
                     public void onSuccess(@NonNull List<Course> courses) {
                         if (courses.size() == 0) {
-                            marks.setAdapter(new EmptyStateAdapter(EmptyStateAdapter.TYPE_PERFORMANCE));
-                            marks.getChildAt(0).setOverScrollMode(View.OVER_SCROLL_NEVER);
-
-                            // Disable app bar scrolling behaviour
-                            CoordinatorLayout.LayoutParams layoutParams = (CoordinatorLayout.LayoutParams) appBarLayout.getLayoutParams();
-                            AppBarLayout.Behavior behavior = (AppBarLayout.Behavior) layoutParams.getBehavior();
-                            Objects.requireNonNull(behavior).setDragCallback(new AppBarLayout.Behavior.DragCallback() {
-                                @Override
-                                public boolean canDrag(@androidx.annotation.NonNull AppBarLayout appBarLayout) {
-                                    return false;
-                                }
-                            });
-
+                            displayEmptyState(EmptyStateAdapter.TYPE_NO_PERFORMANCE, null);
                             return;
                         }
 
-                        performanceFragment.findViewById(R.id.horizontal_scroll_view_performance_cards).setVisibility(View.VISIBLE);
+                        performanceCards.setVisibility(View.VISIBLE);
                         courseTabs.setVisibility(View.VISIBLE);
 
                         marks.setAdapter(new MarksAdapter(courses));
@@ -210,6 +213,7 @@ public class PerformanceFragment extends Fragment {
 
                                             @Override
                                             public void onError(@NonNull Throwable e) {
+                                                Toast.makeText(getContext(), "Error: " + e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
                                             }
                                         });
                             }
@@ -218,6 +222,7 @@ public class PerformanceFragment extends Fragment {
 
                     @Override
                     public void onError(@NonNull Throwable e) {
+                        displayEmptyState(EmptyStateAdapter.TYPE_ERROR, "Error: " + e.getLocalizedMessage());
                     }
                 });
 

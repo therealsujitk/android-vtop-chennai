@@ -10,7 +10,6 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.room.rxjava3.EmptyResultSetException;
 
 import java.util.List;
 
@@ -20,6 +19,7 @@ import io.reactivex.rxjava3.core.SingleObserver;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import tk.therealsuji.vtopchennai.R;
+import tk.therealsuji.vtopchennai.adapters.EmptyStateAdapter;
 import tk.therealsuji.vtopchennai.adapters.ReceiptsItemAdapter;
 import tk.therealsuji.vtopchennai.adapters.SpotlightGroupAdapter;
 import tk.therealsuji.vtopchennai.helpers.AppDatabase;
@@ -34,7 +34,6 @@ public class RecyclerViewFragment extends Fragment {
 
     AppDatabase appDatabase;
     RecyclerView recyclerView;
-    View noData;
 
     public RecyclerViewFragment() {
         // Required empty public constructor
@@ -55,7 +54,7 @@ public class RecyclerViewFragment extends Fragment {
                     @Override
                     public void onSuccess(@NonNull List<Receipt> receipts) {
                         if (receipts.size() == 0) {
-                            displayNoData();
+                            displayEmptyState(EmptyStateAdapter.TYPE_NO_DATA, null);
                             return;
                         }
 
@@ -64,6 +63,7 @@ public class RecyclerViewFragment extends Fragment {
 
                     @Override
                     public void onError(@NonNull Throwable e) {
+                        displayEmptyState(EmptyStateAdapter.TYPE_ERROR, "Error: " + e.getLocalizedMessage());
                     }
                 });
     }
@@ -78,7 +78,7 @@ public class RecyclerViewFragment extends Fragment {
             @Override
             public void onSuccess(@NonNull List<Spotlight> spotlight) {
                 if (spotlight.size() == 0) {
-                    displayNoData();
+                    displayEmptyState(EmptyStateAdapter.TYPE_NO_DATA, null);
                     return;
                 }
 
@@ -87,16 +87,14 @@ public class RecyclerViewFragment extends Fragment {
 
             @Override
             public void onError(@NonNull Throwable e) {
-                if (e.getClass() == EmptyResultSetException.class) {
-                    displayNoData();
-                }
+                displayEmptyState(EmptyStateAdapter.TYPE_ERROR, "Error: " + e.getLocalizedMessage());
             }
         });
     }
 
-    private void displayNoData() {
-        this.recyclerView.setVisibility(View.GONE);
-        this.noData.setVisibility(View.VISIBLE);
+    private void displayEmptyState(int type, String message) {
+        this.recyclerView.setAdapter(new EmptyStateAdapter(type, message));
+        this.recyclerView.setOverScrollMode(View.OVER_SCROLL_NEVER);
     }
 
     @Override
@@ -116,7 +114,6 @@ public class RecyclerViewFragment extends Fragment {
         recyclerViewFragment.getRootView().setOnTouchListener((view, motionEvent) -> true);
 
         View header = recyclerViewFragment.findViewById(R.id.linear_layout_header);
-        this.noData = recyclerViewFragment.findViewById(R.id.text_view_no_data);
         this.recyclerView = recyclerViewFragment.findViewById(R.id.recycler_view);
         this.appDatabase = AppDatabase.getInstance(this.requireActivity().getApplicationContext());
 
@@ -132,13 +129,6 @@ public class RecyclerViewFragment extends Fragment {
                     systemWindowInsetTop,
                     systemWindowInsetRight,
                     0
-            );
-
-            this.noData.setPaddingRelative(
-                    systemWindowInsetLeft,
-                    0,
-                    systemWindowInsetRight,
-                    (int) (systemWindowInsetBottom + 30 * pixelDensity)
             );
 
             this.recyclerView.setPaddingRelative(

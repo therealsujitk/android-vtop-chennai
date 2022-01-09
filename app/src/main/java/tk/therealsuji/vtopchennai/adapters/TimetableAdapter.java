@@ -62,7 +62,7 @@ public class TimetableAdapter extends RecyclerView.Adapter<TimetableAdapter.View
                     @Override
                     public void onSuccess(@io.reactivex.rxjava3.annotations.NonNull List<Timetable.AllData> timetable) {
                         if (timetable.size() == 0) {
-                            timetableView.setAdapter(new EmptyStateAdapter(EmptyStateAdapter.TYPE_TIMETABLE));
+                            timetableView.setAdapter(new EmptyStateAdapter(EmptyStateAdapter.TYPE_NO_TIMETABLE, null));
                             return;
                         }
 
@@ -80,7 +80,7 @@ public class TimetableAdapter extends RecyclerView.Adapter<TimetableAdapter.View
 
                     @Override
                     public void onError(@io.reactivex.rxjava3.annotations.NonNull Throwable e) {
-
+                        timetableView.setAdapter(new EmptyStateAdapter(EmptyStateAdapter.TYPE_ERROR, "Error: " + e.getLocalizedMessage()));
                     }
                 });
     }

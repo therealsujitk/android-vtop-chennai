@@ -68,6 +68,7 @@ public class StaffAdapter extends RecyclerView.Adapter<StaffAdapter.ViewHolder> 
 
                     @Override
                     public void onError(@io.reactivex.rxjava3.annotations.NonNull Throwable e) {
+                        staffView.setAdapter(new EmptyStateAdapter(EmptyStateAdapter.TYPE_ERROR, "Error: " + e.getLocalizedMessage()));
                     }
                 });
     }

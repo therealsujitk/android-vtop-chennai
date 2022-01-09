@@ -13,13 +13,17 @@ import androidx.recyclerview.widget.RecyclerView;
 import tk.therealsuji.vtopchennai.R;
 
 public class EmptyStateAdapter extends RecyclerView.Adapter<EmptyStateAdapter.ViewHolder> {
-    public static final int TYPE_TIMETABLE = 1;
-    public static final int TYPE_PERFORMANCE = 2;
+    public static final int TYPE_ERROR = 1;
+    public static final int TYPE_NO_DATA = 2;
+    public static final int TYPE_NO_PERFORMANCE = 3;
+    public static final int TYPE_NO_TIMETABLE = 4;
 
     final int type;
+    final String message;
 
-    public EmptyStateAdapter(int type) {
+    public EmptyStateAdapter(int type, String message) {
         this.type = type;
+        this.message = message;
     }
 
     @NonNull
@@ -34,12 +38,25 @@ public class EmptyStateAdapter extends RecyclerView.Adapter<EmptyStateAdapter.Vi
 
     @Override
     public void onBindViewHolder(@NonNull EmptyStateAdapter.ViewHolder holder, int position) {
-        if (this.type == TYPE_TIMETABLE) {
-            holder.setImage(R.drawable.image_no_classes);
-            holder.setText(R.string.no_classes);
-        } else if (this.type == TYPE_PERFORMANCE) {
-            holder.setImage(R.drawable.image_no_marks);
-            holder.setText(R.string.no_marks);
+        switch (this.type) {
+            case TYPE_ERROR:
+                holder.setImage(R.drawable.image_error);
+                break;
+            case TYPE_NO_PERFORMANCE:
+                holder.setImage(R.drawable.image_no_marks);
+                holder.setText(R.string.no_marks);
+                break;
+            case TYPE_NO_TIMETABLE:
+                holder.setImage(R.drawable.image_no_classes);
+                holder.setText(R.string.no_classes);
+                break;
+            default:
+                holder.setImage(R.drawable.image_no_data);
+                holder.setText(R.string.no_data);
+        }
+
+        if (this.message != null) {
+            holder.setText(message);
         }
     }
 
@@ -68,6 +85,10 @@ public class EmptyStateAdapter extends RecyclerView.Adapter<EmptyStateAdapter.Vi
 
         public void setText(@StringRes int stringId) {
             this.noData.setText(stringId);
+        }
+
+        public void setText(String text) {
+            this.noData.setText(text);
         }
     }
 }

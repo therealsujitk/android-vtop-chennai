@@ -24,6 +24,7 @@ import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import tk.therealsuji.vtopchennai.R;
 import tk.therealsuji.vtopchennai.adapters.CoursesAdapter;
+import tk.therealsuji.vtopchennai.adapters.EmptyStateAdapter;
 import tk.therealsuji.vtopchennai.adapters.StaffAdapter;
 import tk.therealsuji.vtopchennai.helpers.AppDatabase;
 import tk.therealsuji.vtopchennai.interfaces.CoursesDao;
@@ -36,7 +37,6 @@ public class ViewPagerFragment extends Fragment {
     AppDatabase appDatabase;
     TabLayout tabLayout;
     ViewPager2 viewPager;
-    View noData;
 
     public ViewPagerFragment() {
         // Required empty public constructor
@@ -58,7 +58,7 @@ public class ViewPagerFragment extends Fragment {
                     @Override
                     public void onSuccess(@NonNull List<String> staffTypes) {
                         if (staffTypes.size() == 0) {
-                            displayNoData();
+                            displayEmptyState(EmptyStateAdapter.TYPE_NO_DATA, null);
                             return;
                         }
 
@@ -88,6 +88,7 @@ public class ViewPagerFragment extends Fragment {
 
                     @Override
                     public void onError(@NonNull Throwable e) {
+                        displayEmptyState(EmptyStateAdapter.TYPE_ERROR, "Error: " + e.getLocalizedMessage());
                     }
                 });
     }
@@ -108,7 +109,7 @@ public class ViewPagerFragment extends Fragment {
                     @Override
                     public void onSuccess(@NonNull List<String> courseCodes) {
                         if (courseCodes.size() == 0) {
-                            displayNoData();
+                            displayEmptyState(EmptyStateAdapter.TYPE_NO_DATA, null);
                             return;
                         }
 
@@ -138,14 +139,15 @@ public class ViewPagerFragment extends Fragment {
 
                     @Override
                     public void onError(@NonNull Throwable e) {
+                        displayEmptyState(EmptyStateAdapter.TYPE_ERROR, "Error: " + e.getLocalizedMessage());
                     }
                 });
     }
 
-    private void displayNoData() {
+    private void displayEmptyState(int type, String message) {
         this.tabLayout.setVisibility(View.GONE);
-        this.viewPager.setVisibility(View.GONE);
-        this.noData.setVisibility(View.VISIBLE);
+        this.viewPager.setAdapter(new EmptyStateAdapter(type, message));
+        this.viewPager.getChildAt(0).setOverScrollMode(View.OVER_SCROLL_NEVER);
     }
 
     @Override
@@ -165,7 +167,6 @@ public class ViewPagerFragment extends Fragment {
         viewPagerFragment.getRootView().setOnTouchListener((view, motionEvent) -> true);
 
         this.appDatabase = AppDatabase.getInstance(this.requireActivity().getApplicationContext());
-        this.noData = viewPagerFragment.findViewById(R.id.text_view_no_data);
         this.tabLayout = viewPagerFragment.findViewById(R.id.tab_layout);
         this.viewPager = viewPagerFragment.findViewById(R.id.view_pager);
 
@@ -181,13 +182,6 @@ public class ViewPagerFragment extends Fragment {
                     systemWindowInsetTop,
                     systemWindowInsetRight,
                     0
-            );
-
-            this.noData.setPaddingRelative(
-                    systemWindowInsetLeft,
-                    0,
-                    systemWindowInsetRight,
-                    (int) (systemWindowInsetBottom + 30 * pixelDensity)
             );
 
             this.viewPager.setPageTransformer((page, position) -> page.setPadding(
