@@ -26,6 +26,8 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
+import java.util.Arrays;
+
 import tk.therealsuji.vtopchennai.BuildConfig;
 import tk.therealsuji.vtopchennai.R;
 import tk.therealsuji.vtopchennai.fragments.ReCaptchaDialogFragment;
@@ -112,10 +114,18 @@ public class LoginActivity extends AppCompatActivity {
 
                 @Override
                 public void onRequestSemester(String[] semesters) {
+                    String semester = sharedPreferences.getString("semester", null);
+                    final int[] checkedItem = {Arrays.asList(semesters).indexOf(semester)};
+                    if (checkedItem[0] == -1) checkedItem[0] = 0;
+
                     semesterDialog = new MaterialAlertDialogBuilder(context)
-                            .setItems(semesters, (dialogInterface, i) -> vtopService.setSemester(semesters[i]))
+                            .setSingleChoiceItems(semesters, checkedItem[0], (dialogInterface, i) -> checkedItem[0] = i)
                             .setNegativeButton(R.string.cancel, (dialogInterface, i) -> dialogInterface.cancel())
                             .setOnCancelListener(dialogInterface -> vtopService.endService(false))
+                            .setPositiveButton(R.string.select, (dialogInterface, i) -> {
+                                vtopService.setSemester(semesters[checkedItem[0]]);
+                                sharedPreferences.edit().putString("semester", semesters[checkedItem[0]]).apply();
+                            })
                             .setTitle(R.string.select_semester)
                             .show();
                 }

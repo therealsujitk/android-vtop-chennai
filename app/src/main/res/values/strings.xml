@@ -69,6 +69,7 @@
     <string name="recaptcha">reCaptcha</string>
     <string name="verifying_human">Verifying if you are human</string>
     <string name="select_semester">Select a semester</string>
+    <string name="select">Select</string>
     <string name="sign_in_attempt">Attempting to sign you in</string>
     <string name="downloading_profile">Downloading Profile</string>
     <string name="downloading_timetable">Downloading Timetable</string>
