@@ -1165,6 +1165,7 @@ public class VTOP extends Service {
                 List<Attendance> attendance = new ArrayList<>();
 
                 float overallAttendance = 0;
+                int attendanceLength = 0;
 
                 for (int i = 0; i < attendanceArray.length(); ++i) {
                     JSONObject attendanceObject = attendanceArray.getJSONObject(i);
@@ -1183,11 +1184,17 @@ public class VTOP extends Service {
                     attendanceItem.percentage = this.getIntegerValue(attendanceObject, "percentage");
 
                     attendance.add(attendanceItem);
-                    overallAttendance += attendanceItem.percentage;
+                    if (attendanceItem.total != 0) {
+                        overallAttendance += attendanceItem.percentage;
+                        ++attendanceLength;
+                    }
                 }
 
-                overallAttendance /= attendanceArray.length();
-                sharedPreferences.edit().putInt("overall_attendance", Math.round(overallAttendance)).apply();
+                if (attendanceLength != 0) {
+                    overallAttendance /= attendanceLength;
+                }
+
+                sharedPreferences.edit().putInt("overall_attendance", (int) overallAttendance).apply();
 
                 AttendanceDao attendanceDao = appDatabase.attendanceDao();
                 attendanceDao
