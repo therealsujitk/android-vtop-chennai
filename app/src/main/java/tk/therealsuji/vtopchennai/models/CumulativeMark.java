@@ -43,7 +43,8 @@ public class CumulativeMark {
     @Ignore
     public int theoryCredits, labCredits, projectCredits;
 
-    public CumulativeMark() {
+    public CumulativeMark(int id) {
+        this.id = id;
         this.theoryCredits = 0;
         this.labCredits = 0;
         this.projectCredits = 0;

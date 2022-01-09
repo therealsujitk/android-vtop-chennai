@@ -992,6 +992,7 @@ public class VTOP extends Service {
                     Timetable lab = new Timetable();
                     Timetable theory = new Timetable();
 
+                    lab.id = i * 2 + 1;
                     lab.startTime = this.getStringValue(labObject, "start_time");
                     lab.endTime = this.getStringValue(labObject, "end_time");
                     lab.sunday = this.getSlotId(labObject.getString("sunday"), Course.TYPE_LAB);
@@ -1002,6 +1003,7 @@ public class VTOP extends Service {
                     lab.friday = this.getSlotId(labObject.getString("friday"), Course.TYPE_LAB);
                     lab.saturday = this.getSlotId(labObject.getString("saturday"), Course.TYPE_LAB);
 
+                    theory.id = i * 2 + 2;
                     theory.startTime = this.getStringValue(theoryObject, "start_time");
                     theory.endTime = this.getStringValue(theoryObject, "end_time");
                     theory.sunday = this.getSlotId(theoryObject.getString("sunday"), Course.TYPE_THEORY);
@@ -1174,6 +1176,7 @@ public class VTOP extends Service {
                         courseType = Course.TYPE_LAB;
                     }
 
+                    attendanceItem.id = i + 1;
                     attendanceItem.courseId = this.getCourseId(attendanceObject.getString("slot"), courseType);
                     attendanceItem.attended = this.getIntegerValue(attendanceObject, "attended");
                     attendanceItem.total = this.getIntegerValue(attendanceObject, "total");
@@ -1323,7 +1326,7 @@ public class VTOP extends Service {
 
                 this.cumulativeMarks = new HashMap<>();
 
-                for (int i = 0; i < marksArray.length(); ++i) {
+                for (int i = 0, j = 0; i < marksArray.length(); ++i) {
                     JSONObject markObject = marksArray.getJSONObject(i);
                     Mark mark = new Mark();
 
@@ -1335,6 +1338,7 @@ public class VTOP extends Service {
                         courseType = Course.TYPE_PROJECT;
                     }
 
+                    mark.id = i + 1;
                     mark.courseId = this.getCourseId(markObject.getString("slot"), courseType);
                     mark.title = this.getStringValue(markObject, "title");
                     mark.score = this.getDoubleValue(markObject, "score");
@@ -1348,7 +1352,7 @@ public class VTOP extends Service {
                     Integer courseCredits = this.getCourseCredits(mark.courseId, courseType);
 
                     if (!this.cumulativeMarks.containsKey(courseCode)) {
-                        this.cumulativeMarks.put(courseCode, new CumulativeMark());
+                        this.cumulativeMarks.put(courseCode, new CumulativeMark(++j));
                     }
 
                     Objects.requireNonNull(this.cumulativeMarks.get(courseCode)).courseCode = courseCode;
@@ -1595,6 +1599,7 @@ public class VTOP extends Service {
                     JSONObject proctorObject = proctorArray.getJSONObject(i);
                     Staff staffItem = new Staff();
 
+                    staffItem.id = i + 1;
                     staffItem.type = "proctor";
                     staffItem.key = this.getStringValue(proctorObject, "key");
                     staffItem.value = this.getStringValue(proctorObject, "value");
@@ -1629,7 +1634,7 @@ public class VTOP extends Service {
 
                             @Override
                             public void onComplete() {
-                                downloadDeanHOD();
+                                downloadDeanHOD(staff.size());
                             }
                         });
             } catch (Exception e) {
@@ -1641,7 +1646,7 @@ public class VTOP extends Service {
     /**
      * Function to download the HOD & Dean info. (2 / 2 - Staff info)
      */
-    public void downloadDeanHOD() {
+    public void downloadDeanHOD(final int lastIndex) {
         updateProgress(null);
         /*
          *  JSON response format
@@ -1697,6 +1702,7 @@ public class VTOP extends Service {
                 JSONObject response = new JSONObject(responseString);
                 Iterator<String> keys = response.keys();
                 List<Staff> staff = new ArrayList<>();
+                int index = lastIndex;
 
                 while (keys.hasNext()) {
                     String staffType = keys.next();
@@ -1706,12 +1712,15 @@ public class VTOP extends Service {
                         staffType = "dean";
                     } else if (staffType.contains("hod")) {
                         staffType = "hod";
+                    } else {
+                        staffType = staffType.toLowerCase();
                     }
 
                     for (int i = 0; i < staffArray.length(); ++i) {
                         JSONObject staffObject = staffArray.getJSONObject(i);
                         Staff staffItem = new Staff();
 
+                        staffItem.id = ++index;
                         staffItem.type = staffType;
                         staffItem.key = this.getStringValue(staffObject, "key");
                         staffItem.value = this.getStringValue(staffObject, "value");
@@ -1820,6 +1829,7 @@ public class VTOP extends Service {
                     JSONObject spotlightObject = spotlightArray.getJSONObject(i);
                     Spotlight spotlightItem = new Spotlight();
 
+                    spotlightItem.id = i + 1;
                     spotlightItem.announcement = this.getStringValue(spotlightObject, "announcement");
                     spotlightItem.category = this.getStringValue(spotlightObject, "category");
                     spotlightItem.link = this.getStringValue(spotlightObject, "link");
