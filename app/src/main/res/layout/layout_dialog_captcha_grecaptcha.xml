@@ -1,43 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/relative_layout_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?attr/colorPrimaryContainer"
-    android:padding="20dp">
+    android:fitsSystemWindows="true">
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
+        android:layout_margin="20dp"
         android:gravity="center_horizontal"
         android:orientation="vertical"
         tools:ignore="UselessParent">
 
-        <LinearLayout
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
             android:layout_marginBottom="10dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_marginEnd="10dp"
-                android:contentDescription="@string/recaptcha"
-                android:scaleType="fitCenter"
-                android:src="@drawable/ic_grecaptcha" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:text="@string/recaptcha"
-                android:textSize="20sp"
-                android:textStyle="bold" />
-        </LinearLayout>
+            android:drawablePadding="10dp"
+            android:gravity="center"
+            android:text="@string/recaptcha"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:drawableStartCompat="@drawable/ic_grecaptcha" />
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -54,6 +44,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:text="@string/verifying_human"
+                android:textAlignment="center"
                 android:textSize="20sp"
                 android:textStyle="bold" />
         </LinearLayout>

@@ -15,6 +15,7 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.InsetDrawable;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -133,6 +134,16 @@ public class VTOPHelper {
                         captchaDialog.setCanceledOnTouchOutside(false);
                         captchaDialog.show();
                     } else {
+                        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+
+                        float pixelDensity = displayMetrics.density;
+                        float width = displayMetrics.widthPixels;
+                        float scale = (width / pixelDensity - 80) / 300;
+
+                        if (scale > 1) {
+                            scale = 1;
+                        }
+
                         webView.evaluateJavascript("(function() {" +
                                 "var body = document.getElementsByTagName('body')[0];" +
                                 "body.style.backgroundColor = 'transparent';" +
@@ -144,12 +155,12 @@ public class VTOPHelper {
                                 "    var children = document.getElementsByTagName('body')[0].children;" +
                                 "    var captcha = children[children.length - 1];" +
                                 "    if (captcha.children[0] != undefined && captcha.children[1] != undefined) {" +
-                                "        captcha.children[0].style.display = 'none';" +
-                                "        captcha.children[1].style.transform = 'scale(" + 1 + ")';" +
-                                "        captcha.children[1].style.transformOrigin = '0 0';" +
                                 "        clearInterval(captchaInterval);" +
+                                "        captcha.children[0].style.display = 'none';" +
+                                "        captcha.children[1].style.transform = 'scale(" + scale + ")';" +
+                                "        captcha.children[1].style.transformOrigin = '0 0';" +
                                 "    }" +
-                                "}, 500);" +
+                                "}, 200);" +
                                 "})();", value -> {
                             reCaptchaDialogFragment = new ReCaptchaDialogFragment(webView, () -> {
                                 try {
@@ -299,6 +310,7 @@ public class VTOPHelper {
         @Override
         public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
             View dialogFragment = inflater.inflate(R.layout.layout_dialog_captcha_grecaptcha, container, false);
+            float pixelDensity = this.getResources().getDisplayMetrics().density;
 
             ViewGroup webViewParent = (ViewGroup) webView.getParent();
             if (webViewParent != null) {
@@ -306,10 +318,16 @@ public class VTOPHelper {
             }
 
             RelativeLayout.LayoutParams webViewParams = new RelativeLayout.LayoutParams(
-                    RelativeLayout.LayoutParams.WRAP_CONTENT,
-                    RelativeLayout.LayoutParams.WRAP_CONTENT
+                    RelativeLayout.LayoutParams.MATCH_PARENT,
+                    RelativeLayout.LayoutParams.MATCH_PARENT
             );
             webViewParams.addRule(RelativeLayout.CENTER_IN_PARENT);
+            webViewParams.setMargins(
+                    (int) (40 * pixelDensity),
+                    (int) (40 * pixelDensity),
+                    (int) (40 * pixelDensity),
+                    (int) (40 * pixelDensity)
+            );
 
             webView.setLayoutParams(webViewParams);
             ((RelativeLayout) dialogFragment.findViewById(R.id.relative_layout_container)).addView(webView);

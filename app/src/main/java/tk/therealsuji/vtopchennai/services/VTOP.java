@@ -397,11 +397,11 @@ public class VTOP extends Service {
                 "}" +
                 "(function() {" +
                 "var executeInterval = setInterval(function () {" +
-                "    if (grecaptcha != undefined) {" +
-                "        grecaptcha.execute();" +
+                "    if (typeof grecaptcha != 'undefined') {" +
                 "        clearInterval(executeInterval);" +
+                "        grecaptcha.execute();" +
                 "    }" +
-                "}, 500);" +
+                "}, 1000);" +
                 "})();", value -> {
         });
     }
@@ -432,6 +432,8 @@ public class VTOP extends Service {
                      *  }
                      */
                     webView.evaluateJavascript("(function() {" +
+                            "if (typeof captchaInterval != 'undefined') clearInterval(captchaInterval);" +
+                            "if (typeof executeInterval != 'undefined') clearInterval(executeInterval);" +
                             "var credentials = 'uname=" + username + "&passwd=' + encodeURIComponent('" + password + "') + '&" + captcha + "';" +
                             "var response = {" +
                             "    authorised: false," +
