@@ -15,10 +15,10 @@ import tk.therealsuji.vtopchennai.R;
 import tk.therealsuji.vtopchennai.fragments.ProfileFragment;
 
 public class ProfileItemAdapter extends RecyclerView.Adapter<ProfileItemAdapter.ViewHolder> {
-    int profileGroupIndex;
+    ProfileFragment.ItemData[] profileItems;
 
-    public ProfileItemAdapter(int profileGroupIndex) {
-        this.profileGroupIndex = profileGroupIndex;
+    public ProfileItemAdapter(ProfileFragment.ItemData[] profileItems) {
+        this.profileItems = profileItems;
     }
 
     @NonNull
@@ -33,12 +33,12 @@ public class ProfileItemAdapter extends RecyclerView.Adapter<ProfileItemAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull ProfileItemAdapter.ViewHolder holder, int position) {
-        holder.setProfileItem(ProfileFragment.PROFILE_ITEMS[profileGroupIndex][position]);
+        holder.setProfileItem(this.profileItems[position]);
     }
 
     @Override
     public int getItemCount() {
-        return ProfileFragment.PROFILE_ITEMS[profileGroupIndex].length;
+        return this.profileItems.length;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -56,6 +56,10 @@ public class ProfileItemAdapter extends RecyclerView.Adapter<ProfileItemAdapter.
             icon.setImageDrawable(ContextCompat.getDrawable(this.profileItem.getContext(), profileItem.iconId));
             title.setText(profileItem.titleId);
             this.profileItem.setOnClickListener(view -> profileItem.onClickListener.onClick(this.profileItem.getContext()));
+
+            if (profileItem.onInitListener != null) {
+                profileItem.onInitListener.onInit(this.profileItem);
+            }
         }
     }
 }

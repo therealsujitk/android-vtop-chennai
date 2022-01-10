@@ -32,10 +32,9 @@
         android:textSize="18sp" />
 
     <RelativeLayout
-        android:id="@+id/relative_layout_extras"
+        android:id="@+id/relative_layout_extra_container"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="30dp"
         android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
-        android:visibility="gone" />
+        android:layout_marginEnd="10dp" />
 </LinearLayout>

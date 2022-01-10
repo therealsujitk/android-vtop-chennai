@@ -33,5 +33,7 @@ dependencies {
 
     implementation 'io.reactivex.rxjava3:rxandroid:3.0.0'
 
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.8.1'
+
     annotationProcessor 'androidx.room:room-compiler:2.4.0'
 }

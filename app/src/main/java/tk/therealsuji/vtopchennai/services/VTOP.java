@@ -106,7 +106,7 @@ public class VTOP extends Service {
         NotificationHelper notificationHelper = new NotificationHelper(getApplicationContext());
         this.notificationManager = notificationHelper.getManager();
 
-        this.notification = notificationHelper.notifyDownload(null, null);
+        this.notification = notificationHelper.notifySync(null, null);
         this.notification.addAction(R.drawable.ic_close, getString(R.string.cancel), endServicePendingIntent);
         this.notification.setOngoing(true);
         this.notification.setProgress(0, 0, true);
@@ -126,7 +126,7 @@ public class VTOP extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent.getAction() != null && intent.getAction().equals(END_SERVICE_ACTION)) {
-            this.endService(false);
+            this.endService(true);
             this.notificationManager.cancel(SettingsRepository.NOTIFICATION_ID_VTOP_DOWNLOAD);  // In case the notification isn't removed for some reason
         } else {
             this.startForeground(SettingsRepository.NOTIFICATION_ID_VTOP_DOWNLOAD, this.notification.build());
@@ -166,7 +166,7 @@ public class VTOP extends Service {
                 if (!isOpened) {
                     if (counter >= 30) {
                         error(101);
-                        endService(false);
+                        endService(true);
                         return;
                     }
 
@@ -199,11 +199,10 @@ public class VTOP extends Service {
     /**
      * Function to terminate the download
      *
-     * @param check If check is true, it will check if the service can continue
-     *              after the activity has been destroyed, if not it'll end the service.
+     * @param force If force is true, it will end the service no matter what
      */
-    public void endService(boolean check) {
-        if (check && this.progress != -1) {
+    public void endService(boolean force) {
+        if (!force && this.progress != -1) {
             return;
         }
 
@@ -211,8 +210,9 @@ public class VTOP extends Service {
         stopSelf();
         stopForeground(true);
 
-        if (this.callback != null) {
+        try {
             this.callback.onServiceEnd();
+        } catch (Exception ignored) {
         }
     }
 
@@ -365,10 +365,10 @@ public class VTOP extends Service {
                 byte[] decodedString = Base64.decode(base64Captcha, Base64.DEFAULT);
                 Bitmap decodedImage = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
 
-                if (this.callback != null) {
+                try {
                     this.callback.onRequestCaptcha(CAPTCHA_DEFAULT, decodedImage, null);
-                } else {
-                    this.endService(false);
+                } catch (Exception ignored) {
+                    this.endService(true);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -382,10 +382,10 @@ public class VTOP extends Service {
      * Function to override the default onSubmit function and execute the captcha.
      */
     private void executeCaptcha() {
-        if (this.callback != null) {
+        try {
             this.callback.onRequestCaptcha(CAPTCHA_GRECATPCHA, null, this.webView);
-        } else {
-            this.endService(false);
+        } catch (Exception ignored) {
+            this.endService(true);
             return;
         }
 
@@ -413,8 +413,9 @@ public class VTOP extends Service {
     public void signIn(final String captcha) {
         new Handler(getApplicationContext().getMainLooper())
                 .post(() -> {
-                    if (callback != null) {
+                    try {
                         callback.onCaptchaComplete();
+                    } catch (Exception ignored) {
                     }
 
                     ViewGroup webViewParent = (ViewGroup) webView.getParent();
@@ -485,7 +486,7 @@ public class VTOP extends Service {
                                 if (errorCode == 1) {
                                     getCaptchaType();
                                 } else {
-                                    endService(false);
+                                    this.endService(true);
                                 }
                             }
                         } catch (Exception e) {
@@ -555,11 +556,11 @@ public class VTOP extends Service {
                     this.semesters.put(semesterObject.getString("name"), semesterObject.getString("id"));
                 }
 
-                if (this.callback != null) {
+                try {
                     String[] semesters = this.semesters.keySet().toArray(new String[0]);
                     this.callback.onRequestSemester(semesters);
-                } else {
-                    this.endService(false);
+                } catch (Exception ignored) {
+                    this.endService(true);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -2056,11 +2057,12 @@ public class VTOP extends Service {
         this.sharedPreferences.edit().putString("refreshedDate", date.format(c.getTime())).apply();
         this.sharedPreferences.edit().putString("refreshedTime", time.format(c.getTime())).apply();
 
-        if (this.callback != null) {
+        try {
             this.callback.onComplete();
+        } catch (Exception ignored) {
         }
 
-        this.endService(false);
+        this.endService(true);
     }
 
     /**

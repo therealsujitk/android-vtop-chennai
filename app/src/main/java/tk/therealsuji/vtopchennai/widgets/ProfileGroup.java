@@ -13,13 +13,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import tk.therealsuji.vtopchennai.R;
 import tk.therealsuji.vtopchennai.adapters.ProfileItemAdapter;
+import tk.therealsuji.vtopchennai.fragments.ProfileFragment;
 
 public class ProfileGroup extends LinearLayout {
-    public static final int[] PROFILE_GROUPS = {
-            R.string.personal,
-            R.string.application
-    };
-
     AppCompatTextView title;
     RecyclerView profileItemsView;
 
@@ -72,9 +68,9 @@ public class ProfileGroup extends LinearLayout {
         this.setOrientation(VERTICAL);
     }
 
-    public void initializeProfileGroup(int profileGroupIndex) {
-        String title = this.getContext().getString(PROFILE_GROUPS[profileGroupIndex]);
+    public void initializeProfileGroup(int profileGroup, ProfileFragment.ItemData[] profileItems) {
+        String title = this.getContext().getString(profileGroup);
         this.title.setText(title);
-        this.profileItemsView.setAdapter(new ProfileItemAdapter(profileGroupIndex));
+        this.profileItemsView.setAdapter(new ProfileItemAdapter(profileItems));
     }
 }

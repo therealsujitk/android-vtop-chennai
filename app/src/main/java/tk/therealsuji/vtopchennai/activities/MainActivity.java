@@ -1,5 +1,6 @@
 package tk.therealsuji.vtopchennai.activities;
 
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
@@ -20,9 +21,11 @@ import tk.therealsuji.vtopchennai.fragments.AssignmentsFragment;
 import tk.therealsuji.vtopchennai.fragments.HomeFragment;
 import tk.therealsuji.vtopchennai.fragments.PerformanceFragment;
 import tk.therealsuji.vtopchennai.fragments.ProfileFragment;
+import tk.therealsuji.vtopchennai.helpers.VTOPHelper;
 
 public class MainActivity extends AppCompatActivity {
     BottomNavigationView bottomNavigationView;
+    VTOPHelper vtopHelper;
 
     static final String HOME_FRAGMENT_TAG = "HOME_FRAGMENT_TAG";
     static final String PERFORMANCE_FRAGMENT_TAG = "PERFORMANCE_FRAGMENT_TAG";
@@ -42,7 +45,12 @@ public class MainActivity extends AppCompatActivity {
         return this.requestPermissionLauncher;
     }
 
-    public void hideBottomNavigationView() {
+    private void syncData() {
+        vtopHelper.bind();
+        vtopHelper.start();
+    }
+
+    private void hideBottomNavigationView() {
         this.bottomNavigationView.clearAnimation();
         this.bottomNavigationView.post(() -> this.bottomNavigationView.animate().translationY(bottomNavigationView.getMeasuredHeight()));
 
@@ -57,11 +65,18 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void showBottomNavigationView() {
+    private void showBottomNavigationView() {
         this.bottomNavigationView.clearAnimation();
         this.bottomNavigationView.post(() -> this.bottomNavigationView.animate().translationY(0));
 
         this.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+    }
+
+    private void restartActivity() {
+        Intent intent = new Intent(this, this.getClass());
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
     }
 
     @Override
@@ -111,6 +126,10 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        Bundle syncDataState = new Bundle();
+        syncDataState.putBoolean("isLoading", false);
+        getSupportFragmentManager().setFragmentResultListener("syncData", this, (requestKey, result) -> this.syncData());
+
         this.bottomNavigationView.setOnItemSelectedListener(item -> {
             Fragment selectedFragment;
             String selectedFragmentTag;
@@ -130,6 +149,8 @@ public class MainActivity extends AppCompatActivity {
                     selectedFragment = new AssignmentsFragment();
                 }
             } else if (item.getItemId() == R.id.item_profile) {
+                getSupportFragmentManager().setFragmentResult("syncDataState", syncDataState);
+
                 selectedFragmentTag = PROFILE_FRAGMENT_TAG;
                 selectedFragment = getSupportFragmentManager().findFragmentByTag(selectedFragmentTag);
 
@@ -159,6 +180,18 @@ public class MainActivity extends AppCompatActivity {
         }
 
         this.bottomNavigationView.setSelectedItemId(selectedItem);
+        this.vtopHelper = new VTOPHelper(this, new VTOPHelper.Initiator() {
+            @Override
+            public void onLoading(boolean isLoading) {
+                syncDataState.putBoolean("isLoading", isLoading);
+                getSupportFragmentManager().setFragmentResult("syncDataState", syncDataState);
+            }
+
+            @Override
+            public void onComplete() {
+                restartActivity();
+            }
+        });
     }
 
     @Override
@@ -174,5 +207,17 @@ public class MainActivity extends AppCompatActivity {
         if (this.bottomNavigationView.getTranslationY() != 0) {
             this.hideBottomNavigationView();
         }
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        this.vtopHelper.bind();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        this.vtopHelper.unbind();
     }
 }

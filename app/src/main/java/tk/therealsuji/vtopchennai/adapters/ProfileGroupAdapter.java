@@ -4,11 +4,20 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.StringRes;
 import androidx.recyclerview.widget.RecyclerView;
 
+import tk.therealsuji.vtopchennai.fragments.ProfileFragment;
 import tk.therealsuji.vtopchennai.widgets.ProfileGroup;
 
 public class ProfileGroupAdapter extends RecyclerView.Adapter<ProfileGroupAdapter.ViewHolder> {
+    int[] profileGroups;
+    ProfileFragment.ItemData[][] profileItems;
+
+    public ProfileGroupAdapter(int[] profileGroups, ProfileFragment.ItemData[][] profileItems) {
+        this.profileGroups = profileGroups;
+        this.profileItems = profileItems;
+    }
 
     @NonNull
     @Override
@@ -19,12 +28,12 @@ public class ProfileGroupAdapter extends RecyclerView.Adapter<ProfileGroupAdapte
 
     @Override
     public void onBindViewHolder(@NonNull ProfileGroupAdapter.ViewHolder holder, int position) {
-        holder.initializeProfileGroup(position);
+        holder.initializeProfileGroup(this.profileGroups[position], this.profileItems[position]);
     }
 
     @Override
     public int getItemCount() {
-        return ProfileGroup.PROFILE_GROUPS.length;
+        return this.profileGroups.length;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -35,8 +44,8 @@ public class ProfileGroupAdapter extends RecyclerView.Adapter<ProfileGroupAdapte
             this.profileGroup = (ProfileGroup) itemView;
         }
 
-        public void initializeProfileGroup(int profileGroupIndex) {
-            this.profileGroup.initializeProfileGroup(profileGroupIndex);
+        public void initializeProfileGroup(@StringRes int profileGroup, ProfileFragment.ItemData[] profileItems) {
+            this.profileGroup.initializeProfileGroup(profileGroup, profileItems);
         }
     }
 }

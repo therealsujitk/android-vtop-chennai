@@ -81,14 +81,14 @@ public class NotificationHelper extends ContextWrapper {
         return manager;
     }
 
-    public NotificationCompat.Builder notifyDownload(String title, String message) {
+    public NotificationCompat.Builder notifySync(String title, String message) {
         int colorPrimary = MaterialColors.getColor(this, R.attr.colorPrimary, 0);
 
         return new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID_APPLICATION)
                 .setColor(colorPrimary)
                 .setContentText(message)
                 .setContentTitle(title)
-                .setSmallIcon(R.drawable.ic_refresh)
+                .setSmallIcon(R.drawable.ic_sync)
                 .setVisibility(NotificationCompat.VISIBILITY_PRIVATE);
     }
 
