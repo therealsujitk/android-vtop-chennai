@@ -8,6 +8,11 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.ColorMatrixColorFilter;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.InsetDrawable;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.view.LayoutInflater;
@@ -27,9 +32,13 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.google.android.material.color.MaterialColors;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.elevation.ElevationOverlayProvider;
+import com.google.android.material.shape.MaterialShapeDrawable;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 import tk.therealsuji.vtopchennai.R;
 import tk.therealsuji.vtopchennai.services.VTOP;
@@ -78,6 +87,48 @@ public class VTOPHelper {
                                 })
                                 .setView(captchaLayout)
                                 .create();
+
+                        Drawable background = captchaDialog.getWindow().getDecorView().getBackground();
+                        if (background instanceof InsetDrawable) {
+                            background = ((InsetDrawable) background).getDrawable();
+
+                            if (background instanceof MaterialShapeDrawable && ((MaterialShapeDrawable) background).getFillColor() != null) {
+                                // Getting the color and elevation of the dialog background
+                                int backgroundColor = Objects.requireNonNull(((MaterialShapeDrawable) background).getFillColor()).getDefaultColor();
+                                float backgroundElevation = ((MaterialShapeDrawable) background).getElevation();
+                                float[] colorMatrix = {
+                                        0, 0, 0, 0, 255,    // red
+                                        0, 0, 0, 0, 255,    // green
+                                        0, 0, 0, 0, 255,    // blue
+                                        0, 0, 0, 1, 0,      // alpha
+                                };
+
+                                // Updating the color matrix based on the application theme
+                                int appearance = SettingsRepository.getTheme(context);
+                                if (appearance == SettingsRepository.THEME_NIGHT || appearance == SettingsRepository.THEME_SYSTEM_NIGHT) {
+                                    colorMatrix[0] = (Color.red(backgroundColor) - 255f) / 255f;
+                                    colorMatrix[6] = (Color.green(backgroundColor) - 255f) / 255f;
+                                    colorMatrix[12] = (Color.blue(backgroundColor) - 255f) / 255f;
+                                } else {
+                                    colorMatrix[0] = Color.red(backgroundColor) / 255f;
+                                    colorMatrix[6] = Color.green(backgroundColor) / 255f;
+                                    colorMatrix[12] = Color.blue(backgroundColor) / 255f;
+
+                                    colorMatrix[4] = 0;
+                                    colorMatrix[9] = 0;
+                                    colorMatrix[14] = 0;
+                                }
+
+                                // Setting the alpha value for the captcha overlay
+                                int elevationOverlayColor = MaterialColors.getColor(context, R.attr.elevationOverlayColor, 0);
+                                ColorDrawable overlay = new ColorDrawable(elevationOverlayColor);
+                                overlay.setAlpha(new ElevationOverlayProvider(context).calculateOverlayAlpha(backgroundElevation));
+
+                                // Updating the captcha image colors and adding the overlay
+                                captchaImage.setColorFilter(new ColorMatrixColorFilter(colorMatrix));
+                                captchaImage.setForeground(overlay);
+                            }
+                        }
 
                         captchaDialog.setCanceledOnTouchOutside(false);
                         captchaDialog.show();
