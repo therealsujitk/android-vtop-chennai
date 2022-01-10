@@ -3,7 +3,6 @@ package tk.therealsuji.vtopchennai.adapters;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.os.Handler;
 import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +18,7 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.badoo.mobile.util.WeakHandler;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.chip.Chip;
 
@@ -196,7 +196,7 @@ public class TimetableItemAdapter extends RecyclerView.Adapter<TimetableItemAdap
                                 long durationPending = startTimeDate.getTime() - now.getTime();
 
                                 this.setMaxClassProgress(duration);
-                                new Handler().postDelayed(() -> this.setClassProgressPending(duration), durationPending);
+                                new WeakHandler().postDelayed(() -> this.setClassProgressPending(duration), durationPending);
                             }
                         }
                     }
