@@ -1277,7 +1277,8 @@ public class VTOP extends Service {
                 "            }" +
                 "        }" +
                 "        for (var i = 1; i < rows.length; ++i) {" +
-                "            var courseType = rows[i].getElementsByTagName('td')[courseTypeIndex].innerText.trim();" +
+                "            var rawCourseType = rows[i].getElementsByTagName('td')[courseTypeIndex].innerText.trim().toLowerCase();" +
+                "            var courseType = (rawCourseType.includes('lab')) ? 'lab' : ((rawCourseType.includes('project')) ? 'project' : 'theory');" +
                 "            var slot = rows[i++].getElementsByTagName('td')[slotIndex].innerText.split('+')[0].trim();" +
                 "            var innerTable = rows[i].getElementsByTagName('table')[0];" +
                 "            var innerRows = innerTable.getElementsByTagName('tr');" +
@@ -1331,7 +1332,7 @@ public class VTOP extends Service {
             try {
                 JSONObject response = new JSONObject(responseString);
                 JSONArray marksArray = response.getJSONArray("marks");
-                List<Mark> marks = new ArrayList<>();
+                Map<Integer, Mark> marks = new HashMap<>();
 
                 this.cumulativeMarks = new HashMap<>();
 
@@ -1341,9 +1342,9 @@ public class VTOP extends Service {
 
                     int courseType = Course.TYPE_THEORY;
 
-                    if (markObject.getString("course_type").toLowerCase().contains("lab")) {
+                    if (markObject.getString("course_type").equals("lab")) {
                         courseType = Course.TYPE_LAB;
-                    } else if (markObject.getString("course_type").toLowerCase().contains("project")) {
+                    } else if (markObject.getString("course_type").equals("project")) {
                         courseType = Course.TYPE_PROJECT;
                     }
 
@@ -1367,7 +1368,9 @@ public class VTOP extends Service {
                     Objects.requireNonNull(this.cumulativeMarks.get(courseCode)).courseCode = courseCode;
                     Objects.requireNonNull(this.cumulativeMarks.get(courseCode)).addWeightage(mark.weightage, mark.maxWeightage, courseType, courseCredits);
 
-                    marks.add(mark);
+                    // Generating a unique hash signature to keep a track of read marks
+                    mark.signature = (courseCode + markObject.getString("course_type") + mark.title + mark.score).hashCode();
+                    marks.put(mark.signature, mark);
                 }
 
                 for (Map.Entry<String, CumulativeMark> cumulativeMark : this.cumulativeMarks.entrySet()) {
@@ -1408,8 +1411,7 @@ public class VTOP extends Service {
                     Objects.requireNonNull(this.cumulativeMarks.get(cumulativeMark.getKey())).grandMax = grandMax;
                 }
 
-                MarksDao marksDao = appDatabase.marksDao();
-                marksDao
+                appDatabase.marksDao()
                         .insertMarks(marks)
                         .subscribeOn(Schedulers.single())
                         .observeOn(AndroidSchedulers.mainThread())
@@ -1520,7 +1522,7 @@ public class VTOP extends Service {
                 List<CumulativeMark> cumulativeMarks = new ArrayList<>(this.cumulativeMarks.values());
                 MarksDao marksDao = this.appDatabase.marksDao();
 
-                Observable<Object> deleteAllObservable = Observable.fromCompletable(marksDao.deleteAllCumulativeMarks());
+                Observable<Object> deleteAllObservable = Observable.fromCompletable(marksDao.deleteCumulativeMarks());
                 Observable<Object> insertCumulativeMarks = Observable.fromCompletable(marksDao.insertCumulativeMarks(cumulativeMarks));
 
                 Observable
