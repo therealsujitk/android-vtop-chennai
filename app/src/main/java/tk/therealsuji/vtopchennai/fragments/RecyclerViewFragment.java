@@ -70,26 +70,29 @@ public class RecyclerViewFragment extends Fragment {
 
     private void attachSpotlight() {
         SpotlightDao spotlightDao = this.appDatabase.spotlightDao();
-        spotlightDao.getSpotlight().subscribeOn(Schedulers.single()).subscribe(new SingleObserver<List<Spotlight>>() {
-            @Override
-            public void onSubscribe(@NonNull Disposable d) {
-            }
+        spotlightDao.get()
+                .subscribeOn(Schedulers.single())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new SingleObserver<List<Spotlight>>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+                    }
 
-            @Override
-            public void onSuccess(@NonNull List<Spotlight> spotlight) {
-                if (spotlight.size() == 0) {
-                    displayEmptyState(EmptyStateAdapter.TYPE_NO_DATA, null);
-                    return;
-                }
+                    @Override
+                    public void onSuccess(@NonNull List<Spotlight> spotlight) {
+                        if (spotlight.size() == 0) {
+                            displayEmptyState(EmptyStateAdapter.TYPE_NO_DATA, null);
+                            return;
+                        }
 
-                recyclerView.setAdapter(new SpotlightGroupAdapter(spotlight));
-            }
+                        recyclerView.setAdapter(new SpotlightGroupAdapter(spotlight));
+                    }
 
-            @Override
-            public void onError(@NonNull Throwable e) {
-                displayEmptyState(EmptyStateAdapter.TYPE_ERROR, "Error: " + e.getLocalizedMessage());
-            }
-        });
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                        displayEmptyState(EmptyStateAdapter.TYPE_ERROR, "Error: " + e.getLocalizedMessage());
+                    }
+                });
     }
 
     private void displayEmptyState(int type, String message) {
