@@ -5,14 +5,19 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.OptIn;
 import androidx.appcompat.widget.TooltipCompat;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.badge.BadgeDrawable;
+import com.google.android.material.badge.BadgeUtils;
+import com.google.android.material.badge.ExperimentalBadgeUtils;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
@@ -109,6 +114,29 @@ public class HomeFragment extends Fragment {
                 R.string.spotlight,
                 RecyclerViewFragment.TYPE_SPOTLIGHT
         ));
+
+        BadgeDrawable spotlightBadge = BadgeDrawable.create(requireContext());
+        spotlightBadge.setBadgeGravity(BadgeDrawable.TOP_END);
+        spotlightBadge.setHorizontalOffset((int) (16 * pixelDensity));
+        spotlightBadge.setVerticalOffset((int) (16 * pixelDensity));
+        spotlightBadge.setVisible(false);
+
+        spotlightButton.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @OptIn(markerClass = ExperimentalBadgeUtils.class)
+            @Override
+            public void onGlobalLayout() {
+                BadgeUtils.attachBadgeDrawable(spotlightBadge, spotlightButton);
+                spotlightButton.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+            }
+        });
+
+        getParentFragmentManager().setFragmentResultListener("unreadCount", this, (requestKey, result) -> {
+            int spotlightCount = result.getInt("spotlight");
+            spotlightBadge.setNumber(spotlightCount);
+            spotlightBadge.setVisible(spotlightCount != 0);
+        });
+
+        getParentFragmentManager().setFragmentResult("getUnreadCount", new Bundle());
 
         InfoCard attendance = homeFragment.findViewById(R.id.info_card_attendance);
         InfoCard credits = homeFragment.findViewById(R.id.info_card_credits);

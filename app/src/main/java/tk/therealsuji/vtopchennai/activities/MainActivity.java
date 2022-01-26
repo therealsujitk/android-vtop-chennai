@@ -9,18 +9,25 @@ import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.WindowCompat;
 import androidx.fragment.app.Fragment;
 
+import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.annotations.NonNull;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.core.Observer;
+import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 import tk.therealsuji.vtopchennai.R;
 import tk.therealsuji.vtopchennai.fragments.AssignmentsFragment;
 import tk.therealsuji.vtopchennai.fragments.HomeFragment;
 import tk.therealsuji.vtopchennai.fragments.PerformanceFragment;
 import tk.therealsuji.vtopchennai.fragments.ProfileFragment;
+import tk.therealsuji.vtopchennai.helpers.AppDatabase;
 import tk.therealsuji.vtopchennai.helpers.VTOPHelper;
 
 public class MainActivity extends AppCompatActivity {
@@ -79,6 +86,42 @@ public class MainActivity extends AppCompatActivity {
         finish();
     }
 
+    private void getUnreadCount() {
+        AppDatabase appDatabase = AppDatabase.getInstance(this.getApplicationContext());
+        Bundle unreadCount = new Bundle();
+
+        Observable.fromSingle(appDatabase.spotlightDao().getUnreadCount())
+                .subscribeOn(Schedulers.single())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<Integer>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+                    }
+
+                    @Override
+                    public void onNext(@NonNull Integer count) {
+                        if (!unreadCount.containsKey("spotlight")) {
+                            unreadCount.putInt("spotlight", count);
+                        }
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        getSupportFragmentManager().setFragmentResult("unreadCount", unreadCount);
+
+                        int homeCount = unreadCount.getInt("spotlight");
+                        BadgeDrawable homeBadge = bottomNavigationView.getOrCreateBadge(R.id.item_home);
+
+                        homeBadge.setNumber(homeCount);
+                        homeBadge.setVisible(homeCount != 0);
+                    }
+                });
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -129,6 +172,7 @@ public class MainActivity extends AppCompatActivity {
         Bundle syncDataState = new Bundle();
         syncDataState.putBoolean("isLoading", false);
         getSupportFragmentManager().setFragmentResultListener("syncData", this, (requestKey, result) -> this.syncData());
+        getSupportFragmentManager().setFragmentResultListener("getUnreadCount", this, (requestKey, result) -> this.getUnreadCount());
 
         this.bottomNavigationView.setOnItemSelectedListener(item -> {
             Fragment selectedFragment;
@@ -195,13 +239,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onSaveInstanceState(@NonNull Bundle outState) {
+    protected void onSaveInstanceState(@androidx.annotation.NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt("selectedItem", this.bottomNavigationView.getSelectedItemId());
     }
 
     @Override
-    public void onConfigurationChanged(@NonNull Configuration newConfig) {
+    public void onConfigurationChanged(@androidx.annotation.NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
 
         if (this.bottomNavigationView.getTranslationY() != 0) {

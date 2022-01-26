@@ -38,6 +38,9 @@ public interface SpotlightDao {
     @Query("SELECT id, signature FROM spotlight WHERE is_read IS 1")
     Single<List<Spotlight>> getRead();
 
-    @Query("SELECT id, announcement, category, link FROM spotlight")
+    @Query("SELECT COUNT(id) FROM spotlight WHERE is_read IS 0")
+    Single<Integer> getUnreadCount();
+
+    @Query("SELECT id, announcement, category, link, is_read FROM spotlight")
     Single<List<Spotlight>> get();
 }
