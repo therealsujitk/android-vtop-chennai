@@ -52,6 +52,9 @@ public interface MarksDao {
     @Query("SELECT id, is_read, signature FROM marks WHERE is_read IS 1")
     Single<List<Mark>> getReadMarks();
 
+    @Query("SELECT COUNT(id) FROM marks WHERE is_read IS 0")
+    Single<Integer> getUnreadMarksCount();
+
     @Query("SELECT type AS courseType, marks.title AS title, score, max_score AS maxScore, weightage, max_weightage AS maxWeightage, average, status " +
             "FROM marks, courses " +
             "WHERE course_id = courses.id AND code = :courseCode " +

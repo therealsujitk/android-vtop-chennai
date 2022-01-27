@@ -90,7 +90,10 @@ public class MainActivity extends AppCompatActivity {
         AppDatabase appDatabase = AppDatabase.getInstance(this.getApplicationContext());
         Bundle unreadCount = new Bundle();
 
-        Observable.fromSingle(appDatabase.spotlightDao().getUnreadCount())
+        Observable.concat(
+                Observable.fromSingle(appDatabase.spotlightDao().getUnreadCount()),
+                Observable.fromSingle(appDatabase.marksDao().getUnreadMarksCount())
+        )
                 .subscribeOn(Schedulers.single())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<Integer>() {
@@ -102,6 +105,8 @@ public class MainActivity extends AppCompatActivity {
                     public void onNext(@NonNull Integer count) {
                         if (!unreadCount.containsKey("spotlight")) {
                             unreadCount.putInt("spotlight", count);
+                        } else if (!unreadCount.containsKey("marks")) {
+                            unreadCount.putInt("marks", count);
                         }
                     }
 
@@ -111,13 +116,19 @@ public class MainActivity extends AppCompatActivity {
 
                     @Override
                     public void onComplete() {
-                        getSupportFragmentManager().setFragmentResult("unreadCount", unreadCount);
-
                         int homeCount = unreadCount.getInt("spotlight");
+                        int performanceCount = unreadCount.getInt("marks");
+
                         BadgeDrawable homeBadge = bottomNavigationView.getOrCreateBadge(R.id.item_home);
+                        BadgeDrawable performanceBadge = bottomNavigationView.getOrCreateBadge(R.id.item_performance);
 
                         homeBadge.setNumber(homeCount);
                         homeBadge.setVisible(homeCount != 0);
+
+                        performanceBadge.setNumber(performanceCount);
+                        performanceBadge.setVisible(performanceCount != 0);
+
+                        getSupportFragmentManager().setFragmentResult("unreadCount", unreadCount);
                     }
                 });
     }
