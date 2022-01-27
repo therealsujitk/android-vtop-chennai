@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
@@ -107,17 +108,16 @@ public class PerformanceFragment extends Fragment {
         AppDatabase appDatabase = AppDatabase.getInstance(requireActivity().getApplicationContext());
         MarksDao marksDao = appDatabase.marksDao();
 
-        marksDao
-                .getCourses()
+        marksDao.getCourses()
                 .subscribeOn(Schedulers.single())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new SingleObserver<List<Course>>() {
+                .subscribe(new SingleObserver<List<Course.AllData>>() {
                     @Override
                     public void onSubscribe(@NonNull Disposable d) {
                     }
 
                     @Override
-                    public void onSuccess(@NonNull List<Course> courses) {
+                    public void onSuccess(@NonNull List<Course.AllData> courses) {
                         if (courses.size() == 0) {
                             displayEmptyState(EmptyStateAdapter.TYPE_NO_PERFORMANCE, null);
                             return;
@@ -128,11 +128,23 @@ public class PerformanceFragment extends Fragment {
 
                         marks.setAdapter(new MarksAdapter(courses));
                         new TabLayoutMediator(courseTabs, marks, (tab, position) -> {
-                            Course course = courses.get(position);
+                            Course.AllData course = courses.get(position);
 
-                            tab.setText(course.code);
-                            TooltipCompat.setTooltipText(tab.view, course.title);
-                            tab.view.setContentDescription(course.title);
+                            tab.setText(course.courseCode);
+                            TooltipCompat.setTooltipText(tab.view, course.courseTitle);
+                            tab.view.setContentDescription(course.courseTitle);
+
+                            if (courses.get(position).unreadMarkCount != 0) {
+                                BadgeDrawable badgeDrawable = tab.getOrCreateBadge();
+                                badgeDrawable.setBadgeGravity(BadgeDrawable.TOP_END);
+                                badgeDrawable.setNumber(courses.get(position).unreadMarkCount);
+                                badgeDrawable.setHorizontalOffset((int) (-3 * pixelDensity));
+                                badgeDrawable.setVerticalOffset((int) (-6 * pixelDensity));
+
+                                if (courses.get(position).unreadMarkCount > 9) {
+                                    badgeDrawable.setHorizontalOffset((int) (5 * pixelDensity));
+                                }
+                            }
                         }).attach();
 
                         for (int i = 0; i < courses.size(); ++i) {
@@ -167,8 +179,7 @@ public class PerformanceFragment extends Fragment {
                                 project.setIndeterminate(true);
                                 lab.setIndeterminate(true);
 
-                                marksDao
-                                        .getCumulativeMark(courses.get(position).code)
+                                marksDao.getCumulativeMark(courses.get(position).courseCode)
                                         .subscribeOn(Schedulers.single())
                                         .observeOn(AndroidSchedulers.mainThread())
                                         .subscribe(new SingleObserver<CumulativeMark>() {
@@ -216,6 +227,10 @@ public class PerformanceFragment extends Fragment {
                                                 Toast.makeText(getContext(), "Error: " + e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
                                             }
                                         });
+
+                                marksDao.setMarksRead(courses.get(position).courseCode)
+                                        .subscribeOn(Schedulers.single())
+                                        .subscribe();
                             }
                         });
                     }
@@ -227,5 +242,12 @@ public class PerformanceFragment extends Fragment {
                 });
 
         return performanceFragment;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+
+        getParentFragmentManager().setFragmentResult("getUnreadCount", new Bundle());
     }
 }

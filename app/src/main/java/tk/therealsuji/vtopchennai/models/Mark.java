@@ -61,5 +61,6 @@ public class Mark {
         public Double maxWeightage;
         public Double average;
         public String status;
+        public Boolean isRead;
     }
 }

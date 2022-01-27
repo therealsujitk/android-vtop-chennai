@@ -49,6 +49,7 @@ public class Course {
         public Integer attendanceAttended;
         public Integer attendanceTotal;
         public Integer attendancePercentage;
+        public Integer unreadMarkCount; // Used to store number of unread marks in a course
 
         @Ignore
         public List<String> slots;

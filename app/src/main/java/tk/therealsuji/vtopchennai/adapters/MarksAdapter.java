@@ -32,9 +32,9 @@ import tk.therealsuji.vtopchennai.models.Mark;
 
 public class MarksAdapter extends RecyclerView.Adapter<MarksAdapter.ViewHolder> {
     Context applicationContext;
-    List<Course> courses;
+    List<Course.AllData> courses;
 
-    public MarksAdapter(List<Course> courses) {
+    public MarksAdapter(List<Course.AllData> courses) {
         this.courses = courses;
     }
 
@@ -55,10 +55,10 @@ public class MarksAdapter extends RecyclerView.Adapter<MarksAdapter.ViewHolder> 
     public void onBindViewHolder(@NonNull MarksAdapter.ViewHolder holder, int position) {
         AppDatabase appDatabase = AppDatabase.getInstance(this.applicationContext);
         MarksDao marksDao = appDatabase.marksDao();
-        Course course = courses.get(position);
+        Course.AllData course = courses.get(position);
 
         marksDao
-                .getMarks(course.code)
+                .getMarks(course.courseCode)
                 .subscribeOn(Schedulers.single())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SingleObserver<List<Mark.AllData>>() {

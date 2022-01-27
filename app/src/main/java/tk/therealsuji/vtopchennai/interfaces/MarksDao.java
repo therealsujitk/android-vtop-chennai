@@ -37,17 +37,20 @@ public interface MarksDao {
     @Insert
     Completable insertCumulativeMarks(List<CumulativeMark> cumulativeMarks);
 
+    @Query("UPDATE marks SET is_read = 1 WHERE course_id IN (SELECT id FROM courses WHERE code = :courseCode) AND is_read IS 0")
+    Completable setMarksRead(String courseCode);
+
     @Query("DELETE FROM marks")
     Completable deleteMarks();
 
     @Query("DELETE FROM cumulative_marks")
     Completable deleteCumulativeMarks();
 
-    @Query("SELECT courses.id AS id, courses.code AS code, courses.title AS title " +
+    @Query("SELECT courses.code AS courseCode, courses.title AS CourseTitle, COUNT(CASE WHEN is_read IS 0 THEN 1 END) AS unreadMarkCount " +
             "FROM marks, courses " +
             "WHERE course_id = courses.id " +
             "GROUP BY courses.code")
-    Single<List<Course>> getCourses();
+    Single<List<Course.AllData>> getCourses();
 
     @Query("SELECT id, is_read, signature FROM marks WHERE is_read IS 1")
     Single<List<Mark>> getReadMarks();
@@ -55,7 +58,7 @@ public interface MarksDao {
     @Query("SELECT COUNT(id) FROM marks WHERE is_read IS 0")
     Single<Integer> getUnreadMarksCount();
 
-    @Query("SELECT type AS courseType, marks.title AS title, score, max_score AS maxScore, weightage, max_weightage AS maxWeightage, average, status " +
+    @Query("SELECT type AS courseType, marks.title AS title, score, max_score AS maxScore, weightage, max_weightage AS maxWeightage, average, status, is_read AS isRead " +
             "FROM marks, courses " +
             "WHERE course_id = courses.id AND code = :courseCode " +
             "ORDER BY type DESC, title")
