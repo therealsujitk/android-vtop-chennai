@@ -86,6 +86,9 @@ public class RecyclerViewFragment extends Fragment {
                         }
 
                         recyclerView.setAdapter(new SpotlightGroupAdapter(spotlight));
+                        spotlightDao.markRead()
+                                .subscribeOn(Schedulers.single())
+                                .subscribe();
                     }
 
                     @Override
@@ -172,5 +175,6 @@ public class RecyclerViewFragment extends Fragment {
         Bundle bottomNavigationVisibility = new Bundle();
         bottomNavigationVisibility.putBoolean("isVisible", true);
         getParentFragmentManager().setFragmentResult("bottomNavigationVisibility", bottomNavigationVisibility);
+        getParentFragmentManager().setFragmentResult("getUnreadCount", new Bundle());
     }
 }

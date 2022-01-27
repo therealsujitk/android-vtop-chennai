@@ -32,6 +32,9 @@ public interface SpotlightDao {
     @Insert
     Completable insert(List<Spotlight> spotlight);
 
+    @Query("UPDATE spotlight SET is_read = 1 WHERE is_read IS 0")
+    Completable markRead();
+
     @Query("DELETE FROM spotlight")
     Completable delete();
 
