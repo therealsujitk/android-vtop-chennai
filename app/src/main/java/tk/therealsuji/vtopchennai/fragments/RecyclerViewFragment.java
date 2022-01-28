@@ -32,6 +32,8 @@ public class RecyclerViewFragment extends Fragment {
     public static final int TYPE_RECEIPTS = 1;
     public static final int TYPE_SPOTLIGHT = 2;
 
+    int contentType;
+
     AppDatabase appDatabase;
     RecyclerView recyclerView;
 
@@ -86,7 +88,7 @@ public class RecyclerViewFragment extends Fragment {
                         }
 
                         recyclerView.setAdapter(new SpotlightGroupAdapter(spotlight));
-                        spotlightDao.markRead()
+                        spotlightDao.setRead()
                                 .subscribeOn(Schedulers.single())
                                 .subscribe();
                     }
@@ -145,18 +147,18 @@ public class RecyclerViewFragment extends Fragment {
             );
         });
 
-        int titleId = 0, contentType = 0;
+        int titleId = 0;
         Bundle arguments = this.getArguments();
 
         if (arguments != null) {
             titleId = arguments.getInt("title_id", 0);
-            contentType = arguments.getInt("content_type", 0);
+            this.contentType = arguments.getInt("content_type", 0);
         }
 
         recyclerViewFragment.findViewById(R.id.image_button_back).setOnClickListener(view -> requireActivity().getSupportFragmentManager().popBackStack());
         ((TextView) recyclerViewFragment.findViewById(R.id.text_view_title)).setText(getString(titleId));
 
-        switch (contentType) {
+        switch (this.contentType) {
             case TYPE_RECEIPTS:
                 this.attachReceipts();
                 break;
@@ -175,6 +177,9 @@ public class RecyclerViewFragment extends Fragment {
         Bundle bottomNavigationVisibility = new Bundle();
         bottomNavigationVisibility.putBoolean("isVisible", true);
         getParentFragmentManager().setFragmentResult("bottomNavigationVisibility", bottomNavigationVisibility);
-        getParentFragmentManager().setFragmentResult("getUnreadCount", new Bundle());
+
+        if (this.contentType == TYPE_SPOTLIGHT) {
+            getParentFragmentManager().setFragmentResult("getUnreadCount", new Bundle());
+        }
     }
 }

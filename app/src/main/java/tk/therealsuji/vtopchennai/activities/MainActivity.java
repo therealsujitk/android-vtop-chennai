@@ -92,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
 
         Observable.concat(
                 Observable.fromSingle(appDatabase.spotlightDao().getUnreadCount()),
-                Observable.fromSingle(appDatabase.marksDao().getUnreadMarksCount())
+                Observable.fromSingle(appDatabase.marksDao().getMarksUnreadCount())
         )
                 .subscribeOn(Schedulers.single())
                 .observeOn(AndroidSchedulers.mainThread())

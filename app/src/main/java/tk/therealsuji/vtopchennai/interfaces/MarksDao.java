@@ -19,7 +19,7 @@ import tk.therealsuji.vtopchennai.models.Mark;
 public interface MarksDao {
     default Completable insertMarks(Map<Integer, Mark> marks) {
 
-        return this.getReadMarks()
+        return this.getMarksRead()
                 .concatMapCompletable(readMarks -> {
                     for (Mark markItem : readMarks) {
                         if (marks.containsKey(markItem.signature)) {
@@ -53,10 +53,10 @@ public interface MarksDao {
     Single<List<Course.AllData>> getCourses();
 
     @Query("SELECT id, is_read, signature FROM marks WHERE is_read IS 1")
-    Single<List<Mark>> getReadMarks();
+    Single<List<Mark>> getMarksRead();
 
     @Query("SELECT COUNT(id) FROM marks WHERE is_read IS 0")
-    Single<Integer> getUnreadMarksCount();
+    Single<Integer> getMarksUnreadCount();
 
     @Query("SELECT type AS courseType, marks.title AS title, score, max_score AS maxScore, weightage, max_weightage AS maxWeightage, average, status, is_read AS isRead " +
             "FROM marks, courses " +

@@ -12,7 +12,6 @@ import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.webkit.CookieManager;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -144,12 +143,12 @@ public class SpotlightItemAdapter extends RecyclerView.Adapter<SpotlightItemAdap
                 announcementBadge.setHorizontalOffset((int) (6.5 * pixelDensity));
                 announcementBadge.setVerticalOffset((int) (6.5 * pixelDensity));
 
-                announcementType.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                announcementType.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
                     @OptIn(markerClass = ExperimentalBadgeUtils.class)
                     @Override
-                    public void onGlobalLayout() {
+                    public void onLayoutChange(View view, int i, int i1, int i2, int i3, int i4, int i5, int i6, int i7) {
                         BadgeUtils.attachBadgeDrawable(announcementBadge, announcementType);
-                        announcementType.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                        announcementType.removeOnLayoutChangeListener(this);
                     }
                 });
             } else {

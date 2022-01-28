@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -121,12 +120,12 @@ public class HomeFragment extends Fragment {
         spotlightBadge.setVerticalOffset((int) (16 * pixelDensity));
         spotlightBadge.setVisible(false);
 
-        spotlightButton.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+        spotlightButton.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
             @OptIn(markerClass = ExperimentalBadgeUtils.class)
             @Override
-            public void onGlobalLayout() {
+            public void onLayoutChange(View view, int i, int i1, int i2, int i3, int i4, int i5, int i6, int i7) {
                 BadgeUtils.attachBadgeDrawable(spotlightBadge, spotlightButton);
-                spotlightButton.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                spotlightButton.removeOnLayoutChangeListener(this);
             }
         });
 

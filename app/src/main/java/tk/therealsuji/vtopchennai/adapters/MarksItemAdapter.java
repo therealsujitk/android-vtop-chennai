@@ -68,14 +68,15 @@ public class MarksItemAdapter extends RecyclerView.Adapter<MarksItemAdapter.View
             markTitle.setText(marksItem.title);
 
             if (!marksItem.isRead) {
+                BadgeDrawable markBadge = BadgeDrawable.create(markTitle.getContext());
+                markBadge.setBadgeGravity(BadgeDrawable.TOP_START);
+
                 markTitle.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
                     @OptIn(markerClass = ExperimentalBadgeUtils.class)
                     @Override
                     public void onLayoutChange(View view, int i, int i1, int i2, int i3, int i4, int i5, int i6, int i7) {
-                        BadgeDrawable markBadge = BadgeDrawable.create(markTitle.getContext());
-                        markBadge.setBadgeGravity(BadgeDrawable.TOP_START);
-                        markBadge.setHorizontalOffset(-(((View) markTitle.getParent()).getPaddingStart() + markBadge.getIntrinsicWidth()) / 2);
-                        markBadge.setVerticalOffset((markTitle.getMeasuredHeight() + markBadge.getIntrinsicHeight()) / 2);
+                        markBadge.setHorizontalOffset(-(((View) markTitle.getParent()).getPaddingStart() - markBadge.getIntrinsicWidth()) / 2);
+                        markBadge.setVerticalOffset((markTitle.getMeasuredHeight() - markBadge.getIntrinsicHeight()) / 2);
 
                         BadgeUtils.attachBadgeDrawable(markBadge, markTitle);
                         markTitle.removeOnLayoutChangeListener(this);
