@@ -9,8 +9,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,7 +28,7 @@ import tk.therealsuji.vtopchennai.R;
 import tk.therealsuji.vtopchennai.helpers.SettingsRepository;
 
 public class MoodleLoginDialogFragment extends DialogFragment {
-    Button signIn;
+    RelativeLayout signIn;
     EditText username, password;
 
     private void signIn() {

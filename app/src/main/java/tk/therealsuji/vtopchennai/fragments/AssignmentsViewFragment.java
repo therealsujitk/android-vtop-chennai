@@ -13,7 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.widget.NestedScrollView;
 import androidx.core.widget.TextViewCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
@@ -35,7 +35,6 @@ import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import tk.therealsuji.vtopchennai.R;
-import tk.therealsuji.vtopchennai.activities.MainActivity;
 import tk.therealsuji.vtopchennai.adapters.AttachmentItemAdapter;
 import tk.therealsuji.vtopchennai.helpers.SettingsRepository;
 import tk.therealsuji.vtopchennai.models.Assignment;
@@ -160,17 +159,29 @@ public class AssignmentsViewFragment extends Fragment {
         assignmentsViewFragment.getRootView().setOnTouchListener((view, motionEvent) -> true);
 
         LinearLayout header = assignmentsViewFragment.findViewById(R.id.linear_layout_header);
-        header.setOnApplyWindowInsetsListener((view, windowInsets) -> {
-            ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) view.getLayoutParams();
-            layoutParams.setMargins(0, windowInsets.getSystemWindowInsetTop(), 0, 0);
-            view.setLayoutParams(layoutParams);
+        NestedScrollView assignments = assignmentsViewFragment.findViewById(R.id.nested_scroll_view_assignments_view);
 
-            return windowInsets.consumeSystemWindowInsets();
+        getParentFragmentManager().setFragmentResultListener("customInsets2", this, (requestKey, result) -> {
+            int systemWindowInsetLeft = result.getInt("systemWindowInsetLeft");
+            int systemWindowInsetTop = result.getInt("systemWindowInsetTop");
+            int systemWindowInsetRight = result.getInt("systemWindowInsetRight");
+            int systemWindowInsetBottom = result.getInt("systemWindowInsetBottom");
+            float pixelDensity = getResources().getDisplayMetrics().density;
+
+            header.setPadding(
+                    systemWindowInsetLeft,
+                    systemWindowInsetTop,
+                    systemWindowInsetRight,
+                    0
+            );
+
+            assignments.setPaddingRelative(
+                    systemWindowInsetLeft,
+                    0,
+                    systemWindowInsetRight,
+                    (int) (systemWindowInsetBottom + 20 * pixelDensity)
+            );
         });
-
-        assignmentsViewFragment
-                .findViewById(R.id.nested_scroll_view_assignments_view)
-                .setPadding(0, 0, 0, ((MainActivity) this.requireActivity()).getSystemNavigationPadding());
 
         Assignment assignment = null;
         Bundle arguments = this.getArguments();
@@ -262,6 +273,8 @@ public class AssignmentsViewFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
 
-        ((MainActivity) this.requireActivity()).showBottomNavigationView();
+        Bundle bottomNavigationVisibility = new Bundle();
+        bottomNavigationVisibility.putBoolean("isVisible", true);
+        getParentFragmentManager().setFragmentResult("bottomNavigationVisibility", bottomNavigationVisibility);
     }
 }

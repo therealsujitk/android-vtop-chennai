@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -29,7 +30,6 @@ import java.util.List;
 import java.util.Map;
 
 import tk.therealsuji.vtopchennai.R;
-import tk.therealsuji.vtopchennai.activities.MainActivity;
 import tk.therealsuji.vtopchennai.adapters.AssignmentsGroupAdapter;
 import tk.therealsuji.vtopchennai.helpers.SettingsRepository;
 import tk.therealsuji.vtopchennai.models.Assignment;
@@ -283,15 +283,40 @@ public class AssignmentsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View assignmentsFragment = inflater.inflate(R.layout.fragment_assignments, container, false);
 
-        assignmentsFragment.findViewById(R.id.text_view_title).setOnApplyWindowInsetsListener((view, windowInsets) -> {
-            view.setPadding(
-                    0,
-                    windowInsets.getSystemWindowInsetTop(),
-                    0,
+        this.assignmentGroups = assignmentsFragment.findViewById(R.id.recycler_view_assignment_groups);
+        TextView header = assignmentsFragment.findViewById(R.id.text_view_title);
+        LinearLayout signInContainer = assignmentsFragment.findViewById(R.id.linear_layout_container);
+
+        getParentFragmentManager().setFragmentResultListener("customInsets", this, (requestKey, result) -> {
+            int systemWindowInsetLeft = result.getInt("systemWindowInsetLeft");
+            int systemWindowInsetTop = result.getInt("systemWindowInsetTop");
+            int systemWindowInsetRight = result.getInt("systemWindowInsetRight");
+            int bottomNavigationHeight = result.getInt("bottomNavigationHeight");
+            float pixelDensity = getResources().getDisplayMetrics().density;
+
+            header.setPadding(
+                    systemWindowInsetLeft,
+                    systemWindowInsetTop,
+                    systemWindowInsetRight,
                     0
             );
 
-            return windowInsets;
+            this.assignmentGroups.setPaddingRelative(
+                    systemWindowInsetLeft,
+                    0,
+                    systemWindowInsetRight,
+                    (int) (bottomNavigationHeight + 20 * pixelDensity)
+            );
+
+            signInContainer.setPaddingRelative(
+                    systemWindowInsetLeft,
+                    0,
+                    systemWindowInsetRight,
+                    (int) (bottomNavigationHeight + 20 * pixelDensity)
+            );
+
+            // Only one listener can be added per requestKey, so we create a duplicate
+            getParentFragmentManager().setFragmentResult("customInsets2", result);
         });
 
         SettingsRepository.trustAllCertificates();
@@ -300,27 +325,10 @@ public class AssignmentsFragment extends Fragment {
 
         if (!this.moodleToken.equals("")) {
             this.requestQueue = Volley.newRequestQueue(this.requireContext().getApplicationContext());
-            this.assignmentGroups = assignmentsFragment.findViewById(R.id.recycler_view_assignment_groups);
             this.assignments = new ArrayList<>();
-
-            this.assignmentGroups.setPadding(
-                    0,
-                    0,
-                    0,
-                    ((MainActivity) this.requireActivity()).getBottomNavigationPadding()
-            );
-
             this.getUserId();
         } else {
-            LinearLayout signInContainer = assignmentsFragment.findViewById(R.id.linear_layout_container);
             signInContainer.setVisibility(View.VISIBLE);
-
-            ((ViewGroup.MarginLayoutParams) signInContainer.getLayoutParams()).setMargins(
-                    0,
-                    0,
-                    0,
-                    ((MainActivity) this.requireActivity()).getBottomNavigationPadding()
-            );
 
             assignmentsFragment.findViewById(R.id.button_sign_in).setOnClickListener(view -> {
                 MoodleLoginDialogFragment moodleLoginDialogFragment = new MoodleLoginDialogFragment();

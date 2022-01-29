@@ -17,7 +17,6 @@ import java.util.Comparator;
 import java.util.List;
 
 import tk.therealsuji.vtopchennai.R;
-import tk.therealsuji.vtopchennai.activities.MainActivity;
 import tk.therealsuji.vtopchennai.fragments.AssignmentsViewFragment;
 import tk.therealsuji.vtopchennai.models.Assignment;
 
@@ -84,7 +83,9 @@ public class AssignmentsItemAdapter extends RecyclerView.Adapter<AssignmentsItem
                         .addToBackStack(null)
                         .commit();
 
-                ((MainActivity) fragmentActivity).hideBottomNavigationView();
+                Bundle bottomNavigationVisibility = new Bundle();
+                bottomNavigationVisibility.putBoolean("isVisible", false);
+                fragmentActivity.getSupportFragmentManager().setFragmentResult("bottomNavigationVisibility", bottomNavigationVisibility);
             });
         }
     }
