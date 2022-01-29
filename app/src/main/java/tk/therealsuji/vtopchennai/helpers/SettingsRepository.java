@@ -33,11 +33,11 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.Objects;
 
-import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
+import okhttp3.OkHttpClient;
 import tk.therealsuji.vtopchennai.R;
 import tk.therealsuji.vtopchennai.activities.WebViewActivity;
 import tk.therealsuji.vtopchennai.fragments.RecyclerViewFragment;
@@ -58,8 +58,8 @@ public class SettingsRepository {
     public static final String GITHUB_ISSUE_URL = GITHUB_BASE_URL + "/issues";
 
     public static final String MOODLE_BASE_URL = "https://lms.vit.ac.in";
-    public static final String MOODLE_LOGIN_URL = MOODLE_BASE_URL + "/login/token.php";
-    public static final String MOODLE_WEBSERVICE_URL = MOODLE_BASE_URL + "/webservice/rest/server.php";
+    public static final String MOODLE_LOGIN_PATH = "/login/token.php";
+    public static final String MOODLE_WEBSERVICE_PATH = "/webservice/rest/server.php";
 
     public static final String VTOP_BASE_URL = "https://vtopcc.vit.ac.in/vtop";
 
@@ -286,7 +286,7 @@ public class SettingsRepository {
      */
     @Deprecated
     @SuppressLint({"BadHostnameVerifier", "CustomX509TrustManager", "TrustAllX509TrustManager"})
-    public static void trustAllCertificates() {
+    public static OkHttpClient getNaiveOkHttpClient() {
         try {
             TrustManager[] trustAllCertificates = new TrustManager[]{
                     new X509TrustManager() {
@@ -306,9 +306,13 @@ public class SettingsRepository {
 
             SSLContext sslContext = SSLContext.getInstance("SSL");
             sslContext.init(null, trustAllCertificates, new SecureRandom());
-            HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.getSocketFactory());
-            HttpsURLConnection.setDefaultHostnameVerifier((arg0, arg1) -> true);
-        } catch (Exception ignored) {
+
+            return new OkHttpClient.Builder()
+                    .sslSocketFactory(sslContext.getSocketFactory(), (X509TrustManager) trustAllCertificates[0])
+                    .hostnameVerifier((s, sslSession) -> true)
+                    .build();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 }

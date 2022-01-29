@@ -2,7 +2,6 @@ package tk.therealsuji.vtopchennai.fragments;
 
 import android.app.Dialog;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.LayoutInflater;
@@ -18,18 +17,25 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
 import com.google.android.material.color.MaterialColors;
 
+import org.json.JSONObject;
+
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.SingleObserver;
+import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
+import okhttp3.ResponseBody;
+import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory;
 import tk.therealsuji.vtopchennai.R;
 import tk.therealsuji.vtopchennai.helpers.SettingsRepository;
+import tk.therealsuji.vtopchennai.interfaces.MoodleApi;
 
 public class MoodleLoginDialogFragment extends DialogFragment {
     RelativeLayout signIn;
     EditText username, password;
+    MoodleApi moodleApi;
 
     private void signIn() {
         this.setLoading(true);
@@ -37,41 +43,55 @@ public class MoodleLoginDialogFragment extends DialogFragment {
         String username = this.username.getText().toString();
         String password = this.password.getText().toString();
 
-        RequestQueue requestQueue = Volley.newRequestQueue(this.requireContext());
-        String url = Uri.parse(SettingsRepository.MOODLE_LOGIN_URL)
-                .buildUpon()
-                .appendQueryParameter("username", username)
-                .appendQueryParameter("password", password)
-                .appendQueryParameter("service", "moodle_mobile_app")
-                .toString();
+        this.moodleApi.signIn(username, password)
+                .subscribeOn(Schedulers.single())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new SingleObserver<ResponseBody>() {
+                    @Override
+                    public void onSubscribe(@io.reactivex.rxjava3.annotations.NonNull Disposable d) {
+                    }
 
-        JsonObjectRequest stringRequest = new JsonObjectRequest(Request.Method.GET, url, null,
-                response -> {
-                    try {
-                        if (response.has("error")) {
-                            Toast.makeText(this.requireContext(), response.getString("error"), Toast.LENGTH_SHORT).show();
-                        } else if (response.has("token")) {
-                            SharedPreferences sharedPreferences = SettingsRepository.getSharedPreferences(this.requireContext().getApplicationContext());
+                    @Override
+                    public void onSuccess(@io.reactivex.rxjava3.annotations.NonNull ResponseBody responseBody) {
+                        try {
+                            JSONObject response = new JSONObject(responseBody.string());
+
+                            if (response.has("error")) {
+                                throw new Exception(response.getString("error"));
+                            }
+
+                            SharedPreferences sharedPreferences = SettingsRepository.getSharedPreferences(requireContext().getApplicationContext());
                             sharedPreferences.edit().putString("moodleToken", response.getString("token")).apply();
                             sharedPreferences.edit().putString("moodlePrivateToken", response.getString("privatetoken")).apply();
 
-                            this.dismiss();
+                            dismiss();
+                        } catch (Exception e) {
+                            Toast.makeText(getContext(), "Error: " + e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                        } finally {
+                            setLoading(false);
                         }
-                    } catch (Exception ignored) {
-                    } finally {
-                        this.setLoading(false);
                     }
-                },
-                error -> this.setLoading(false)
-        );
 
-        requestQueue.add(stringRequest);
+                    @Override
+                    public void onError(@io.reactivex.rxjava3.annotations.NonNull Throwable e) {
+                        Toast.makeText(getContext(), "Error: " + e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                        setLoading(false);
+                    }
+                });
     }
 
-    private void setLoading(boolean loading) {
-        this.username.setEnabled(loading);
-        this.password.setEnabled(loading);
-        this.signIn.setEnabled(loading);
+    private void setLoading(boolean isLoading) {
+        if (isLoading) {
+            signIn.findViewById(R.id.text_view_sign_in).setVisibility(View.INVISIBLE);
+            signIn.findViewById(R.id.progress_bar_loading).setVisibility(View.VISIBLE);
+        } else {
+            signIn.findViewById(R.id.text_view_sign_in).setVisibility(View.VISIBLE);
+            signIn.findViewById(R.id.progress_bar_loading).setVisibility(View.INVISIBLE);
+        }
+
+        this.username.setEnabled(!isLoading);
+        this.password.setEnabled(!isLoading);
+        this.signIn.setEnabled(!isLoading);
     }
 
     @Nullable
@@ -87,6 +107,13 @@ public class MoodleLoginDialogFragment extends DialogFragment {
 
         this.username.setInputType(InputType.TYPE_CLASS_TEXT);
         this.signIn.setOnClickListener(view -> this.signIn());
+
+        new Retrofit.Builder()
+                .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
+                .baseUrl(SettingsRepository.MOODLE_BASE_URL)
+                .client(SettingsRepository.getNaiveOkHttpClient())
+                .build()
+                .create(MoodleApi.class);
 
         return dialogFragment;
     }

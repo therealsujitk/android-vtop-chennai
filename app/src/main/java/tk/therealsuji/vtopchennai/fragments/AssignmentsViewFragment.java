@@ -2,7 +2,6 @@ package tk.therealsuji.vtopchennai.fragments;
 
 import android.annotation.SuppressLint;
 import android.content.res.ColorStateList;
-import android.net.Uri;
 import android.os.Bundle;
 import android.text.Html;
 import android.view.LayoutInflater;
@@ -18,10 +17,6 @@ import androidx.core.widget.TextViewCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
 import com.google.android.material.color.MaterialColors;
 
 import org.json.JSONArray;
@@ -34,9 +29,18 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.annotations.NonNull;
+import io.reactivex.rxjava3.core.SingleObserver;
+import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
+import okhttp3.ResponseBody;
+import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory;
 import tk.therealsuji.vtopchennai.R;
 import tk.therealsuji.vtopchennai.adapters.AttachmentItemAdapter;
 import tk.therealsuji.vtopchennai.helpers.SettingsRepository;
+import tk.therealsuji.vtopchennai.interfaces.MoodleApi;
 import tk.therealsuji.vtopchennai.models.Assignment;
 
 public class AssignmentsViewFragment extends Fragment {
@@ -50,60 +54,69 @@ public class AssignmentsViewFragment extends Fragment {
     }
 
     void getSubmissionStatus(int activityId) {
-        RequestQueue requestQueue = Volley.newRequestQueue(this.requireContext().getApplicationContext());
-        String url = Uri.parse(SettingsRepository.MOODLE_WEBSERVICE_URL)
-                .buildUpon()
-                .appendQueryParameter("wstoken", this.moodleToken)
-                .appendQueryParameter("moodlewsrestformat", "json")
-                .appendQueryParameter("wsfunction", "mod_assign_get_submission_status")
-                .appendQueryParameter("assignid", String.valueOf(activityId))
-                .toString();
+        new Retrofit.Builder()
+                .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
+                .baseUrl(SettingsRepository.MOODLE_BASE_URL)
+                .client(SettingsRepository.getNaiveOkHttpClient())
+                .build()
+                .create(MoodleApi.class)
+                .getSubmissionStatus(this.moodleToken, activityId)
+                .subscribeOn(Schedulers.single())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new SingleObserver<ResponseBody>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
 
-        JsonObjectRequest stringRequest = new JsonObjectRequest(Request.Method.GET, url, null,
-                response -> {
-                    try {
-                        if (!response.has("lastattempt")) {
-                            return;
-                        }
-
-                        JSONObject submission = response.getJSONObject("lastattempt").getJSONObject("submission");
-                        JSONArray plugins = submission.getJSONArray("plugins");
-                        List<Assignment.Attachment> attachments = new ArrayList<>();
-
-                        for (int i = 0; i < plugins.length(); ++i) {
-                            JSONObject plugin = plugins.getJSONObject(i);
-                            if (plugin.getString("type").equals("file")) {
-                                JSONArray files = plugin.getJSONArray("fileareas");
-
-                                if (files.length() > 0) {
-                                    files = files.getJSONObject(0).getJSONArray("files");
-                                }
-
-                                for (int j = 0; j < files.length(); ++j) {
-                                    JSONObject file = files.getJSONObject(j);
-
-                                    Assignment.Attachment attachment = new Assignment.Attachment();
-                                    attachment.name = file.getString("filename");
-                                    attachment.mimetype = file.getString("mimetype");
-                                    attachment.size = file.getInt("filesize");
-                                    attachment.url = file.getString("fileurl");
-
-                                    attachments.add(attachment);
-                                }
-
-                                break;
-                            }
-                        }
-
-                        this.displaySubmissions(attachments);
-                    } catch (Exception ignored) {
                     }
-                },
-                error -> {
-                }
-        );
 
-        requestQueue.add(stringRequest);
+                    @Override
+                    public void onSuccess(@NonNull ResponseBody responseBody) {
+                        try {
+                            JSONObject response = new JSONObject(responseBody.string());
+
+                            if (response.has("error")) {
+                                throw new Exception(response.getString("error"));
+                            }
+
+                            JSONObject submission = response.getJSONObject("lastattempt").getJSONObject("submission");
+                            JSONArray plugins = submission.getJSONArray("plugins");
+                            List<Assignment.Attachment> attachments = new ArrayList<>();
+
+                            for (int i = 0; i < plugins.length(); ++i) {
+                                JSONObject plugin = plugins.getJSONObject(i);
+                                if (plugin.getString("type").equals("file")) {
+                                    JSONArray files = plugin.getJSONArray("fileareas");
+
+                                    if (files.length() > 0) {
+                                        files = files.getJSONObject(0).getJSONArray("files");
+                                    }
+
+                                    for (int j = 0; j < files.length(); ++j) {
+                                        JSONObject file = files.getJSONObject(j);
+
+                                        Assignment.Attachment attachment = new Assignment.Attachment();
+                                        attachment.name = file.getString("filename");
+                                        attachment.mimetype = file.getString("mimetype");
+                                        attachment.size = file.getInt("filesize");
+                                        attachment.url = file.getString("fileurl");
+
+                                        attachments.add(attachment);
+                                    }
+
+                                    break;
+                                }
+                            }
+
+                            displaySubmissions(attachments);
+                        } catch (Exception ignored) {
+                        }
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+
+                    }
+                });
     }
 
     void displaySubmissions(List<Assignment.Attachment> attachments) {
