@@ -9,9 +9,7 @@
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/app_bar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@null"
-        app:elevation="0dp">
+        android:layout_height="wrap_content">
 
         <LinearLayout
             android:id="@+id/linear_layout_header"
@@ -33,10 +31,12 @@
                 android:textStyle="bold" />
 
             <HorizontalScrollView
+                android:id="@+id/horizontal_scroll_view_performance_cards"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:scrollbars="none">
+                android:scrollbars="none"
+                android:visibility="gone">
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -85,7 +85,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
-            android:contentDescription="@string/courses" />
+            android:contentDescription="@string/courses"
+            android:visibility="gone" />
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.viewpager2.widget.ViewPager2

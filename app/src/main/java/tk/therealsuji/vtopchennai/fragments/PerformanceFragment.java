@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import androidx.appcompat.widget.TooltipCompat;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
@@ -16,6 +17,7 @@ import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
 import java.util.List;
+import java.util.Objects;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.annotations.NonNull;
@@ -23,6 +25,7 @@ import io.reactivex.rxjava3.core.SingleObserver;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import tk.therealsuji.vtopchennai.R;
+import tk.therealsuji.vtopchennai.adapters.EmptyStateAdapter;
 import tk.therealsuji.vtopchennai.adapters.MarksAdapter;
 import tk.therealsuji.vtopchennai.helpers.AppDatabase;
 import tk.therealsuji.vtopchennai.interfaces.MarksDao;
@@ -31,46 +34,73 @@ import tk.therealsuji.vtopchennai.models.CumulativeMark;
 import tk.therealsuji.vtopchennai.widgets.PerformanceCard;
 
 public class PerformanceFragment extends Fragment {
+    AppBarLayout appBarLayout;
+    ViewPager2 marks;
+    View performanceCards;
 
     public PerformanceFragment() {
         // Required empty public constructor
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    private void displayEmptyState(int type, String message) {
+        this.marks.setAdapter(new EmptyStateAdapter(type, message));
+        this.marks.getChildAt(0).setOverScrollMode(View.OVER_SCROLL_NEVER);
+
+        // Disable app bar scrolling behaviour
+        CoordinatorLayout.LayoutParams layoutParams = (CoordinatorLayout.LayoutParams) this.appBarLayout.getLayoutParams();
+        AppBarLayout.Behavior behavior = (AppBarLayout.Behavior) layoutParams.getBehavior();
+        Objects.requireNonNull(behavior).setDragCallback(new AppBarLayout.Behavior.DragCallback() {
+            @Override
+            public boolean canDrag(@androidx.annotation.NonNull AppBarLayout appBarLayout) {
+                return false;
+            }
+        });
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View performanceFragment = inflater.inflate(R.layout.fragment_performance, container, false);
 
-        AppBarLayout appBarLayout = performanceFragment.findViewById(R.id.app_bar);
-        ViewPager2 marks = performanceFragment.findViewById(R.id.view_pager_marks);
-
-        appBarLayout.setOnApplyWindowInsetsListener((view, windowInsets) -> {
-            CoordinatorLayout.LayoutParams layoutParams = (CoordinatorLayout.LayoutParams) view.getLayoutParams();
-            layoutParams.setMargins(0, windowInsets.getSystemWindowInsetTop(), 0, 0);
-            view.setLayoutParams(layoutParams);
-
-            marks.setPadding(
-                    0,
-                    0,
-                    0,
-                    windowInsets.getSystemWindowInsetTop()
-            );
-
-            return windowInsets;
-        });
-
-        appBarLayout.addOnOffsetChangedListener((appBarLayout1, verticalOffset) -> {
-            LinearLayout header = performanceFragment.findViewById(R.id.linear_layout_header);
-            float alpha = 1 - ((float) (-1 * verticalOffset) / header.getHeight());
-
-            header.setAlpha(alpha);
-        });
+        this.appBarLayout = performanceFragment.findViewById(R.id.app_bar);
+        this.marks = performanceFragment.findViewById(R.id.view_pager_marks);
+        this.performanceCards = performanceFragment.findViewById(R.id.horizontal_scroll_view_performance_cards);
+        LinearLayout header = performanceFragment.findViewById(R.id.linear_layout_header);
 
         float pixelDensity = this.getResources().getDisplayMetrics().density;
+
+        getParentFragmentManager().setFragmentResultListener("customInsets", this, (requestKey, result) -> {
+            int systemWindowInsetLeft = result.getInt("systemWindowInsetLeft");
+            int systemWindowInsetTop = result.getInt("systemWindowInsetTop");
+            int systemWindowInsetRight = result.getInt("systemWindowInsetRight");
+            int bottomNavigationHeight = result.getInt("bottomNavigationHeight");
+
+            this.appBarLayout.setPadding(
+                    systemWindowInsetLeft,
+                    systemWindowInsetTop,
+                    systemWindowInsetRight,
+                    0
+            );
+
+            this.marks.setPageTransformer((page, position) -> {
+                int headerOffset = 0;
+                if (this.performanceCards.getVisibility() != View.VISIBLE && page.findViewById(R.id.text_view_no_data) != null) {
+                    headerOffset = header.getMeasuredHeight();
+                }
+
+                // Setting padding to the RecyclerView child inside the RelativeLayout
+                ((ViewGroup) page).getChildAt(0).setPadding(
+                        systemWindowInsetLeft,
+                        0,
+                        systemWindowInsetRight,
+                        (int) (bottomNavigationHeight + 20 * pixelDensity + headerOffset)
+                );
+            });
+        });
+
+        this.appBarLayout.addOnOffsetChangedListener((appBarLayout1, verticalOffset) -> {
+            float alpha = 1 - ((float) (-1 * verticalOffset) / header.getHeight());
+            header.setAlpha(alpha);
+        });
 
         TabLayout courseTabs = performanceFragment.findViewById(R.id.tab_layout_courses);
 
@@ -88,6 +118,14 @@ public class PerformanceFragment extends Fragment {
 
                     @Override
                     public void onSuccess(@NonNull List<Course> courses) {
+                        if (courses.size() == 0) {
+                            displayEmptyState(EmptyStateAdapter.TYPE_NO_PERFORMANCE, null);
+                            return;
+                        }
+
+                        performanceCards.setVisibility(View.VISIBLE);
+                        courseTabs.setVisibility(View.VISIBLE);
+
                         marks.setAdapter(new MarksAdapter(courses));
                         new TabLayoutMediator(courseTabs, marks, (tab, position) -> {
                             Course course = courses.get(position);
@@ -175,6 +213,7 @@ public class PerformanceFragment extends Fragment {
 
                                             @Override
                                             public void onError(@NonNull Throwable e) {
+                                                Toast.makeText(getContext(), "Error: " + e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
                                             }
                                         });
                             }
@@ -183,6 +222,7 @@ public class PerformanceFragment extends Fragment {
 
                     @Override
                     public void onError(@NonNull Throwable e) {
+                        displayEmptyState(EmptyStateAdapter.TYPE_ERROR, "Error: " + e.getLocalizedMessage());
                     }
                 });
 

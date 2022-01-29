@@ -16,7 +16,6 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.SingleObserver;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
-import tk.therealsuji.vtopchennai.activities.MainActivity;
 import tk.therealsuji.vtopchennai.helpers.AppDatabase;
 import tk.therealsuji.vtopchennai.interfaces.TimetableDao;
 import tk.therealsuji.vtopchennai.models.Timetable;
@@ -38,12 +37,6 @@ public class TimetableAdapter extends RecyclerView.Adapter<TimetableAdapter.View
         timetableView.setLayoutParams(timetableParams);
         timetableView.setLayoutManager(new LinearLayoutManager(context));
         timetableView.setClipToPadding(false);
-        timetableView.setPadding(
-                0,
-                0,
-                0,
-                ((MainActivity) context).getBottomNavigationPadding()
-        );
 
         return new ViewHolder(timetableView);
     }
@@ -68,6 +61,11 @@ public class TimetableAdapter extends RecyclerView.Adapter<TimetableAdapter.View
 
                     @Override
                     public void onSuccess(@io.reactivex.rxjava3.annotations.NonNull List<Timetable.AllData> timetable) {
+                        if (timetable.size() == 0) {
+                            timetableView.setAdapter(new EmptyStateAdapter(EmptyStateAdapter.TYPE_NO_TIMETABLE, null));
+                            return;
+                        }
+
                         int dayOfWeek = Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 1;
                         int status = TimetableItemAdapter.STATUS_FUTURE;
 
@@ -82,7 +80,7 @@ public class TimetableAdapter extends RecyclerView.Adapter<TimetableAdapter.View
 
                     @Override
                     public void onError(@io.reactivex.rxjava3.annotations.NonNull Throwable e) {
-
+                        timetableView.setAdapter(new EmptyStateAdapter(EmptyStateAdapter.TYPE_ERROR, "Error: " + e.getLocalizedMessage()));
                     }
                 });
     }

@@ -24,6 +24,7 @@ public class MarksGroupAdapter extends RecyclerView.Adapter<MarksGroupAdapter.Vi
     @Override
     public MarksGroupAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         Context context = parent.getContext();
+        float pixelDensity = context.getResources().getDisplayMetrics().density;
 
         RecyclerView marksGroup = new RecyclerView(context);
         ViewGroup.LayoutParams marksGroupParams = new ViewGroup.LayoutParams(
@@ -33,6 +34,7 @@ public class MarksGroupAdapter extends RecyclerView.Adapter<MarksGroupAdapter.Vi
         marksGroup.setLayoutParams(marksGroupParams);
         marksGroup.setLayoutManager(new LinearLayoutManager(context));
         marksGroup.setNestedScrollingEnabled(false);
+        marksGroup.setPadding(0, (int) (48 * pixelDensity), 0, 0);
 
         View courseTypes = ((View) parent.getParent()).findViewById(R.id.chip_group_course_types);
         courseTypes.post(() -> marksGroup.setPadding(0, courseTypes.getMeasuredHeight(), 0, 0));

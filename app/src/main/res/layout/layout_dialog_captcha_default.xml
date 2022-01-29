@@ -11,8 +11,9 @@
 
     <ImageView
         android:id="@+id/image_view_captcha"
-        android:layout_width="match_parent"
+        android:layout_width="180dp"
         android:layout_height="45dp"
+        android:layout_gravity="center_horizontal"
         android:contentDescription="@string/captcha_description" />
 
     <com.google.android.material.textfield.MaterialAutoCompleteTextView

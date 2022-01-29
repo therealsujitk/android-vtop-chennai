@@ -106,7 +106,7 @@ public class VTOP extends Service {
         NotificationHelper notificationHelper = new NotificationHelper(getApplicationContext());
         this.notificationManager = notificationHelper.getManager();
 
-        this.notification = notificationHelper.notifyDownload(null, null);
+        this.notification = notificationHelper.notifySync(null, null);
         this.notification.addAction(R.drawable.ic_close, getString(R.string.cancel), endServicePendingIntent);
         this.notification.setOngoing(true);
         this.notification.setProgress(0, 0, true);
@@ -126,7 +126,7 @@ public class VTOP extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent.getAction() != null && intent.getAction().equals(END_SERVICE_ACTION)) {
-            this.endService(false);
+            this.endService(true);
             this.notificationManager.cancel(SettingsRepository.NOTIFICATION_ID_VTOP_DOWNLOAD);  // In case the notification isn't removed for some reason
         } else {
             this.startForeground(SettingsRepository.NOTIFICATION_ID_VTOP_DOWNLOAD, this.notification.build());
@@ -166,7 +166,7 @@ public class VTOP extends Service {
                 if (!isOpened) {
                     if (counter >= 30) {
                         error(101);
-                        endService(false);
+                        endService(true);
                         return;
                     }
 
@@ -199,11 +199,10 @@ public class VTOP extends Service {
     /**
      * Function to terminate the download
      *
-     * @param check If check is true, it will check if the service can continue
-     *              after the activity has been destroyed, if not it'll end the service.
+     * @param force If force is true, it will end the service no matter what
      */
-    public void endService(boolean check) {
-        if (check && this.progress != -1) {
+    public void endService(boolean force) {
+        if (!force && this.progress != -1) {
             return;
         }
 
@@ -211,8 +210,9 @@ public class VTOP extends Service {
         stopSelf();
         stopForeground(true);
 
-        if (this.callback != null) {
+        try {
             this.callback.onServiceEnd();
+        } catch (Exception ignored) {
         }
     }
 
@@ -365,10 +365,10 @@ public class VTOP extends Service {
                 byte[] decodedString = Base64.decode(base64Captcha, Base64.DEFAULT);
                 Bitmap decodedImage = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
 
-                if (this.callback != null) {
+                try {
                     this.callback.onRequestCaptcha(CAPTCHA_DEFAULT, decodedImage, null);
-                } else {
-                    this.endService(false);
+                } catch (Exception ignored) {
+                    this.endService(true);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -382,10 +382,10 @@ public class VTOP extends Service {
      * Function to override the default onSubmit function and execute the captcha.
      */
     private void executeCaptcha() {
-        if (this.callback != null) {
+        try {
             this.callback.onRequestCaptcha(CAPTCHA_GRECATPCHA, null, this.webView);
-        } else {
-            this.endService(false);
+        } catch (Exception ignored) {
+            this.endService(true);
             return;
         }
 
@@ -397,11 +397,11 @@ public class VTOP extends Service {
                 "}" +
                 "(function() {" +
                 "var executeInterval = setInterval(function () {" +
-                "    if (grecaptcha != undefined) {" +
-                "        grecaptcha.execute();" +
+                "    if (typeof grecaptcha != 'undefined') {" +
                 "        clearInterval(executeInterval);" +
+                "        grecaptcha.execute();" +
                 "    }" +
-                "}, 500);" +
+                "}, 1000);" +
                 "})();", value -> {
         });
     }
@@ -413,8 +413,9 @@ public class VTOP extends Service {
     public void signIn(final String captcha) {
         new Handler(getApplicationContext().getMainLooper())
                 .post(() -> {
-                    if (callback != null) {
+                    try {
                         callback.onCaptchaComplete();
+                    } catch (Exception ignored) {
                     }
 
                     ViewGroup webViewParent = (ViewGroup) webView.getParent();
@@ -431,6 +432,8 @@ public class VTOP extends Service {
                      *  }
                      */
                     webView.evaluateJavascript("(function() {" +
+                            "if (typeof captchaInterval != 'undefined') clearInterval(captchaInterval);" +
+                            "if (typeof executeInterval != 'undefined') clearInterval(executeInterval);" +
                             "var credentials = 'uname=" + username + "&passwd=' + encodeURIComponent('" + password + "') + '&" + captcha + "';" +
                             "var response = {" +
                             "    authorised: false," +
@@ -485,7 +488,7 @@ public class VTOP extends Service {
                                 if (errorCode == 1) {
                                     getCaptchaType();
                                 } else {
-                                    endService(false);
+                                    this.endService(true);
                                 }
                             }
                         } catch (Exception e) {
@@ -555,11 +558,11 @@ public class VTOP extends Service {
                     this.semesters.put(semesterObject.getString("name"), semesterObject.getString("id"));
                 }
 
-                if (this.callback != null) {
+                try {
                     String[] semesters = this.semesters.keySet().toArray(new String[0]);
                     this.callback.onRequestSemester(semesters);
-                } else {
-                    this.endService(false);
+                } catch (Exception ignored) {
+                    this.endService(true);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -743,12 +746,13 @@ public class VTOP extends Service {
                 "        while (courseIndex < cells.length && creditsIndex < cells.length && slotVenueIndex < cells.length && facultyIndex < cells.length) {" +
                 "            var course = {};" +
                 "            var rawCourse = cells[courseIndex].innerText.replace(/\\t/g,'').replace(/\\n/g,' ');" +
+                "            var rawCourseType = rawCourse.split('(').slice(-1)[0].toLowerCase();" +
                 "            var rawCredits = cells[creditsIndex].innerText.replace(/\\t/g,'').replace(/\\n/g,' ').trim().split(' ');" +
                 "            var rawSlotVenue = cells[slotVenueIndex].innerText.replace(/\\t/g,'').replace(/\\n/g,'').split('-');" +
                 "            var rawFaculty = cells[facultyIndex].innerText.replace(/\\t/g,'').replace(/\\n/g,'').split('-');" +
                 "            course.code = rawCourse.split('-')[0].trim();" +
                 "            course.title = rawCourse.split('-').slice(1).join('-').split('(')[0].trim();" +
-                "            course.type = (rawCourse.toLowerCase().includes('lab')) ? 'lab' : ((rawCourse.toLowerCase().includes('project')) ? 'project' : 'theory');" +
+                "            course.type = (rawCourseType.includes('lab')) ? 'lab' : ((rawCourseType.includes('project')) ? 'project' : 'theory');" +
                 "            course.credits = parseInt(rawCredits[rawCredits.length - 1]) || 0;" +
                 "            course.slots = rawSlotVenue[0].trim().split('+');" +
                 "            course.venue = rawSlotVenue.slice(1, rawSlotVenue.length).join(' - ').trim();" +
@@ -991,6 +995,7 @@ public class VTOP extends Service {
                     Timetable lab = new Timetable();
                     Timetable theory = new Timetable();
 
+                    lab.id = i * 2 + 1;
                     lab.startTime = this.getStringValue(labObject, "start_time");
                     lab.endTime = this.getStringValue(labObject, "end_time");
                     lab.sunday = this.getSlotId(labObject.getString("sunday"), Course.TYPE_LAB);
@@ -1001,6 +1006,7 @@ public class VTOP extends Service {
                     lab.friday = this.getSlotId(labObject.getString("friday"), Course.TYPE_LAB);
                     lab.saturday = this.getSlotId(labObject.getString("saturday"), Course.TYPE_LAB);
 
+                    theory.id = i * 2 + 2;
                     theory.startTime = this.getStringValue(theoryObject, "start_time");
                     theory.endTime = this.getStringValue(theoryObject, "end_time");
                     theory.sunday = this.getSlotId(theoryObject.getString("sunday"), Course.TYPE_THEORY);
@@ -1162,6 +1168,7 @@ public class VTOP extends Service {
                 List<Attendance> attendance = new ArrayList<>();
 
                 float overallAttendance = 0;
+                int attendanceLength = 0;
 
                 for (int i = 0; i < attendanceArray.length(); ++i) {
                     JSONObject attendanceObject = attendanceArray.getJSONObject(i);
@@ -1173,17 +1180,24 @@ public class VTOP extends Service {
                         courseType = Course.TYPE_LAB;
                     }
 
+                    attendanceItem.id = i + 1;
                     attendanceItem.courseId = this.getCourseId(attendanceObject.getString("slot"), courseType);
                     attendanceItem.attended = this.getIntegerValue(attendanceObject, "attended");
                     attendanceItem.total = this.getIntegerValue(attendanceObject, "total");
                     attendanceItem.percentage = this.getIntegerValue(attendanceObject, "percentage");
 
                     attendance.add(attendanceItem);
-                    overallAttendance += attendanceItem.percentage;
+                    if (attendanceItem.total != 0) {
+                        overallAttendance += attendanceItem.percentage;
+                        ++attendanceLength;
+                    }
                 }
 
-                overallAttendance /= attendanceArray.length();
-                sharedPreferences.edit().putInt("overall_attendance", Math.round(overallAttendance)).apply();
+                if (attendanceLength != 0) {
+                    overallAttendance /= attendanceLength;
+                }
+
+                sharedPreferences.edit().putInt("overall_attendance", (int) overallAttendance).apply();
 
                 AttendanceDao attendanceDao = appDatabase.attendanceDao();
                 attendanceDao
@@ -1322,7 +1336,7 @@ public class VTOP extends Service {
 
                 this.cumulativeMarks = new HashMap<>();
 
-                for (int i = 0; i < marksArray.length(); ++i) {
+                for (int i = 0, j = 0; i < marksArray.length(); ++i) {
                     JSONObject markObject = marksArray.getJSONObject(i);
                     Mark mark = new Mark();
 
@@ -1334,6 +1348,7 @@ public class VTOP extends Service {
                         courseType = Course.TYPE_PROJECT;
                     }
 
+                    mark.id = i + 1;
                     mark.courseId = this.getCourseId(markObject.getString("slot"), courseType);
                     mark.title = this.getStringValue(markObject, "title");
                     mark.score = this.getDoubleValue(markObject, "score");
@@ -1347,7 +1362,7 @@ public class VTOP extends Service {
                     Integer courseCredits = this.getCourseCredits(mark.courseId, courseType);
 
                     if (!this.cumulativeMarks.containsKey(courseCode)) {
-                        this.cumulativeMarks.put(courseCode, new CumulativeMark());
+                        this.cumulativeMarks.put(courseCode, new CumulativeMark(++j));
                     }
 
                     Objects.requireNonNull(this.cumulativeMarks.get(courseCode)).courseCode = courseCode;
@@ -1594,6 +1609,7 @@ public class VTOP extends Service {
                     JSONObject proctorObject = proctorArray.getJSONObject(i);
                     Staff staffItem = new Staff();
 
+                    staffItem.id = i + 1;
                     staffItem.type = "proctor";
                     staffItem.key = this.getStringValue(proctorObject, "key");
                     staffItem.value = this.getStringValue(proctorObject, "value");
@@ -1628,7 +1644,7 @@ public class VTOP extends Service {
 
                             @Override
                             public void onComplete() {
-                                downloadDeanHOD();
+                                downloadDeanHOD(staff.size());
                             }
                         });
             } catch (Exception e) {
@@ -1640,7 +1656,7 @@ public class VTOP extends Service {
     /**
      * Function to download the HOD & Dean info. (2 / 2 - Staff info)
      */
-    public void downloadDeanHOD() {
+    public void downloadDeanHOD(final int lastIndex) {
         updateProgress(null);
         /*
          *  JSON response format
@@ -1696,6 +1712,7 @@ public class VTOP extends Service {
                 JSONObject response = new JSONObject(responseString);
                 Iterator<String> keys = response.keys();
                 List<Staff> staff = new ArrayList<>();
+                int index = lastIndex;
 
                 while (keys.hasNext()) {
                     String staffType = keys.next();
@@ -1705,12 +1722,15 @@ public class VTOP extends Service {
                         staffType = "dean";
                     } else if (staffType.contains("hod")) {
                         staffType = "hod";
+                    } else {
+                        staffType = staffType.toLowerCase();
                     }
 
                     for (int i = 0; i < staffArray.length(); ++i) {
                         JSONObject staffObject = staffArray.getJSONObject(i);
                         Staff staffItem = new Staff();
 
+                        staffItem.id = ++index;
                         staffItem.type = staffType;
                         staffItem.key = this.getStringValue(staffObject, "key");
                         staffItem.value = this.getStringValue(staffObject, "value");
@@ -1819,6 +1839,7 @@ public class VTOP extends Service {
                     JSONObject spotlightObject = spotlightArray.getJSONObject(i);
                     Spotlight spotlightItem = new Spotlight();
 
+                    spotlightItem.id = i + 1;
                     spotlightItem.announcement = this.getStringValue(spotlightObject, "announcement");
                     spotlightItem.category = this.getStringValue(spotlightObject, "category");
                     spotlightItem.link = this.getStringValue(spotlightObject, "link");
@@ -2038,11 +2059,12 @@ public class VTOP extends Service {
         this.sharedPreferences.edit().putString("refreshedDate", date.format(c.getTime())).apply();
         this.sharedPreferences.edit().putString("refreshedTime", time.format(c.getTime())).apply();
 
-        if (this.callback != null) {
+        try {
             this.callback.onComplete();
+        } catch (Exception ignored) {
         }
 
-        this.endService(false);
+        this.endService(true);
     }
 
     /**

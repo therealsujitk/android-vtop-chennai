@@ -41,10 +41,10 @@
     <string name="lab_weightage">Lab Weightage</string>
     <string name="project_weightage">Project Weightage</string>
     <string name="overall_course_score">Overall Course Score</string>
-    <string name="score">Your Score</string>
-    <string name="weightage">Weightage Score</string>
-    <string name="status">Status: %s</string>
-    <string name="average">Average: %f</string>
+    <string name="score">Score</string>
+    <string name="weightage">Weightage</string>
+    <string name="status">Status: &lt;b>%s&lt;/b></string>
+    <string name="average">Average: &lt;b>%f&lt;/b></string>
 
     <!-- AssignmentsFragment Strings -->
     <string name="assignments_header">Your Assignments</string>
@@ -65,7 +65,7 @@
     <string name="courses">Courses</string>
     <string name="receipts">Receipts</string>
     <string name="staff">Staff</string>
-    <string name="switch_semester">Switch Semester</string>
+    <string name="sync_data">Sync Data</string>
     <string name="faq">Frequently Asked Questions</string>
     <string name="notifications">Notifications</string>
     <string name="share">Share App</string>
@@ -78,6 +78,7 @@
     <string name="recaptcha">reCaptcha</string>
     <string name="verifying_human">Verifying if you are human</string>
     <string name="select_semester">Select a semester</string>
+    <string name="select">Select</string>
     <string name="sign_in_attempt">Attempting to sign you in</string>
     <string name="downloading_profile">Downloading Profile</string>
     <string name="downloading_timetable">Downloading Timetable</string>
@@ -115,6 +116,11 @@
     <string name="share_subject">Get the &app_name; android app</string>
     <string name="share_text">Visit %s to download the latest version of &app_name;.</string>
     <string name="share_title">Share \"&app_name;\" via</string>
+
+    <!-- Empty State String -->
+    <string name="no_classes">Looks like you have the day off :)</string>
+    <string name="no_data">There\'s nothing here :(</string>
+    <string name="no_marks">There\'s nothing here yet :(</string>
 
     <!-- Other Strings & Strings used in multiple locations -->
     <string name="lab">Lab</string>

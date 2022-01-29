@@ -15,6 +15,11 @@ import tk.therealsuji.vtopchennai.R;
 import tk.therealsuji.vtopchennai.fragments.ProfileFragment;
 
 public class AnnouncementItemAdapter extends RecyclerView.Adapter<AnnouncementItemAdapter.ViewHolder> {
+    ProfileFragment.ItemData[] announcementItems;
+
+    public AnnouncementItemAdapter(ProfileFragment.ItemData[] announcementItems) {
+        this.announcementItems = announcementItems;
+    }
 
     @NonNull
     @Override
@@ -28,7 +33,7 @@ public class AnnouncementItemAdapter extends RecyclerView.Adapter<AnnouncementIt
 
     @Override
     public void onBindViewHolder(@NonNull AnnouncementItemAdapter.ViewHolder holder, int position) {
-        holder.setItem(ProfileFragment.ANNOUNCEMENT_ITEMS[position]);
+        holder.setItem(this.announcementItems[position]);
 
         if (position == this.getItemCount() - 1) {
             holder.setMargins(20, 10, 20, 10);
@@ -37,7 +42,7 @@ public class AnnouncementItemAdapter extends RecyclerView.Adapter<AnnouncementIt
 
     @Override
     public int getItemCount() {
-        return ProfileFragment.ANNOUNCEMENT_ITEMS.length;
+        return this.announcementItems.length;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -49,7 +54,7 @@ public class AnnouncementItemAdapter extends RecyclerView.Adapter<AnnouncementIt
             this.announcementItem = (LinearLayout) itemView;
         }
 
-        public void setItem(ProfileFragment.AnnouncementItemData announcementItem) {
+        public void setItem(ProfileFragment.ItemData announcementItem) {
             ImageView icon = this.announcementItem.findViewById(R.id.image_view_icon);
             TextView title = this.announcementItem.findViewById(R.id.text_view_title);
             TextView description = this.announcementItem.findViewById(R.id.text_view_description);

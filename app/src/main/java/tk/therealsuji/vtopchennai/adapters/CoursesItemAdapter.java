@@ -153,8 +153,8 @@ public class CoursesItemAdapter extends RecyclerView.Adapter<CoursesItemAdapter.
 
             ProgressBar attendanceProgress = this.courseItem.findViewById(R.id.progress_bar_attendance);
 
-            faculty.setText(Html.fromHtml(this.courseItem.getContext().getString(R.string.faculty, courseItem.faculty)));
-            venue.setText(Html.fromHtml(this.courseItem.getContext().getString(R.string.venue, courseItem.venue)));
+            faculty.setText(Html.fromHtml(this.courseItem.getContext().getString(R.string.faculty, courseItem.faculty), Html.FROM_HTML_MODE_LEGACY));
+            venue.setText(Html.fromHtml(this.courseItem.getContext().getString(R.string.venue, courseItem.venue), Html.FROM_HTML_MODE_LEGACY));
 
             int chipIconResource = R.drawable.ic_theory;
 

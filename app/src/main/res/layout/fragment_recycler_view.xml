@@ -46,5 +46,4 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linear_layout_header" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>

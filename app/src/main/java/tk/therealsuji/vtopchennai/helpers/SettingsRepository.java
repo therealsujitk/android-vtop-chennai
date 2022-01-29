@@ -39,7 +39,6 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
 import tk.therealsuji.vtopchennai.R;
-import tk.therealsuji.vtopchennai.activities.MainActivity;
 import tk.therealsuji.vtopchennai.activities.WebViewActivity;
 import tk.therealsuji.vtopchennai.fragments.RecyclerViewFragment;
 import tk.therealsuji.vtopchennai.fragments.ViewPagerFragment;
@@ -132,8 +131,6 @@ public class SettingsRepository {
                 .add(R.id.frame_layout_fragment_container, recyclerViewFragment)
                 .addToBackStack(null)
                 .commit();
-
-        ((MainActivity) fragmentActivity).hideBottomNavigationView();
     }
 
     public static void openViewPagerFragment(FragmentActivity fragmentActivity, int titleId, int contentType) {
@@ -150,8 +147,6 @@ public class SettingsRepository {
                 .add(R.id.frame_layout_fragment_container, viewPagerFragment)
                 .addToBackStack(null)
                 .commit();
-
-        ((MainActivity) fragmentActivity).hideBottomNavigationView();
     }
 
     public static void openWebViewActivity(Context context, String title, String url) {

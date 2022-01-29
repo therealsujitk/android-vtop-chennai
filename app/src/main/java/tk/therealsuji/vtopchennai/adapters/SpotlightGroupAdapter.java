@@ -46,6 +46,10 @@ public class SpotlightGroupAdapter extends RecyclerView.Adapter<SpotlightGroupAd
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         String category = categories.get(position);
         holder.setSpotlightSection(category, announcements.get(category));
+
+        if (position == this.getItemCount() - 1) {
+            holder.setPaddingBottom(0);
+        }
     }
 
     @Override
@@ -67,6 +71,10 @@ public class SpotlightGroupAdapter extends RecyclerView.Adapter<SpotlightGroupAd
 
         public void setSpotlightSection(String category, List<Spotlight> announcements) {
             this.spotlightGroup.setSpotlightSection(category, announcements);
+        }
+
+        public void setPaddingBottom(int paddingBottom) {
+            this.spotlightGroup.setPadding(0, 0, 0, paddingBottom);
         }
     }
 }

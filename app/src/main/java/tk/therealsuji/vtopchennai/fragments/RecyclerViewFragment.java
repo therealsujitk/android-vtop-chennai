@@ -5,10 +5,9 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -20,7 +19,7 @@ import io.reactivex.rxjava3.core.SingleObserver;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import tk.therealsuji.vtopchennai.R;
-import tk.therealsuji.vtopchennai.activities.MainActivity;
+import tk.therealsuji.vtopchennai.adapters.EmptyStateAdapter;
 import tk.therealsuji.vtopchennai.adapters.ReceiptsItemAdapter;
 import tk.therealsuji.vtopchennai.adapters.SpotlightGroupAdapter;
 import tk.therealsuji.vtopchennai.helpers.AppDatabase;
@@ -30,19 +29,14 @@ import tk.therealsuji.vtopchennai.models.Receipt;
 import tk.therealsuji.vtopchennai.models.Spotlight;
 
 public class RecyclerViewFragment extends Fragment {
-    public static final int TYPE_ATTENDANCE = 1;
-    public static final int TYPE_RECEIPTS = 2;
-    public static final int TYPE_SPOTLIGHT = 3;
+    public static final int TYPE_RECEIPTS = 1;
+    public static final int TYPE_SPOTLIGHT = 2;
 
     AppDatabase appDatabase;
     RecyclerView recyclerView;
 
     public RecyclerViewFragment() {
         // Required empty public constructor
-    }
-
-    private void attachAttendance() {
-
     }
 
     private void attachReceipts() {
@@ -59,11 +53,17 @@ public class RecyclerViewFragment extends Fragment {
 
                     @Override
                     public void onSuccess(@NonNull List<Receipt> receipts) {
+                        if (receipts.size() == 0) {
+                            displayEmptyState(EmptyStateAdapter.TYPE_NO_DATA, null);
+                            return;
+                        }
+
                         recyclerView.setAdapter(new ReceiptsItemAdapter(receipts));
                     }
 
                     @Override
                     public void onError(@NonNull Throwable e) {
+                        displayEmptyState(EmptyStateAdapter.TYPE_ERROR, "Error: " + e.getLocalizedMessage());
                     }
                 });
     }
@@ -77,13 +77,33 @@ public class RecyclerViewFragment extends Fragment {
 
             @Override
             public void onSuccess(@NonNull List<Spotlight> spotlight) {
+                if (spotlight.size() == 0) {
+                    displayEmptyState(EmptyStateAdapter.TYPE_NO_DATA, null);
+                    return;
+                }
+
                 recyclerView.setAdapter(new SpotlightGroupAdapter(spotlight));
             }
 
             @Override
             public void onError(@NonNull Throwable e) {
+                displayEmptyState(EmptyStateAdapter.TYPE_ERROR, "Error: " + e.getLocalizedMessage());
             }
         });
+    }
+
+    private void displayEmptyState(int type, String message) {
+        this.recyclerView.setAdapter(new EmptyStateAdapter(type, message));
+        this.recyclerView.setOverScrollMode(View.OVER_SCROLL_NEVER);
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        Bundle bottomNavigationVisibility = new Bundle();
+        bottomNavigationVisibility.putBoolean("isVisible", false);
+        getParentFragmentManager().setFragmentResult("bottomNavigationVisibility", bottomNavigationVisibility);
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -93,24 +113,31 @@ public class RecyclerViewFragment extends Fragment {
         recyclerViewFragment.getRootView().setBackgroundColor(requireContext().getColor(R.color.secondary_container_95));
         recyclerViewFragment.getRootView().setOnTouchListener((view, motionEvent) -> true);
 
-        LinearLayout header = recyclerViewFragment.findViewById(R.id.linear_layout_header);
-        header.setOnApplyWindowInsetsListener((view, windowInsets) -> {
-            ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) view.getLayoutParams();
-            layoutParams.setMargins(0, windowInsets.getSystemWindowInsetTop(), 0, 0);
-            view.setLayoutParams(layoutParams);
-
-            return windowInsets.consumeSystemWindowInsets();
-        });
-
+        View header = recyclerViewFragment.findViewById(R.id.linear_layout_header);
         this.recyclerView = recyclerViewFragment.findViewById(R.id.recycler_view);
         this.appDatabase = AppDatabase.getInstance(this.requireActivity().getApplicationContext());
 
-        this.recyclerView.setPadding(
-                0,
-                0,
-                0,
-                ((MainActivity) this.requireActivity()).getSystemNavigationPadding()
-        );
+        getParentFragmentManager().setFragmentResultListener("customInsets2", this, (requestKey, result) -> {
+            int systemWindowInsetLeft = result.getInt("systemWindowInsetLeft");
+            int systemWindowInsetTop = result.getInt("systemWindowInsetTop");
+            int systemWindowInsetRight = result.getInt("systemWindowInsetRight");
+            int systemWindowInsetBottom = result.getInt("systemWindowInsetBottom");
+            float pixelDensity = getResources().getDisplayMetrics().density;
+
+            header.setPaddingRelative(
+                    systemWindowInsetLeft,
+                    systemWindowInsetTop,
+                    systemWindowInsetRight,
+                    0
+            );
+
+            this.recyclerView.setPaddingRelative(
+                    systemWindowInsetLeft,
+                    0,
+                    systemWindowInsetRight,
+                    (int) (systemWindowInsetBottom + 20 * pixelDensity)
+            );
+        });
 
         int titleId = 0, contentType = 0;
         Bundle arguments = this.getArguments();
@@ -124,9 +151,6 @@ public class RecyclerViewFragment extends Fragment {
         ((TextView) recyclerViewFragment.findViewById(R.id.text_view_title)).setText(getString(titleId));
 
         switch (contentType) {
-            case TYPE_ATTENDANCE:
-                this.attachAttendance();
-                break;
             case TYPE_RECEIPTS:
                 this.attachReceipts();
                 break;
@@ -142,6 +166,8 @@ public class RecyclerViewFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
 
-        ((MainActivity) this.requireActivity()).showBottomNavigationView();
+        Bundle bottomNavigationVisibility = new Bundle();
+        bottomNavigationVisibility.putBoolean("isVisible", true);
+        getParentFragmentManager().setFragmentResult("bottomNavigationVisibility", bottomNavigationVisibility);
     }
 }

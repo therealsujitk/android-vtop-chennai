@@ -1,5 +1,7 @@
 package tk.therealsuji.vtopchennai.activities;
 
+import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.WindowManager;
@@ -7,6 +9,7 @@ import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.WindowCompat;
 import androidx.fragment.app.Fragment;
@@ -18,10 +21,16 @@ import tk.therealsuji.vtopchennai.fragments.AssignmentsFragment;
 import tk.therealsuji.vtopchennai.fragments.HomeFragment;
 import tk.therealsuji.vtopchennai.fragments.PerformanceFragment;
 import tk.therealsuji.vtopchennai.fragments.ProfileFragment;
+import tk.therealsuji.vtopchennai.helpers.VTOPHelper;
 
 public class MainActivity extends AppCompatActivity {
     BottomNavigationView bottomNavigationView;
-    Fragment homeFragment, performanceFragment, assignmentsFragment, profileFragment;
+    VTOPHelper vtopHelper;
+
+    static final String HOME_FRAGMENT_TAG = "HOME_FRAGMENT_TAG";
+    static final String PERFORMANCE_FRAGMENT_TAG = "PERFORMANCE_FRAGMENT_TAG";
+    static final String ASSIGNMENTS_FRAGMENT_TAG = "ASSIGNMENTS_FRAGMENT_TAG";
+    static final String PROFILE_FRAGMENT_TAG = "PROFILE_FRAGMENT_TAG";
 
     ActivityResultLauncher<String> requestPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
@@ -36,23 +45,14 @@ public class MainActivity extends AppCompatActivity {
         return this.requestPermissionLauncher;
     }
 
-    public int getSystemNavigationPadding() {
-        int systemNavigationHeight = this.getWindow().getDecorView().getRootWindowInsets().getSystemWindowInsetBottom();
-        int extraPadding = (int) (20 * this.getResources().getDisplayMetrics().density);
-
-        return systemNavigationHeight + extraPadding;
+    private void syncData() {
+        vtopHelper.bind();
+        vtopHelper.start();
     }
 
-    public int getBottomNavigationPadding() {
-        int bottomNavigationHeight = this.bottomNavigationView.getMeasuredHeight();
-        int extraPadding = (int) (20 * this.getResources().getDisplayMetrics().density);
-
-        return bottomNavigationHeight + extraPadding;
-    }
-
-    public void hideBottomNavigationView() {
+    private void hideBottomNavigationView() {
         this.bottomNavigationView.clearAnimation();
-        this.bottomNavigationView.animate().translationY(bottomNavigationView.getMeasuredHeight());
+        this.bottomNavigationView.post(() -> this.bottomNavigationView.animate().translationY(bottomNavigationView.getMeasuredHeight()));
 
         int gestureLeft = 0;
 
@@ -65,11 +65,18 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void showBottomNavigationView() {
+    private void showBottomNavigationView() {
         this.bottomNavigationView.clearAnimation();
-        this.bottomNavigationView.animate().translationY(0);
+        this.bottomNavigationView.post(() -> this.bottomNavigationView.animate().translationY(0));
 
         this.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+    }
+
+    private void restartActivity() {
+        Intent intent = new Intent(this, this.getClass());
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
     }
 
     @Override
@@ -80,42 +87,137 @@ public class MainActivity extends AppCompatActivity {
         WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
 
         this.bottomNavigationView = findViewById(R.id.bottom_navigation);
+
+        Bundle customInsets = new Bundle();
+        customInsets.putInt("systemWindowInsetLeft", 0);
+        customInsets.putInt("systemWindowInsetTop", 0);
+        customInsets.putInt("systemWindowInsetRight", 0);
+        customInsets.putInt("systemWindowInsetBottom", 0);
+        customInsets.putInt("bottomNavigationHeight", 0);
+
+        findViewById(R.id.frame_layout_fragment_container)
+                .setOnApplyWindowInsetsListener((view, windowInsets) -> {
+                    int systemWindowInsetLeft = windowInsets.getSystemWindowInsetLeft();
+                    int systemWindowInsetTop = windowInsets.getSystemWindowInsetTop();
+                    int systemWindowInsetRight = windowInsets.getSystemWindowInsetRight();
+                    int systemWindowInsetBottom = windowInsets.getSystemWindowInsetBottom();
+
+                    customInsets.putInt("systemWindowInsetLeft", systemWindowInsetLeft);
+                    customInsets.putInt("systemWindowInsetTop", systemWindowInsetTop);
+                    customInsets.putInt("systemWindowInsetRight", systemWindowInsetRight);
+                    customInsets.putInt("systemWindowInsetBottom", systemWindowInsetBottom);
+
+                    getSupportFragmentManager().setFragmentResult("customInsets", customInsets);
+
+                    // Send the bottom navigation height to all fragments when ready
+                    bottomNavigationView.post(() -> {
+                        customInsets.putInt("bottomNavigationHeight", bottomNavigationView.getMeasuredHeight());
+                        getSupportFragmentManager().setFragmentResult("customInsets", customInsets);
+                    });
+
+                    return windowInsets;
+                });
+
+        getSupportFragmentManager().setFragmentResultListener("bottomNavigationVisibility", this, (requestKey, result) -> {
+            if (result.getBoolean("isVisible")) {
+                this.showBottomNavigationView();
+            } else {
+                this.hideBottomNavigationView();
+            }
+        });
+
+        Bundle syncDataState = new Bundle();
+        syncDataState.putBoolean("isLoading", false);
+        getSupportFragmentManager().setFragmentResultListener("syncData", this, (requestKey, result) -> this.syncData());
+
         this.bottomNavigationView.setOnItemSelectedListener(item -> {
             Fragment selectedFragment;
+            String selectedFragmentTag;
 
             if (item.getItemId() == R.id.item_performance) {
-                if (this.performanceFragment == null) {
-                    this.performanceFragment = new PerformanceFragment();
-                }
+                selectedFragmentTag = PERFORMANCE_FRAGMENT_TAG;
+                selectedFragment = getSupportFragmentManager().findFragmentByTag(selectedFragmentTag);
 
-                selectedFragment = this.performanceFragment;
+                if (selectedFragment == null) {
+                    selectedFragment = new PerformanceFragment();
+                }
             } else if (item.getItemId() == R.id.item_assignments) {
-                if (this.assignmentsFragment == null) {
-                    this.assignmentsFragment = new AssignmentsFragment();
-                }
+                selectedFragmentTag = ASSIGNMENTS_FRAGMENT_TAG;
+                selectedFragment = getSupportFragmentManager().findFragmentByTag(selectedFragmentTag);
 
-                selectedFragment = this.assignmentsFragment;
+                if (selectedFragment == null) {
+                    selectedFragment = new AssignmentsFragment();
+                }
             } else if (item.getItemId() == R.id.item_profile) {
-                if (this.profileFragment == null) {
-                    this.profileFragment = new ProfileFragment();
-                }
+                getSupportFragmentManager().setFragmentResult("syncDataState", syncDataState);
 
-                selectedFragment = this.profileFragment;
+                selectedFragmentTag = PROFILE_FRAGMENT_TAG;
+                selectedFragment = getSupportFragmentManager().findFragmentByTag(selectedFragmentTag);
+
+                if (selectedFragment == null) {
+                    selectedFragment = new ProfileFragment();
+                }
             } else {
-                if (this.homeFragment == null) {
-                    this.homeFragment = new HomeFragment();
-                }
+                selectedFragmentTag = HOME_FRAGMENT_TAG;
+                selectedFragment = getSupportFragmentManager().findFragmentByTag(selectedFragmentTag);
 
-                selectedFragment = this.homeFragment;
+                if (selectedFragment == null) {
+                    selectedFragment = new HomeFragment();
+                }
             }
 
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.frame_layout_fragment_container, selectedFragment)
+                    .replace(R.id.frame_layout_fragment_container, selectedFragment, selectedFragmentTag)
                     .commit();
 
             return true;
         });
 
-        this.bottomNavigationView.setSelectedItemId(R.id.item_home);
+        int selectedItem = R.id.item_home;
+
+        if (savedInstanceState != null) {
+            selectedItem = savedInstanceState.getInt("selectedItem");
+        }
+
+        this.bottomNavigationView.setSelectedItemId(selectedItem);
+        this.vtopHelper = new VTOPHelper(this, new VTOPHelper.Initiator() {
+            @Override
+            public void onLoading(boolean isLoading) {
+                syncDataState.putBoolean("isLoading", isLoading);
+                getSupportFragmentManager().setFragmentResult("syncDataState", syncDataState);
+            }
+
+            @Override
+            public void onComplete() {
+                restartActivity();
+            }
+        });
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt("selectedItem", this.bottomNavigationView.getSelectedItemId());
+    }
+
+    @Override
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        if (this.bottomNavigationView.getTranslationY() != 0) {
+            this.hideBottomNavigationView();
+        }
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        this.vtopHelper.bind();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        this.vtopHelper.unbind();
     }
 }

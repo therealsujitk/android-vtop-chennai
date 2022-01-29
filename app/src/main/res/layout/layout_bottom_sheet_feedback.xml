@@ -23,9 +23,9 @@
         android:clickable="true"
         android:focusable="true"
         android:paddingStart="30dp"
-        android:paddingTop="15dp"
+        android:paddingTop="18dp"
         android:paddingEnd="30dp"
-        android:paddingBottom="15dp"
+        android:paddingBottom="18dp"
         android:text="@string/contact_developer"
         android:textSize="16sp" />
 
@@ -37,9 +37,9 @@
         android:clickable="true"
         android:focusable="true"
         android:paddingStart="30dp"
-        android:paddingTop="15dp"
+        android:paddingTop="18dp"
         android:paddingEnd="30dp"
-        android:paddingBottom="15dp"
+        android:paddingBottom="18dp"
         android:text="@string/open_issue"
         android:textSize="16sp" />
 
@@ -51,9 +51,9 @@
         android:clickable="true"
         android:focusable="true"
         android:paddingStart="30dp"
-        android:paddingTop="15dp"
+        android:paddingTop="18dp"
         android:paddingEnd="30dp"
-        android:paddingBottom="15dp"
+        android:paddingBottom="18dp"
         android:text="@string/request_feature"
         android:textSize="16sp" />
 </LinearLayout>

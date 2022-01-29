@@ -5,11 +5,10 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.widget.TooltipCompat;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
 
@@ -24,8 +23,8 @@ import io.reactivex.rxjava3.core.SingleObserver;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import tk.therealsuji.vtopchennai.R;
-import tk.therealsuji.vtopchennai.activities.MainActivity;
 import tk.therealsuji.vtopchennai.adapters.CoursesAdapter;
+import tk.therealsuji.vtopchennai.adapters.EmptyStateAdapter;
 import tk.therealsuji.vtopchennai.adapters.StaffAdapter;
 import tk.therealsuji.vtopchennai.helpers.AppDatabase;
 import tk.therealsuji.vtopchennai.interfaces.CoursesDao;
@@ -58,6 +57,11 @@ public class ViewPagerFragment extends Fragment {
 
                     @Override
                     public void onSuccess(@NonNull List<String> staffTypes) {
+                        if (staffTypes.size() == 0) {
+                            displayEmptyState(EmptyStateAdapter.TYPE_NO_DATA, null);
+                            return;
+                        }
+
                         viewPager.setAdapter(new StaffAdapter(staffTypes));
 
                         new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {
@@ -84,6 +88,7 @@ public class ViewPagerFragment extends Fragment {
 
                     @Override
                     public void onError(@NonNull Throwable e) {
+                        displayEmptyState(EmptyStateAdapter.TYPE_ERROR, "Error: " + e.getLocalizedMessage());
                     }
                 });
     }
@@ -103,6 +108,11 @@ public class ViewPagerFragment extends Fragment {
 
                     @Override
                     public void onSuccess(@NonNull List<String> courseCodes) {
+                        if (courseCodes.size() == 0) {
+                            displayEmptyState(EmptyStateAdapter.TYPE_NO_DATA, null);
+                            return;
+                        }
+
                         viewPager.setAdapter(new CoursesAdapter(courseCodes));
 
                         new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {
@@ -129,8 +139,24 @@ public class ViewPagerFragment extends Fragment {
 
                     @Override
                     public void onError(@NonNull Throwable e) {
+                        displayEmptyState(EmptyStateAdapter.TYPE_ERROR, "Error: " + e.getLocalizedMessage());
                     }
                 });
+    }
+
+    private void displayEmptyState(int type, String message) {
+        this.tabLayout.setVisibility(View.GONE);
+        this.viewPager.setAdapter(new EmptyStateAdapter(type, message));
+        this.viewPager.getChildAt(0).setOverScrollMode(View.OVER_SCROLL_NEVER);
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        Bundle bottomNavigationVisibility = new Bundle();
+        bottomNavigationVisibility.putBoolean("isVisible", false);
+        getParentFragmentManager().setFragmentResult("bottomNavigationVisibility", bottomNavigationVisibility);
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -140,18 +166,31 @@ public class ViewPagerFragment extends Fragment {
         viewPagerFragment.getRootView().setBackgroundColor(requireContext().getColor(R.color.secondary_container_95));
         viewPagerFragment.getRootView().setOnTouchListener((view, motionEvent) -> true);
 
-        LinearLayout header = viewPagerFragment.findViewById(R.id.linear_layout_header);
-        header.setOnApplyWindowInsetsListener((view, windowInsets) -> {
-            ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) view.getLayoutParams();
-            layoutParams.setMargins(0, windowInsets.getSystemWindowInsetTop(), 0, 0);
-            view.setLayoutParams(layoutParams);
-
-            return windowInsets.consumeSystemWindowInsets();
-        });
-
         this.appDatabase = AppDatabase.getInstance(this.requireActivity().getApplicationContext());
         this.tabLayout = viewPagerFragment.findViewById(R.id.tab_layout);
         this.viewPager = viewPagerFragment.findViewById(R.id.view_pager);
+
+        getParentFragmentManager().setFragmentResultListener("customInsets2", this, (requestKey, result) -> {
+            int systemWindowInsetLeft = result.getInt("systemWindowInsetLeft");
+            int systemWindowInsetTop = result.getInt("systemWindowInsetTop");
+            int systemWindowInsetRight = result.getInt("systemWindowInsetRight");
+            int systemWindowInsetBottom = result.getInt("systemWindowInsetBottom");
+            float pixelDensity = this.getResources().getDisplayMetrics().density;
+
+            viewPagerFragment.setPaddingRelative(
+                    systemWindowInsetLeft,
+                    systemWindowInsetTop,
+                    systemWindowInsetRight,
+                    0
+            );
+
+            this.viewPager.setPageTransformer((page, position) -> page.setPadding(
+                    0,
+                    0,
+                    0,
+                    (int) (systemWindowInsetBottom + 20 * pixelDensity)
+            ));
+        });
 
         int titleId = 0, contentType = 0;
         Bundle arguments = this.getArguments();
@@ -180,6 +219,8 @@ public class ViewPagerFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
 
-        ((MainActivity) this.requireActivity()).showBottomNavigationView();
+        Bundle bottomNavigationVisibility = new Bundle();
+        bottomNavigationVisibility.putBoolean("isVisible", true);
+        getParentFragmentManager().setFragmentResult("bottomNavigationVisibility", bottomNavigationVisibility);
     }
 }

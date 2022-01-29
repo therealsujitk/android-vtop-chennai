@@ -9,7 +9,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.widget.TooltipCompat;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
 
@@ -47,25 +46,34 @@ public class HomeFragment extends Fragment {
         AppBarLayout appBarLayout = homeFragment.findViewById(R.id.app_bar);
         ViewPager2 timetable = homeFragment.findViewById(R.id.view_pager_timetable);
 
-        appBarLayout.setOnApplyWindowInsetsListener((view, windowInsets) -> {
-            CoordinatorLayout.LayoutParams layoutParams = (CoordinatorLayout.LayoutParams) view.getLayoutParams();
-            layoutParams.setMargins(0, windowInsets.getSystemWindowInsetTop(), 0, 0);
-            view.setLayoutParams(layoutParams);
+        getParentFragmentManager().setFragmentResultListener("customInsets", this, (requestKey, result) -> {
+            int systemWindowInsetLeft = result.getInt("systemWindowInsetLeft");
+            int systemWindowInsetTop = result.getInt("systemWindowInsetTop");
+            int systemWindowInsetRight = result.getInt("systemWindowInsetRight");
+            int bottomNavigationHeight = result.getInt("bottomNavigationHeight");
 
-            timetable.setPadding(
-                    0,
-                    0,
-                    0,
-                    windowInsets.getSystemWindowInsetTop()
+            appBarLayout.setPadding(
+                    systemWindowInsetLeft,
+                    systemWindowInsetTop,
+                    systemWindowInsetRight,
+                    0
             );
 
-            return windowInsets;
+            timetable.setPageTransformer((page, position) -> page.setPadding(
+                    systemWindowInsetLeft,
+                    0,
+                    systemWindowInsetRight,
+                    (int) (bottomNavigationHeight + 20 * pixelDensity)
+            ));
+
+            // Only one listener can be added per requestKey, so we create a duplicate
+            getParentFragmentManager().setFragmentResult("customInsets2", result);
         });
 
         appBarLayout.addOnOffsetChangedListener((appBarLayout1, verticalOffset) -> {
             LinearLayout header = homeFragment.findViewById(R.id.linear_layout_header);
-            float alpha = 1 - ((float) (-1 * verticalOffset) / header.getHeight());
 
+            float alpha = 1 - ((float) (-1 * verticalOffset) / header.getHeight());
             header.setAlpha(alpha);
         });
 
