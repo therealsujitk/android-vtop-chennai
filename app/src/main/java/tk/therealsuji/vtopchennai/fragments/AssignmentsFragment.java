@@ -366,6 +366,10 @@ public class AssignmentsFragment extends Fragment {
         TooltipCompat.setTooltipText(this.imageButtonSync, this.imageButtonSync.getContentDescription());
 
         if (!this.moodleToken.equals("")) {
+            this.assignmentGroups.setAdapter(new EmptyStateAdapter(
+                    EmptyStateAdapter.TYPE_FETCHING_DATA,
+                    getString(R.string.fetch_assignments)
+            ));
             this.moodleApi = new Retrofit.Builder()
                     .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
                     .baseUrl(SettingsRepository.MOODLE_BASE_URL)
