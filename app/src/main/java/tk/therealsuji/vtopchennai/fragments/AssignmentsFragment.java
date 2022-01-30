@@ -296,7 +296,12 @@ public class AssignmentsFragment extends Fragment {
 
                     @Override
                     public void onComplete() {
-                        displayAssignments();
+                        if (assignments.size() == 0) {
+                            assignmentGroups.setAdapter(new EmptyStateAdapter(EmptyStateAdapter.TYPE_NO_ASSIGNMENTS));
+                        } else {
+                            displayAssignments();
+                        }
+
                         setLoading(false);
                     }
                 });
@@ -305,7 +310,8 @@ public class AssignmentsFragment extends Fragment {
     private void displayAssignments() {
         try {
             this.assignmentGroups.setAdapter(new AssignmentsGroupAdapter(this.assignments));
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            this.assignmentGroups.setAdapter(new EmptyStateAdapter(EmptyStateAdapter.TYPE_ERROR, e.getLocalizedMessage()));
         }
     }
 

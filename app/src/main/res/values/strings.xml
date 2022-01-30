@@ -119,6 +119,7 @@
     <string name="share_title">Share \"&app_name;\" via</string>
 
     <!-- Empty State String -->
+    <string name="no_assignments">Looks like you have no pending assignments :)</string>
     <string name="no_classes">Looks like you have the day off :)</string>
     <string name="no_data">There\'s nothing here :(</string>
     <string name="no_marks">There\'s nothing here yet :(</string>

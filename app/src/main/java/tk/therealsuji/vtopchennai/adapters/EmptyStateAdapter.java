@@ -15,10 +15,11 @@ import tk.therealsuji.vtopchennai.R;
 
 public class EmptyStateAdapter extends RecyclerView.Adapter<EmptyStateAdapter.ViewHolder> {
     public static final int TYPE_ERROR = 1;
-    public static final int TYPE_NO_DATA = 2;
-    public static final int TYPE_NO_PERFORMANCE = 3;
-    public static final int TYPE_NO_TIMETABLE = 4;
-    public static final int TYPE_NOT_AUTHENTICATED = 5;
+    public static final int TYPE_NO_ASSIGNMENTS = 2;
+    public static final int TYPE_NO_DATA = 3;
+    public static final int TYPE_NO_PERFORMANCE = 4;
+    public static final int TYPE_NO_TIMETABLE = 5;
+    public static final int TYPE_NOT_AUTHENTICATED = 6;
 
     final int type;
     OnClickListener onClickListener;
@@ -54,6 +55,10 @@ public class EmptyStateAdapter extends RecyclerView.Adapter<EmptyStateAdapter.Vi
         switch (this.type) {
             case TYPE_ERROR:
                 holder.setImage(R.drawable.image_error);
+                break;
+            case TYPE_NO_ASSIGNMENTS:
+                holder.setImage(R.drawable.image_no_assignments);
+                holder.setText(R.string.no_assignments);
                 break;
             case TYPE_NO_PERFORMANCE:
                 holder.setImage(R.drawable.image_no_marks);
