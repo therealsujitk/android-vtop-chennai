@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import androidx.appcompat.widget.TooltipCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -43,8 +44,10 @@ public class AssignmentsFragment extends Fragment {
     int moodleUserId;
     List<Assignment> assignments;
     MoodleApi moodleApi;
-    RecyclerView assignmentGroups;
     String moodleToken;
+
+    RecyclerView assignmentGroups;
+    View imageButtonSync, progressBarLoading;
 
     public AssignmentsFragment() {
         // Required empty public constructor
@@ -54,6 +57,7 @@ public class AssignmentsFragment extends Fragment {
      * Function to get the moodle user id
      */
     private void getUserId() {
+        this.setLoading(true);
         this.moodleApi.getUserId(this.moodleToken)
                 .subscribeOn(Schedulers.single())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -75,11 +79,13 @@ public class AssignmentsFragment extends Fragment {
                             getCourses();
                         } catch (Exception e) {
                             Toast.makeText(getContext(), "Error: " + e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                            setLoading(false);
                         }
                     }
 
                     @Override
                     public void onError(@NonNull Throwable e) {
+                        setLoading(false);
                     }
                 });
     }
@@ -115,11 +121,13 @@ public class AssignmentsFragment extends Fragment {
 
                             getAssignments(courseIds);
                         } catch (Exception ignored) {
+                            setLoading(false);
                         }
                     }
 
                     @Override
                     public void onError(@NonNull Throwable e) {
+                        setLoading(false);
                     }
                 });
     }
@@ -218,11 +226,13 @@ public class AssignmentsFragment extends Fragment {
 
                             filterAssignmentsByCompletion(courseIds, assignments);
                         } catch (Exception ignored) {
+                            setLoading(false);
                         }
                     }
 
                     @Override
                     public void onError(@NonNull Throwable e) {
+                        setLoading(false);
                     }
                 });
     }
@@ -275,16 +285,19 @@ public class AssignmentsFragment extends Fragment {
                                 }
                             }
                         } catch (Exception ignored) {
+                            setLoading(false);
                         }
                     }
 
                     @Override
                     public void onError(@NonNull Throwable e) {
+                        setLoading(false);
                     }
 
                     @Override
                     public void onComplete() {
                         displayAssignments();
+                        setLoading(false);
                     }
                 });
     }
@@ -293,6 +306,16 @@ public class AssignmentsFragment extends Fragment {
         try {
             this.assignmentGroups.setAdapter(new AssignmentsGroupAdapter(this.assignments));
         } catch (Exception ignored) {
+        }
+    }
+
+    private void setLoading(boolean isLoading) {
+        if (isLoading) {
+            this.imageButtonSync.setVisibility(View.INVISIBLE);
+            this.progressBarLoading.setVisibility(View.VISIBLE);
+        } else {
+            this.imageButtonSync.setVisibility(View.VISIBLE);
+            this.progressBarLoading.setVisibility(View.GONE);
         }
     }
 
@@ -330,6 +353,11 @@ public class AssignmentsFragment extends Fragment {
 
         SharedPreferences sharedPreferences = SettingsRepository.getSharedPreferences(this.requireContext().getApplicationContext());
         this.moodleToken = sharedPreferences.getString("moodleToken", "");
+        this.imageButtonSync = assignmentsFragment.findViewById(R.id.image_button_sync);
+        this.progressBarLoading = assignmentsFragment.findViewById(R.id.progress_bar_loading);
+
+        this.imageButtonSync.setOnClickListener(view -> this.getUserId());
+        TooltipCompat.setTooltipText(this.imageButtonSync, this.imageButtonSync.getContentDescription());
 
         if (!this.moodleToken.equals("")) {
             this.moodleApi = new Retrofit.Builder()
@@ -362,6 +390,8 @@ public class AssignmentsFragment extends Fragment {
                     }
             ));
             this.assignmentGroups.setOverScrollMode(View.OVER_SCROLL_NEVER);
+            this.imageButtonSync.setVisibility(View.GONE);
+            this.progressBarLoading.setVisibility(View.GONE);
         }
 
         return assignmentsFragment;

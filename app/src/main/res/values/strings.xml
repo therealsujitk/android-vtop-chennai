@@ -48,6 +48,7 @@
 
     <!-- AssignmentsFragment Strings -->
     <string name="assignments_header">Your Assignments</string>
+    <string name="sync_assignments">Sync Assignments</string>
     <string name="moodle_sign_in">Sign In to Moodle</string>
     <string name="moodle_login_description">Sign in using your Moodle credentials</string>
     <string name="due_date">Due date: &lt;b>%s, %s&lt;/b></string>
