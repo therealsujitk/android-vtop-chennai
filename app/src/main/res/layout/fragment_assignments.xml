@@ -31,36 +31,4 @@
         android:clipToPadding="false"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
-
-    <LinearLayout
-        android:id="@+id/linear_layout_container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginStart="40dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="40dp"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:visibility="gone"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/moodle_sign_in_text"
-            android:textAlignment="center"
-            android:textColor="?attr/colorOnSurface"
-            android:textSize="18sp" />
-
-        <Button
-            android:id="@+id/button_sign_in"
-            style="@style/Widget.Material3.Button.OutlinedButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:padding="15dp"
-            android:text="@string/sign_in"
-            android:textAllCaps="true"
-            android:textSize="18sp" />
-    </LinearLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

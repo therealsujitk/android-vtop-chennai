@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
@@ -35,6 +34,7 @@ import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory;
 import tk.therealsuji.vtopchennai.R;
 import tk.therealsuji.vtopchennai.adapters.AssignmentsGroupAdapter;
+import tk.therealsuji.vtopchennai.adapters.EmptyStateAdapter;
 import tk.therealsuji.vtopchennai.helpers.SettingsRepository;
 import tk.therealsuji.vtopchennai.interfaces.MoodleApi;
 import tk.therealsuji.vtopchennai.models.Assignment;
@@ -302,7 +302,6 @@ public class AssignmentsFragment extends Fragment {
 
         this.assignmentGroups = assignmentsFragment.findViewById(R.id.recycler_view_assignment_groups);
         View appBarLayout = assignmentsFragment.findViewById(R.id.app_bar);
-        LinearLayout signInContainer = assignmentsFragment.findViewById(R.id.linear_layout_container);
 
         getParentFragmentManager().setFragmentResultListener("customInsets", this, (requestKey, result) -> {
             int systemWindowInsetLeft = result.getInt("systemWindowInsetLeft");
@@ -319,13 +318,6 @@ public class AssignmentsFragment extends Fragment {
             );
 
             this.assignmentGroups.setPaddingRelative(
-                    systemWindowInsetLeft,
-                    0,
-                    systemWindowInsetRight,
-                    (int) (bottomNavigationHeight + 20 * pixelDensity)
-            );
-
-            signInContainer.setPaddingRelative(
                     systemWindowInsetLeft,
                     0,
                     systemWindowInsetRight,
@@ -349,15 +341,27 @@ public class AssignmentsFragment extends Fragment {
             this.assignments = new ArrayList<>();
             this.getUserId();
         } else {
-            signInContainer.setVisibility(View.VISIBLE);
-            assignmentsFragment.findViewById(R.id.button_sign_in).setOnClickListener(view -> {
-                MoodleLoginDialogFragment moodleLoginDialogFragment = new MoodleLoginDialogFragment();
+            this.assignmentGroups.setAdapter(new EmptyStateAdapter(
+                    EmptyStateAdapter.TYPE_NOT_AUTHENTICATED,
+                    null,
+                    new EmptyStateAdapter.OnClickListener() {
+                        @Override
+                        public void onClick() {
+                            MoodleLoginDialogFragment moodleLoginDialogFragment = new MoodleLoginDialogFragment();
 
-                FragmentManager fragmentManager = this.requireActivity().getSupportFragmentManager();
-                FragmentTransaction transaction = fragmentManager.beginTransaction();
-                transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-                transaction.add(android.R.id.content, moodleLoginDialogFragment).addToBackStack(null).commit();
-            });
+                            FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
+                            FragmentTransaction transaction = fragmentManager.beginTransaction();
+                            transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                            transaction.add(android.R.id.content, moodleLoginDialogFragment).addToBackStack(null).commit();
+                        }
+
+                        @Override
+                        public int getButtonTextId() {
+                            return R.string.moodle_sign_in;
+                        }
+                    }
+            ));
+            this.assignmentGroups.setOverScrollMode(View.OVER_SCROLL_NEVER);
         }
 
         return assignmentsFragment;
