@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
@@ -44,8 +43,8 @@ public class AssignmentsFragment extends Fragment {
     int moodleUserId;
     List<Assignment> assignments;
     MoodleApi moodleApi;
-    String moodleToken;
     RecyclerView assignmentGroups;
+    String moodleToken;
 
     public AssignmentsFragment() {
         // Required empty public constructor
@@ -302,7 +301,7 @@ public class AssignmentsFragment extends Fragment {
         View assignmentsFragment = inflater.inflate(R.layout.fragment_assignments, container, false);
 
         this.assignmentGroups = assignmentsFragment.findViewById(R.id.recycler_view_assignment_groups);
-        TextView header = assignmentsFragment.findViewById(R.id.text_view_title);
+        View appBarLayout = assignmentsFragment.findViewById(R.id.app_bar);
         LinearLayout signInContainer = assignmentsFragment.findViewById(R.id.linear_layout_container);
 
         getParentFragmentManager().setFragmentResultListener("customInsets", this, (requestKey, result) -> {
@@ -312,7 +311,7 @@ public class AssignmentsFragment extends Fragment {
             int bottomNavigationHeight = result.getInt("bottomNavigationHeight");
             float pixelDensity = getResources().getDisplayMetrics().density;
 
-            header.setPadding(
+            appBarLayout.setPadding(
                     systemWindowInsetLeft,
                     systemWindowInsetTop,
                     systemWindowInsetRight,
@@ -351,7 +350,6 @@ public class AssignmentsFragment extends Fragment {
             this.getUserId();
         } else {
             signInContainer.setVisibility(View.VISIBLE);
-
             assignmentsFragment.findViewById(R.id.button_sign_in).setOnClickListener(view -> {
                 MoodleLoginDialogFragment moodleLoginDialogFragment = new MoodleLoginDialogFragment();
 
