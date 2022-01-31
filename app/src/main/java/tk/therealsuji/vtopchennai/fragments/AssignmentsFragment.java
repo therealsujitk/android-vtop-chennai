@@ -159,7 +159,7 @@ public class AssignmentsFragment extends Fragment {
                             Map<Integer, Assignment> assignments = new HashMap<>();
 
                             Calendar calendar = Calendar.getInstance();
-                            calendar.add(Calendar.DATE, -30);
+                            calendar.add(Calendar.DATE, -300);
                             Date dueLimit = calendar.getTime();
 
                             for (int i = 0; i < coursesArray.length(); ++i) {

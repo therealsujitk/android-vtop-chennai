@@ -2,6 +2,7 @@ package tk.therealsuji.vtopchennai.fragments;
 
 import android.annotation.SuppressLint;
 import android.content.res.ColorStateList;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.text.Html;
 import android.view.LayoutInflater;
@@ -18,6 +19,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.color.MaterialColors;
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -47,7 +49,6 @@ public class AssignmentsViewFragment extends Fragment {
     ProgressBar loading;
     RecyclerView submissions;
     String moodleToken;
-    TextView submissionsTitle;
 
     public AssignmentsViewFragment() {
         // Required empty public constructor
@@ -121,23 +122,6 @@ public class AssignmentsViewFragment extends Fragment {
 
     void displaySubmissions(List<Assignment.Attachment> attachments) {
         this.loading.setVisibility(View.GONE);
-        this.submissionsTitle.setVisibility(View.VISIBLE);
-
-        if (attachments.size() == 0) {
-            float pixelDensity = this.requireContext().getResources().getDisplayMetrics().density;
-
-            this.submissionsTitle.setText(R.string.no_submissions);
-            this.submissionsTitle.setPadding(
-                    0,
-                    (int) (20 * pixelDensity),
-                    0,
-                    (int) (40 * pixelDensity)
-            );
-            return;
-        }
-
-        this.submissionsTitle.setText(R.string.your_submissions);
-        this.submissionsTitle.setPadding(0, 0, 0, 0);
         this.submissions.setAdapter(new AttachmentItemAdapter(attachments));
     }
 
@@ -173,6 +157,7 @@ public class AssignmentsViewFragment extends Fragment {
 
         LinearLayout header = assignmentsViewFragment.findViewById(R.id.linear_layout_header);
         NestedScrollView assignments = assignmentsViewFragment.findViewById(R.id.nested_scroll_view_assignments_view);
+        ExtendedFloatingActionButton extendedFloatingActionButton = assignmentsViewFragment.findViewById(R.id.extended_floating_action_button);
 
         getParentFragmentManager().setFragmentResultListener("customInsets2", this, (requestKey, result) -> {
             int systemWindowInsetLeft = result.getInt("systemWindowInsetLeft");
@@ -192,6 +177,13 @@ public class AssignmentsViewFragment extends Fragment {
                     systemWindowInsetLeft,
                     0,
                     systemWindowInsetRight,
+                    (int) (systemWindowInsetBottom + 20 * pixelDensity)
+            );
+
+            ((ViewGroup.MarginLayoutParams) extendedFloatingActionButton.getLayoutParams()).setMargins(
+                    0,
+                    0,
+                    (int) (systemWindowInsetRight + 20 * pixelDensity),
                     (int) (systemWindowInsetBottom + 20 * pixelDensity)
             );
         });
@@ -215,17 +207,16 @@ public class AssignmentsViewFragment extends Fragment {
         TextView title = assignmentsViewFragment.findViewById(R.id.text_view_title);
         this.loading = assignmentsViewFragment.findViewById(R.id.progress_bar_loading);
         this.submissions = assignmentsViewFragment.findViewById(R.id.recycler_view_submissions);
-        this.submissionsTitle = assignmentsViewFragment.findViewById(R.id.text_view_submissions_title);
 
         back.setOnClickListener(view -> requireActivity().getSupportFragmentManager().popBackStack());
 
         if (assignment != null) {
             title.setText(assignment.title);
 
-            if (assignment.intro.equals("")) {
-                intro.setVisibility(View.GONE);
-            } else {
+            if (!assignment.intro.equals("")) {
                 intro.setText(Html.fromHtml(assignment.intro, Html.FROM_HTML_MODE_LEGACY).toString().trim());
+            } else {
+                intro.setTypeface(intro.getTypeface(), Typeface.ITALIC);
             }
 
             SimpleDateFormat date = new SimpleDateFormat("EEEE, d MMMM yyyy", Locale.getDefault());

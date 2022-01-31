@@ -75,7 +75,7 @@ public class AttachmentItemAdapter extends RecyclerView.Adapter<AttachmentItemAd
             fileName.setText(attachment.name);
             fileSize.setText(fileSizeString);
 
-            this.attachment.setOnClickListener(view -> {
+            this.attachment.findViewById(R.id.image_button_download).setOnClickListener(view -> {
                 Context applicationContext = this.attachment.getContext().getApplicationContext();
                 String moodleToken = SettingsRepository
                         .getSharedPreferences(applicationContext)

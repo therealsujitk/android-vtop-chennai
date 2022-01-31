@@ -51,13 +51,15 @@
     <string name="sync_assignments">Sync Assignments</string>
     <string name="moodle_sign_in">Sign In to Moodle</string>
     <string name="moodle_login_description">Sign in using your Moodle credentials</string>
+    <string name="no_description">No description provided.</string>
     <string name="due_date">Due date: &lt;b>%s, %s&lt;/b></string>
     <string name="assignment_due">This assignment is due in &lt;b>%s&lt;/b>.</string>
     <string name="assignment_overdue">This assignment is overdue by &lt;b>%s&lt;/b>.</string>
     <string name="late_submission">This assignment allows late submission for &lt;b>%s&lt;/b> after the deadline.</string>
     <string name="no_late_submission">This assignment does not entertain late submission.</string>
     <string name="your_submissions">Your Submissions</string>
-    <string name="no_submissions">No Submissions</string>
+    <string name="add_submission">Add Submission</string>
+    <string name="submit_assignment">Submit Assignment</string>
 
     <!-- ProfileFragment Strings -->
     <string name="profile_header">Your Profile</string>
