@@ -1,7 +1,9 @@
 package tk.therealsuji.vtopchennai.activities;
 
+import android.content.ClipData;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.WindowManager;
@@ -12,9 +14,16 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.WindowCompat;
+import androidx.documentfile.provider.DocumentFile;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+import org.apache.commons.io.FileUtils;
+
+import java.io.File;
+import java.io.InputStream;
+import java.util.ArrayList;
 
 import tk.therealsuji.vtopchennai.R;
 import tk.therealsuji.vtopchennai.fragments.AssignmentsFragment;
@@ -41,8 +50,61 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
 
+    ActivityResultLauncher<Intent> requestFileLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                    try {
+                        ArrayList<String> filePaths = new ArrayList<>();
+
+                        if (result.getData().getClipData() != null) {
+                            ClipData clipData = result.getData().getClipData();
+                            for (int i = 0; i < clipData.getItemCount(); ++i) {
+                                Uri uri = clipData.getItemAt(i).getUri();
+                                filePaths.add(this.copyFileToCache(uri));
+                            }
+                        } else if (result.getData().getData() != null) {
+                            Uri uri = result.getData().getData();
+                            filePaths.add(this.copyFileToCache(uri));
+                        } else {
+                            return;
+                        }
+
+                        Bundle fileUri = new Bundle();
+                        fileUri.putStringArrayList("paths", filePaths);
+                        getSupportFragmentManager().setFragmentResult("file", fileUri);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(this, "Error: " + e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                    }
+                }
+            }
+    );
+
+    private String copyFileToCache(Uri uri) throws Exception {
+        DocumentFile documentFile = DocumentFile.fromSingleUri(this, uri);
+        assert documentFile != null && documentFile.getName() != null;
+
+        String fileName = documentFile.getName();
+        File file = new File(getCacheDir() + "/Moodle", fileName);
+        file.deleteOnExit();
+
+        if ((file.getParentFile() == null || !file.getParentFile().mkdir()) && !file.createNewFile() && !file.exists()) {
+            throw new Exception("Failed to copy one or more files.");
+        }
+
+        InputStream inputStream = getContentResolver().openInputStream(uri);
+        FileUtils.copyInputStreamToFile(inputStream, file);
+
+        return file.getPath();
+    }
+
     public ActivityResultLauncher<String> getRequestPermissionLauncher() {
         return this.requestPermissionLauncher;
+    }
+
+    public ActivityResultLauncher<Intent> getRequestFileLauncher() {
+        return this.requestFileLauncher;
     }
 
     private void syncData() {

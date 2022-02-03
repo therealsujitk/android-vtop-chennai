@@ -59,8 +59,8 @@ public class Assignment implements Parcelable {
         parcel.writeString(title);
         parcel.writeString(intro);
         parcel.writeList(introAttachments);
-        parcel.writeLong(dueDate.getTime());
-        parcel.writeLong(cutoffDate.getTime());
+        if (dueDate != null) parcel.writeLong(dueDate.getTime());
+        if (cutoffDate != null) parcel.writeLong(cutoffDate.getTime());
     }
 
     public static class Attachment implements Parcelable {

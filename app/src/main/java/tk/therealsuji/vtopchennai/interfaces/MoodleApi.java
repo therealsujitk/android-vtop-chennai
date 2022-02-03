@@ -3,8 +3,11 @@ package tk.therealsuji.vtopchennai.interfaces;
 import java.util.List;
 
 import io.reactivex.rxjava3.core.Single;
+import okhttp3.MultipartBody;
 import okhttp3.ResponseBody;
+import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.POST;
 import retrofit2.http.Query;
 import tk.therealsuji.vtopchennai.helpers.SettingsRepository;
 
@@ -43,4 +46,16 @@ public interface MoodleApi {
             "&moodlewsrestformat=json")
     Single<ResponseBody> getSubmissionStatus(@Query("wstoken") String moodleToken,
                                              @Query("assignid") int activityId);
+
+    @POST(SettingsRepository.MOODLE_UPLOAD_PATH)
+    Single<ResponseBody> addSubmissions(@Query("token") String moodleToken,
+                                        @Query("itemid") int fileArea,
+                                        @Body MultipartBody body);
+
+    @POST(SettingsRepository.MOODLE_WEBSERVICE_PATH +
+            "?wsfunction=mod_assign_save_submission" +
+            "&moodlewsrestformat=json")
+    Single<ResponseBody> saveSubmissions(@Query("wstoken") String moodleToken,
+                                         @Query("assignmentid") int assignmentId,
+                                         @Query("plugindata[files_filemanager]") int fileArea);
 }
