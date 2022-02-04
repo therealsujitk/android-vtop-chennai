@@ -51,8 +51,10 @@
     <string name="sync_assignments">Sync Assignments</string>
     <string name="moodle_sign_in">Sign In to Moodle</string>
     <string name="moodle_login_description">Sign in using your Moodle credentials</string>
+    <string name="no_due_date">No Due Date</string>
     <string name="no_description">No description provided.</string>
     <string name="due_date">Due date: &lt;b>%s, %s&lt;/b></string>
+    <string name="assignment_no_due">This assignment does not have a due date.</string>
     <string name="assignment_due">This assignment is due in &lt;b>%s&lt;/b>.</string>
     <string name="assignment_overdue">This assignment is overdue by &lt;b>%s&lt;/b>.</string>
     <string name="late_submission">This assignment allows late submission for &lt;b>%s&lt;/b> after the deadline.</string>

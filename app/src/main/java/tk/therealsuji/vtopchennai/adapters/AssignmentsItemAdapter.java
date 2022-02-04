@@ -17,7 +17,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.color.MaterialColors;
 
 import java.util.Calendar;
-import java.util.Comparator;
 import java.util.List;
 
 import tk.therealsuji.vtopchennai.R;
@@ -28,7 +27,6 @@ public class AssignmentsItemAdapter extends RecyclerView.Adapter<AssignmentsItem
     List<Assignment> assignments;
 
     public AssignmentsItemAdapter(List<Assignment> assignments) {
-        assignments.sort(Comparator.comparing(assignment -> assignment.dueDate));
         this.assignments = assignments;
     }
 
@@ -68,7 +66,7 @@ public class AssignmentsItemAdapter extends RecyclerView.Adapter<AssignmentsItem
             title.setText(assignmentsItem.title);
             course.setText(assignmentsItem.course);
 
-            if (assignmentsItem.dueDate.before(Calendar.getInstance().getTime())) {
+            if (assignmentsItem.dueDate != null && assignmentsItem.dueDate.before(Calendar.getInstance().getTime())) {
                 endDrawable.setImageDrawable(ContextCompat.getDrawable(this.assignmentsItem.getContext(), R.drawable.ic_clock));
                 DrawableCompat.setTint(
                         DrawableCompat.wrap(endDrawable.getDrawable()),

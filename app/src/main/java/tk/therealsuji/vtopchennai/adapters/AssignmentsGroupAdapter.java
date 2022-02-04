@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -28,13 +27,29 @@ public class AssignmentsGroupAdapter extends RecyclerView.Adapter<AssignmentsGro
     List<Date> dates;
 
     public AssignmentsGroupAdapter(List<Assignment> assignments) throws ParseException {
+        assignments.sort((a1, a2) -> {
+            Date d1 = a1.dueDate, d2 = a2.dueDate;
+
+            if (d1 == null) {
+                return d2 == null ? 0 : 1;
+            } else if (d2 == null) {
+                return -1;
+            }
+
+            return d1.compareTo(d2);
+        });
+
         this.assignments = new HashMap<>();
         this.dates = new ArrayList<>();
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
 
         for (int i = 0; i < assignments.size(); ++i) {
             Assignment assignment = assignments.get(i);
-            Date date = dateFormat.parse(dateFormat.format(assignment.dueDate));
+            Date date = null;
+
+            if (assignment.dueDate != null) {
+                date = dateFormat.parse(dateFormat.format(assignment.dueDate));
+            }
 
             if (!this.assignments.containsKey(date)) {
                 this.assignments.put(date, new ArrayList<>());
@@ -43,8 +58,6 @@ public class AssignmentsGroupAdapter extends RecyclerView.Adapter<AssignmentsGro
 
             Objects.requireNonNull(this.assignments.get(date)).add(assignment);
         }
-
-        Collections.sort(dates);
     }
 
     @NonNull
@@ -83,9 +96,14 @@ public class AssignmentsGroupAdapter extends RecyclerView.Adapter<AssignmentsGro
         public void setAssignment(Date date, List<Assignment> assignmentItems) {
             TextView dateView = this.assignmentsGroup.findViewById(R.id.text_view_date);
             RecyclerView assignmentItemsView = this.assignmentsGroup.findViewById(R.id.recycler_view_assignment_items);
-            SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, d MMMM yyyy", Locale.getDefault());
 
-            dateView.setText(dateFormat.format(date));
+            if (date == null) {
+                dateView.setText(R.string.no_due_date);
+            } else {
+                SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, d MMMM yyyy", Locale.getDefault());
+                dateView.setText(dateFormat.format(date));
+            }
+
             assignmentItemsView.setAdapter(new AssignmentsItemAdapter(assignmentItems));
         }
 

@@ -42,7 +42,6 @@ import tk.therealsuji.vtopchennai.models.Assignment;
 
 public class AssignmentsFragment extends Fragment {
     int moodleUserId;
-    List<Assignment> assignments;
     MoodleApi moodleApi;
     String moodleToken;
 
@@ -176,12 +175,14 @@ public class AssignmentsFragment extends Fragment {
                                 for (int j = 0; j < assignmentsArray.length(); ++j) {
                                     JSONObject assignmentObject = assignmentsArray.getJSONObject(j);
 
-                                    Date dueDate = new Date(assignmentObject.getLong("duedate") * 1000);
                                     Date cutoffDate = (assignmentObject.getLong("cutoffdate") != 0)
                                             ? new Date(assignmentObject.getLong("cutoffdate") * 1000)
                                             : null;
+                                    Date dueDate = (assignmentObject.getLong("duedate") != 0)
+                                            ? new Date(assignmentObject.getLong("duedate") * 1000)
+                                            : cutoffDate;
 
-                                    if (dueDate.before(dueLimit)) {
+                                    if (dueDate != null && dueDate.before(dueLimit)) {
                                         continue;
                                     }
 
@@ -243,6 +244,7 @@ public class AssignmentsFragment extends Fragment {
      * @param courseIds The list of course ids
      */
     private void filterAssignmentsByCompletion(List<Integer> courseIds, Map<Integer, Assignment> assignmentsMap) {
+        List<Assignment> assignments = new ArrayList<>();
         List<Observable<ResponseBody>> singleSources = new ArrayList<>();
 
         for (Integer courseId : courseIds) {
@@ -299,7 +301,7 @@ public class AssignmentsFragment extends Fragment {
                         if (assignments.size() == 0) {
                             assignmentGroups.setAdapter(new EmptyStateAdapter(EmptyStateAdapter.TYPE_NO_ASSIGNMENTS));
                         } else {
-                            displayAssignments();
+                            displayAssignments(assignments);
                         }
 
                         setLoading(false);
@@ -307,9 +309,9 @@ public class AssignmentsFragment extends Fragment {
                 });
     }
 
-    private void displayAssignments() {
+    private void displayAssignments(List<Assignment> assignments) {
         try {
-            this.assignmentGroups.setAdapter(new AssignmentsGroupAdapter(this.assignments));
+            this.assignmentGroups.setAdapter(new AssignmentsGroupAdapter(assignments));
         } catch (Exception e) {
             this.assignmentGroups.setAdapter(new EmptyStateAdapter(EmptyStateAdapter.TYPE_ERROR, e.getLocalizedMessage()));
         }
@@ -376,7 +378,6 @@ public class AssignmentsFragment extends Fragment {
                     .client(SettingsRepository.getNaiveOkHttpClient())
                     .build()
                     .create(MoodleApi.class);
-            this.assignments = new ArrayList<>();
             this.getUserId();
         } else {
             this.assignmentGroups.setAdapter(new EmptyStateAdapter(

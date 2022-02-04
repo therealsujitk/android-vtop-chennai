@@ -3,6 +3,7 @@ package tk.therealsuji.vtopchennai.fragments;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.res.ColorStateList;
+import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
@@ -353,13 +354,13 @@ public class AssignmentsViewFragment extends Fragment {
         LinearLayout header = assignmentsViewFragment.findViewById(R.id.linear_layout_header);
         NestedScrollView assignments = assignmentsViewFragment.findViewById(R.id.nested_scroll_view_assignments_view);
         ExtendedFloatingActionButton extendedFloatingActionButton = assignmentsViewFragment.findViewById(R.id.extended_floating_action_button);
+        float pixelDensity = getResources().getDisplayMetrics().density;
 
         getParentFragmentManager().setFragmentResultListener("customInsets2", this, (requestKey, result) -> {
             int systemWindowInsetLeft = result.getInt("systemWindowInsetLeft");
             int systemWindowInsetTop = result.getInt("systemWindowInsetTop");
             int systemWindowInsetRight = result.getInt("systemWindowInsetRight");
             int systemWindowInsetBottom = result.getInt("systemWindowInsetBottom");
-            float pixelDensity = getResources().getDisplayMetrics().density;
 
             header.setPadding(
                     systemWindowInsetLeft,
@@ -403,6 +404,10 @@ public class AssignmentsViewFragment extends Fragment {
         TextView title = assignmentsViewFragment.findViewById(R.id.text_view_title);
         this.loading = assignmentsViewFragment.findViewById(R.id.progress_bar_loading);
         this.submissions = assignmentsViewFragment.findViewById(R.id.recycler_view_submissions);
+
+        Rect compoundDrawableBounds = new Rect(0, 0, (int) (24 * pixelDensity), (int) (24 * pixelDensity));
+        allowLate.getCompoundDrawablesRelative()[0].setBounds(compoundDrawableBounds);
+        dueIn.getCompoundDrawablesRelative()[0].setBounds(compoundDrawableBounds);
 
         getParentFragmentManager().setFragmentResultListener("file", this, (requestKey, result) -> {
             List<File> files = new ArrayList<>();
@@ -472,48 +477,53 @@ public class AssignmentsViewFragment extends Fragment {
                 intro.setTypeface(intro.getTypeface(), Typeface.ITALIC);
             }
 
-            SimpleDateFormat date = new SimpleDateFormat("EEEE, d MMMM yyyy", Locale.getDefault());
-            SimpleDateFormat time = new SimpleDateFormat("HH:mm", Locale.getDefault());
+            if (assignment.dueDate != null) {
+                SimpleDateFormat date = new SimpleDateFormat("EEEE, d MMMM yyyy", Locale.getDefault());
+                SimpleDateFormat time = new SimpleDateFormat("HH:mm", Locale.getDefault());
 
-            try {
-                String dueDateString = date.format(assignment.dueDate) + ", " + SettingsRepository.getSystemFormattedTime(
-                        this.requireContext().getApplicationContext(),
-                        time.format(assignment.dueDate)
-                );
-                dueDate.setText(dueDateString);
-            } catch (Exception ignored) {
-            }
-
-            int dueInStringId = R.string.assignment_due;
-            long duration = assignment.dueDate.getTime() - Calendar.getInstance().getTime().getTime();
-
-            if (duration < 0) {
-                duration *= -1;
-                dueInStringId = R.string.assignment_overdue;
-
-                int colorError = MaterialColors.getColor(dueIn, R.attr.colorError);
-                TextViewCompat.setCompoundDrawableTintList(dueIn, ColorStateList.valueOf(colorError));
-                dueIn.setTextColor(colorError);
-            }
-
-            dueIn.setText(Html.fromHtml(
-                    getString(dueInStringId, this.getTimeDifference(duration)),
-                    Html.FROM_HTML_MODE_LEGACY
-            ));
-
-            if (assignment.cutoffDate != null) {
-                allowLate.setVisibility(View.VISIBLE);
-
-                if (assignment.cutoffDate.after(assignment.dueDate)) {
-                    long lateSubmission = assignment.cutoffDate.getTime() - assignment.dueDate.getTime();
-
-                    allowLate.setText(Html.fromHtml(
-                            getString(R.string.late_submission, this.getTimeDifference(lateSubmission).trim()),
-                            Html.FROM_HTML_MODE_LEGACY
-                    ));
-                } else {
-                    allowLate.setText(R.string.no_late_submission);
+                try {
+                    String dueDateString = date.format(assignment.dueDate) + ", " + SettingsRepository.getSystemFormattedTime(
+                            this.requireContext().getApplicationContext(),
+                            time.format(assignment.dueDate)
+                    );
+                    dueDate.setText(dueDateString);
+                } catch (Exception ignored) {
                 }
+
+                int dueInStringId = R.string.assignment_due;
+                long duration = assignment.dueDate.getTime() - Calendar.getInstance().getTime().getTime();
+
+                if (duration < 0) {
+                    duration *= -1;
+                    dueInStringId = R.string.assignment_overdue;
+
+                    int colorError = MaterialColors.getColor(dueIn, R.attr.colorError);
+                    TextViewCompat.setCompoundDrawableTintList(dueIn, ColorStateList.valueOf(colorError));
+                    dueIn.setTextColor(colorError);
+                }
+
+                dueIn.setText(Html.fromHtml(
+                        getString(dueInStringId, this.getTimeDifference(duration)),
+                        Html.FROM_HTML_MODE_LEGACY
+                ));
+
+                if (assignment.cutoffDate != null) {
+                    allowLate.setVisibility(View.VISIBLE);
+
+                    if (assignment.cutoffDate.after(assignment.dueDate)) {
+                        long lateSubmission = assignment.cutoffDate.getTime() - assignment.dueDate.getTime();
+
+                        allowLate.setText(Html.fromHtml(
+                                getString(R.string.late_submission, this.getTimeDifference(lateSubmission).trim()),
+                                Html.FROM_HTML_MODE_LEGACY
+                        ));
+                    } else {
+                        allowLate.setText(R.string.no_late_submission);
+                    }
+                }
+            } else {
+                dueDate.setText(R.string.no_due_date);
+                dueIn.setText(R.string.assignment_no_due);
             }
 
             if (assignment.introAttachments != null) {
