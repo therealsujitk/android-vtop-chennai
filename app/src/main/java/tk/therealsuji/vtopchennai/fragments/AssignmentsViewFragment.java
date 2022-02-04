@@ -23,6 +23,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.color.MaterialColors;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 
 import org.apache.commons.io.FileUtils;
@@ -334,6 +335,14 @@ public class AssignmentsViewFragment extends Fragment {
         }
     }
 
+    private void throwErrorIfExists(JSONObject jsonObject) throws Exception {
+        if (jsonObject.has("error")) {
+            throw new Exception(jsonObject.getString("error"));
+        } else if (jsonObject.has("message")) {
+            throw new Exception(jsonObject.getString("message"));
+        }
+    }
+
     @SuppressLint("ClickableViewAccessibility")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -416,6 +425,43 @@ public class AssignmentsViewFragment extends Fragment {
             intent.setType("*/*");
             ((MainActivity) requireActivity()).getRequestFileLauncher().launch(intent);
         });
+        extendedFloatingActionButton.setOnClickListener(view -> new MaterialAlertDialogBuilder(requireContext())
+                .setTitle(R.string.submit_assignment)
+                .setMessage(Html.fromHtml(getString(R.string.submit_confirmation, this.attachments.size()), Html.FROM_HTML_MODE_LEGACY))
+                .setNegativeButton(R.string.cancel, (dialogInterface, i) -> dialogInterface.cancel())
+                .setPositiveButton(R.string.submit, (dialogInterface, i) -> {
+                    setLoading(true);
+                    this.moodleApi.submitAssignmentForGrading(this.moodleToken, this.assignmentId)
+                            .subscribeOn(Schedulers.single())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(new SingleObserver<ResponseBody>() {
+                                @Override
+                                public void onSubscribe(@NonNull Disposable d) {
+                                }
+
+                                @Override
+                                public void onSuccess(@NonNull ResponseBody responseBody) {
+                                    try {
+                                        JSONArray response = new JSONArray(responseBody.string());
+
+                                        if (response.length() != 0) {
+                                            JSONObject responseObject = response.getJSONObject(0);
+                                            throwErrorIfExists(responseObject);
+                                        }
+                                    } catch (Exception e) {
+                                        Toast.makeText(getContext(), "Error: " + e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                                    } finally {
+                                        setLoading(false);
+                                    }
+                                }
+
+                                @Override
+                                public void onError(@NonNull Throwable e) {
+                                    Toast.makeText(getContext(), "Error: " + e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                                }
+                            });
+                })
+                .show());
 
         if (assignment != null) {
             title.setText(assignment.title);

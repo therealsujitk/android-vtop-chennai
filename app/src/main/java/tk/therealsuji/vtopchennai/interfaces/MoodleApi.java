@@ -58,4 +58,11 @@ public interface MoodleApi {
     Single<ResponseBody> saveSubmissions(@Query("wstoken") String moodleToken,
                                          @Query("assignmentid") int assignmentId,
                                          @Query("plugindata[files_filemanager]") int fileArea);
+
+    @POST(SettingsRepository.MOODLE_WEBSERVICE_PATH +
+            "?wsfunction=mod_assign_submit_for_grading" +
+            "&moodlewsrestformat=json" +
+            "&acceptsubmissionstatement=1")
+    Single<ResponseBody> submitAssignmentForGrading(@Query("wstoken") String moodleToken,
+                                                    @Query("assignmentid") int assignmentId);
 }

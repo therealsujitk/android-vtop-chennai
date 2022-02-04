@@ -60,6 +60,7 @@
     <string name="your_submissions">Your Submissions</string>
     <string name="add_submission">Add Submission</string>
     <string name="submit_assignment">Submit Assignment</string>
+    <string name="submit_confirmation">You are about to submit &lt;b>%d files&lt;/b> for grading, are you sure you want to proceed?</string>
 
     <!-- ProfileFragment Strings -->
     <string name="profile_header">Your Profile</string>
