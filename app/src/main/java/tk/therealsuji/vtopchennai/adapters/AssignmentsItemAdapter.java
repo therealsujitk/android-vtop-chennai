@@ -9,8 +9,12 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.color.MaterialColors;
 
 import java.util.Calendar;
 import java.util.Comparator;
@@ -59,13 +63,17 @@ public class AssignmentsItemAdapter extends RecyclerView.Adapter<AssignmentsItem
         public void setAssignment(Assignment assignmentsItem) {
             TextView title = this.assignmentsItem.findViewById(R.id.text_view_title);
             TextView course = this.assignmentsItem.findViewById(R.id.text_view_course);
-            ImageView pastDue = this.assignmentsItem.findViewById(R.id.image_view_past_due);
+            ImageView endDrawable = this.assignmentsItem.findViewById(R.id.image_view_past_due);
 
             title.setText(assignmentsItem.title);
             course.setText(assignmentsItem.course);
 
             if (assignmentsItem.dueDate.before(Calendar.getInstance().getTime())) {
-                pastDue.setVisibility(View.VISIBLE);
+                endDrawable.setImageDrawable(ContextCompat.getDrawable(this.assignmentsItem.getContext(), R.drawable.ic_clock));
+                DrawableCompat.setTint(
+                        DrawableCompat.wrap(endDrawable.getDrawable()),
+                        MaterialColors.getColor(endDrawable, R.attr.colorError)
+                );
             }
 
             this.assignmentsItem.setOnClickListener(view -> {
