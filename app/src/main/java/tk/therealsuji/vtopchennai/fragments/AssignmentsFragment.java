@@ -365,7 +365,7 @@ public class AssignmentsFragment extends Fragment {
         this.imageButtonSync.setOnClickListener(view -> this.getUserId());
         TooltipCompat.setTooltipText(this.imageButtonSync, this.imageButtonSync.getContentDescription());
 
-        if (!this.moodleToken.equals("")) {
+        if (SettingsRepository.isMoodleSignedIn(requireContext())) {
             this.assignmentGroups.setAdapter(new EmptyStateAdapter(
                     EmptyStateAdapter.TYPE_FETCHING_DATA,
                     getString(R.string.fetch_assignments)

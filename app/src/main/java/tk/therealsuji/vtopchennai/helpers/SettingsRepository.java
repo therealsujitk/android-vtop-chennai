@@ -91,6 +91,20 @@ public class SettingsRepository {
         return getSharedPreferences(context).getBoolean("isSignedIn", false);
     }
 
+    public static boolean isMoodleSignedIn(Context context) {
+        return getSharedPreferences(context).getString("moodleToken", null) != null;
+    }
+
+    public static void signOut(Context context) {
+        getSharedPreferences(context).edit().remove("isSignedIn").apply();
+    }
+
+    public static void signOutMoodle(Context context) {
+        SharedPreferences sharedPreferences = getSharedPreferences(context);
+        sharedPreferences.edit().remove("moodleToken").apply();
+        sharedPreferences.edit().remove("moodlePrivateToken").apply();
+    }
+
     public static SharedPreferences getSharedPreferences(Context context) {
         return context.getSharedPreferences("tk.therealsuji.vtopchennai", Context.MODE_PRIVATE);
     }

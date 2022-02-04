@@ -107,6 +107,7 @@
 
     <!-- Sign Out Dialog Strings -->
     <string name="sign_out">Sign Out</string>
+    <string name="moodle_sign_out_text">Are you sure you want to sign out of Moodle? You will no longer be able to view your assignments.</string>
     <string name="sign_out_text">Are you sure you want to sign out of this application? You can switch semesters without having to sign out.</string>
     <string name="cancel">Cancel</string>
 
@@ -115,6 +116,10 @@
     <string name="contact_developer">Contact the developer</string>
     <string name="open_issue">Open an issue</string>
     <string name="request_feature">Request a feature</string>
+
+    <!-- Sign Out BottomSheet Strings -->
+    <string name="sign_out_moodle">Sign out of Moodle</string>
+    <string name="sign_out_app">Sign out of &app_name;</string>
 
     <!-- Share Intent Strings -->
     <string name="share_subject">Get the &app_name; android app</string>
