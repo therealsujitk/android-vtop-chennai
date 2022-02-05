@@ -14,7 +14,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,6 +21,7 @@ import androidx.core.widget.NestedScrollView;
 import androidx.core.widget.TextViewCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.android.material.color.MaterialColors;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -61,23 +61,23 @@ import tk.therealsuji.vtopchennai.helpers.SettingsRepository;
 import tk.therealsuji.vtopchennai.interfaces.MoodleApi;
 import tk.therealsuji.vtopchennai.models.Assignment;
 
-public class AssignmentsViewFragment extends Fragment {
-    ProgressBar loading;
-    RecyclerView submissions;
-
+public class AssignmentsViewFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
     int assignmentId, fileArea = 0;
     List<Assignment.Attachment> attachments;
     MoodleApi moodleApi;
     String moodleToken;
 
+    RecyclerView submissions;
+    SwipeRefreshLayout swipeRefreshLayout;
+
     public AssignmentsViewFragment() {
         // Required empty public constructor
     }
 
-    private void getSubmissionStatus(int activityId) {
+    private void getSubmissionStatus() {
         this.setLoading(true);
 
-        this.moodleApi.getSubmissionStatus(this.moodleToken, activityId)
+        this.moodleApi.getSubmissionStatus(this.moodleToken, this.assignmentId)
                 .subscribeOn(Schedulers.single())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SingleObserver<ResponseBody>() {
@@ -329,11 +329,7 @@ public class AssignmentsViewFragment extends Fragment {
     }
 
     private void setLoading(boolean isLoading) {
-        if (isLoading) {
-            this.loading.setVisibility(View.VISIBLE);
-        } else {
-            this.loading.setVisibility(View.GONE);
-        }
+        this.swipeRefreshLayout.setRefreshing(isLoading);
     }
 
     private void throwErrorIfExists(JSONObject jsonObject) throws Exception {
@@ -342,6 +338,11 @@ public class AssignmentsViewFragment extends Fragment {
         } else if (jsonObject.has("message")) {
             throw new Exception(jsonObject.getString("message"));
         }
+    }
+
+    @Override
+    public void onRefresh() {
+        this.getSubmissionStatus();
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -402,8 +403,12 @@ public class AssignmentsViewFragment extends Fragment {
         TextView dueIn = assignmentsViewFragment.findViewById(R.id.text_view_due_in);
         TextView intro = assignmentsViewFragment.findViewById(R.id.text_view_intro);
         TextView title = assignmentsViewFragment.findViewById(R.id.text_view_title);
-        this.loading = assignmentsViewFragment.findViewById(R.id.progress_bar_loading);
         this.submissions = assignmentsViewFragment.findViewById(R.id.recycler_view_submissions);
+        this.swipeRefreshLayout = assignmentsViewFragment.findViewById(R.id.swipe_refresh_layout);
+
+        this.swipeRefreshLayout.setColorSchemeColors(MaterialColors.getColor(this.swipeRefreshLayout, R.attr.colorSurface));
+        this.swipeRefreshLayout.setProgressBackgroundColorSchemeColor(MaterialColors.getColor(this.swipeRefreshLayout, R.attr.colorPrimary));
+        this.swipeRefreshLayout.setOnRefreshListener(this);
 
         Rect compoundDrawableBounds = new Rect(0, 0, (int) (24 * pixelDensity), (int) (24 * pixelDensity));
         allowLate.getCompoundDrawablesRelative()[0].setBounds(compoundDrawableBounds);
@@ -422,6 +427,7 @@ public class AssignmentsViewFragment extends Fragment {
                 return null;
             });
         });
+
         back.setOnClickListener(view -> requireActivity().getSupportFragmentManager().popBackStack());
         addSubmission.setOnClickListener(view -> {
             Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
@@ -538,7 +544,7 @@ public class AssignmentsViewFragment extends Fragment {
                     .build()
                     .create(MoodleApi.class);
 
-            this.getSubmissionStatus(assignment.id);
+            this.getSubmissionStatus();
         }
 
         return assignmentsViewFragment;

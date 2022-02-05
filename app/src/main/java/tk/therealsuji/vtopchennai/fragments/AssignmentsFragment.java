@@ -7,11 +7,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import androidx.appcompat.widget.TooltipCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
+import com.google.android.material.color.MaterialColors;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -40,13 +42,13 @@ import tk.therealsuji.vtopchennai.helpers.SettingsRepository;
 import tk.therealsuji.vtopchennai.interfaces.MoodleApi;
 import tk.therealsuji.vtopchennai.models.Assignment;
 
-public class AssignmentsFragment extends Fragment {
+public class AssignmentsFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
     int moodleUserId;
     MoodleApi moodleApi;
     String moodleToken;
 
     RecyclerView assignmentGroups;
-    View imageButtonSync, progressBarLoading;
+    SwipeRefreshLayout swipeRefreshLayout;
 
     public AssignmentsFragment() {
         // Required empty public constructor
@@ -318,13 +320,12 @@ public class AssignmentsFragment extends Fragment {
     }
 
     private void setLoading(boolean isLoading) {
-        if (isLoading) {
-            this.imageButtonSync.setVisibility(View.INVISIBLE);
-            this.progressBarLoading.setVisibility(View.VISIBLE);
-        } else {
-            this.imageButtonSync.setVisibility(View.VISIBLE);
-            this.progressBarLoading.setVisibility(View.GONE);
-        }
+        this.swipeRefreshLayout.setRefreshing(isLoading);
+    }
+
+    @Override
+    public void onRefresh() {
+        this.getUserId();
     }
 
     @Override
@@ -332,6 +333,7 @@ public class AssignmentsFragment extends Fragment {
         View assignmentsFragment = inflater.inflate(R.layout.fragment_assignments, container, false);
 
         this.assignmentGroups = assignmentsFragment.findViewById(R.id.recycler_view_assignment_groups);
+        this.swipeRefreshLayout = assignmentsFragment.findViewById(R.id.swipe_refresh_layout);
         View appBarLayout = assignmentsFragment.findViewById(R.id.app_bar);
 
         getParentFragmentManager().setFragmentResultListener("customInsets", this, (requestKey, result) -> {
@@ -361,11 +363,9 @@ public class AssignmentsFragment extends Fragment {
 
         SharedPreferences sharedPreferences = SettingsRepository.getSharedPreferences(this.requireContext().getApplicationContext());
         this.moodleToken = sharedPreferences.getString("moodleToken", "");
-        this.imageButtonSync = assignmentsFragment.findViewById(R.id.image_button_sync);
-        this.progressBarLoading = assignmentsFragment.findViewById(R.id.progress_bar_loading);
-
-        this.imageButtonSync.setOnClickListener(view -> this.getUserId());
-        TooltipCompat.setTooltipText(this.imageButtonSync, this.imageButtonSync.getContentDescription());
+        this.swipeRefreshLayout.setColorSchemeColors(MaterialColors.getColor(this.swipeRefreshLayout, R.attr.colorSurface));
+        this.swipeRefreshLayout.setProgressBackgroundColorSchemeColor(MaterialColors.getColor(this.swipeRefreshLayout, R.attr.colorPrimary));
+        this.swipeRefreshLayout.setOnRefreshListener(this);
 
         if (SettingsRepository.isMoodleSignedIn(requireContext())) {
             this.assignmentGroups.setAdapter(new EmptyStateAdapter(
@@ -401,8 +401,7 @@ public class AssignmentsFragment extends Fragment {
                     }
             ));
             this.assignmentGroups.setOverScrollMode(View.OVER_SCROLL_NEVER);
-            this.imageButtonSync.setVisibility(View.GONE);
-            this.progressBarLoading.setVisibility(View.GONE);
+            this.swipeRefreshLayout.setEnabled(false);
         }
 
         return assignmentsFragment;
