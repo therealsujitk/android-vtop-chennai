@@ -378,11 +378,10 @@ public class AssignmentsFragment extends Fragment implements SwipeRefreshLayout.
                 .getSharedPreferences(this.requireContext().getApplicationContext())
                 .getString("moodleToken", null);
 
-        if (this.assignmentGroups.getAdapter() == null) {
-            this.assignmentGroups.setAdapter(new EmptyStateAdapter(
-                    EmptyStateAdapter.TYPE_FETCHING_DATA,
-                    getString(R.string.fetch_assignments)
-            ));
+        if (this.assignmentGroups.getAdapter() != null
+                && (this.assignmentGroups.getAdapter().getClass() != AssignmentsGroupAdapter.class
+                || this.assignmentGroups.getAdapter().getItemCount() == 0)) {
+            this.assignmentGroups.setAdapter(new EmptyStateAdapter(EmptyStateAdapter.TYPE_FETCHING_ASSIGNMENTS));
         }
 
         this.moodleApi = new Retrofit.Builder()
