@@ -59,10 +59,11 @@ import tk.therealsuji.vtopchennai.adapters.AttachmentItemAdapter;
 import tk.therealsuji.vtopchennai.helpers.SettingsRepository;
 import tk.therealsuji.vtopchennai.interfaces.MoodleApi;
 import tk.therealsuji.vtopchennai.models.Assignment;
+import tk.therealsuji.vtopchennai.models.Attachment;
 
 public class AssignmentsViewFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
     int assignmentId, fileArea = 0;
-    List<Assignment.Attachment> attachments;
+    List<Attachment> attachments;
     MoodleApi moodleApi;
     String moodleToken;
 
@@ -119,10 +120,10 @@ public class AssignmentsViewFragment extends Fragment implements SwipeRefreshLay
                                     for (int j = 0; j < files.length(); ++j) {
                                         JSONObject file = files.getJSONObject(j);
 
-                                        Assignment.Attachment attachment = new Assignment.Attachment();
+                                        Attachment attachment = new Attachment();
                                         attachment.name = file.getString("filename");
                                         attachment.mimetype = file.getString("mimetype");
-                                        attachment.size = file.getInt("filesize");
+                                        attachment.size = file.getLong("filesize");
                                         attachment.url = file.getString("fileurl");
 
                                         attachments.add(attachment);
@@ -171,7 +172,7 @@ public class AssignmentsViewFragment extends Fragment implements SwipeRefreshLay
         Observable.fromCallable(() -> {
             List<File> files = new ArrayList<>();
 
-            for (Assignment.Attachment attachment : this.attachments) {
+            for (Attachment attachment : this.attachments) {
                 Uri uri = Uri.parse(attachment.url)
                         .buildUpon()
                         .appendQueryParameter("token", this.moodleToken)
@@ -532,7 +533,7 @@ public class AssignmentsViewFragment extends Fragment implements SwipeRefreshLay
                 }
 
                 int dueInStringId = R.string.assignment_due;
-                long duration = assignment.dueDate.getTime() - Calendar.getInstance().getTime().getTime();
+                long duration = assignment.dueDate - Calendar.getInstance().getTime().getTime();
 
                 if (duration < 0) {
                     duration *= -1;
@@ -551,8 +552,8 @@ public class AssignmentsViewFragment extends Fragment implements SwipeRefreshLay
                 if (assignment.cutoffDate != null) {
                     allowLate.setVisibility(View.VISIBLE);
 
-                    if (assignment.cutoffDate.after(assignment.dueDate)) {
-                        long lateSubmission = assignment.cutoffDate.getTime() - assignment.dueDate.getTime();
+                    if (assignment.cutoffDate > assignment.dueDate) {
+                        long lateSubmission = assignment.cutoffDate - assignment.dueDate;
 
                         allowLate.setText(Html.fromHtml(
                                 getString(R.string.late_submission, this.getTimeDifference(lateSubmission).trim()),

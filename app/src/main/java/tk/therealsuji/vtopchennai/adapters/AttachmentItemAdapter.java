@@ -16,12 +16,12 @@ import java.util.Locale;
 
 import tk.therealsuji.vtopchennai.R;
 import tk.therealsuji.vtopchennai.helpers.SettingsRepository;
-import tk.therealsuji.vtopchennai.models.Assignment;
+import tk.therealsuji.vtopchennai.models.Attachment;
 
 public class AttachmentItemAdapter extends RecyclerView.Adapter<AttachmentItemAdapter.ViewHolder> {
-    List<Assignment.Attachment> attachments;
+    List<Attachment> attachments;
 
-    public AttachmentItemAdapter(List<Assignment.Attachment> attachments) {
+    public AttachmentItemAdapter(List<Attachment> attachments) {
         this.attachments = attachments;
     }
 
@@ -53,7 +53,7 @@ public class AttachmentItemAdapter extends RecyclerView.Adapter<AttachmentItemAd
             this.attachment = (LinearLayout) itemView;
         }
 
-        public void setReceipt(Assignment.Attachment attachment) {
+        public void setReceipt(Attachment attachment) {
             TextView fileName = this.attachment.findViewById(R.id.text_view_file_name);
             TextView fileSize = this.attachment.findViewById(R.id.text_view_file_size);
 

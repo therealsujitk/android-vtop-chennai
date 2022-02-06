@@ -66,7 +66,7 @@ public class AssignmentsItemAdapter extends RecyclerView.Adapter<AssignmentsItem
             title.setText(assignmentsItem.title);
             course.setText(assignmentsItem.course);
 
-            if (assignmentsItem.dueDate != null && assignmentsItem.dueDate.before(Calendar.getInstance().getTime())) {
+            if (assignmentsItem.dueDate != null && assignmentsItem.dueDate < Calendar.getInstance().getTime().getTime()) {
                 endDrawable.setImageDrawable(ContextCompat.getDrawable(this.assignmentsItem.getContext(), R.drawable.ic_clock));
                 DrawableCompat.setTint(
                         DrawableCompat.wrap(endDrawable.getDrawable()),

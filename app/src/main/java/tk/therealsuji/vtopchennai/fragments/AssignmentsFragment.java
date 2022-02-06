@@ -38,9 +38,11 @@ import tk.therealsuji.vtopchennai.R;
 import tk.therealsuji.vtopchennai.adapters.AssignmentsGroupAdapter;
 import tk.therealsuji.vtopchennai.adapters.EmptyStateAdapter;
 import tk.therealsuji.vtopchennai.fragments.dialogs.MoodleLoginDialogFragment;
+import tk.therealsuji.vtopchennai.helpers.AppDatabase;
 import tk.therealsuji.vtopchennai.helpers.SettingsRepository;
 import tk.therealsuji.vtopchennai.interfaces.MoodleApi;
 import tk.therealsuji.vtopchennai.models.Assignment;
+import tk.therealsuji.vtopchennai.models.Attachment;
 
 public class AssignmentsFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
     int moodleUserId;
@@ -90,6 +92,7 @@ public class AssignmentsFragment extends Fragment implements SwipeRefreshLayout.
 
                     @Override
                     public void onError(@NonNull Throwable e) {
+                        Toast.makeText(getContext(), "Error: " + e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
                         setLoading(false);
                     }
                 });
@@ -122,13 +125,15 @@ public class AssignmentsFragment extends Fragment implements SwipeRefreshLayout.
                             }
 
                             getAssignments(courseIds);
-                        } catch (Exception ignored) {
+                        } catch (Exception e) {
+                            Toast.makeText(getContext(), "Error: " + e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
                             setLoading(false);
                         }
                     }
 
                     @Override
                     public void onError(@NonNull Throwable e) {
+                        Toast.makeText(getContext(), "Error: " + e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
                         setLoading(false);
                     }
                 });
@@ -161,7 +166,7 @@ public class AssignmentsFragment extends Fragment implements SwipeRefreshLayout.
                             calendar.add(Calendar.DATE, -300);
                             Date dueLimit = calendar.getTime();
 
-                            for (int i = 0; i < coursesArray.length(); ++i) {
+                            for (int i = 0, attachmentId = 0; i < coursesArray.length(); ++i) {
                                 JSONObject courseObject = coursesArray.getJSONObject(i);
                                 JSONArray assignmentsArray = courseObject.getJSONArray("assignments");
 
@@ -175,14 +180,18 @@ public class AssignmentsFragment extends Fragment implements SwipeRefreshLayout.
                                 for (int j = 0; j < assignmentsArray.length(); ++j) {
                                     JSONObject assignmentObject = assignmentsArray.getJSONObject(j);
 
-                                    Date cutoffDate = (assignmentObject.getLong("cutoffdate") != 0)
-                                            ? new Date(assignmentObject.getLong("cutoffdate") * 1000)
+                                    Long cutoffDate = assignmentObject.getLong("cutoffdate") != 0
+                                            ? assignmentObject.getLong("cutoffdate") * 1000
                                             : null;
-                                    Date dueDate = (assignmentObject.getLong("duedate") != 0)
-                                            ? new Date(assignmentObject.getLong("duedate") * 1000)
-                                            : cutoffDate;
+                                    Long dueDate = assignmentObject.getLong("duedate") != 0
+                                            ? assignmentObject.getLong("duedate") * 1000
+                                            : null;
 
-                                    if (dueDate != null && dueDate.before(dueLimit)) {
+                                    if (dueDate == null && cutoffDate != null) {
+                                        dueDate = cutoffDate;
+                                    }
+
+                                    if (dueDate != null && dueDate < dueLimit.getTime()) {
                                         continue;
                                     }
 
@@ -193,7 +202,6 @@ public class AssignmentsFragment extends Fragment implements SwipeRefreshLayout.
 
                                     Assignment assignment = new Assignment();
                                     assignment.id = id;
-                                    assignment.activityId = activityId;
                                     assignment.course = course;
                                     assignment.title = title;
                                     assignment.intro = intro;
@@ -206,11 +214,13 @@ public class AssignmentsFragment extends Fragment implements SwipeRefreshLayout.
                                     for (int k = 0; k < introAttachments.length(); ++k) {
                                         JSONObject attachmentObject = introAttachments.getJSONObject(k);
 
-                                        Assignment.Attachment attachment = new Assignment.Attachment();
+                                        Attachment attachment = new Attachment();
+                                        attachment.id = ++attachmentId;
+                                        attachment.assignmentId = assignment.id;
                                         attachment.name = attachmentObject.getString("filename");
                                         attachment.mimetype = attachmentObject.getString("mimetype");
                                         attachment.url = attachmentObject.getString("fileurl");
-                                        attachment.size = attachmentObject.getInt("filesize");
+                                        attachment.size = attachmentObject.getLong("filesize");
 
                                         assignment.introAttachments.add(attachment);
                                     }
@@ -226,13 +236,15 @@ public class AssignmentsFragment extends Fragment implements SwipeRefreshLayout.
                             }
 
                             filterAssignmentsByCompletion(courseIds, assignments);
-                        } catch (Exception ignored) {
+                        } catch (Exception e) {
+                            Toast.makeText(getContext(), "Error: " + e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
                             setLoading(false);
                         }
                     }
 
                     @Override
                     public void onError(@NonNull Throwable e) {
+                        Toast.makeText(getContext(), "Error: " + e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
                         setLoading(false);
                     }
                 });
@@ -283,13 +295,15 @@ public class AssignmentsFragment extends Fragment implements SwipeRefreshLayout.
                                     assignments.add(assignmentsMap.get(activityId));
                                 }
                             }
-                        } catch (Exception ignored) {
+                        } catch (Exception e) {
+                            Toast.makeText(getContext(), "Error: " + e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
                             setLoading(false);
                         }
                     }
 
                     @Override
                     public void onError(@NonNull Throwable e) {
+                        Toast.makeText(getContext(), "Error: " + e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
                         setLoading(false);
                     }
 
@@ -299,6 +313,11 @@ public class AssignmentsFragment extends Fragment implements SwipeRefreshLayout.
                             assignmentGroups.setAdapter(new EmptyStateAdapter(EmptyStateAdapter.TYPE_NO_ASSIGNMENTS));
                         } else {
                             displayAssignments(assignments);
+                            AppDatabase.getInstance(requireContext().getApplicationContext())
+                                    .assignmentsDao()
+                                    .insert(assignments)
+                                    .subscribeOn(Schedulers.single())
+                                    .subscribe();
                         }
 
                         setLoading(false);
@@ -359,10 +378,12 @@ public class AssignmentsFragment extends Fragment implements SwipeRefreshLayout.
                 .getSharedPreferences(this.requireContext().getApplicationContext())
                 .getString("moodleToken", null);
 
-        this.assignmentGroups.setAdapter(new EmptyStateAdapter(
-                EmptyStateAdapter.TYPE_FETCHING_DATA,
-                getString(R.string.fetch_assignments)
-        ));
+        if (this.assignmentGroups.getAdapter() == null) {
+            this.assignmentGroups.setAdapter(new EmptyStateAdapter(
+                    EmptyStateAdapter.TYPE_FETCHING_DATA,
+                    getString(R.string.fetch_assignments)
+            ));
+        }
 
         this.moodleApi = new Retrofit.Builder()
                 .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
@@ -417,7 +438,30 @@ public class AssignmentsFragment extends Fragment implements SwipeRefreshLayout.
         this.swipeRefreshLayout.setOnRefreshListener(this);
 
         if (SettingsRepository.isMoodleSignedIn(requireContext())) {
-            this.displayAssignmentsPage();
+            AppDatabase.getInstance(requireContext().getApplicationContext())
+                    .assignmentsDao()
+                    .get()
+                    .subscribeOn(Schedulers.single())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new SingleObserver<List<Assignment>>() {
+                        @Override
+                        public void onSubscribe(@NonNull Disposable d) {
+
+                        }
+
+                        @Override
+                        public void onSuccess(@NonNull List<Assignment> assignments) {
+                            if (assignments.size() != 0) {
+                                displayAssignments(assignments);
+                            }
+
+                            displayAssignmentsPage();
+                        }
+
+                        @Override
+                        public void onError(@NonNull Throwable e) {
+                        }
+                    });
         } else {
             this.displaySignInPage();
         }

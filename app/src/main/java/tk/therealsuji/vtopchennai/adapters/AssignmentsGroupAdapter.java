@@ -28,7 +28,7 @@ public class AssignmentsGroupAdapter extends RecyclerView.Adapter<AssignmentsGro
 
     public AssignmentsGroupAdapter(List<Assignment> assignments) throws ParseException {
         assignments.sort((a1, a2) -> {
-            Date d1 = a1.dueDate, d2 = a2.dueDate;
+            Long d1 = a1.dueDate, d2 = a2.dueDate;
 
             if (d1 == null) {
                 return d2 == null ? 0 : 1;
