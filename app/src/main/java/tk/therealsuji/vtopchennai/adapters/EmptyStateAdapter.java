@@ -23,7 +23,7 @@ public class EmptyStateAdapter extends RecyclerView.Adapter<EmptyStateAdapter.Vi
     public static final int TYPE_NOT_AUTHENTICATED = 7;
 
     final int type;
-    OnClickListener onClickListener;
+    ButtonAttributes buttonAttributes;
     String message;
 
     public EmptyStateAdapter(int type) {
@@ -35,10 +35,10 @@ public class EmptyStateAdapter extends RecyclerView.Adapter<EmptyStateAdapter.Vi
         this.message = message;
     }
 
-    public EmptyStateAdapter(int type, String message, OnClickListener onClickListener) {
+    public EmptyStateAdapter(int type, String message, ButtonAttributes buttonAttributes) {
         this.type = type;
         this.message = message;
-        this.onClickListener = onClickListener;
+        this.buttonAttributes = buttonAttributes;
     }
 
     @NonNull
@@ -85,7 +85,7 @@ public class EmptyStateAdapter extends RecyclerView.Adapter<EmptyStateAdapter.Vi
             holder.setText(message);
         }
 
-        holder.setButton(this.onClickListener);
+        holder.setButton(this.buttonAttributes);
     }
 
     @Override
@@ -93,7 +93,7 @@ public class EmptyStateAdapter extends RecyclerView.Adapter<EmptyStateAdapter.Vi
         return 1;
     }
 
-    public interface OnClickListener {
+    public interface ButtonAttributes {
         void onClick();
 
         int getButtonTextId();
@@ -127,13 +127,13 @@ public class EmptyStateAdapter extends RecyclerView.Adapter<EmptyStateAdapter.Vi
             this.noData.setText(text);
         }
 
-        public void setButton(OnClickListener onClickListener) {
-            if (onClickListener == null) {
+        public void setButton(ButtonAttributes buttonAttributes) {
+            if (buttonAttributes == null) {
                 return;
             }
 
-            this.button.setOnClickListener(view -> onClickListener.onClick());
-            this.button.setText(onClickListener.getButtonTextId());
+            this.button.setOnClickListener(view -> buttonAttributes.onClick());
+            this.button.setText(buttonAttributes.getButtonTextId());
             this.button.setVisibility(View.VISIBLE);
         }
     }

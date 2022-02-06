@@ -1,6 +1,5 @@
 package tk.therealsuji.vtopchennai.fragments;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,6 +37,7 @@ import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory;
 import tk.therealsuji.vtopchennai.R;
 import tk.therealsuji.vtopchennai.adapters.AssignmentsGroupAdapter;
 import tk.therealsuji.vtopchennai.adapters.EmptyStateAdapter;
+import tk.therealsuji.vtopchennai.fragments.dialogs.MoodleLoginDialogFragment;
 import tk.therealsuji.vtopchennai.helpers.SettingsRepository;
 import tk.therealsuji.vtopchennai.interfaces.MoodleApi;
 import tk.therealsuji.vtopchennai.models.Assignment;
@@ -71,15 +71,19 @@ public class AssignmentsFragment extends Fragment implements SwipeRefreshLayout.
                     public void onSuccess(@NonNull ResponseBody responseBody) {
                         try {
                             JSONObject response = new JSONObject(responseBody.string());
-
-                            if (response.has("error")) {
-                                throw new Exception(response.getString("error"));
-                            }
+                            throwErrorIfExists(response);
 
                             moodleUserId = response.getInt("userid");
                             getCourses();
                         } catch (Exception e) {
-                            Toast.makeText(getContext(), "Error: " + e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                            if (e.getMessage() != null && e.getMessage().contains("token")) {
+                                SettingsRepository.signOutMoodle(requireContext());
+                                displaySignInPage();
+                                Toast.makeText(getContext(), "You've been signed out of Moodle. Please sign in again.", Toast.LENGTH_LONG).show();
+                            } else {
+                                Toast.makeText(getContext(), "Error: " + e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                            }
+
                             setLoading(false);
                         }
                     }
@@ -107,10 +111,7 @@ public class AssignmentsFragment extends Fragment implements SwipeRefreshLayout.
                     public void onSuccess(@NonNull ResponseBody responseBody) {
                         try {
                             JSONObject response = new JSONObject(responseBody.string());
-
-                            if (!response.has("courses")) {
-                                throw new Exception(response.getString("error"));
-                            }
+                            throwErrorIfExists(response);
 
                             JSONArray courses = response.getJSONArray("courses");
                             List<Integer> courseIds = new ArrayList<>();
@@ -151,10 +152,7 @@ public class AssignmentsFragment extends Fragment implements SwipeRefreshLayout.
                     public void onSuccess(@NonNull ResponseBody responseBody) {
                         try {
                             JSONObject response = new JSONObject(responseBody.string());
-
-                            if (response.has("error")) {
-                                throw new Exception(response.getString("error"));
-                            }
+                            throwErrorIfExists(response);
 
                             JSONArray coursesArray = response.getJSONArray("courses");
                             Map<Integer, Assignment> assignments = new HashMap<>();
@@ -271,10 +269,7 @@ public class AssignmentsFragment extends Fragment implements SwipeRefreshLayout.
                     public void onNext(@NonNull ResponseBody responseBody) {
                         try {
                             JSONObject response = new JSONObject(responseBody.string());
-
-                            if (response.has("error")) {
-                                throw new Exception(response.getString("error"));
-                            }
+                            throwErrorIfExists(response);
 
                             JSONArray statusArray = response.getJSONArray("statuses");
 
@@ -323,6 +318,62 @@ public class AssignmentsFragment extends Fragment implements SwipeRefreshLayout.
         this.swipeRefreshLayout.setRefreshing(isLoading);
     }
 
+    private void throwErrorIfExists(JSONObject jsonObject) throws Exception {
+        if (jsonObject.has("error")) {
+            throw new Exception(jsonObject.getString("error"));
+        } else if (jsonObject.has("message")) {
+            throw new Exception(jsonObject.getString("message"));
+        }
+    }
+
+    private void displaySignInPage() {
+        this.assignmentGroups.setAdapter(new EmptyStateAdapter(
+                EmptyStateAdapter.TYPE_NOT_AUTHENTICATED,
+                null,
+                new EmptyStateAdapter.ButtonAttributes() {
+                    @Override
+                    public void onClick() {
+                        MoodleLoginDialogFragment moodleLoginDialogFragment = new MoodleLoginDialogFragment(o -> {
+                            displayAssignmentsPage();
+                            return null;
+                        });
+
+                        FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
+                        FragmentTransaction transaction = fragmentManager.beginTransaction();
+                        transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                        transaction.add(android.R.id.content, moodleLoginDialogFragment).addToBackStack(null).commit();
+                    }
+
+                    @Override
+                    public int getButtonTextId() {
+                        return R.string.moodle_sign_in;
+                    }
+                }
+        ));
+        this.assignmentGroups.setOverScrollMode(View.OVER_SCROLL_NEVER);
+        this.swipeRefreshLayout.setEnabled(false);
+    }
+
+    private void displayAssignmentsPage() {
+        this.moodleToken = SettingsRepository
+                .getSharedPreferences(this.requireContext().getApplicationContext())
+                .getString("moodleToken", null);
+
+        this.assignmentGroups.setAdapter(new EmptyStateAdapter(
+                EmptyStateAdapter.TYPE_FETCHING_DATA,
+                getString(R.string.fetch_assignments)
+        ));
+
+        this.moodleApi = new Retrofit.Builder()
+                .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
+                .baseUrl(SettingsRepository.MOODLE_BASE_URL)
+                .client(SettingsRepository.getNaiveOkHttpClient())
+                .build()
+                .create(MoodleApi.class);
+
+        this.getUserId();
+    }
+
     @Override
     public void onRefresh() {
         this.getUserId();
@@ -361,47 +412,14 @@ public class AssignmentsFragment extends Fragment implements SwipeRefreshLayout.
             getParentFragmentManager().setFragmentResult("customInsets2", result);
         });
 
-        SharedPreferences sharedPreferences = SettingsRepository.getSharedPreferences(this.requireContext().getApplicationContext());
-        this.moodleToken = sharedPreferences.getString("moodleToken", "");
         this.swipeRefreshLayout.setColorSchemeColors(MaterialColors.getColor(this.swipeRefreshLayout, R.attr.colorSurface));
         this.swipeRefreshLayout.setProgressBackgroundColorSchemeColor(MaterialColors.getColor(this.swipeRefreshLayout, R.attr.colorPrimary));
         this.swipeRefreshLayout.setOnRefreshListener(this);
 
         if (SettingsRepository.isMoodleSignedIn(requireContext())) {
-            this.assignmentGroups.setAdapter(new EmptyStateAdapter(
-                    EmptyStateAdapter.TYPE_FETCHING_DATA,
-                    getString(R.string.fetch_assignments)
-            ));
-            this.moodleApi = new Retrofit.Builder()
-                    .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
-                    .baseUrl(SettingsRepository.MOODLE_BASE_URL)
-                    .client(SettingsRepository.getNaiveOkHttpClient())
-                    .build()
-                    .create(MoodleApi.class);
-            this.getUserId();
+            this.displayAssignmentsPage();
         } else {
-            this.assignmentGroups.setAdapter(new EmptyStateAdapter(
-                    EmptyStateAdapter.TYPE_NOT_AUTHENTICATED,
-                    null,
-                    new EmptyStateAdapter.OnClickListener() {
-                        @Override
-                        public void onClick() {
-                            MoodleLoginDialogFragment moodleLoginDialogFragment = new MoodleLoginDialogFragment();
-
-                            FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
-                            FragmentTransaction transaction = fragmentManager.beginTransaction();
-                            transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-                            transaction.add(android.R.id.content, moodleLoginDialogFragment).addToBackStack(null).commit();
-                        }
-
-                        @Override
-                        public int getButtonTextId() {
-                            return R.string.moodle_sign_in;
-                        }
-                    }
-            ));
-            this.assignmentGroups.setOverScrollMode(View.OVER_SCROLL_NEVER);
-            this.swipeRefreshLayout.setEnabled(false);
+            this.displaySignInPage();
         }
 
         return assignmentsFragment;

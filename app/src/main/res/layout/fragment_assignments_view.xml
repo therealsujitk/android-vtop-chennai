@@ -191,5 +191,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:text="@string/submit_assignment"
+        android:visibility="gone"
         app:icon="@drawable/ic_done" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

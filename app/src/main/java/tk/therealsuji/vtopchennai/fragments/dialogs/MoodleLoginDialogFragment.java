@@ -1,4 +1,4 @@
-package tk.therealsuji.vtopchennai.fragments;
+package tk.therealsuji.vtopchennai.fragments.dialogs;
 
 import android.app.Dialog;
 import android.content.SharedPreferences;
@@ -21,6 +21,8 @@ import com.google.android.material.color.MaterialColors;
 
 import org.json.JSONObject;
 
+import java.util.function.Function;
+
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.SingleObserver;
 import io.reactivex.rxjava3.disposables.Disposable;
@@ -35,7 +37,13 @@ import tk.therealsuji.vtopchennai.interfaces.MoodleApi;
 public class MoodleLoginDialogFragment extends DialogFragment {
     RelativeLayout signIn;
     EditText username, password;
+
+    Function<Object, Object> callback;
     MoodleApi moodleApi;
+
+    public MoodleLoginDialogFragment(Function<Object, Object> callback) {
+        this.callback = callback;
+    }
 
     private void signIn() {
         this.setLoading(true);
@@ -124,5 +132,14 @@ public class MoodleLoginDialogFragment extends DialogFragment {
         Dialog dialog = super.onCreateDialog(savedInstanceState);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         return dialog;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+
+        if (SettingsRepository.isMoodleSignedIn(requireContext())) {
+            this.callback.apply(null);
+        }
     }
 }

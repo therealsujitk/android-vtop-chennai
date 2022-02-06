@@ -12,7 +12,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -67,6 +66,8 @@ public class AssignmentsViewFragment extends Fragment implements SwipeRefreshLay
     MoodleApi moodleApi;
     String moodleToken;
 
+    Button addSubmission;
+    ExtendedFloatingActionButton submitAssignment;
     RecyclerView submissions;
     SwipeRefreshLayout swipeRefreshLayout;
 
@@ -90,12 +91,19 @@ public class AssignmentsViewFragment extends Fragment implements SwipeRefreshLay
                     public void onSuccess(@NonNull ResponseBody responseBody) {
                         try {
                             JSONObject response = new JSONObject(responseBody.string());
+                            throwErrorIfExists(response);
 
-                            if (response.has("error")) {
-                                throw new Exception(response.getString("error"));
+                            JSONObject lastAttempt = response.getJSONObject("lastattempt");
+                            JSONObject submission;
+
+                            if (lastAttempt.has("teamsubmission")) {
+                                submission = lastAttempt.getJSONObject("teamsubmission");
+                            } else if (lastAttempt.has("submission")) {
+                                submission = lastAttempt.getJSONObject("submission");
+                            } else {
+                                throw new Exception("Failed to fetch submissions");
                             }
 
-                            JSONObject submission = response.getJSONObject("lastattempt").getJSONObject("submission");
                             JSONArray plugins = submission.getJSONArray("plugins");
                             attachments = new ArrayList<>();
 
@@ -120,8 +128,20 @@ public class AssignmentsViewFragment extends Fragment implements SwipeRefreshLay
                                         attachments.add(attachment);
                                     }
 
+                                    if (lastAttempt.getBoolean("canedit")) {
+                                        addSubmission.setAlpha(1);
+                                        addSubmission.setEnabled(true);
+                                    }
+
                                     break;
                                 }
+                            }
+
+                            if (lastAttempt.getBoolean("cansubmit")) {
+                                submitAssignment.setEnabled(true);
+                                submitAssignment.setVisibility(View.VISIBLE);
+                            } else {
+                                submitAssignment.setVisibility(View.GONE);
                             }
 
                             displaySubmissions();
@@ -179,7 +199,7 @@ public class AssignmentsViewFragment extends Fragment implements SwipeRefreshLay
 
                     @Override
                     public void onNext(@NonNull List<File> files) {
-                        addSubmissions(files, false, callback);
+                        addSubmissions(files, callback);
                     }
 
                     @Override
@@ -198,7 +218,7 @@ public class AssignmentsViewFragment extends Fragment implements SwipeRefreshLay
         this.submissions.setAdapter(new AttachmentItemAdapter(this.attachments));
     }
 
-    private void addSubmissions(List<File> files, boolean saveSubmissions, Function<Object, Object> callback) {
+    private void addSubmissions(List<File> files, Function<Object, Object> callback) {
         setLoading(true);
 
         MultipartBody.Builder formBuilder = new MultipartBody.Builder();
@@ -226,9 +246,7 @@ public class AssignmentsViewFragment extends Fragment implements SwipeRefreshLay
                             String responseString = responseBody.string();
                             if (responseString.startsWith("{")) {
                                 JSONObject response = new JSONObject(responseString);
-                                if (response.has("error")) {
-                                    throw new Exception(response.getString("error"));
-                                }
+                                throwErrorIfExists(response);
                             }
 
                             JSONArray response = new JSONArray(responseString);
@@ -237,11 +255,11 @@ public class AssignmentsViewFragment extends Fragment implements SwipeRefreshLay
                                 throw new Exception("Something went wrong.");
                             }
 
-                            fileArea = response.getJSONObject(0).getInt("itemid");
-
-                            if (saveSubmissions) {
-                                saveSubmissions();
+                            for (int i = 0; i < response.length(); ++i) {
+                                throwErrorIfExists(response.getJSONObject(i));
                             }
+
+                            fileArea = response.getJSONObject(0).getInt("itemid");
 
                             if (callback != null) {
                                 callback.apply(null);
@@ -250,8 +268,11 @@ public class AssignmentsViewFragment extends Fragment implements SwipeRefreshLay
                             deleteTemporaryFiles(files);
                         } catch (Exception e) {
                             Toast.makeText(getContext(), "Error: " + e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-                        } finally {
                             setLoading(false);
+                        } finally {
+                            if (fileArea != 0) {
+                                saveSubmissions();
+                            }
                         }
                     }
 
@@ -278,14 +299,12 @@ public class AssignmentsViewFragment extends Fragment implements SwipeRefreshLay
                             String responseString = responseBody.string();
                             if (responseString.startsWith("{")) {
                                 JSONObject response = new JSONObject(responseString);
-
-                                if (response.has("exception")) {
-                                    throw new Exception(response.getString("message"));
-                                }
+                                throwErrorIfExists(response);
                             }
+
+                            getSubmissionStatus();
                         } catch (Exception e) {
-                            Toast.makeText(getContext(), "Exception: " + e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
-                        } finally {
+                            Toast.makeText(getContext(), "Error: " + e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
                             setLoading(false);
                         }
                     }
@@ -330,6 +349,12 @@ public class AssignmentsViewFragment extends Fragment implements SwipeRefreshLay
 
     private void setLoading(boolean isLoading) {
         this.swipeRefreshLayout.setRefreshing(isLoading);
+
+        if (isLoading) {
+            this.addSubmission.setAlpha(0.5f);
+            this.addSubmission.setEnabled(false);
+            this.submitAssignment.setEnabled(false);
+        }
     }
 
     private void throwErrorIfExists(JSONObject jsonObject) throws Exception {
@@ -353,8 +378,8 @@ public class AssignmentsViewFragment extends Fragment implements SwipeRefreshLay
         assignmentsViewFragment.getRootView().setOnTouchListener((view, motionEvent) -> true);
 
         LinearLayout header = assignmentsViewFragment.findViewById(R.id.linear_layout_header);
-        NestedScrollView assignments = assignmentsViewFragment.findViewById(R.id.nested_scroll_view_assignments_view);
-        ExtendedFloatingActionButton extendedFloatingActionButton = assignmentsViewFragment.findViewById(R.id.extended_floating_action_button);
+        NestedScrollView nestedScrollView = assignmentsViewFragment.findViewById(R.id.nested_scroll_view_assignments_view);
+        this.submitAssignment = assignmentsViewFragment.findViewById(R.id.extended_floating_action_button);
         float pixelDensity = getResources().getDisplayMetrics().density;
 
         getParentFragmentManager().setFragmentResultListener("customInsets2", this, (requestKey, result) -> {
@@ -370,14 +395,14 @@ public class AssignmentsViewFragment extends Fragment implements SwipeRefreshLay
                     0
             );
 
-            assignments.setPaddingRelative(
+            nestedScrollView.setPaddingRelative(
                     systemWindowInsetLeft,
                     0,
                     systemWindowInsetRight,
                     (int) (systemWindowInsetBottom + 20 * pixelDensity)
             );
 
-            ((ViewGroup.MarginLayoutParams) extendedFloatingActionButton.getLayoutParams()).setMargins(
+            ((ViewGroup.MarginLayoutParams) submitAssignment.getLayoutParams()).setMargins(
                     0,
                     0,
                     (int) (systemWindowInsetRight + 20 * pixelDensity),
@@ -395,14 +420,14 @@ public class AssignmentsViewFragment extends Fragment implements SwipeRefreshLay
             assignment = arguments.getParcelable("assignment");
         }
 
-        ImageButton back = assignmentsViewFragment.findViewById(R.id.image_button_back);
         RecyclerView introAttachments = assignmentsViewFragment.findViewById(R.id.recycler_view_attachments);
-        Button addSubmission = assignmentsViewFragment.findViewById(R.id.button_add_submission);
         TextView allowLate = assignmentsViewFragment.findViewById(R.id.text_view_allow_late);
         TextView dueDate = assignmentsViewFragment.findViewById(R.id.text_view_due_date);
         TextView dueIn = assignmentsViewFragment.findViewById(R.id.text_view_due_in);
         TextView intro = assignmentsViewFragment.findViewById(R.id.text_view_intro);
         TextView title = assignmentsViewFragment.findViewById(R.id.text_view_title);
+        View back = assignmentsViewFragment.findViewById(R.id.image_button_back);
+        this.addSubmission = assignmentsViewFragment.findViewById(R.id.button_add_submission);
         this.submissions = assignmentsViewFragment.findViewById(R.id.recycler_view_submissions);
         this.swipeRefreshLayout = assignmentsViewFragment.findViewById(R.id.swipe_refresh_layout);
 
@@ -423,7 +448,7 @@ public class AssignmentsViewFragment extends Fragment implements SwipeRefreshLay
             }
 
             this.downloadPreviousAttempt(o -> {
-                addSubmissions(files, true, null);
+                addSubmissions(files, null);
                 return null;
             });
         });
@@ -436,7 +461,7 @@ public class AssignmentsViewFragment extends Fragment implements SwipeRefreshLay
             intent.setType("*/*");
             ((MainActivity) requireActivity()).getRequestFileLauncher().launch(intent);
         });
-        extendedFloatingActionButton.setOnClickListener(view -> new MaterialAlertDialogBuilder(requireContext())
+        submitAssignment.setOnClickListener(view -> new MaterialAlertDialogBuilder(requireContext())
                 .setTitle(R.string.submit_assignment)
                 .setMessage(Html.fromHtml(getString(R.string.submit_confirmation, this.attachments.size()), Html.FROM_HTML_MODE_LEGACY))
                 .setNegativeButton(R.string.cancel, (dialogInterface, i) -> dialogInterface.cancel())
@@ -459,9 +484,10 @@ public class AssignmentsViewFragment extends Fragment implements SwipeRefreshLay
                                             JSONObject responseObject = response.getJSONObject(0);
                                             throwErrorIfExists(responseObject);
                                         }
+
+                                        getSubmissionStatus();
                                     } catch (Exception e) {
                                         Toast.makeText(getContext(), "Error: " + e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-                                    } finally {
                                         setLoading(false);
                                     }
                                 }
@@ -469,10 +495,19 @@ public class AssignmentsViewFragment extends Fragment implements SwipeRefreshLay
                                 @Override
                                 public void onError(@NonNull Throwable e) {
                                     Toast.makeText(getContext(), "Error: " + e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                                    setLoading(false);
                                 }
                             });
                 })
                 .show());
+
+        nestedScrollView.setOnScrollChangeListener((NestedScrollView.OnScrollChangeListener) (v, scrollX, scrollY, oldScrollX, oldScrollY) -> {
+            if (scrollY > oldScrollY + 12) {
+                this.submitAssignment.shrink();
+            } else if (scrollY == 0 || scrollY < oldScrollY - 12) {
+                this.submitAssignment.extend();
+            }
+        });
 
         if (assignment != null) {
             title.setText(assignment.title);
