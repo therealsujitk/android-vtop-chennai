@@ -10,9 +10,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import androidx.annotation.DrawableRes;
 import androidx.annotation.StringRes;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
@@ -191,16 +193,48 @@ public class ProfileFragment extends Fragment {
             new ItemData(
                     R.drawable.ic_sign_out,
                     R.string.sign_out,
-                    context -> new MaterialAlertDialogBuilder(context)
-                            .setMessage(R.string.sign_out_text)
-                            .setNegativeButton(R.string.cancel, (dialogInterface, i) -> dialogInterface.cancel())
-                            .setPositiveButton(R.string.sign_out, (dialogInterface, i) -> {
-                                SettingsRepository.getSharedPreferences(context).edit().remove("isSignedIn").apply();
-                                context.startActivity(new Intent(context, LoginActivity.class));
-                                ((Activity) context).finish();
-                            })
-                            .setTitle(R.string.sign_out)
-                            .show(),
+                    context -> {
+                        AlertDialog signOutDialog = new MaterialAlertDialogBuilder(context)
+                                .setMessage(R.string.sign_out_text)
+                                .setNegativeButton(R.string.cancel, (dialogInterface, i) -> dialogInterface.cancel())
+                                .setPositiveButton(R.string.sign_out, (dialogInterface, i) -> {
+                                    SettingsRepository.signOut(context);
+                                    context.startActivity(new Intent(context, LoginActivity.class));
+                                    ((Activity) context).finish();
+                                })
+                                .setTitle(R.string.sign_out)
+                                .create();
+
+                        if (!SettingsRepository.isMoodleSignedIn(requireContext())) {
+                            signOutDialog.show();
+                            return;
+                        }
+
+                        AlertDialog moodleSignOutDialog = new MaterialAlertDialogBuilder(context)
+                                .setMessage(R.string.moodle_sign_out_text)
+                                .setNegativeButton(R.string.cancel, (dialogInterface, i) -> dialogInterface.cancel())
+                                .setPositiveButton(R.string.sign_out, (dialogInterface, i) -> {
+                                    SettingsRepository.signOutMoodle(requireContext());
+                                    Toast.makeText(context, "You've signed out of Moodle.", Toast.LENGTH_SHORT).show();
+                                })
+                                .setTitle(R.string.sign_out)
+                                .create();
+
+                        View bottomSheetLayout = View.inflate(context, R.layout.layout_bottom_sheet_sign_out, null);
+                        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(context);
+                        bottomSheetDialog.setContentView(bottomSheetLayout);
+
+                        bottomSheetLayout.findViewById(R.id.text_view_sign_out_moodle).setOnClickListener(view -> {
+                            bottomSheetDialog.dismiss();
+                            moodleSignOutDialog.show();
+                        });
+                        bottomSheetLayout.findViewById(R.id.text_view_sign_out_app).setOnClickListener(view -> {
+                            bottomSheetDialog.dismiss();
+                            signOutDialog.show();
+                        });
+
+                        bottomSheetDialog.show();
+                    },
                     null)
     };
 

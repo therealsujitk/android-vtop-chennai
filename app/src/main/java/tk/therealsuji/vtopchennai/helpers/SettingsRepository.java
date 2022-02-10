@@ -1,6 +1,10 @@
 package tk.therealsuji.vtopchennai.helpers;
 
+import static android.content.Context.DOWNLOAD_SERVICE;
+
+import android.annotation.SuppressLint;
 import android.app.AlarmManager;
+import android.app.DownloadManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -11,12 +15,17 @@ import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.text.Html;
 import android.text.format.DateFormat;
+import android.widget.Toast;
 
 import androidx.fragment.app.FragmentActivity;
 import androidx.security.crypto.EncryptedSharedPreferences;
 import androidx.security.crypto.MasterKey;
 
+import java.security.SecureRandom;
+import java.security.cert.X509Certificate;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -24,6 +33,11 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.Objects;
 
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+
+import okhttp3.OkHttpClient;
 import tk.therealsuji.vtopchennai.R;
 import tk.therealsuji.vtopchennai.activities.WebViewActivity;
 import tk.therealsuji.vtopchennai.fragments.RecyclerViewFragment;
@@ -42,6 +56,11 @@ public class SettingsRepository {
     public static final String GITHUB_BASE_URL = "https://github.com/therealsujitk/android-vtop-chennai";
     public static final String GITHUB_FEATURE_URL = GITHUB_BASE_URL + "/issues";
     public static final String GITHUB_ISSUE_URL = GITHUB_BASE_URL + "/issues";
+
+    public static final String MOODLE_BASE_URL = "https://lms.vit.ac.in";
+    public static final String MOODLE_LOGIN_PATH = "/login/token.php";
+    public static final String MOODLE_UPLOAD_PATH = "/webservice/upload.php";
+    public static final String MOODLE_WEBSERVICE_PATH = "/webservice/rest/server.php";
 
     public static final String VTOP_BASE_URL = "https://vtopcc.vit.ac.in/vtop";
 
@@ -70,6 +89,20 @@ public class SettingsRepository {
 
     public static boolean isSignedIn(Context context) {
         return getSharedPreferences(context).getBoolean("isSignedIn", false);
+    }
+
+    public static boolean isMoodleSignedIn(Context context) {
+        return getSharedPreferences(context).getString("moodleToken", null) != null;
+    }
+
+    public static void signOut(Context context) {
+        getSharedPreferences(context).edit().remove("isSignedIn").apply();
+    }
+
+    public static void signOutMoodle(Context context) {
+        SharedPreferences sharedPreferences = getSharedPreferences(context);
+        sharedPreferences.edit().remove("moodleToken").apply();
+        sharedPreferences.edit().remove("moodlePrivateToken").apply();
     }
 
     public static SharedPreferences getSharedPreferences(Context context) {
@@ -141,6 +174,20 @@ public class SettingsRepository {
     public static void openBrowser(Context context, String url) {
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
         context.startActivity(intent);
+    }
+
+    public static void downloadFile(Context context, String fileName, String mimetype, Uri uri) {
+        Toast.makeText(context, Html.fromHtml(context.getString(R.string.downloading_file, fileName), Html.FROM_HTML_MODE_LEGACY), Toast.LENGTH_SHORT).show();
+
+        DownloadManager.Request request = new DownloadManager.Request(uri);
+        request.allowScanningByMediaScanner();
+        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "Moodle/" + fileName);
+        request.setMimeType(mimetype);
+        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE | DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+        request.setTitle(fileName);
+
+        DownloadManager downloadManager = (DownloadManager) context.getSystemService(DOWNLOAD_SERVICE);
+        downloadManager.enqueue(request);
     }
 
     public static String getSystemFormattedTime(Context context, String time) throws ParseException {
@@ -245,5 +292,42 @@ public class SettingsRepository {
         }
 
         sharedPreferences.edit().putInt("alarmCount", alarmCount).apply();
+    }
+
+    /**
+     * WARNING: This function is to be used ONLY for the purpose of testing and not in production.
+     * This function returns a naive OkHttpClient that accepts any and all certificates,
+     * and hence can lead to attacks.
+     */
+    @Deprecated
+    @SuppressLint({"BadHostnameVerifier", "CustomX509TrustManager", "TrustAllX509TrustManager"})
+    public static OkHttpClient getNaiveOkHttpClient() {
+        try {
+            TrustManager[] trustAllCertificates = new TrustManager[]{
+                    new X509TrustManager() {
+                        @Override
+                        public void checkClientTrusted(java.security.cert.X509Certificate[] x509Certificates, String s) {
+                        }
+
+                        @Override
+                        public void checkServerTrusted(java.security.cert.X509Certificate[] x509Certificates, String s) {
+                        }
+
+                        public X509Certificate[] getAcceptedIssuers() {
+                            return new X509Certificate[0];
+                        }
+                    }
+            };
+
+            SSLContext sslContext = SSLContext.getInstance("SSL");
+            sslContext.init(null, trustAllCertificates, new SecureRandom());
+
+            return new OkHttpClient.Builder()
+                    .sslSocketFactory(sslContext.getSocketFactory(), (X509TrustManager) trustAllCertificates[0])
+                    .hostnameVerifier((s, sslSession) -> true)
+                    .build();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }
