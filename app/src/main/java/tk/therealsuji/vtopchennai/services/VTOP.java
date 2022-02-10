@@ -53,7 +53,6 @@ import tk.therealsuji.vtopchennai.interfaces.AttendanceDao;
 import tk.therealsuji.vtopchennai.interfaces.CoursesDao;
 import tk.therealsuji.vtopchennai.interfaces.MarksDao;
 import tk.therealsuji.vtopchennai.interfaces.ReceiptsDao;
-import tk.therealsuji.vtopchennai.interfaces.SpotlightDao;
 import tk.therealsuji.vtopchennai.interfaces.StaffDao;
 import tk.therealsuji.vtopchennai.interfaces.TimetableDao;
 import tk.therealsuji.vtopchennai.models.Attendance;
@@ -1278,7 +1277,8 @@ public class VTOP extends Service {
                 "            }" +
                 "        }" +
                 "        for (var i = 1; i < rows.length; ++i) {" +
-                "            var courseType = rows[i].getElementsByTagName('td')[courseTypeIndex].innerText.trim();" +
+                "            var rawCourseType = rows[i].getElementsByTagName('td')[courseTypeIndex].innerText.trim().toLowerCase();" +
+                "            var courseType = (rawCourseType.includes('lab')) ? 'lab' : ((rawCourseType.includes('project')) ? 'project' : 'theory');" +
                 "            var slot = rows[i++].getElementsByTagName('td')[slotIndex].innerText.split('+')[0].trim();" +
                 "            var innerTable = rows[i].getElementsByTagName('table')[0];" +
                 "            var innerRows = innerTable.getElementsByTagName('tr');" +
@@ -1332,7 +1332,7 @@ public class VTOP extends Service {
             try {
                 JSONObject response = new JSONObject(responseString);
                 JSONArray marksArray = response.getJSONArray("marks");
-                List<Mark> marks = new ArrayList<>();
+                Map<Integer, Mark> marks = new HashMap<>();
 
                 this.cumulativeMarks = new HashMap<>();
 
@@ -1342,9 +1342,9 @@ public class VTOP extends Service {
 
                     int courseType = Course.TYPE_THEORY;
 
-                    if (markObject.getString("course_type").toLowerCase().contains("lab")) {
+                    if (markObject.getString("course_type").equals("lab")) {
                         courseType = Course.TYPE_LAB;
-                    } else if (markObject.getString("course_type").toLowerCase().contains("project")) {
+                    } else if (markObject.getString("course_type").equals("project")) {
                         courseType = Course.TYPE_PROJECT;
                     }
 
@@ -1368,7 +1368,9 @@ public class VTOP extends Service {
                     Objects.requireNonNull(this.cumulativeMarks.get(courseCode)).courseCode = courseCode;
                     Objects.requireNonNull(this.cumulativeMarks.get(courseCode)).addWeightage(mark.weightage, mark.maxWeightage, courseType, courseCredits);
 
-                    marks.add(mark);
+                    // Generating a unique hash signature to keep a track of read marks
+                    mark.signature = (courseCode + markObject.getString("course_type") + mark.title + mark.score).hashCode();
+                    marks.put(mark.signature, mark);
                 }
 
                 for (Map.Entry<String, CumulativeMark> cumulativeMark : this.cumulativeMarks.entrySet()) {
@@ -1409,8 +1411,7 @@ public class VTOP extends Service {
                     Objects.requireNonNull(this.cumulativeMarks.get(cumulativeMark.getKey())).grandMax = grandMax;
                 }
 
-                MarksDao marksDao = appDatabase.marksDao();
-                marksDao
+                appDatabase.marksDao()
                         .insertMarks(marks)
                         .subscribeOn(Schedulers.single())
                         .observeOn(AndroidSchedulers.mainThread())
@@ -1521,7 +1522,7 @@ public class VTOP extends Service {
                 List<CumulativeMark> cumulativeMarks = new ArrayList<>(this.cumulativeMarks.values());
                 MarksDao marksDao = this.appDatabase.marksDao();
 
-                Observable<Object> deleteAllObservable = Observable.fromCompletable(marksDao.deleteAllCumulativeMarks());
+                Observable<Object> deleteAllObservable = Observable.fromCompletable(marksDao.deleteCumulativeMarks());
                 Observable<Object> insertCumulativeMarks = Observable.fromCompletable(marksDao.insertCumulativeMarks(cumulativeMarks));
 
                 Observable
@@ -1833,7 +1834,7 @@ public class VTOP extends Service {
             try {
                 JSONObject response = new JSONObject(responseString);
                 JSONArray spotlightArray = response.getJSONArray("spotlight");
-                List<Spotlight> spotlight = new ArrayList<>();
+                Map<Integer, Spotlight> spotlight = new HashMap<>();
 
                 for (int i = 0; i < spotlightArray.length(); ++i) {
                     JSONObject spotlightObject = spotlightArray.getJSONObject(i);
@@ -1844,37 +1845,27 @@ public class VTOP extends Service {
                     spotlightItem.category = this.getStringValue(spotlightObject, "category");
                     spotlightItem.link = this.getStringValue(spotlightObject, "link");
 
-                    spotlight.add(spotlightItem);
+                    // Generating a unique hash signature to keep a track of read announcements
+                    spotlightItem.signature = (spotlightItem.announcement + spotlightItem.link).hashCode();
+                    spotlight.put(spotlightItem.signature, spotlightItem);
                 }
 
-                SpotlightDao spotlightDao = appDatabase.spotlightDao();
-
-                Observable<Object> deleteAllObservable = Observable.fromCompletable(spotlightDao.deleteAll());
-                Observable<Object> insertSpotlightObservable = Observable.fromCompletable(spotlightDao.insert(spotlight));
-
-                Observable
-                        .concat(
-                                deleteAllObservable,
-                                insertSpotlightObservable
-                        )
+                appDatabase.spotlightDao()
+                        .insert(spotlight)
                         .subscribeOn(Schedulers.single())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(new Observer<Object>() {
+                        .subscribe(new CompletableObserver() {
                             @Override
                             public void onSubscribe(@NonNull Disposable d) {
                             }
 
                             @Override
-                            public void onNext(@NonNull Object o) {
+                            public void onComplete() {
+                                downloadReceipts();
                             }
 
                             @Override
                             public void onError(@NonNull Throwable e) {
-                            }
-
-                            @Override
-                            public void onComplete() {
-                                downloadReceipts();
                             }
                         });
             } catch (Exception e) {

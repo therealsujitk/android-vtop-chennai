@@ -64,7 +64,6 @@
                     android:padding="12dp"
                     android:src="@drawable/ic_spotlight"
                     app:tint="?attr/colorPrimary" />
-
             </LinearLayout>
 
             <HorizontalScrollView
@@ -100,11 +99,8 @@
                         android:layout_height="150dp"
                         android:layout_margin="10dp"
                         app:key="@string/cgpa" />
-
                 </LinearLayout>
-
             </HorizontalScrollView>
-
         </LinearLayout>
 
         <com.google.android.material.tabs.TabLayout
@@ -116,7 +112,6 @@
             android:layout_marginBottom="10dp"
             android:contentDescription="@string/days"
             app:tabMaxWidth="50dp" />
-
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.viewpager2.widget.ViewPager2

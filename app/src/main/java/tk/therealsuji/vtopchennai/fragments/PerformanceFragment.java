@@ -13,14 +13,18 @@ import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.annotations.NonNull;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.core.Observer;
 import io.reactivex.rxjava3.core.SingleObserver;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
@@ -31,6 +35,7 @@ import tk.therealsuji.vtopchennai.helpers.AppDatabase;
 import tk.therealsuji.vtopchennai.interfaces.MarksDao;
 import tk.therealsuji.vtopchennai.models.Course;
 import tk.therealsuji.vtopchennai.models.CumulativeMark;
+import tk.therealsuji.vtopchennai.models.Mark;
 import tk.therealsuji.vtopchennai.widgets.PerformanceCard;
 
 public class PerformanceFragment extends Fragment {
@@ -107,17 +112,16 @@ public class PerformanceFragment extends Fragment {
         AppDatabase appDatabase = AppDatabase.getInstance(requireActivity().getApplicationContext());
         MarksDao marksDao = appDatabase.marksDao();
 
-        marksDao
-                .getCourses()
+        marksDao.getCourses()
                 .subscribeOn(Schedulers.single())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new SingleObserver<List<Course>>() {
+                .subscribe(new SingleObserver<List<Course.AllData>>() {
                     @Override
                     public void onSubscribe(@NonNull Disposable d) {
                     }
 
                     @Override
-                    public void onSuccess(@NonNull List<Course> courses) {
+                    public void onSuccess(@NonNull List<Course.AllData> courses) {
                         if (courses.size() == 0) {
                             displayEmptyState(EmptyStateAdapter.TYPE_NO_PERFORMANCE, null);
                             return;
@@ -126,13 +130,36 @@ public class PerformanceFragment extends Fragment {
                         performanceCards.setVisibility(View.VISIBLE);
                         courseTabs.setVisibility(View.VISIBLE);
 
-                        marks.setAdapter(new MarksAdapter(courses));
-                        new TabLayoutMediator(courseTabs, marks, (tab, position) -> {
-                            Course course = courses.get(position);
+                        List<Observable<List<Mark.AllData>>> markObservables = new ArrayList<>();
+                        for (Course.AllData course : courses) {
+                            Observable<List<Mark.AllData>> observable = Observable.fromSingle(marksDao.getMarks(course.courseCode))
+                                    .subscribeOn(Schedulers.single())
+                                    .observeOn(AndroidSchedulers.mainThread())
+                                    .replay()
+                                    .autoConnect();
 
-                            tab.setText(course.code);
-                            TooltipCompat.setTooltipText(tab.view, course.title);
-                            tab.view.setContentDescription(course.title);
+                            markObservables.add(observable);
+                        }
+
+                        marks.setAdapter(new MarksAdapter(markObservables));
+                        new TabLayoutMediator(courseTabs, marks, (tab, position) -> {
+                            Course.AllData course = courses.get(position);
+
+                            tab.setText(course.courseCode);
+                            TooltipCompat.setTooltipText(tab.view, course.courseTitle);
+                            tab.view.setContentDescription(course.courseTitle);
+
+                            if (courses.get(position).unreadMarkCount != 0) {
+                                BadgeDrawable badgeDrawable = tab.getOrCreateBadge();
+                                badgeDrawable.setBadgeGravity(BadgeDrawable.TOP_END);
+                                badgeDrawable.setNumber(courses.get(position).unreadMarkCount);
+                                badgeDrawable.setHorizontalOffset((int) (-3 * pixelDensity));
+                                badgeDrawable.setVerticalOffset((int) (-6 * pixelDensity));
+
+                                if (courses.get(position).unreadMarkCount > 9) {
+                                    badgeDrawable.setHorizontalOffset((int) (5 * pixelDensity));
+                                }
+                            }
                         }).attach();
 
                         for (int i = 0; i < courses.size(); ++i) {
@@ -156,19 +183,19 @@ public class PerformanceFragment extends Fragment {
                         PerformanceCard project = performanceFragment.findViewById(R.id.performance_card_project);
                         PerformanceCard lab = performanceFragment.findViewById(R.id.performance_card_lab);
 
-
                         marks.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
                             @Override
                             public void onPageSelected(int position) {
                                 super.onPageSelected(position);
+
+                                final String courseCode = courses.get(position).courseCode;
 
                                 overall.setIndeterminate(true);
                                 theory.setIndeterminate(true);
                                 project.setIndeterminate(true);
                                 lab.setIndeterminate(true);
 
-                                marksDao
-                                        .getCumulativeMark(courses.get(position).code)
+                                marksDao.getCumulativeMark(courseCode)
                                         .subscribeOn(Schedulers.single())
                                         .observeOn(AndroidSchedulers.mainThread())
                                         .subscribe(new SingleObserver<CumulativeMark>() {
@@ -216,6 +243,30 @@ public class PerformanceFragment extends Fragment {
                                                 Toast.makeText(getContext(), "Error: " + e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
                                             }
                                         });
+
+                                if (courses.get(position).unreadMarkCount != 0) {
+                                    markObservables.get(position)
+                                            .subscribe(new Observer<List<Mark.AllData>>() {
+                                                @Override
+                                                public void onSubscribe(@NonNull Disposable d) {
+                                                }
+
+                                                @Override
+                                                public void onNext(@NonNull List<Mark.AllData> marks) {
+                                                }
+
+                                                @Override
+                                                public void onError(@NonNull Throwable e) {
+                                                }
+
+                                                @Override
+                                                public void onComplete() {
+                                                    marksDao.setMarksRead(courseCode)
+                                                            .subscribeOn(Schedulers.single())
+                                                            .subscribe();
+                                                }
+                                            });
+                                }
                             }
                         });
                     }
@@ -227,5 +278,12 @@ public class PerformanceFragment extends Fragment {
                 });
 
         return performanceFragment;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+
+        getParentFragmentManager().setFragmentResult("getUnreadCount", new Bundle());
     }
 }
