@@ -22,8 +22,13 @@ import android.widget.Toast;
 
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
+import androidx.annotation.OptIn;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.badge.BadgeDrawable;
+import com.google.android.material.badge.BadgeUtils;
+import com.google.android.material.badge.ExperimentalBadgeUtils;
 
 import java.util.List;
 
@@ -128,6 +133,27 @@ public class SpotlightItemAdapter extends RecyclerView.Adapter<SpotlightItemAdap
                     });
                     downloadPage.loadUrl(SettingsRepository.VTOP_BASE_URL);
                 });
+            }
+
+            ImageView announcementType = this.spotlightItem.findViewById(R.id.image_view_announcement_type);
+            if (!spotlightItem.isRead) {
+                float pixelDensity = announcementType.getContext().getResources().getDisplayMetrics().density;
+                BadgeDrawable announcementBadge = BadgeDrawable.create(announcementType.getContext());
+                announcementBadge.setBadgeGravity(BadgeDrawable.TOP_END);
+                announcementBadge.setHorizontalOffset((int) (6.5 * pixelDensity));
+                announcementBadge.setVerticalOffset((int) (6.5 * pixelDensity));
+
+                announcementType.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+                    @OptIn(markerClass = ExperimentalBadgeUtils.class)
+                    @Override
+                    public void onLayoutChange(View view, int i, int i1, int i2, int i3, int i4, int i5, int i6, int i7) {
+                        BadgeUtils.attachBadgeDrawable(announcementBadge, announcementType);
+                        announcementType.removeOnLayoutChangeListener(this);
+                    }
+                });
+            } else {
+                // Remove the BadgeDrawable if any (Required because RecyclerView recycles layouts)
+                announcementType.getOverlay().clear();
             }
         }
 

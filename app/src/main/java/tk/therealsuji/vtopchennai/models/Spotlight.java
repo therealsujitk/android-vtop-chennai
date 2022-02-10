@@ -17,4 +17,10 @@ public class Spotlight {
 
     @ColumnInfo(name = "link")
     public String link;
+
+    @ColumnInfo(name = "is_read")
+    public Boolean isRead = false;
+
+    @ColumnInfo(name = "signature")
+    public Integer signature;
 }

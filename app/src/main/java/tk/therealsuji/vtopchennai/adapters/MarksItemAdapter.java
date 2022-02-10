@@ -8,9 +8,13 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.OptIn;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.badge.BadgeDrawable;
+import com.google.android.material.badge.BadgeUtils;
+import com.google.android.material.badge.ExperimentalBadgeUtils;
 import com.google.android.material.chip.Chip;
 
 import java.text.DecimalFormat;
@@ -62,6 +66,26 @@ public class MarksItemAdapter extends RecyclerView.Adapter<MarksItemAdapter.View
             AppCompatTextView markType = this.marksItem.findViewById(R.id.text_view_mark_type);
 
             markTitle.setText(marksItem.title);
+
+            if (!marksItem.isRead) {
+                BadgeDrawable markBadge = BadgeDrawable.create(markTitle.getContext());
+                markBadge.setBadgeGravity(BadgeDrawable.TOP_START);
+
+                markTitle.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+                    @OptIn(markerClass = ExperimentalBadgeUtils.class)
+                    @Override
+                    public void onLayoutChange(View view, int i, int i1, int i2, int i3, int i4, int i5, int i6, int i7) {
+                        markBadge.setHorizontalOffset(-(((View) markTitle.getParent()).getPaddingStart() - markBadge.getIntrinsicWidth()) / 2);
+                        markBadge.setVerticalOffset((markTitle.getMeasuredHeight() - markBadge.getIntrinsicHeight()) / 2);
+
+                        BadgeUtils.attachBadgeDrawable(markBadge, markTitle);
+                        markTitle.removeOnLayoutChangeListener(this);
+                    }
+                });
+            } else {
+                // Remove the BadgeDrawable if any (Required because RecyclerView recycles layouts)
+                markTitle.getOverlay().clear();
+            }
 
             if (marksItem.score != null && marksItem.maxScore != null && marksItem.weightage != null && marksItem.maxWeightage != null) {
                 String markTypeScore = this.marksItem.getContext().getString(R.string.score);
