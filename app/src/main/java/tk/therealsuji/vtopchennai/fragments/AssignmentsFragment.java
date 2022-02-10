@@ -387,7 +387,6 @@ public class AssignmentsFragment extends Fragment implements SwipeRefreshLayout.
         this.moodleApi = new Retrofit.Builder()
                 .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
                 .baseUrl(SettingsRepository.MOODLE_BASE_URL)
-                .client(SettingsRepository.getNaiveOkHttpClient())
                 .build()
                 .create(MoodleApi.class);
 

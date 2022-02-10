@@ -295,9 +295,9 @@ public class SettingsRepository {
     }
 
     /**
-     * WARNING: This function has to be removed as soon as possible. Accepting all
-     * certificates can lead to attacks. Since this application only makes requests
-     * to a select number of trusted domains, it can still be used in production.
+     * WARNING: This function is to be used ONLY for the purpose of testing and not in production.
+     * This function returns a naive OkHttpClient that accepts any and all certificates,
+     * and hence can lead to attacks.
      */
     @Deprecated
     @SuppressLint({"BadHostnameVerifier", "CustomX509TrustManager", "TrustAllX509TrustManager"})
