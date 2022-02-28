@@ -1,6 +1,5 @@
 package tk.therealsuji.vtopchennai.adapters;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -71,7 +70,6 @@ public class MarksAdapter extends RecyclerView.Adapter<MarksAdapter.ViewHolder> 
 
                     @Override
                     public void onComplete() {
-                        Log.i("hi", "complete");
                     }
                 });
     }
