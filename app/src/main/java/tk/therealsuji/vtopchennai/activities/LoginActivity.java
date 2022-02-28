@@ -5,12 +5,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
@@ -57,20 +55,6 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
-        ConstraintLayout loginLayout = findViewById(R.id.constraint_layout_login);
-        loginLayout.setOnApplyWindowInsetsListener((view, windowInsets) -> {
-            ViewGroup.MarginLayoutParams layoutParams = (ViewGroup.MarginLayoutParams) view.getLayoutParams();
-            layoutParams.setMargins(
-                    windowInsets.getSystemWindowInsetLeft(),
-                    windowInsets.getSystemWindowInsetTop(),
-                    windowInsets.getSystemWindowInsetRight(),
-                    windowInsets.getSystemWindowInsetBottom()
-            );
-            view.setLayoutParams(layoutParams);
-
-            return windowInsets.consumeSystemWindowInsets();
-        });
 
         this.encryptedSharedPreferences = SettingsRepository.getEncryptedSharedPreferences(getApplicationContext());
         this.sharedPreferences = SettingsRepository.getSharedPreferences(getApplicationContext());
