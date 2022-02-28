@@ -49,7 +49,6 @@ public class SettingsRepository {
     public static final String APP_BASE_URL = "https://vtopchennai.therealsuji.tk";
     public static final String APP_ABOUT_URL = APP_BASE_URL + "/about.json";
     public static final String APP_PRIVACY_URL = APP_BASE_URL + "/privacy-policy";
-    public static final String APP_FAQ_URL = APP_BASE_URL + "/frequently-asked-questions";
 
     public static final String DEVELOPER_BASE_URL = "https://therealsuji.tk";
 
@@ -57,7 +56,7 @@ public class SettingsRepository {
     public static final String GITHUB_FEATURE_URL = GITHUB_BASE_URL + "/issues";
     public static final String GITHUB_ISSUE_URL = GITHUB_BASE_URL + "/issues";
 
-    public static final String MOODLE_BASE_URL = "https://school.moodledemo.net";
+    public static final String MOODLE_BASE_URL = "https://lms.vit.ac.in";
     public static final String MOODLE_LOGIN_PATH = "/login/token.php";
     public static final String MOODLE_UPLOAD_PATH = "/webservice/upload.php";
     public static final String MOODLE_WEBSERVICE_PATH = "/webservice/rest/server.php";
@@ -85,6 +84,16 @@ public class SettingsRepository {
         } else {
             return THEME_SYSTEM_DAY;
         }
+    }
+
+    public static boolean isRefreshRequired(Context context) {
+        Calendar c = Calendar.getInstance();
+        c.add(Calendar.DATE, -7);
+
+        Date now = c.getTime();
+        Date lastRefreshed = new Date(getSharedPreferences(context).getLong("lastRefreshed", 0));
+
+        return !lastRefreshed.after(now);
     }
 
     public static boolean isSignedIn(Context context) {

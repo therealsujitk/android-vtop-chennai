@@ -675,7 +675,7 @@ public class VTOPService extends Service {
             try {
                 JSONObject response = new JSONObject(responseString);
                 this.sharedPreferences.edit().putFloat("cgpa", (float) response.getDouble("cgpa")).apply();
-                this.sharedPreferences.edit().putInt("total_credits", response.getInt("total_credits")).apply();
+                this.sharedPreferences.edit().putInt("totalCredits", response.getInt("total_credits")).apply();
 
                 this.downloadCourses();
             } catch (Exception e) {
@@ -1200,7 +1200,7 @@ public class VTOPService extends Service {
                     overallAttendance /= attendanceLength;
                 }
 
-                sharedPreferences.edit().putInt("overall_attendance", (int) overallAttendance).apply();
+                sharedPreferences.edit().putInt("overallAttendance", (int) overallAttendance).apply();
 
                 AttendanceDao attendanceDao = appDatabase.attendanceDao();
                 attendanceDao
@@ -2052,12 +2052,7 @@ public class VTOPService extends Service {
         this.notificationManager.notify(SettingsRepository.NOTIFICATION_ID_VTOP_DOWNLOAD, this.notification.build());
 
         this.sharedPreferences.edit().putBoolean("isVTOPSignedIn", true).apply();
-
-        Calendar c = Calendar.getInstance();
-        SimpleDateFormat date = new SimpleDateFormat("MMM d", Locale.ENGLISH);
-        SimpleDateFormat time = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
-        this.sharedPreferences.edit().putString("refreshedDate", date.format(c.getTime())).apply();
-        this.sharedPreferences.edit().putString("refreshedTime", time.format(c.getTime())).apply();
+        this.sharedPreferences.edit().putLong("lastRefreshed", Calendar.getInstance().getTimeInMillis()).apply();
 
         try {
             this.callback.onComplete();

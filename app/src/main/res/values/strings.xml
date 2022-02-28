@@ -98,6 +98,11 @@
     <string name="update_message">A new version of &app_name; has been released! The Update button bellow will take you to the download page.</string>
     <string name="update">Update</string>
 
+    <!-- Sync Dialog Strings -->
+    <string name="sync_title">Data Sync Required</string>
+    <string name="sync_message">You haven\'t refreshed your data in a while. It might be out of date.</string>
+    <string name="sync">Sync Data</string>
+
     <!-- Appearance Dialog Strings -->
     <string name="appearance">Appearance</string>
     <string name="light">Light</string>

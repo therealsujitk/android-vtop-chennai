@@ -1,6 +1,7 @@
 package tk.therealsuji.vtopchennai.activities;
 
 import android.content.ClipData;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.net.Uri;
@@ -18,29 +19,40 @@ import androidx.fragment.app.Fragment;
 
 import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import org.apache.commons.io.FileUtils;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.annotations.NonNull;
 import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.core.ObservableSource;
 import io.reactivex.rxjava3.core.Observer;
+import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.functions.Function;
 import io.reactivex.rxjava3.schedulers.Schedulers;
+import tk.therealsuji.vtopchennai.BuildConfig;
 import tk.therealsuji.vtopchennai.R;
 import tk.therealsuji.vtopchennai.fragments.AssignmentsFragment;
 import tk.therealsuji.vtopchennai.fragments.HomeFragment;
 import tk.therealsuji.vtopchennai.fragments.PerformanceFragment;
 import tk.therealsuji.vtopchennai.fragments.ProfileFragment;
 import tk.therealsuji.vtopchennai.helpers.AppDatabase;
+import tk.therealsuji.vtopchennai.helpers.SettingsRepository;
 import tk.therealsuji.vtopchennai.helpers.VTOPHelper;
 
 public class MainActivity extends AppCompatActivity {
     BottomNavigationView bottomNavigationView;
+    CompositeDisposable compositeDisposable = new CompositeDisposable();
     VTOPHelper vtopHelper;
 
     static final String HOME_FRAGMENT_TAG = "HOME_FRAGMENT_TAG";
@@ -309,6 +321,72 @@ public class MainActivity extends AppCompatActivity {
                 restartActivity();
             }
         });
+
+        /*
+            Check for updates
+         */
+        Context context = this;
+        Observable.just(0).subscribeOn(Schedulers.single())
+                .flatMap((Function<Integer, ObservableSource<Integer>>) integer -> {
+                    StringBuilder sb = new StringBuilder();
+                    URL url = new URL(SettingsRepository.APP_ABOUT_URL + "?v=" + BuildConfig.VERSION_NAME);
+                    HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+                    InputStream in = httpURLConnection.getInputStream();
+                    InputStreamReader reader = new InputStreamReader(in);
+                    int data = reader.read();
+
+                    while (data != -1) {
+                        char current = (char) data;
+                        sb.append(current);
+                        data = reader.read();
+                    }
+
+                    String result = sb.toString();
+                    JSONObject about = new JSONObject(result);
+
+                    return Observable.just(about.getInt("versionCode")).subscribeOn(Schedulers.single());
+                })
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<Integer>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+                        compositeDisposable.add(d);
+                    }
+
+                    @Override
+                    public void onNext(@NonNull Integer versionCode) {
+                        if (versionCode > BuildConfig.VERSION_CODE) {
+                            new MaterialAlertDialogBuilder(context)
+                                    .setMessage(R.string.update_message)
+                                    .setNegativeButton(R.string.cancel, (dialogInterface, i) -> dialogInterface.dismiss())
+                                    .setPositiveButton(R.string.update, (dialogInterface, i) -> SettingsRepository.openDownloadPage(context))
+                                    .setTitle(R.string.update_title)
+                                    .show();
+
+                            return;
+                        }
+
+                        /*
+                            Check if refreshing data is required
+                         */
+                        if (SettingsRepository.isRefreshRequired(context)) {
+                            new MaterialAlertDialogBuilder(context)
+                                    .setMessage(R.string.sync_message)
+                                    .setNegativeButton(R.string.cancel, (dialogInterface, i) -> dialogInterface.dismiss())
+                                    .setPositiveButton(R.string.sync, (dialogInterface, i) -> syncData())
+                                    .setTitle(R.string.sync_title)
+                                    .show();
+                        }
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                    }
+
+                    @Override
+                    public void onComplete() {
+                    }
+                });
     }
 
     @Override
@@ -336,5 +414,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         this.vtopHelper.unbind();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        compositeDisposable.dispose();
     }
 }

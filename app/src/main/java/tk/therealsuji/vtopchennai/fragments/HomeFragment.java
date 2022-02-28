@@ -141,8 +141,8 @@ public class HomeFragment extends Fragment {
         InfoCard credits = homeFragment.findViewById(R.id.info_card_credits);
         InfoCard cgpa = homeFragment.findViewById(R.id.info_card_cgpa);
 
-        attendance.setValue(sharedPreferences.getInt("overall_attendance", 0) + "%");
-        credits.setValue(String.valueOf(sharedPreferences.getInt("total_credits", 0)));
+        attendance.setValue(sharedPreferences.getInt("overallAttendance", 0) + "%");
+        credits.setValue(String.valueOf(sharedPreferences.getInt("totalCredits", 0)));
         cgpa.setValue(new DecimalFormat("#.00").format(sharedPreferences.getFloat("cgpa", 0)));
 
         TabLayout days = homeFragment.findViewById(R.id.tab_layout_days);

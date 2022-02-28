@@ -10,9 +10,6 @@ import android.widget.EditText;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-
-import tk.therealsuji.vtopchennai.BuildConfig;
 import tk.therealsuji.vtopchennai.R;
 import tk.therealsuji.vtopchennai.helpers.SettingsRepository;
 import tk.therealsuji.vtopchennai.helpers.VTOPHelper;
@@ -65,21 +62,6 @@ public class LoginActivity extends AppCompatActivity {
                 getString(R.string.privacy),
                 SettingsRepository.APP_PRIVACY_URL
         ));
-
-        /*
-            Locally check for a new version (The actually checking is done in the LauncherActivity)
-         */
-        int versionCode = BuildConfig.VERSION_CODE;
-        int latestVersion = this.sharedPreferences.getInt("latest", versionCode);
-
-        if (versionCode < latestVersion) {
-            new MaterialAlertDialogBuilder(this)
-                    .setMessage(R.string.update_message)
-                    .setNegativeButton(R.string.cancel, (dialogInterface, i) -> dialogInterface.dismiss())
-                    .setPositiveButton(R.string.update, (dialogInterface, i) -> SettingsRepository.openDownloadPage(this))
-                    .setTitle(R.string.update_title)
-                    .show();
-        }
 
         this.vtopHelper = new VTOPHelper(this, new VTOPHelper.Initiator() {
             @Override

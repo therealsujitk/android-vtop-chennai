@@ -391,6 +391,9 @@ public class AssignmentsFragment extends Fragment implements SwipeRefreshLayout.
             this.assignmentGroups.setAdapter(new EmptyStateAdapter(EmptyStateAdapter.TYPE_FETCHING_ASSIGNMENTS));
         }
 
+        this.assignmentGroups.setOverScrollMode(View.OVER_SCROLL_ALWAYS);
+        this.swipeRefreshLayout.setEnabled(true);
+
         this.moodleApi = new Retrofit.Builder()
                 .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
                 .baseUrl(SettingsRepository.MOODLE_BASE_URL)
