@@ -49,12 +49,21 @@ public abstract class AppDatabase extends RoomDatabase {
     public static synchronized AppDatabase getInstance(Context context) {
         if (instance == null) {
             instance = Room.databaseBuilder(context.getApplicationContext(),
-                    AppDatabase.class, "vtop")
+                    AppDatabase.class, "vit_student")
                     .fallbackToDestructiveMigration()
                     .build();
         }
 
         return instance;
+    }
+
+    public static synchronized void deleteDatabase(Context context) {
+        if (instance != null) {
+            instance.close();
+        }
+
+        instance = null;
+        context.deleteDatabase("vit_student");
     }
 
     public abstract AssignmentsDao assignmentsDao();

@@ -68,8 +68,8 @@ public class Assignment implements Parcelable {
         parcel.writeString(course);
         parcel.writeString(title);
         parcel.writeString(intro);
-        parcel.writeLong(dueDate);
-        parcel.writeLong(cutoffDate);
+        if (dueDate != null) parcel.writeLong(dueDate);
+        if (cutoffDate != null) parcel.writeLong(cutoffDate);
         parcel.writeList(introAttachments);
     }
 }

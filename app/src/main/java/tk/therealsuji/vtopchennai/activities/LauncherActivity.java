@@ -39,6 +39,7 @@ public class LauncherActivity extends AppCompatActivity {
         if (SettingsRepository.isSignedIn(this.getApplicationContext())) {
             startActivity(new Intent(LauncherActivity.this, MainActivity.class));
         } else {
+            SettingsRepository.signOut(this.getApplicationContext());   // Delete old data
             startActivity(new Intent(LauncherActivity.this, LoginActivity.class));
         }
 

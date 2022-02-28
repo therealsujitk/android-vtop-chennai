@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
@@ -45,6 +46,7 @@ import io.reactivex.rxjava3.annotations.NonNull;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Observer;
 import io.reactivex.rxjava3.core.SingleObserver;
+import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import okhttp3.MediaType;
@@ -61,8 +63,9 @@ import tk.therealsuji.vtopchennai.interfaces.MoodleApi;
 import tk.therealsuji.vtopchennai.models.Assignment;
 import tk.therealsuji.vtopchennai.models.Attachment;
 
-public class AssignmentsViewFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
+public class AssignmentViewFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
     int assignmentId, fileArea = 0;
+    CompositeDisposable compositeDisposable = new CompositeDisposable();
     List<Attachment> attachments;
     MoodleApi moodleApi;
     String moodleToken;
@@ -72,7 +75,7 @@ public class AssignmentsViewFragment extends Fragment implements SwipeRefreshLay
     RecyclerView submissions;
     SwipeRefreshLayout swipeRefreshLayout;
 
-    public AssignmentsViewFragment() {
+    public AssignmentViewFragment() {
         // Required empty public constructor
     }
 
@@ -85,7 +88,7 @@ public class AssignmentsViewFragment extends Fragment implements SwipeRefreshLay
                 .subscribe(new SingleObserver<ResponseBody>() {
                     @Override
                     public void onSubscribe(@NonNull Disposable d) {
-
+                        compositeDisposable.add(d);
                     }
 
                     @Override
@@ -145,7 +148,7 @@ public class AssignmentsViewFragment extends Fragment implements SwipeRefreshLay
                                 submitAssignment.setVisibility(View.GONE);
                             }
 
-                            displaySubmissions();
+                            displaySubmissions(null);
                         } catch (Exception e) {
                             Toast.makeText(getContext(), "Error: " + e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
                         } finally {
@@ -196,6 +199,7 @@ public class AssignmentsViewFragment extends Fragment implements SwipeRefreshLay
                 .subscribe(new Observer<List<File>>() {
                     @Override
                     public void onSubscribe(@NonNull Disposable d) {
+                        compositeDisposable.add(d);
                     }
 
                     @Override
@@ -215,8 +219,15 @@ public class AssignmentsViewFragment extends Fragment implements SwipeRefreshLay
                 });
     }
 
-    private void displaySubmissions() {
-        this.submissions.setAdapter(new AttachmentItemAdapter(this.attachments));
+    private void displaySubmissions(List<Attachment> tentativeAttachments) {
+        List<Attachment> attachments = this.attachments;
+
+        if (tentativeAttachments != null) {
+            attachments = new ArrayList<>(this.attachments);
+            attachments.addAll(tentativeAttachments);
+        }
+
+        this.submissions.setAdapter(new AttachmentItemAdapter(attachments));
     }
 
     private void addSubmissions(List<File> files, Function<Object, Object> callback) {
@@ -239,6 +250,7 @@ public class AssignmentsViewFragment extends Fragment implements SwipeRefreshLay
                 .subscribe(new SingleObserver<ResponseBody>() {
                     @Override
                     public void onSubscribe(@NonNull Disposable d) {
+                        compositeDisposable.add(d);
                     }
 
                     @Override
@@ -269,6 +281,7 @@ public class AssignmentsViewFragment extends Fragment implements SwipeRefreshLay
                             deleteTemporaryFiles(files);
                         } catch (Exception e) {
                             Toast.makeText(getContext(), "Error: " + e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                            displaySubmissions(null);
                             setLoading(false);
                         } finally {
                             if (fileArea != 0) {
@@ -292,6 +305,7 @@ public class AssignmentsViewFragment extends Fragment implements SwipeRefreshLay
                 .subscribe(new SingleObserver<ResponseBody>() {
                     @Override
                     public void onSubscribe(@NonNull Disposable d) {
+                        compositeDisposable.add(d);
                     }
 
                     @Override
@@ -306,6 +320,7 @@ public class AssignmentsViewFragment extends Fragment implements SwipeRefreshLay
                             getSubmissionStatus();
                         } catch (Exception e) {
                             Toast.makeText(getContext(), "Error: " + e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                            displaySubmissions(null);
                             setLoading(false);
                         }
                     }
@@ -413,9 +428,9 @@ public class AssignmentsViewFragment extends Fragment implements SwipeRefreshLay
 
         Assignment assignment = null;
         Bundle arguments = this.getArguments();
-        this.moodleToken = SettingsRepository
-                .getSharedPreferences(this.requireContext().getApplicationContext())
-                .getString("moodleToken", "");
+        this.moodleToken = Objects.requireNonNull(SettingsRepository
+                .getEncryptedSharedPreferences(this.requireContext().getApplicationContext()))
+                .getString("moodleToken", null);
 
         if (arguments != null) {
             assignment = arguments.getParcelable("assignment");
@@ -442,12 +457,21 @@ public class AssignmentsViewFragment extends Fragment implements SwipeRefreshLay
 
         getParentFragmentManager().setFragmentResultListener("file", this, (requestKey, result) -> {
             List<File> files = new ArrayList<>();
+            List<Attachment> tentativeAttachments = new ArrayList<>();
             List<String> filePaths = result.getStringArrayList("paths");
 
             for (String filePath : filePaths) {
-                files.add(new File(filePath));
+                File file = new File(filePath);
+                files.add(file);
+
+                Attachment attachment = new Attachment();
+                attachment.name = file.getName();
+                attachment.size = file.length();
+
+                tentativeAttachments.add(attachment);
             }
 
+            displaySubmissions(tentativeAttachments);
             this.downloadPreviousAttempt(o -> {
                 addSubmissions(files, null);
                 return null;
@@ -474,6 +498,7 @@ public class AssignmentsViewFragment extends Fragment implements SwipeRefreshLay
                             .subscribe(new SingleObserver<ResponseBody>() {
                                 @Override
                                 public void onSubscribe(@NonNull Disposable d) {
+                                    compositeDisposable.add(d);
                                 }
 
                                 @Override
@@ -592,5 +617,6 @@ public class AssignmentsViewFragment extends Fragment implements SwipeRefreshLay
         Bundle bottomNavigationVisibility = new Bundle();
         bottomNavigationVisibility.putBoolean("isVisible", true);
         getParentFragmentManager().setFragmentResult("bottomNavigationVisibility", bottomNavigationVisibility);
+        compositeDisposable.dispose();
     }
 }

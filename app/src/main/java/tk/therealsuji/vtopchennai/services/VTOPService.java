@@ -65,9 +65,9 @@ import tk.therealsuji.vtopchennai.models.Spotlight;
 import tk.therealsuji.vtopchennai.models.Staff;
 import tk.therealsuji.vtopchennai.models.Timetable;
 
-public class VTOP extends Service {
-    public static final int CAPTCHA_DEFAULT = 0;
-    public static final int CAPTCHA_GRECATPCHA = 1;
+public class VTOPService extends Service {
+    public static final int CAPTCHA_DEFAULT = 1;
+    public static final int CAPTCHA_GRECATPCHA = 2;
 
     private static final String END_SERVICE_ACTION = "END_SERVICE_ACTION";
 
@@ -93,7 +93,7 @@ public class VTOP extends Service {
 
     @Override
     public void onCreate() {
-        Intent endServiceIntent = new Intent(this, VTOP.class);
+        Intent endServiceIntent = new Intent(this, VTOPService.class);
         endServiceIntent.setAction(END_SERVICE_ACTION);
         PendingIntent endServicePendingIntent = PendingIntent.getService(
                 this,
@@ -136,7 +136,7 @@ public class VTOP extends Service {
             SharedPreferences encryptedSharedPreferences = SettingsRepository.getEncryptedSharedPreferences(getApplicationContext());
 
             if (encryptedSharedPreferences == null) {
-                error(102);
+                error(102, "Failed to fetching credentials.");
             } else {
                 this.username = encryptedSharedPreferences.getString("username", null);
                 this.password = encryptedSharedPreferences.getString("password", null);
@@ -163,8 +163,8 @@ public class VTOP extends Service {
             @Override
             public void onPageFinished(WebView view, String url) {
                 if (!isOpened) {
-                    if (counter >= 30) {
-                        error(101);
+                    if (counter >= 10) {
+                        error(101, "Couldn't connect to the server.");
                         endService(true);
                         return;
                     }
@@ -257,8 +257,8 @@ public class VTOP extends Service {
     /**
      * Function to handle errors.
      */
-    public void error(final int errorCode) {
-        Toast.makeText(getApplicationContext(), "Error " + errorCode + ". Try again later.", Toast.LENGTH_SHORT).show();
+    public void error(final int errorCode, final String errorMessage) {
+        Toast.makeText(getApplicationContext(), "Error " + errorCode + ". " + errorMessage, Toast.LENGTH_SHORT).show();
         this.reloadPage();
     }
 
@@ -299,7 +299,7 @@ public class VTOP extends Service {
                     reloadPage();
                 }
             } catch (Exception e) {
-                error(103);
+                error(103, e.getLocalizedMessage());
             }
         });
     }
@@ -329,7 +329,7 @@ public class VTOP extends Service {
                     executeCaptcha();
                 }
             } catch (Exception e) {
-                error(104);
+                error(104, e.getLocalizedMessage());
             }
         });
     }
@@ -371,7 +371,7 @@ public class VTOP extends Service {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                error(105);
+                error(105, e.getLocalizedMessage());
             }
         });
     }
@@ -491,7 +491,7 @@ public class VTOP extends Service {
                                 }
                             }
                         } catch (Exception e) {
-                            error(107);
+                            error(106, e.getLocalizedMessage());
                         }
                     });
                 });
@@ -564,7 +564,7 @@ public class VTOP extends Service {
                     this.endService(true);
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                error(201, e.getLocalizedMessage());
             }
         });
     }
@@ -620,7 +620,7 @@ public class VTOP extends Service {
 
                 this.getCreditsCGPA();
             } catch (Exception e) {
-                error(401);
+                error(301, e.getLocalizedMessage());
             }
         });
     }
@@ -679,7 +679,7 @@ public class VTOP extends Service {
 
                 this.downloadCourses();
             } catch (Exception e) {
-                error(401);
+                error(302, e.getLocalizedMessage());
             }
         });
     }
@@ -846,6 +846,7 @@ public class VTOP extends Service {
 
                             @Override
                             public void onError(@NonNull Throwable e) {
+                                error(402, e.getLocalizedMessage());
                             }
 
                             @Override
@@ -854,7 +855,7 @@ public class VTOP extends Service {
                             }
                         });
             } catch (Exception e) {
-                error(601);
+                error(401, e.getLocalizedMessage());
             }
         });
     }
@@ -1078,6 +1079,7 @@ public class VTOP extends Service {
 
                             @Override
                             public void onError(@NonNull Throwable e) {
+                                error(502, e.getLocalizedMessage());
                             }
 
                             @Override
@@ -1086,7 +1088,7 @@ public class VTOP extends Service {
                             }
                         });
             } catch (Exception e) {
-                error(501);
+                error(501, e.getLocalizedMessage());
             }
         });
     }
@@ -1189,6 +1191,8 @@ public class VTOP extends Service {
                     if (attendanceItem.total != 0) {
                         overallAttendance += attendanceItem.percentage;
                         ++attendanceLength;
+                    } else {
+                        attendanceItem.percentage = null;
                     }
                 }
 
@@ -1215,10 +1219,11 @@ public class VTOP extends Service {
 
                             @Override
                             public void onError(@NonNull Throwable e) {
+                                error(602, e.getLocalizedMessage());
                             }
                         });
             } catch (Exception e) {
-                error(801);
+                error(601, e.getLocalizedMessage());
             }
         });
     }
@@ -1427,11 +1432,11 @@ public class VTOP extends Service {
 
                             @Override
                             public void onError(@NonNull Throwable e) {
+                                error(702, e.getLocalizedMessage());
                             }
                         });
             } catch (Exception e) {
-                e.printStackTrace();
-                error(1001);
+                error(701, e.getLocalizedMessage());
             }
         });
     }
@@ -1543,6 +1548,7 @@ public class VTOP extends Service {
 
                             @Override
                             public void onError(@NonNull Throwable e) {
+                                error(802, e.getLocalizedMessage());
                             }
 
                             @Override
@@ -1551,8 +1557,7 @@ public class VTOP extends Service {
                             }
                         });
             } catch (Exception e) {
-                e.printStackTrace();
-                error(1101);
+                error(801, e.getLocalizedMessage());
             }
         });
     }
@@ -1641,6 +1646,7 @@ public class VTOP extends Service {
 
                             @Override
                             public void onError(@NonNull Throwable e) {
+                                error(902, e.getLocalizedMessage());
                             }
 
                             @Override
@@ -1649,7 +1655,7 @@ public class VTOP extends Service {
                             }
                         });
             } catch (Exception e) {
-                error(701);
+                error(901, e.getLocalizedMessage());
             }
         });
     }
@@ -1757,10 +1763,11 @@ public class VTOP extends Service {
 
                             @Override
                             public void onError(@NonNull Throwable e) {
+                                error(904, e.getLocalizedMessage());
                             }
                         });
             } catch (Exception e) {
-                error(703);
+                error(903, e.getLocalizedMessage());
             }
         });
     }
@@ -1866,10 +1873,11 @@ public class VTOP extends Service {
 
                             @Override
                             public void onError(@NonNull Throwable e) {
+                                error(1002, e.getLocalizedMessage());
                             }
                         });
             } catch (Exception e) {
-                error(1301);
+                error(1001, e.getLocalizedMessage());
             }
         });
     }
@@ -1971,6 +1979,7 @@ public class VTOP extends Service {
 
                             @Override
                             public void onError(@NonNull Throwable e) {
+                                error(1102, e.getLocalizedMessage());
                             }
 
                             @Override
@@ -1979,7 +1988,7 @@ public class VTOP extends Service {
                             }
                         });
             } catch (Exception e) {
-                error(1401);
+                error(1101, e.getLocalizedMessage());
             }
         });
     }
@@ -2025,7 +2034,7 @@ public class VTOP extends Service {
                     sharedPreferences.edit().remove("duePayments").apply();
                 }
             } catch (Exception e) {
-                error(1403);
+                error(1103, e.getLocalizedMessage());
             }
 
             finishUp();
@@ -2042,7 +2051,7 @@ public class VTOP extends Service {
 
         this.notificationManager.notify(SettingsRepository.NOTIFICATION_ID_VTOP_DOWNLOAD, this.notification.build());
 
-        this.sharedPreferences.edit().putBoolean("isSignedIn", true).apply();
+        this.sharedPreferences.edit().putBoolean("isVTOPSignedIn", true).apply();
 
         Calendar c = Calendar.getInstance();
         SimpleDateFormat date = new SimpleDateFormat("MMM d", Locale.ENGLISH);
@@ -2232,8 +2241,8 @@ public class VTOP extends Service {
     }
 
     public class ServiceBinder extends Binder {
-        public VTOP getService() {
-            return VTOP.this;
+        public VTOPService getService() {
+            return VTOPService.this;
         }
 
         public void setCallback(Callback mCallback) {
@@ -2241,3 +2250,46 @@ public class VTOP extends Service {
         }
     }
 }
+
+/*
+ * Error codes
+ *
+ * Error 101    Errors connecting to the server
+ * Error 102    Error fetching user credentials
+ * Error 103    Error opening sign in page
+ * Error 104    Error getting captcha type
+ * Error 105    Error getting default captcha image
+ * Error 106    Error while attempting to sign in
+ *
+ * Error 201    Error fetching list of semesters
+ *
+ * Error 301    Error fetching user's name
+ * Error 302    Error fetching user's credits & GPA
+ *
+ * Error 401    Error downloading courses
+ * Error 402    Error saving courses to the database
+ *
+ * Error 501    Error downloading timetable
+ * Error 502    Error saving timetable to the database
+ *
+ * Error 601    Error downloading attendance
+ * Error 602    Error saving attendance to the database
+ *
+ * Error 701    Error downloading marks
+ * Error 702    Error saving marks to the database
+ *
+ * Error 801    Error downloading grades
+ * Error 802    Error saving grades to the database
+ *
+ * Error 901    Error downloading proctor info
+ * Error 902    Error saving proctor info to the database
+ * Error 903    Error downloading dean & hod info
+ * Error 904    Error saving dean & hod info to the database
+ *
+ * Error 1001   Error downloading spotlight
+ * Error 1002   Error saving spotlight to the database
+ *
+ * Error 1101   Error downloading receipts
+ * Error 1102   Error saving receipts to the database
+ * Error 1103   Error checking for due payments
+ */

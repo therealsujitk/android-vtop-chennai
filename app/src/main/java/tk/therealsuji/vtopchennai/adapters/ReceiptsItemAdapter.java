@@ -15,6 +15,11 @@ import java.util.List;
 import tk.therealsuji.vtopchennai.R;
 import tk.therealsuji.vtopchennai.models.Receipt;
 
+/**
+ * ┬─── Receipts Hierarchy
+ * ├─ {@link tk.therealsuji.vtopchennai.fragments.RecyclerViewFragment}
+ * ╰→ {@link ReceiptsItemAdapter}   - RecyclerView (Current File)
+ */
 public class ReceiptsItemAdapter extends RecyclerView.Adapter<ReceiptsItemAdapter.ViewHolder> {
     List<Receipt> receipts;
 

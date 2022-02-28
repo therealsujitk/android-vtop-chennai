@@ -23,6 +23,13 @@ import java.util.List;
 import tk.therealsuji.vtopchennai.R;
 import tk.therealsuji.vtopchennai.models.Mark;
 
+/**
+ * ┬─── Marks Hierarchy
+ * ├─ {@link tk.therealsuji.vtopchennai.fragments.PerformanceFragment}
+ * ├─ {@link MarksAdapter}          - ViewPager2
+ * ├─ {@link MarksGroupAdapter}     - RecyclerView
+ * ╰→ {@link MarksItemAdapter}      - RecyclerView (Current File)
+ */
 public class MarksItemAdapter extends RecyclerView.Adapter<MarksItemAdapter.ViewHolder> {
     List<Mark.AllData> marks;
 
@@ -116,6 +123,8 @@ public class MarksItemAdapter extends RecyclerView.Adapter<MarksItemAdapter.View
             }
 
             Chip courseType = new Chip(this.marksItem.getContext());
+            courseType.setClickable(false);
+            courseType.setFocusable(false);
             courseType.setLayoutParams(new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT

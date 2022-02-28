@@ -21,10 +21,12 @@ import com.google.android.material.color.MaterialColors;
 
 import org.json.JSONObject;
 
+import java.util.Objects;
 import java.util.function.Function;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.SingleObserver;
+import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import okhttp3.ResponseBody;
@@ -38,6 +40,7 @@ public class MoodleLoginDialogFragment extends DialogFragment {
     RelativeLayout signIn;
     EditText username, password;
 
+    CompositeDisposable compositeDisposable = new CompositeDisposable();
     Function<Object, Object> callback;
     MoodleApi moodleApi;
 
@@ -57,6 +60,7 @@ public class MoodleLoginDialogFragment extends DialogFragment {
                 .subscribe(new SingleObserver<ResponseBody>() {
                     @Override
                     public void onSubscribe(@io.reactivex.rxjava3.annotations.NonNull Disposable d) {
+                        compositeDisposable.add(d);
                     }
 
                     @Override
@@ -68,9 +72,10 @@ public class MoodleLoginDialogFragment extends DialogFragment {
                                 throw new Exception(response.getString("error"));
                             }
 
-                            SharedPreferences sharedPreferences = SettingsRepository.getSharedPreferences(requireContext().getApplicationContext());
-                            sharedPreferences.edit().putString("moodleToken", response.getString("token")).apply();
-                            sharedPreferences.edit().putString("moodlePrivateToken", response.getString("privatetoken")).apply();
+                            SharedPreferences encryptedSharedPreferences = Objects.requireNonNull(SettingsRepository.getEncryptedSharedPreferences(requireContext().getApplicationContext()));
+                            encryptedSharedPreferences.edit().putString("moodleToken", response.getString("token")).apply();
+                            encryptedSharedPreferences.edit().putString("moodlePrivateToken", response.getString("privatetoken")).apply();
+                            SettingsRepository.getSharedPreferences(requireContext().getApplicationContext()).edit().putBoolean("isMoodleSignedIn", true).apply();
 
                             dismiss();
                         } catch (Exception e) {
@@ -140,5 +145,7 @@ public class MoodleLoginDialogFragment extends DialogFragment {
         if (SettingsRepository.isMoodleSignedIn(requireContext())) {
             this.callback.apply(null);
         }
+
+        compositeDisposable.dispose();
     }
 }

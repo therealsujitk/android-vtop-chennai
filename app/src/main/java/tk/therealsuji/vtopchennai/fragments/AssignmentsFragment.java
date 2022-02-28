@@ -23,12 +23,14 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.annotations.NonNull;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Observer;
 import io.reactivex.rxjava3.core.SingleObserver;
+import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import okhttp3.ResponseBody;
@@ -46,6 +48,7 @@ import tk.therealsuji.vtopchennai.models.Attachment;
 
 public class AssignmentsFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
     int moodleUserId;
+    CompositeDisposable compositeDisposable = new CompositeDisposable();
     MoodleApi moodleApi;
     String moodleToken;
 
@@ -67,6 +70,7 @@ public class AssignmentsFragment extends Fragment implements SwipeRefreshLayout.
                 .subscribe(new SingleObserver<ResponseBody>() {
                     @Override
                     public void onSubscribe(@NonNull Disposable d) {
+                        compositeDisposable.add(d);
                     }
 
                     @Override
@@ -108,6 +112,7 @@ public class AssignmentsFragment extends Fragment implements SwipeRefreshLayout.
                 .subscribe(new SingleObserver<ResponseBody>() {
                     @Override
                     public void onSubscribe(@NonNull Disposable d) {
+                        compositeDisposable.add(d);
                     }
 
                     @Override
@@ -151,6 +156,7 @@ public class AssignmentsFragment extends Fragment implements SwipeRefreshLayout.
                 .subscribe(new SingleObserver<ResponseBody>() {
                     @Override
                     public void onSubscribe(@NonNull Disposable d) {
+                        compositeDisposable.add(d);
                     }
 
                     @Override
@@ -275,6 +281,7 @@ public class AssignmentsFragment extends Fragment implements SwipeRefreshLayout.
                 .subscribe(new Observer<ResponseBody>() {
                     @Override
                     public void onSubscribe(@NonNull Disposable d) {
+                        compositeDisposable.add(d);
                     }
 
                     @Override
@@ -374,8 +381,8 @@ public class AssignmentsFragment extends Fragment implements SwipeRefreshLayout.
     }
 
     private void displayAssignmentsPage() {
-        this.moodleToken = SettingsRepository
-                .getSharedPreferences(this.requireContext().getApplicationContext())
+        this.moodleToken = Objects.requireNonNull(SettingsRepository
+                .getEncryptedSharedPreferences(this.requireContext().getApplicationContext()))
                 .getString("moodleToken", null);
 
         if (this.assignmentGroups.getAdapter() != null
@@ -444,7 +451,7 @@ public class AssignmentsFragment extends Fragment implements SwipeRefreshLayout.
                     .subscribe(new SingleObserver<List<Assignment>>() {
                         @Override
                         public void onSubscribe(@NonNull Disposable d) {
-
+                            compositeDisposable.add(d);
                         }
 
                         @Override
@@ -465,5 +472,11 @@ public class AssignmentsFragment extends Fragment implements SwipeRefreshLayout.
         }
 
         return assignmentsFragment;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        compositeDisposable.dispose();
     }
 }

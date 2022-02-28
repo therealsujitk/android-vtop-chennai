@@ -157,7 +157,6 @@ public class HomeFragment extends Fragment {
         };
 
         timetable.setAdapter(new TimetableAdapter());
-        timetable.setCurrentItem(Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 1);
 
         new TabLayoutMediator(days, timetable, (tab, position) -> {
             tab.setText(dayStrings[position].substring(0, 1));
@@ -183,6 +182,8 @@ public class HomeFragment extends Fragment {
                 tabParams.setMarginEnd((int) (5 * pixelDensity));
             }
         }
+
+        timetable.setCurrentItem(Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 1);
 
         return homeFragment;
     }

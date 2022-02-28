@@ -15,9 +15,16 @@ import java.util.List;
 import java.util.Locale;
 
 import tk.therealsuji.vtopchennai.R;
+import tk.therealsuji.vtopchennai.fragments.AssignmentViewFragment;
 import tk.therealsuji.vtopchennai.helpers.SettingsRepository;
 import tk.therealsuji.vtopchennai.models.Attachment;
 
+/**
+ * ┬─── Assignment Attachments Hierarchy
+ * ├─ {@link tk.therealsuji.vtopchennai.fragments.AssignmentsFragment}
+ * ├─ {@link AssignmentViewFragment}
+ * ╰→ {@link AttachmentItemAdapter}     - RecyclerView (Current File)
+ */
 public class AttachmentItemAdapter extends RecyclerView.Adapter<AttachmentItemAdapter.ViewHolder> {
     List<Attachment> attachments;
 
@@ -75,6 +82,12 @@ public class AttachmentItemAdapter extends RecyclerView.Adapter<AttachmentItemAd
             fileName.setText(attachment.name);
             fileSize.setText(fileSizeString);
 
+            if (attachment.url == null) {
+                this.attachment.findViewById(R.id.image_button_download).setVisibility(View.GONE);
+                this.attachment.findViewById(R.id.progress_bar_uploading).setVisibility(View.VISIBLE);
+                return;
+            }
+
             this.attachment.findViewById(R.id.image_button_download).setOnClickListener(view -> {
                 Context applicationContext = this.attachment.getContext().getApplicationContext();
                 String moodleToken = SettingsRepository
@@ -85,7 +98,7 @@ public class AttachmentItemAdapter extends RecyclerView.Adapter<AttachmentItemAd
                         .appendQueryParameter("token", moodleToken)
                         .build();
 
-                SettingsRepository.downloadFile(applicationContext, attachment.name, attachment.mimetype, uri);
+                SettingsRepository.downloadFile(applicationContext, "Moodle", attachment.name, attachment.mimetype, uri, null);
             });
         }
     }

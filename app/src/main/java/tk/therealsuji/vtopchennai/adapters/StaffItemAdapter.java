@@ -1,12 +1,16 @@
 package tk.therealsuji.vtopchennai.adapters;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
@@ -14,6 +18,12 @@ import java.util.List;
 import tk.therealsuji.vtopchennai.R;
 import tk.therealsuji.vtopchennai.models.Staff;
 
+/**
+ * ┬─── Spotlight Hierarchy
+ * ├─ {@link tk.therealsuji.vtopchennai.fragments.RecyclerViewFragment}
+ * ├─ {@link StaffAdapter}      - ViewPager2
+ * ╰→ {@link StaffItemAdapter}  - RecyclerView (Current File)
+ */
 public class StaffItemAdapter extends RecyclerView.Adapter<StaffItemAdapter.ViewHolder> {
     List<Staff> staff;
 
@@ -53,9 +63,36 @@ public class StaffItemAdapter extends RecyclerView.Adapter<StaffItemAdapter.View
         public void setStaffItem(Staff staffItem) {
             TextView key = this.staffItem.findViewById(R.id.text_view_key);
             TextView value = this.staffItem.findViewById(R.id.text_view_value);
+            ImageView icon = this.staffItem.findViewById(R.id.image_view_icon);
 
             key.setText(staffItem.key);
             value.setText(staffItem.value);
+
+            if (staffItem.key.toLowerCase().contains("mobile") || staffItem.key.toLowerCase().contains("phone")) {
+                this.staffItem.setClickable(true);
+                this.staffItem.setFocusable(true);
+
+                icon.setImageDrawable(ContextCompat.getDrawable(this.staffItem.getContext(), R.drawable.ic_phone));
+                icon.setVisibility(View.VISIBLE);
+
+                this.staffItem.setOnClickListener(view -> {
+                    Intent intent = new Intent(Intent.ACTION_DIAL);
+                    intent.setData(Uri.parse("tel:" + staffItem.value));
+                    view.getContext().startActivity(intent);
+                });
+            } else if (staffItem.key.toLowerCase().contains("mail")) {
+                this.staffItem.setClickable(true);
+                this.staffItem.setFocusable(true);
+
+                icon.setImageDrawable(ContextCompat.getDrawable(this.staffItem.getContext(), R.drawable.ic_email));
+                icon.setVisibility(View.VISIBLE);
+
+                this.staffItem.setOnClickListener(view -> {
+                    Intent intent = new Intent(Intent.ACTION_SENDTO);
+                    intent.setData(Uri.parse("mailto:" + staffItem.value));
+                    view.getContext().startActivity(intent);
+                });
+            }
         }
     }
 }

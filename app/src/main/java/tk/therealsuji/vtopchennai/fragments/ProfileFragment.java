@@ -30,6 +30,9 @@ import tk.therealsuji.vtopchennai.adapters.ProfileGroupAdapter;
 import tk.therealsuji.vtopchennai.helpers.SettingsRepository;
 
 public class ProfileFragment extends Fragment {
+    /*
+        User Related Profile Items
+     */
     private final ItemData[] personalProfileItems = {
             new ItemData(
                     R.drawable.ic_courses,
@@ -83,6 +86,9 @@ public class ProfileFragment extends Fragment {
             )
     };
 
+    /*
+        Application Related Profile Items
+     */
     private final ItemData[] applicationProfileItems = {
             new ItemData(
                     R.drawable.ic_appearance,
@@ -124,16 +130,6 @@ public class ProfileFragment extends Fragment {
                                 .setTitle(R.string.appearance)
                                 .show();
                     },
-                    null
-            ),
-            new ItemData(
-                    R.drawable.ic_faq,
-                    R.string.faq,
-                    context -> SettingsRepository.openWebViewActivity(
-                            context,
-                            context.getString(R.string.faq),
-                            SettingsRepository.APP_FAQ_URL
-                    ),
                     null
             ),
             new ItemData(
@@ -248,6 +244,9 @@ public class ProfileFragment extends Fragment {
             R.string.application
     };
 
+    /*
+        App announcements
+     */
     private final ItemData[] announcementItems = {
             new ItemData(
                     R.drawable.ic_whats_new,

@@ -57,20 +57,20 @@ public class SettingsRepository {
     public static final String GITHUB_FEATURE_URL = GITHUB_BASE_URL + "/issues";
     public static final String GITHUB_ISSUE_URL = GITHUB_BASE_URL + "/issues";
 
-    public static final String MOODLE_BASE_URL = "https://lms.vit.ac.in";
+    public static final String MOODLE_BASE_URL = "https://school.moodledemo.net";
     public static final String MOODLE_LOGIN_PATH = "/login/token.php";
     public static final String MOODLE_UPLOAD_PATH = "/webservice/upload.php";
     public static final String MOODLE_WEBSERVICE_PATH = "/webservice/rest/server.php";
 
     public static final String VTOP_BASE_URL = "https://vtopcc.vit.ac.in/vtop";
 
-    public static final int THEME_DAY = 0;
-    public static final int THEME_NIGHT = 1;
-    public static final int THEME_SYSTEM_DAY = 2;
-    public static final int THEME_SYSTEM_NIGHT = 3;
+    public static final int THEME_DAY = 1;
+    public static final int THEME_NIGHT = 2;
+    public static final int THEME_SYSTEM_DAY = 3;
+    public static final int THEME_SYSTEM_NIGHT = 4;
 
     public static final int NOTIFICATION_ID_TIMETABLE = 1;
-    public static final int NOTIFICATION_ID_VTOP_DOWNLOAD = 1;
+    public static final int NOTIFICATION_ID_VTOP_DOWNLOAD = 2;
 
     public static int getTheme(Context context) {
         String appearance = getSharedPreferences(context).getString("appearance", "system");
@@ -88,19 +88,22 @@ public class SettingsRepository {
     }
 
     public static boolean isSignedIn(Context context) {
-        return getSharedPreferences(context).getBoolean("isSignedIn", false);
+        return getSharedPreferences(context).getBoolean("isVTOPSignedIn", false);
     }
 
     public static boolean isMoodleSignedIn(Context context) {
-        return getSharedPreferences(context).getString("moodleToken", null) != null;
+        return getSharedPreferences(context).getBoolean("isMoodleSignedIn", false);
     }
 
     public static void signOut(Context context) {
-        getSharedPreferences(context).edit().remove("isSignedIn").apply();
+        AppDatabase.deleteDatabase(context);
+        getSharedPreferences(context).edit().clear().apply();
+        Objects.requireNonNull(getEncryptedSharedPreferences(context)).edit().clear().apply();
     }
 
     public static void signOutMoodle(Context context) {
         SharedPreferences sharedPreferences = getSharedPreferences(context);
+        sharedPreferences.edit().remove("isMoodleSignedIn").apply();
         sharedPreferences.edit().remove("moodleToken").apply();
         sharedPreferences.edit().remove("moodlePrivateToken").apply();
     }
@@ -143,7 +146,7 @@ public class SettingsRepository {
 
         fragmentActivity.getSupportFragmentManager().beginTransaction()
                 .setCustomAnimations(R.anim.slide_in_right, 0, 0, R.anim.slide_out_right)
-                .add(R.id.frame_layout_fragment_container, recyclerViewFragment)
+                .add(android.R.id.content, recyclerViewFragment)
                 .addToBackStack(null)
                 .commit();
     }
@@ -159,7 +162,7 @@ public class SettingsRepository {
 
         fragmentActivity.getSupportFragmentManager().beginTransaction()
                 .setCustomAnimations(R.anim.slide_in_right, 0, 0, R.anim.slide_out_right)
-                .add(R.id.frame_layout_fragment_container, viewPagerFragment)
+                .add(android.R.id.content, viewPagerFragment)
                 .addToBackStack(null)
                 .commit();
     }
@@ -176,12 +179,13 @@ public class SettingsRepository {
         context.startActivity(intent);
     }
 
-    public static void downloadFile(Context context, String fileName, String mimetype, Uri uri) {
+    public static void downloadFile(Context context, String filePath, String fileName, String mimetype, Uri uri, String cookie) {
         Toast.makeText(context, Html.fromHtml(context.getString(R.string.downloading_file, fileName), Html.FROM_HTML_MODE_LEGACY), Toast.LENGTH_SHORT).show();
 
         DownloadManager.Request request = new DownloadManager.Request(uri);
+        request.addRequestHeader("cookie", cookie);
         request.allowScanningByMediaScanner();
-        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "Moodle/" + fileName);
+        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "VIT Student/" + filePath + "/" + fileName);
         request.setMimeType(mimetype);
         request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE | DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
         request.setTitle(fileName);

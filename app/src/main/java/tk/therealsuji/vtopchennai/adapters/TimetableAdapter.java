@@ -20,6 +20,12 @@ import tk.therealsuji.vtopchennai.helpers.AppDatabase;
 import tk.therealsuji.vtopchennai.interfaces.TimetableDao;
 import tk.therealsuji.vtopchennai.models.Timetable;
 
+/**
+ * ┬─── Timetable Hierarchy
+ * ├─ {@link tk.therealsuji.vtopchennai.fragments.HomeFragment}
+ * ├─ {@link TimetableAdapter}      - ViewPager2 (Current File)
+ * ╰→ {@link TimetableItemAdapter}  - RecyclerView
+ */
 public class TimetableAdapter extends RecyclerView.Adapter<TimetableAdapter.ViewHolder> {
     Context applicationContext;
 
