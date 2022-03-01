@@ -30,15 +30,14 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.concurrent.Callable;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.annotations.NonNull;
 import io.reactivex.rxjava3.core.Observable;
-import io.reactivex.rxjava3.core.ObservableSource;
 import io.reactivex.rxjava3.core.Observer;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.disposables.Disposable;
-import io.reactivex.rxjava3.functions.Function;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import tk.therealsuji.vtopchennai.BuildConfig;
 import tk.therealsuji.vtopchennai.R;
@@ -326,26 +325,30 @@ public class MainActivity extends AppCompatActivity {
             Check for updates
          */
         Context context = this;
-        Observable.just(0).subscribeOn(Schedulers.single())
-                .flatMap((Function<Integer, ObservableSource<Integer>>) integer -> {
-                    StringBuilder sb = new StringBuilder();
-                    URL url = new URL(SettingsRepository.APP_ABOUT_URL + "?v=" + BuildConfig.VERSION_NAME);
-                    HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
-                    InputStream in = httpURLConnection.getInputStream();
-                    InputStreamReader reader = new InputStreamReader(in);
-                    int data = reader.read();
+        Observable.fromCallable((Callable<Integer>) () -> {
+            try {
+                StringBuilder sb = new StringBuilder();
+                URL url = new URL(SettingsRepository.APP_ABOUT_URL + "?v=" + BuildConfig.VERSION_NAME);
+                HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+                InputStream in = httpURLConnection.getInputStream();
+                InputStreamReader reader = new InputStreamReader(in);
+                int data = reader.read();
 
-                    while (data != -1) {
-                        char current = (char) data;
-                        sb.append(current);
-                        data = reader.read();
-                    }
+                while (data != -1) {
+                    char current = (char) data;
+                    sb.append(current);
+                    data = reader.read();
+                }
 
-                    String result = sb.toString();
-                    JSONObject about = new JSONObject(result);
+                String result = sb.toString();
+                JSONObject about = new JSONObject(result);
 
-                    return Observable.just(about.getInt("versionCode")).subscribeOn(Schedulers.single());
-                })
+                return about.getInt("versionCode");
+            } catch (Exception ignored) {
+                return 0;
+            }
+        })
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<Integer>() {
                     @Override
@@ -362,14 +365,7 @@ public class MainActivity extends AppCompatActivity {
                                     .setPositiveButton(R.string.update, (dialogInterface, i) -> SettingsRepository.openDownloadPage(context))
                                     .setTitle(R.string.update_title)
                                     .show();
-
-                            return;
-                        }
-
-                        /*
-                            Check if refreshing data is required
-                         */
-                        if (SettingsRepository.isRefreshRequired(context)) {
+                        } else if (SettingsRepository.isRefreshRequired(context)) {
                             new MaterialAlertDialogBuilder(context)
                                     .setMessage(R.string.sync_message)
                                     .setNegativeButton(R.string.cancel, (dialogInterface, i) -> dialogInterface.dismiss())

@@ -65,7 +65,7 @@ public class AssignmentsFragment extends Fragment implements SwipeRefreshLayout.
     private void getUserId() {
         this.setLoading(true);
         this.moodleApi.getUserId(this.moodleToken)
-                .subscribeOn(Schedulers.single())
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SingleObserver<ResponseBody>() {
                     @Override
@@ -107,7 +107,7 @@ public class AssignmentsFragment extends Fragment implements SwipeRefreshLayout.
      */
     private void getCourses() {
         this.moodleApi.getCourses(this.moodleToken)
-                .subscribeOn(Schedulers.single())
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SingleObserver<ResponseBody>() {
                     @Override
@@ -151,7 +151,7 @@ public class AssignmentsFragment extends Fragment implements SwipeRefreshLayout.
      */
     private void getAssignments(List<Integer> courseIds) {
         this.moodleApi.getAssignments(this.moodleToken, courseIds)
-                .subscribeOn(Schedulers.single())
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SingleObserver<ResponseBody>() {
                     @Override
@@ -276,7 +276,7 @@ public class AssignmentsFragment extends Fragment implements SwipeRefreshLayout.
         }
 
         Observable.merge(singleSources)
-                .subscribeOn(Schedulers.single())
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<ResponseBody>() {
                     @Override
@@ -323,7 +323,7 @@ public class AssignmentsFragment extends Fragment implements SwipeRefreshLayout.
                             AppDatabase.getInstance(requireContext().getApplicationContext())
                                     .assignmentsDao()
                                     .insert(assignments)
-                                    .subscribeOn(Schedulers.single())
+                                    .subscribeOn(Schedulers.io())
                                     .subscribe();
                         }
 

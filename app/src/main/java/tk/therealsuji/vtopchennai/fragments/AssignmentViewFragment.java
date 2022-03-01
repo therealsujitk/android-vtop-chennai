@@ -83,7 +83,7 @@ public class AssignmentViewFragment extends Fragment implements SwipeRefreshLayo
         this.setLoading(true);
 
         this.moodleApi.getSubmissionStatus(this.moodleToken, this.assignmentId)
-                .subscribeOn(Schedulers.single())
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SingleObserver<ResponseBody>() {
                     @Override
@@ -245,7 +245,7 @@ public class AssignmentViewFragment extends Fragment implements SwipeRefreshLayo
         }
 
         this.moodleApi.addSubmissions(this.moodleToken, this.fileArea, formBuilder.build())
-                .subscribeOn(Schedulers.single())
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SingleObserver<ResponseBody>() {
                     @Override
@@ -300,7 +300,7 @@ public class AssignmentViewFragment extends Fragment implements SwipeRefreshLayo
 
     private void saveSubmissions() {
         this.moodleApi.saveSubmissions(this.moodleToken, this.assignmentId, this.fileArea)
-                .subscribeOn(Schedulers.single())
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SingleObserver<ResponseBody>() {
                     @Override
@@ -321,6 +321,43 @@ public class AssignmentViewFragment extends Fragment implements SwipeRefreshLayo
                         } catch (Exception e) {
                             Toast.makeText(getContext(), "Error: " + e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
                             displaySubmissions(null);
+                            setLoading(false);
+                        }
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                        Toast.makeText(getContext(), "Error: " + e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                        setLoading(false);
+                    }
+                });
+    }
+
+    private void submitForGrading() {
+        setLoading(true);
+
+        this.moodleApi.submitAssignmentForGrading(this.moodleToken, this.assignmentId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new SingleObserver<ResponseBody>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+                        compositeDisposable.add(d);
+                    }
+
+                    @Override
+                    public void onSuccess(@NonNull ResponseBody responseBody) {
+                        try {
+                            JSONArray response = new JSONArray(responseBody.string());
+
+                            if (response.length() != 0) {
+                                JSONObject responseObject = response.getJSONObject(0);
+                                throwErrorIfExists(responseObject);
+                            }
+
+                            getSubmissionStatus();
+                        } catch (Exception e) {
+                            Toast.makeText(getContext(), "Error: " + e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
                             setLoading(false);
                         }
                     }
@@ -490,41 +527,7 @@ public class AssignmentViewFragment extends Fragment implements SwipeRefreshLayo
                 .setTitle(R.string.submit_assignment)
                 .setMessage(Html.fromHtml(getString(R.string.submit_confirmation, this.attachments.size()), Html.FROM_HTML_MODE_LEGACY))
                 .setNegativeButton(R.string.cancel, (dialogInterface, i) -> dialogInterface.cancel())
-                .setPositiveButton(R.string.submit, (dialogInterface, i) -> {
-                    setLoading(true);
-                    this.moodleApi.submitAssignmentForGrading(this.moodleToken, this.assignmentId)
-                            .subscribeOn(Schedulers.single())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe(new SingleObserver<ResponseBody>() {
-                                @Override
-                                public void onSubscribe(@NonNull Disposable d) {
-                                    compositeDisposable.add(d);
-                                }
-
-                                @Override
-                                public void onSuccess(@NonNull ResponseBody responseBody) {
-                                    try {
-                                        JSONArray response = new JSONArray(responseBody.string());
-
-                                        if (response.length() != 0) {
-                                            JSONObject responseObject = response.getJSONObject(0);
-                                            throwErrorIfExists(responseObject);
-                                        }
-
-                                        getSubmissionStatus();
-                                    } catch (Exception e) {
-                                        Toast.makeText(getContext(), "Error: " + e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-                                        setLoading(false);
-                                    }
-                                }
-
-                                @Override
-                                public void onError(@NonNull Throwable e) {
-                                    Toast.makeText(getContext(), "Error: " + e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-                                    setLoading(false);
-                                }
-                            });
-                })
+                .setPositiveButton(R.string.submit, (dialogInterface, i) -> submitForGrading())
                 .show());
 
         nestedScrollView.setOnScrollChangeListener((NestedScrollView.OnScrollChangeListener) (v, scrollX, scrollY, oldScrollX, oldScrollY) -> {
