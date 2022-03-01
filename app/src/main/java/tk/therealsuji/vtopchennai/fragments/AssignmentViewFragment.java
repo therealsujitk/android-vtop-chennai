@@ -57,7 +57,7 @@ import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory;
 import tk.therealsuji.vtopchennai.R;
 import tk.therealsuji.vtopchennai.activities.MainActivity;
-import tk.therealsuji.vtopchennai.adapters.AttachmentItemAdapter;
+import tk.therealsuji.vtopchennai.adapters.AttachmentsItemAdapter;
 import tk.therealsuji.vtopchennai.helpers.SettingsRepository;
 import tk.therealsuji.vtopchennai.interfaces.MoodleApi;
 import tk.therealsuji.vtopchennai.models.Assignment;
@@ -227,7 +227,7 @@ public class AssignmentViewFragment extends Fragment implements SwipeRefreshLayo
             attachments.addAll(tentativeAttachments);
         }
 
-        this.submissions.setAdapter(new AttachmentItemAdapter(attachments));
+        this.submissions.setAdapter(new AttachmentsItemAdapter(attachments));
     }
 
     private void addSubmissions(List<File> files, Function<Object, Object> callback) {
@@ -597,7 +597,7 @@ public class AssignmentViewFragment extends Fragment implements SwipeRefreshLayo
             }
 
             if (assignment.introAttachments != null) {
-                introAttachments.setAdapter(new AttachmentItemAdapter(assignment.introAttachments));
+                introAttachments.setAdapter(new AttachmentsItemAdapter(assignment.introAttachments));
             }
 
             this.assignmentId = assignment.id;
