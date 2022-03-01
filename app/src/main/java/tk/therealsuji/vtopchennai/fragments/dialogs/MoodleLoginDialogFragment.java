@@ -120,6 +120,11 @@ public class MoodleLoginDialogFragment extends DialogFragment {
 
         this.username.setInputType(InputType.TYPE_CLASS_TEXT);
         this.signIn.setOnClickListener(view -> this.signIn());
+        dialogFragment.findViewById(R.id.button_privacy).setOnClickListener(view -> SettingsRepository.openWebViewActivity(
+                requireContext(),
+                getString(R.string.privacy),
+                SettingsRepository.APP_PRIVACY_URL
+        ));
 
         this.moodleApi = new Retrofit.Builder()
                 .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
