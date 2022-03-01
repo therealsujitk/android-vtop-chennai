@@ -110,6 +110,11 @@ public class SpotlightItemAdapter extends RecyclerView.Adapter<SpotlightItemAdap
                     String downloadLink = SettingsRepository.VTOP_BASE_URL + "/" + spotlightItem.link + "?&x=";
                     WebView downloadPage = new WebView(context);
 
+                    // Clear cookies and cache to prevent a session timeout
+                    CookieManager.getInstance().removeAllCookies(null);
+                    downloadPage.clearCache(true);
+                    downloadPage.clearHistory();
+
                     downloadPage.getSettings().setUserAgentString("Mozilla/5.0 (Linux; Android 10) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.99 Mobile Safari/537.36");
                     downloadPage.setWebViewClient(new WebViewClient() {
                         public void onPageFinished(WebView view, String url) {
