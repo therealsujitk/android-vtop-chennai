@@ -19,7 +19,7 @@ jobs:
       - run: ./gradlew spotlessApply --stacktrace
 
       - name: Run git push
-      - run: |
+        run: |
           git config --global user.email "bot@therealsuji.tk"
           git config --global user.name "earphone-jack"
           git add --all
