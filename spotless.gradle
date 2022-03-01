@@ -1,0 +1,16 @@
+spotless {
+    format 'misc', {
+        target '**/*.gradle', 'app/src/main/java/**/*.java', 'app/src/main/res/*/*.xml'
+
+        indentWithSpaces()
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
+
+    java {
+        target 'app/*/java/**/*.java'
+        importOrder()
+        removeUnusedImports()
+        googleJavaFormat().aosp().reflowLongStrings()
+    }
+}

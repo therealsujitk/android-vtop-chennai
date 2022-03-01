@@ -19,6 +19,12 @@ import tk.therealsuji.vtopchennai.helpers.AppDatabase;
 import tk.therealsuji.vtopchennai.interfaces.StaffDao;
 import tk.therealsuji.vtopchennai.models.Staff;
 
+/**
+ * ┬─── Staff Hierarchy
+ * ├─ {@link tk.therealsuji.vtopchennai.fragments.ViewPagerFragment}
+ * ├─ {@link StaffAdapter}      - ViewPager2 (Current File)
+ * ╰→ {@link StaffItemAdapter}  - RecyclerView
+ */
 public class StaffAdapter extends RecyclerView.Adapter<StaffAdapter.ViewHolder> {
     Context applicationContext;
     List<String> staffTypes;

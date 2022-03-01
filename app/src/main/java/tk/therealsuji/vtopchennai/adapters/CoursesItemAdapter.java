@@ -26,6 +26,12 @@ import java.util.Set;
 import tk.therealsuji.vtopchennai.R;
 import tk.therealsuji.vtopchennai.models.Course;
 
+/**
+ * ┬─── Courses Hierarchy
+ * ├─ {@link tk.therealsuji.vtopchennai.fragments.ViewPagerFragment}
+ * ├─ {@link CoursesAdapter}        - ViewPager2
+ * ╰→ {@link CoursesItemAdapter}    - RecyclerView (Current File)
+ */
 public class CoursesItemAdapter extends RecyclerView.Adapter<CoursesItemAdapter.ViewHolder> {
     static final int VIEW_TITLE = 1;
     static final int VIEW_DEFAULT = 2;

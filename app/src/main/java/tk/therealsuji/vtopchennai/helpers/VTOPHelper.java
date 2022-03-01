@@ -13,22 +13,14 @@ import android.graphics.ColorMatrixColorFilter;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.InsetDrawable;
-import android.os.Bundle;
 import android.os.IBinder;
 import android.util.DisplayMetrics;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.Window;
 import android.webkit.WebView;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
-import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -42,7 +34,8 @@ import java.util.Arrays;
 import java.util.Objects;
 
 import tk.therealsuji.vtopchennai.R;
-import tk.therealsuji.vtopchennai.services.VTOP;
+import tk.therealsuji.vtopchennai.fragments.dialogs.ReCaptchaDialogFragment;
+import tk.therealsuji.vtopchennai.services.VTOPService;
 
 public class VTOPHelper {
     boolean isBound;
@@ -50,7 +43,7 @@ public class VTOPHelper {
     Initiator initiator;
     Intent vtopServiceIntent;
     SharedPreferences sharedPreferences;
-    VTOP vtopService;
+    VTOPService vtopService;
 
     Dialog captchaDialog, semesterDialog;
     ReCaptchaDialogFragment reCaptchaDialogFragment;
@@ -58,17 +51,24 @@ public class VTOPHelper {
     private final ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-            VTOP.ServiceBinder serviceBinder = (VTOP.ServiceBinder) iBinder;
+            VTOPService.ServiceBinder serviceBinder = (VTOPService.ServiceBinder) iBinder;
 
             vtopService = serviceBinder.getService();
             isBound = true;
-            initiator.onLoading(true);
 
-            serviceBinder.setCallback(new VTOP.Callback() {
+            serviceBinder.setCallback(new VTOPService.Callback() {
 
+                /**
+                 * This function is to ask the user to solve the captcha in order
+                 * to complete the sign in process.
+                 *
+                 * @param captchaType Whether the user should solve the default captcha or Google's reCaptcha
+                 * @param bitmap      If the default captcha is to be solved, pass the captcha bitmap image
+                 * @param webView     If Google's reCaptcha is to be solved, pass the WebView that is being used
+                 */
                 @Override
                 public void onRequestCaptcha(int captchaType, Bitmap bitmap, WebView webView) {
-                    if (captchaType == VTOP.CAPTCHA_DEFAULT) {
+                    if (captchaType == VTOPService.CAPTCHA_DEFAULT) {
                         View captchaLayout = ((Activity) context).getLayoutInflater().inflate(R.layout.layout_dialog_captcha_default, null);
                         ImageView captchaImage = captchaLayout.findViewById(R.id.image_view_captcha);
                         captchaImage.setImageBitmap(bitmap);
@@ -177,6 +177,10 @@ public class VTOPHelper {
                     }
                 }
 
+                /**
+                 * When the Google reCaptcha has been solved correctly, this function
+                 * is called so that the reCaptcha dialog can be safely dismissed.
+                 */
                 @Override
                 public void onCaptchaComplete() {
                     if (captchaDialog != null) {
@@ -188,6 +192,12 @@ public class VTOPHelper {
                     }
                 }
 
+                /**
+                 * This function is to ask the user to select the semester
+                 * to download the data from.
+                 *
+                 * @param semesters The list of available semesters
+                 */
                 @Override
                 public void onRequestSemester(String[] semesters) {
                     String semester = sharedPreferences.getString("semester", null);
@@ -247,13 +257,14 @@ public class VTOPHelper {
     };
 
     public VTOPHelper(Context context, Initiator initiator) {
-        this.vtopServiceIntent = new Intent(context, VTOP.class);
+        this.vtopServiceIntent = new Intent(context, VTOPService.class);
         this.context = context;
         this.initiator = initiator;
         this.sharedPreferences = SettingsRepository.getSharedPreferences(context.getApplicationContext());
     }
 
     public void start() {
+        this.initiator.onLoading(true);
         ContextCompat.startForegroundService(this.context, this.vtopServiceIntent);
     }
 
@@ -294,72 +305,5 @@ public class VTOPHelper {
         void onLoading(boolean isLoading);
 
         void onComplete();
-    }
-
-    public static class ReCaptchaDialogFragment extends DialogFragment {
-        boolean isDismissed;
-        OnCancelListener onCancelListener;
-        WebView webView;
-
-        public ReCaptchaDialogFragment(@NonNull WebView webView, @NonNull OnCancelListener onCancelListener) {
-            this.onCancelListener = onCancelListener;
-            this.webView = webView;
-        }
-
-        @Nullable
-        @Override
-        public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-            View dialogFragment = inflater.inflate(R.layout.layout_dialog_captcha_grecaptcha, container, false);
-            float pixelDensity = this.getResources().getDisplayMetrics().density;
-
-            ViewGroup webViewParent = (ViewGroup) webView.getParent();
-            if (webViewParent != null) {
-                webViewParent.removeView(webView);
-            }
-
-            RelativeLayout.LayoutParams webViewParams = new RelativeLayout.LayoutParams(
-                    RelativeLayout.LayoutParams.MATCH_PARENT,
-                    RelativeLayout.LayoutParams.MATCH_PARENT
-            );
-            webViewParams.addRule(RelativeLayout.CENTER_IN_PARENT);
-            webViewParams.setMargins(
-                    (int) (40 * pixelDensity),
-                    (int) (40 * pixelDensity),
-                    (int) (40 * pixelDensity),
-                    (int) (40 * pixelDensity)
-            );
-
-            webView.setLayoutParams(webViewParams);
-            ((RelativeLayout) dialogFragment.findViewById(R.id.relative_layout_container)).addView(webView);
-
-            return dialogFragment;
-        }
-
-        @NonNull
-        @Override
-        public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-            Dialog dialog = super.onCreateDialog(savedInstanceState);
-            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-            return dialog;
-        }
-
-        @Override
-        public void dismiss() {
-            super.dismiss();
-            this.isDismissed = true;
-        }
-
-        @Override
-        public void onDestroyView() {
-            super.onDestroyView();
-
-            if (!this.isDismissed) {
-                this.onCancelListener.onCancel();
-            }
-        }
-
-        public interface OnCancelListener {
-            void onCancel();
-        }
     }
 }

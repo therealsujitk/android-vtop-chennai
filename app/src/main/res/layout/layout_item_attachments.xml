@@ -49,4 +49,12 @@
         android:padding="12dp"
         android:src="@drawable/ic_download"
         app:tint="?attr/colorSecondary" />
+
+    <ProgressBar
+        android:id="@+id/progress_bar_uploading"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_margin="12dp"
+        android:indeterminateTint="?attr/colorSecondary"
+        android:visibility="gone" />
 </LinearLayout>

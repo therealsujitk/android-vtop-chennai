@@ -141,8 +141,8 @@ public class HomeFragment extends Fragment {
         InfoCard credits = homeFragment.findViewById(R.id.info_card_credits);
         InfoCard cgpa = homeFragment.findViewById(R.id.info_card_cgpa);
 
-        attendance.setValue(sharedPreferences.getInt("overall_attendance", 0) + "%");
-        credits.setValue(String.valueOf(sharedPreferences.getInt("total_credits", 0)));
+        attendance.setValue(sharedPreferences.getInt("overallAttendance", 0) + "%");
+        credits.setValue(String.valueOf(sharedPreferences.getInt("totalCredits", 0)));
         cgpa.setValue(new DecimalFormat("#.00").format(sharedPreferences.getFloat("cgpa", 0)));
 
         TabLayout days = homeFragment.findViewById(R.id.tab_layout_days);
@@ -157,7 +157,6 @@ public class HomeFragment extends Fragment {
         };
 
         timetable.setAdapter(new TimetableAdapter());
-        timetable.setCurrentItem(Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 1);
 
         new TabLayoutMediator(days, timetable, (tab, position) -> {
             tab.setText(dayStrings[position].substring(0, 1));
@@ -183,6 +182,8 @@ public class HomeFragment extends Fragment {
                 tabParams.setMarginEnd((int) (5 * pixelDensity));
             }
         }
+
+        timetable.setCurrentItem(Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 1);
 
         return homeFragment;
     }

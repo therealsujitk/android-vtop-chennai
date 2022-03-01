@@ -14,6 +14,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import tk.therealsuji.vtopchennai.R;
 import tk.therealsuji.vtopchennai.fragments.ProfileFragment;
 
+/**
+ * ┬─── Profile Announcements Hierarchy
+ * ├─ {@link ProfileFragment}
+ * ╰→ {@link AnnouncementItemAdapter}    - RecyclerView (Current File)
+ */
 public class AnnouncementItemAdapter extends RecyclerView.Adapter<AnnouncementItemAdapter.ViewHolder> {
     ProfileFragment.ItemData[] announcementItems;
 

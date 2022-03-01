@@ -16,11 +16,12 @@ import android.widget.TextView;
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.badoo.mobile.util.WeakHandler;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.chip.Chip;
+import com.google.android.material.color.MaterialColors;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -40,6 +41,12 @@ import tk.therealsuji.vtopchennai.interfaces.CoursesDao;
 import tk.therealsuji.vtopchennai.models.Course;
 import tk.therealsuji.vtopchennai.models.Timetable;
 
+/**
+ * ┬─── Timetable Hierarchy
+ * ├─ {@link tk.therealsuji.vtopchennai.fragments.HomeFragment}
+ * ├─ {@link TimetableAdapter}      - ViewPager2
+ * ╰→ {@link TimetableItemAdapter}  - RecyclerView(Current File)
+ */
 public class TimetableItemAdapter extends RecyclerView.Adapter<TimetableItemAdapter.ViewHolder> {
     public static final int STATUS_PAST = 1;
     public static final int STATUS_PRESENT = 2;
@@ -74,6 +81,8 @@ public class TimetableItemAdapter extends RecyclerView.Adapter<TimetableItemAdap
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
+        private static final int MULTIPLYING_FACTOR = 5;
+
         RelativeLayout timetableItem;
         ProgressBar classProgress;
 
@@ -96,6 +105,15 @@ public class TimetableItemAdapter extends RecyclerView.Adapter<TimetableItemAdap
             courseType.setImageDrawable(ContextCompat.getDrawable(this.timetableItem.getContext(), courseTypeId));
             courseCode.setText(timetableItem.courseCode);
             setTimings(timetableItem.startTime, timetableItem.endTime, status);
+
+            if (timetableItem.attendancePercentage != null && timetableItem.attendancePercentage < 75) {
+                ImageView endDrawable = this.timetableItem.findViewById(R.id.image_view_failed_attendance);
+                endDrawable.setImageDrawable(ContextCompat.getDrawable(this.timetableItem.getContext(), R.drawable.ic_feedback));
+                DrawableCompat.setTint(
+                        DrawableCompat.wrap(endDrawable.getDrawable()),
+                        MaterialColors.getColor(endDrawable, R.attr.colorError)
+                );
+            }
 
             this.classProgress.setOnClickListener(view -> this.onClick(timetableItem.slotId));
         }
@@ -180,24 +198,26 @@ public class TimetableItemAdapter extends RecyclerView.Adapter<TimetableItemAdap
                     } else if (status == STATUS_PRESENT) {
                         Date now = hour24.parse(hour24.format(Calendar.getInstance().getTime()));
 
-                        if (now != null) {
-                            if (now.after(endTimeDate)) {
-                                this.classProgress.setProgress(100);
-                            } else if (now.after(startTimeDate)) {
-                                long duration = endTimeDate.getTime() - startTimeDate.getTime();
-                                long durationComplete = now.getTime() - startTimeDate.getTime();
-                                long durationPending = endTimeDate.getTime() - now.getTime();
+                        if (now == null) {
+                            return;
+                        }
 
-                                this.setMaxClassProgress(duration);
-                                this.setClassProgressComplete(durationComplete);
-                                this.setClassProgressPending(durationPending);
-                            } else {
-                                long duration = endTimeDate.getTime() - startTimeDate.getTime();
-                                long durationPending = startTimeDate.getTime() - now.getTime();
+                        if (now.after(endTimeDate)) {
+                            this.classProgress.setProgress(100);
+                        } else if (now.after(startTimeDate)) {
+                            long duration = endTimeDate.getTime() - startTimeDate.getTime();
+                            long durationComplete = now.getTime() - startTimeDate.getTime();
+                            long durationPending = endTimeDate.getTime() - now.getTime();
 
-                                this.setMaxClassProgress(duration);
-                                new WeakHandler().postDelayed(() -> this.setClassProgressPending(duration), durationPending);
-                            }
+                            this.setMaxClassProgress(duration);
+                            this.setClassProgressComplete(durationComplete);
+                            this.setClassProgressPending(durationPending, 0);
+                        } else {
+                            long duration = endTimeDate.getTime() - startTimeDate.getTime();
+                            long durationPending = startTimeDate.getTime() - now.getTime();
+
+                            this.setMaxClassProgress(duration);
+                            this.setClassProgressPending(duration, durationPending);
                         }
                     }
                 }
@@ -205,7 +225,7 @@ public class TimetableItemAdapter extends RecyclerView.Adapter<TimetableItemAdap
             }
         }
 
-        private void setClassProgressPending(long duration) {
+        private void setClassProgressPending(long duration, long delay) {
             ObjectAnimator objectAnimator = ObjectAnimator.ofInt(
                     this.classProgress,
                     "progress",
@@ -214,17 +234,18 @@ public class TimetableItemAdapter extends RecyclerView.Adapter<TimetableItemAdap
             );
             objectAnimator.setDuration(duration);
             objectAnimator.setInterpolator(new LinearInterpolator());
+            objectAnimator.setStartDelay(delay);
             objectAnimator.start();
         }
 
         private void setClassProgressComplete(long duration) {
             int minutes = (int) duration / (1000 * 60);
-            this.classProgress.setProgress(minutes, true);
+            this.classProgress.setProgress(minutes * MULTIPLYING_FACTOR, true);
         }
 
         private void setMaxClassProgress(long duration) {
             int minutes = (int) duration / (1000 * 60);
-            this.classProgress.setMax(minutes);
+            this.classProgress.setMax(minutes * MULTIPLYING_FACTOR);
         }
     }
 }

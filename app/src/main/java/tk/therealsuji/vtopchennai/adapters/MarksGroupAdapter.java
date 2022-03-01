@@ -13,6 +13,13 @@ import java.util.List;
 import tk.therealsuji.vtopchennai.R;
 import tk.therealsuji.vtopchennai.models.Mark;
 
+/**
+ * ┬─── Marks Hierarchy
+ * ├─ {@link tk.therealsuji.vtopchennai.fragments.PerformanceFragment}
+ * ├─ {@link MarksAdapter}          - ViewPager2
+ * ├─ {@link MarksGroupAdapter}     - RecyclerView (Current File)
+ * ╰→ {@link MarksItemAdapter}      - RecyclerView
+ */
 public class MarksGroupAdapter extends RecyclerView.Adapter<MarksGroupAdapter.ViewHolder> {
     List<List<Mark.AllData>> marks;
 

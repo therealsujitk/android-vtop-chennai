@@ -48,12 +48,10 @@
 
     <!-- AssignmentsFragment Strings -->
     <string name="assignments_header">Your Assignments</string>
-    <string name="sync_assignments">Sync Assignments</string>
     <string name="moodle_sign_in">Sign In to Moodle</string>
     <string name="moodle_login_description">Sign in using your Moodle credentials</string>
     <string name="no_due_date">No Due Date</string>
     <string name="no_description">No description provided.</string>
-    <string name="due_date">Due date: &lt;b>%s, %s&lt;/b></string>
     <string name="assignment_no_due">This assignment does not have a due date.</string>
     <string name="assignment_due">This assignment is due in &lt;b>%s&lt;/b>.</string>
     <string name="assignment_overdue">This assignment is overdue by &lt;b>%s&lt;/b>.</string>
@@ -72,7 +70,6 @@
     <string name="receipts">Receipts</string>
     <string name="staff">Staff</string>
     <string name="sync_data">Sync Data</string>
-    <string name="faq">Frequently Asked Questions</string>
     <string name="notifications">Notifications</string>
     <string name="share">Share App</string>
 
@@ -100,6 +97,11 @@
     <string name="update_title">Update Available</string>
     <string name="update_message">A new version of &app_name; has been released! The Update button bellow will take you to the download page.</string>
     <string name="update">Update</string>
+
+    <!-- Sync Dialog Strings -->
+    <string name="sync_title">Data Sync Required</string>
+    <string name="sync_message">You haven\'t refreshed your data in a while. It might be out of date.</string>
+    <string name="sync">Sync Data</string>
 
     <!-- Appearance Dialog Strings -->
     <string name="appearance">Appearance</string>

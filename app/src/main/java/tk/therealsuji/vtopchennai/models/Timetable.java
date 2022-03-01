@@ -92,5 +92,6 @@ public class Timetable {
         public String courseType;
         public String courseCode;
         public String courseTitle;
+        public Integer attendancePercentage;
     }
 }

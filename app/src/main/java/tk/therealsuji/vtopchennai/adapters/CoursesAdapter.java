@@ -19,6 +19,12 @@ import tk.therealsuji.vtopchennai.helpers.AppDatabase;
 import tk.therealsuji.vtopchennai.interfaces.CoursesDao;
 import tk.therealsuji.vtopchennai.models.Course;
 
+/**
+ * ┬─── Courses Hierarchy
+ * ├─ {@link tk.therealsuji.vtopchennai.fragments.ViewPagerFragment}
+ * ├─ {@link CoursesAdapter}        - ViewPager2 (Current File)
+ * ╰→ {@link CoursesItemAdapter}    - RecyclerView
+ */
 public class CoursesAdapter extends RecyclerView.Adapter<CoursesAdapter.ViewHolder> {
     Context applicationContext;
     List<String> courseCodes;

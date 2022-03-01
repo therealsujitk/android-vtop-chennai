@@ -13,24 +13,32 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 import tk.therealsuji.vtopchennai.R;
+import tk.therealsuji.vtopchennai.fragments.AssignmentViewFragment;
 import tk.therealsuji.vtopchennai.helpers.SettingsRepository;
 import tk.therealsuji.vtopchennai.models.Attachment;
 
-public class AttachmentItemAdapter extends RecyclerView.Adapter<AttachmentItemAdapter.ViewHolder> {
+/**
+ * ┬─── Assignment Attachments Hierarchy
+ * ├─ {@link tk.therealsuji.vtopchennai.fragments.AssignmentsFragment}
+ * ├─ {@link AssignmentViewFragment}
+ * ╰→ {@link AttachmentsItemAdapter}     - RecyclerView (Current File)
+ */
+public class AttachmentsItemAdapter extends RecyclerView.Adapter<AttachmentsItemAdapter.ViewHolder> {
     List<Attachment> attachments;
 
-    public AttachmentItemAdapter(List<Attachment> attachments) {
+    public AttachmentsItemAdapter(List<Attachment> attachments) {
         this.attachments = attachments;
     }
 
     @NonNull
     @Override
-    public AttachmentItemAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public AttachmentsItemAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LinearLayout attachment = (LinearLayout) LayoutInflater
                 .from(parent.getContext())
-                .inflate(R.layout.layout_item_attachment, parent, false);
+                .inflate(R.layout.layout_item_attachments, parent, false);
 
         return new ViewHolder(attachment);
     }
@@ -75,17 +83,23 @@ public class AttachmentItemAdapter extends RecyclerView.Adapter<AttachmentItemAd
             fileName.setText(attachment.name);
             fileSize.setText(fileSizeString);
 
+            if (attachment.url == null) {
+                this.attachment.findViewById(R.id.image_button_download).setVisibility(View.GONE);
+                this.attachment.findViewById(R.id.progress_bar_uploading).setVisibility(View.VISIBLE);
+                return;
+            }
+
             this.attachment.findViewById(R.id.image_button_download).setOnClickListener(view -> {
                 Context applicationContext = this.attachment.getContext().getApplicationContext();
-                String moodleToken = SettingsRepository
-                        .getSharedPreferences(applicationContext)
-                        .getString("moodleToken", "");
+                String moodleToken = Objects.requireNonNull(SettingsRepository
+                        .getEncryptedSharedPreferences(applicationContext))
+                        .getString("moodleToken", null);
                 Uri uri = Uri.parse(attachment.url)
                         .buildUpon()
                         .appendQueryParameter("token", moodleToken)
                         .build();
 
-                SettingsRepository.downloadFile(applicationContext, attachment.name, attachment.mimetype, uri);
+                SettingsRepository.downloadFile(applicationContext, "Moodle", attachment.name, attachment.mimetype, uri, null);
             });
         }
     }

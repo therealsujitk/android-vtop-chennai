@@ -22,6 +22,12 @@ import java.util.Objects;
 import tk.therealsuji.vtopchennai.R;
 import tk.therealsuji.vtopchennai.models.Assignment;
 
+/**
+ * ┬─── Assignments Hierarchy
+ * ├─ {@link tk.therealsuji.vtopchennai.fragments.AssignmentsFragment}
+ * ├─ {@link AssignmentsGroupAdapter}   - RecyclerView (Current File)
+ * ╰→ {@link AssignmentsItemAdapter}    - RecyclerView
+ */
 public class AssignmentsGroupAdapter extends RecyclerView.Adapter<AssignmentsGroupAdapter.ViewHolder> {
     Map<Date, List<Assignment>> assignments;
     List<Date> dates;

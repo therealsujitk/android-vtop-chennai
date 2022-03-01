@@ -15,6 +15,12 @@ import java.util.Objects;
 import tk.therealsuji.vtopchennai.models.Spotlight;
 import tk.therealsuji.vtopchennai.widgets.SpotlightGroup;
 
+/**
+ * ┬─── Spotlight Hierarchy
+ * ├─ {@link tk.therealsuji.vtopchennai.fragments.RecyclerViewFragment}
+ * ├─ {@link SpotlightGroupAdapter}     - RecyclerView (Current File)
+ * ╰→ {@link SpotlightItemAdapter}      - RecyclerView
+ */
 public class SpotlightGroupAdapter extends RecyclerView.Adapter<SpotlightGroupAdapter.ViewHolder> {
     private final List<String> categories;
     private final Map<String, List<Spotlight>> announcements;

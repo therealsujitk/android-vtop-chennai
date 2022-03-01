@@ -1,6 +1,5 @@
 package tk.therealsuji.vtopchennai.adapters;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +25,13 @@ import io.reactivex.rxjava3.disposables.Disposable;
 import tk.therealsuji.vtopchennai.R;
 import tk.therealsuji.vtopchennai.models.Mark;
 
+/**
+ * ┬─── Marks Hierarchy
+ * ├─ {@link tk.therealsuji.vtopchennai.fragments.PerformanceFragment}
+ * ├─ {@link MarksAdapter}          - ViewPager2 (Current File)
+ * ├─ {@link MarksGroupAdapter}     - RecyclerView
+ * ╰→ {@link MarksItemAdapter}      - RecyclerView
+ */
 public class MarksAdapter extends RecyclerView.Adapter<MarksAdapter.ViewHolder> {
     List<Observable<List<Mark.AllData>>> markObservables;
 
@@ -64,7 +70,6 @@ public class MarksAdapter extends RecyclerView.Adapter<MarksAdapter.ViewHolder> 
 
                     @Override
                     public void onComplete() {
-                        Log.i("hi", "complete");
                     }
                 });
     }

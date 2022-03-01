@@ -1,14 +1,9 @@
 package tk.therealsuji.vtopchennai.adapters;
 
-import static android.content.Context.DOWNLOAD_SERVICE;
-
 import android.Manifest;
-import android.app.DownloadManager;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.Environment;
-import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +13,6 @@ import android.webkit.WebViewClient;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
@@ -37,6 +31,12 @@ import tk.therealsuji.vtopchennai.activities.MainActivity;
 import tk.therealsuji.vtopchennai.helpers.SettingsRepository;
 import tk.therealsuji.vtopchennai.models.Spotlight;
 
+/**
+ * ┬─── Staff Hierarchy
+ * ├─ {@link tk.therealsuji.vtopchennai.fragments.ViewPagerFragment}
+ * ├─ {@link SpotlightGroupAdapter}     - RecyclerView
+ * ╰→ {@link SpotlightItemAdapter}      - RecyclerView (Current File)
+ */
 public class SpotlightItemAdapter extends RecyclerView.Adapter<SpotlightItemAdapter.ViewHolder> {
     private final List<Spotlight> spotlight;
 
@@ -110,26 +110,22 @@ public class SpotlightItemAdapter extends RecyclerView.Adapter<SpotlightItemAdap
                     String downloadLink = SettingsRepository.VTOP_BASE_URL + "/" + spotlightItem.link + "?&x=";
                     WebView downloadPage = new WebView(context);
 
+                    // Clear cookies and cache to prevent a session timeout
+                    CookieManager.getInstance().removeAllCookies(null);
+                    downloadPage.clearCache(true);
+                    downloadPage.clearHistory();
+
                     downloadPage.getSettings().setUserAgentString("Mozilla/5.0 (Linux; Android 10) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.99 Mobile Safari/537.36");
                     downloadPage.setWebViewClient(new WebViewClient() {
                         public void onPageFinished(WebView view, String url) {
-                            downloadPage.loadUrl(downloadLink);
-                            downloadPage.setWebViewClient(null);
+                            view.loadUrl(downloadLink);
+                            view.setWebViewClient(null);
                         }
                     });
                     downloadPage.setDownloadListener((url, userAgent, contentDisposition, mimetype, contentLength) -> {
                         String fileName = contentDisposition.split("filename=")[1];
-                        Toast.makeText(context, Html.fromHtml(context.getString(R.string.downloading_file, fileName), Html.FROM_HTML_MODE_LEGACY), Toast.LENGTH_SHORT).show();
-
-                        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
-                        request.addRequestHeader("cookie", CookieManager.getInstance().getCookie(url));
-                        request.allowScanningByMediaScanner();
-                        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "VTOP Spotlight/" + fileName);
-                        request.setMimeType(mimetype);
-                        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE | DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-
-                        DownloadManager downloadManager = (DownloadManager) context.getSystemService(DOWNLOAD_SERVICE);
-                        downloadManager.enqueue(request);
+                        String cookie = CookieManager.getInstance().getCookie(url);
+                        SettingsRepository.downloadFile(context, "VTOP Spotlight", fileName, mimetype, Uri.parse(url), cookie);
                     });
                     downloadPage.loadUrl(SettingsRepository.VTOP_BASE_URL);
                 });

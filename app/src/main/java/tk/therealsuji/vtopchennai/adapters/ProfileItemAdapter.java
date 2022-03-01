@@ -14,6 +14,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import tk.therealsuji.vtopchennai.R;
 import tk.therealsuji.vtopchennai.fragments.ProfileFragment;
 
+/**
+ * ┬─── Profile Hierarchy
+ * ├─ {@link tk.therealsuji.vtopchennai.fragments.ProfileFragment}
+ * ├─ {@link ProfileGroupAdapter}   - RecyclerView
+ * ╰→ {@link ProfileItemAdapter}    - RecyclerView (Current File)
+ */
 public class ProfileItemAdapter extends RecyclerView.Adapter<ProfileItemAdapter.ViewHolder> {
     ProfileFragment.ItemData[] profileItems;
 
