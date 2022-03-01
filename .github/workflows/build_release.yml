@@ -32,7 +32,7 @@ jobs:
         run: |
           cd app/build/outputs/apk/release
           git init
-          git remote add origin https://x-access-token:${{ COMMIT_SECRET }}@github.com/therealsujitk/website-vtop-chennai
+          git remote add origin https://x-access-token:${{ secrets.COMMIT_TOKEN }}@github.com/therealsujitk/website-vtop-chennai
           git config --global user.email "bot@therealsuji.tk"
           git config --global user.name "earphone-jack"
           git fetch
