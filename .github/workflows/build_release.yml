@@ -37,7 +37,7 @@ jobs:
           git config --global user.name "earphone-jack"
           git fetch
           git checkout main
-          mv app-release-unsigned.apk public/assets/apk/vtop_chennai_${{ github.ref_name }}.apk
+          mv app-release-unsigned-signed.apk public/assets/apk/vtop_chennai_${{ github.ref_name }}.apk
           git add --all public/
           git commit -m "Release ${{ github.ref_name }}"
           git push
