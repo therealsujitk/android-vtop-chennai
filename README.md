@@ -31,8 +31,7 @@ If you're interested in contributing to this project, make sure the issue you'd 
 open (if not, create one) and do not start resolving said issue until you've been assigned to it.
 Good knowledge in android development is recommended, you can always ask for directions if you're
 stuck or don't know where to start. If you're new here you can take a look at
-the [good first issues](https://github.com/therealsujitk/android-vtop-chennai/labels/good%20first%20issue)
-.
+the [good first issues](https://github.com/therealsujitk/android-vtop-chennai/labels/good%20first%20issue).
 
 ## Links
 
