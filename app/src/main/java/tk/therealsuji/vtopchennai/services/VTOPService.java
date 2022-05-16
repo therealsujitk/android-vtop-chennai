@@ -395,12 +395,13 @@ public class VTOPService extends Service {
                 "    Android.signIn('g-recaptcha-response=' + token);" +
                 "}" +
                 "(function() {" +
-                "var executeInterval = setInterval(function () {" +
-                "    if (typeof grecaptcha != 'undefined') {" +
-                "        clearInterval(executeInterval);" +
+                "var executeInterval = setInterval(function() {" +
+                "    try {" +   // typeof grecaptcha != 'undefined' always returns true for some reason
                 "        grecaptcha.execute();" +
+                "        clearInterval(executeInterval);" +
+                "    } catch (err) {" +
                 "    }" +
-                "}, 1000);" +
+                "}, 500);" +
                 "})();", value -> {
         });
     }
