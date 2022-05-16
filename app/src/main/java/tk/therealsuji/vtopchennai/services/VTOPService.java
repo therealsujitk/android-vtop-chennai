@@ -800,12 +800,12 @@ public class VTOPService extends Service {
                     if (course.type.equals("lab")) {
                         slotReference = this.labSlots;
                         this.labCourses.put(course.id, course);
-                    } else if (course.type.equals("project")) {
-                        slotReference = this.projectSlots;
-                        this.projectCourses.put(course.id, course);
-                    } else {
+                    } else if (course.type.equals("theory")) {
                         slotReference = this.theorySlots;
                         this.theoryCourses.put(course.id, course);
+                    } else {
+                        this.projectCourses.put(course.id, course);
+                        continue;
                     }
 
                     JSONArray slotsArray = courseObject.getJSONArray("slots");

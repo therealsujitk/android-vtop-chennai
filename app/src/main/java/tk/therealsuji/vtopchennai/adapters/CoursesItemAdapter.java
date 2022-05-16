@@ -36,11 +36,13 @@ public class CoursesItemAdapter extends RecyclerView.Adapter<CoursesItemAdapter.
     static final int VIEW_TITLE = 1;
     static final int VIEW_DEFAULT = 2;
 
+    String courseTitle;
     List<Course.AllData> course;
     Set<String> courseTypes;
 
     public CoursesItemAdapter(List<Course.AllData> course) {
         Map<String, Course.AllData> courseMap = new HashMap<>();
+        this.courseTitle = course.get(0).courseTitle;
         this.courseTypes = new ArraySet<>();
 
         for (int i = 0; i < course.size(); ++i) {
@@ -86,7 +88,7 @@ public class CoursesItemAdapter extends RecyclerView.Adapter<CoursesItemAdapter.
     public void onBindViewHolder(@NonNull CoursesItemAdapter.ViewHolder holder, int position) {
         if (position == 0) {
             holder.setCourseTitle(
-                    this.course.get(0).courseTitle,
+                    this.courseTitle,
                     this.courseTypes.contains("lab"),
                     this.courseTypes.contains("project"),
                     this.courseTypes.contains("theory")
