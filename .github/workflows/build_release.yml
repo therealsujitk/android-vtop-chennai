@@ -28,16 +28,12 @@ jobs:
           keyStorePassword: ${{ secrets.KEYSTORE_PASSWORD }}
           keyPassword: ${{ secrets.KEY_PASSWORD }}
 
-      - name: Upload signed apk
+      - name: Rename signed apk
         run: |
           cd app/build/outputs/apk/release
-          git init
-          git remote add origin https://x-access-token:${{ secrets.COMMIT_TOKEN }}@github.com/therealsujitk/website-vtop-chennai
-          git config --global user.email "bot@therealsuji.tk"
-          git config --global user.name "earphone-jack"
-          git fetch
-          git checkout main
           mv app-release-unsigned-signed.apk public/assets/apk/vtop_chennai_${{ github.ref_name }}.apk
-          git add --all public/
-          git commit -m "Release ${{ github.ref_name }}"
-          git push
+
+      - name: Upload signed apk
+        uses: softprops/action-gh-release@v1
+        with:
+          files: app/build/outputs/apk/release/vtop_chennai_${{ github.ref_name }}.apk
