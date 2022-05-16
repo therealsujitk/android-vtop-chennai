@@ -46,7 +46,7 @@ public interface MarksDao {
     @Query("DELETE FROM cumulative_marks")
     Completable deleteCumulativeMarks();
 
-    @Query("SELECT courses.code AS courseCode, courses.title AS CourseTitle, COUNT(CASE WHEN is_read IS 0 THEN 1 END) AS unreadMarkCount " +
+    @Query("SELECT courses.code AS courseCode, courses.title AS courseTitle, COUNT(CASE WHEN is_read IS 0 THEN 1 END) AS unreadMarkCount " +
             "FROM marks, courses " +
             "WHERE course_id = courses.id " +
             "GROUP BY courses.code")
