@@ -147,6 +147,7 @@
     <string name="faculty">Faculty: &lt;b>%s&lt;/b></string>
     <string name="venue">Venue: &lt;b>%s&lt;/b></string>
     <string name="attendance">Attendance</string>
+    <string name="na">NA</string>
     <string name="permission_granted">Permission Granted</string>
     <string name="permission_denied">Permission Denied</string>
     <string name="downloading_file">Downloading &lt;b>%s&lt;/b></string>

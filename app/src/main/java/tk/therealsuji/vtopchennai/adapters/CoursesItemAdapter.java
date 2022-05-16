@@ -181,8 +181,9 @@ public class CoursesItemAdapter extends RecyclerView.Adapter<CoursesItemAdapter.
                 slots.addView(slot);
             }
 
-            if (courseItem.courseType.equals("project")) {
-                this.courseItem.findViewById(R.id.linear_layout_attendance).setVisibility(View.GONE);
+            if (courseItem.attendancePercentage == null) {
+                attendanceText.setText(this.courseItem.getContext().getString(R.string.na));
+                attendanceProgress.setProgress(0);
                 return;
             }
 
