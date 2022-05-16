@@ -73,6 +73,12 @@ public class ViewPagerFragment extends Fragment {
                             View day = ((ViewGroup) tabLayout.getChildAt(0)).getChildAt(i);
                             ViewGroup.MarginLayoutParams tabParams = (ViewGroup.MarginLayoutParams) day.getLayoutParams();
 
+                            if (tabLayout.getTabCount() == 1) {
+                                tabParams.setMarginStart((int) (20 * pixelDensity));
+                                tabParams.setMarginEnd((int) (20 * pixelDensity));
+                                break;
+                            }
+
                             if (i == 0) {
                                 tabParams.setMarginStart((int) (20 * pixelDensity));
                                 tabParams.setMarginEnd((int) (5 * pixelDensity));
@@ -166,9 +172,10 @@ public class ViewPagerFragment extends Fragment {
         viewPagerFragment.getRootView().setBackgroundColor(requireContext().getColor(R.color.secondary_container_95));
         viewPagerFragment.getRootView().setOnTouchListener((view, motionEvent) -> true);
 
-        this.appDatabase = AppDatabase.getInstance(this.requireActivity().getApplicationContext());
+        View header = viewPagerFragment.findViewById(R.id.linear_layout_header);
         this.tabLayout = viewPagerFragment.findViewById(R.id.tab_layout);
         this.viewPager = viewPagerFragment.findViewById(R.id.view_pager);
+        this.appDatabase = AppDatabase.getInstance(this.requireActivity().getApplicationContext());
 
         getParentFragmentManager().setFragmentResultListener("customInsets2", this, (requestKey, result) -> {
             int systemWindowInsetLeft = result.getInt("systemWindowInsetLeft");
@@ -177,9 +184,16 @@ public class ViewPagerFragment extends Fragment {
             int systemWindowInsetBottom = result.getInt("systemWindowInsetBottom");
             float pixelDensity = this.getResources().getDisplayMetrics().density;
 
-            viewPagerFragment.setPaddingRelative(
+            header.setPaddingRelative(
                     systemWindowInsetLeft,
                     systemWindowInsetTop,
+                    systemWindowInsetRight,
+                    0
+            );
+
+            this.viewPager.setPaddingRelative(
+                    systemWindowInsetLeft,
+                    0,
                     systemWindowInsetRight,
                     0
             );
