@@ -162,9 +162,15 @@ public class PerformanceFragment extends Fragment {
                             }
                         }).attach();
 
-                        for (int i = 0; i < courses.size(); ++i) {
+                        for (int i = 0; i < courseTabs.getTabCount(); ++i) {
                             View day = ((ViewGroup) courseTabs.getChildAt(0)).getChildAt(i);
                             ViewGroup.MarginLayoutParams tabParams = (ViewGroup.MarginLayoutParams) day.getLayoutParams();
+
+                            if (courseTabs.getTabCount() == 1) {
+                                tabParams.setMarginStart((int) (20 * pixelDensity));
+                                tabParams.setMarginEnd((int) (20 * pixelDensity));
+                                break;
+                            }
 
                             if (i == 0) {
                                 tabParams.setMarginStart((int) (20 * pixelDensity));

@@ -60,20 +60,20 @@
                         app:title="@string/theory_weightage" />
 
                     <tk.therealsuji.vtopchennai.widgets.PerformanceCard
-                        android:id="@+id/performance_card_project"
-                        android:layout_width="140dp"
-                        android:layout_height="match_parent"
-                        android:layout_marginStart="10dp"
-                        android:layout_marginEnd="10dp"
-                        app:title="@string/project_weightage" />
-
-                    <tk.therealsuji.vtopchennai.widgets.PerformanceCard
                         android:id="@+id/performance_card_lab"
                         android:layout_width="140dp"
                         android:layout_height="match_parent"
                         android:layout_marginStart="10dp"
                         android:layout_marginEnd="10dp"
                         app:title="@string/lab_weightage" />
+
+                    <tk.therealsuji.vtopchennai.widgets.PerformanceCard
+                        android:id="@+id/performance_card_project"
+                        android:layout_width="140dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="10dp"
+                        app:title="@string/project_weightage" />
                 </LinearLayout>
             </HorizontalScrollView>
         </LinearLayout>
@@ -81,7 +81,7 @@
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tab_layout_courses"
             style="@style/Widget.VTOP.TabLayout"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
