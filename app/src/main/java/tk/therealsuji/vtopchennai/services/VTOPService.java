@@ -998,24 +998,24 @@ public class VTOPService extends Service {
                     lab.id = i * 2 + 1;
                     lab.startTime = this.getStringValue(labObject, "start_time");
                     lab.endTime = this.getStringValue(labObject, "end_time");
-                    lab.sunday = this.getSlotId(labObject.getString("sunday"), Course.TYPE_LAB);
-                    lab.monday = this.getSlotId(labObject.getString("monday"), Course.TYPE_LAB);
-                    lab.tuesday = this.getSlotId(labObject.getString("tuesday"), Course.TYPE_LAB);
-                    lab.wednesday = this.getSlotId(labObject.getString("wednesday"), Course.TYPE_LAB);
-                    lab.thursday = this.getSlotId(labObject.getString("thursday"), Course.TYPE_LAB);
-                    lab.friday = this.getSlotId(labObject.getString("friday"), Course.TYPE_LAB);
-                    lab.saturday = this.getSlotId(labObject.getString("saturday"), Course.TYPE_LAB);
+                    lab.sunday = this.getSlotId(this.getStringValue(labObject, "sunday"), Course.TYPE_LAB);
+                    lab.monday = this.getSlotId(this.getStringValue(labObject, "monday"), Course.TYPE_LAB);
+                    lab.tuesday = this.getSlotId(this.getStringValue(labObject, "tuesday"), Course.TYPE_LAB);
+                    lab.wednesday = this.getSlotId(this.getStringValue(labObject, "wednesday"), Course.TYPE_LAB);
+                    lab.thursday = this.getSlotId(this.getStringValue(labObject, "thursday"), Course.TYPE_LAB);
+                    lab.friday = this.getSlotId(this.getStringValue(labObject, "friday"), Course.TYPE_LAB);
+                    lab.saturday = this.getSlotId(this.getStringValue(labObject, "saturday"), Course.TYPE_LAB);
 
                     theory.id = i * 2 + 2;
                     theory.startTime = this.getStringValue(theoryObject, "start_time");
                     theory.endTime = this.getStringValue(theoryObject, "end_time");
-                    theory.sunday = this.getSlotId(theoryObject.getString("sunday"), Course.TYPE_THEORY);
-                    theory.monday = this.getSlotId(theoryObject.getString("monday"), Course.TYPE_THEORY);
-                    theory.tuesday = this.getSlotId(theoryObject.getString("tuesday"), Course.TYPE_THEORY);
-                    theory.wednesday = this.getSlotId(theoryObject.getString("wednesday"), Course.TYPE_THEORY);
-                    theory.thursday = this.getSlotId(theoryObject.getString("thursday"), Course.TYPE_THEORY);
-                    theory.friday = this.getSlotId(theoryObject.getString("friday"), Course.TYPE_THEORY);
-                    theory.saturday = this.getSlotId(theoryObject.getString("saturday"), Course.TYPE_THEORY);
+                    theory.sunday = this.getSlotId(this.getStringValue(theoryObject, "sunday"), Course.TYPE_THEORY);
+                    theory.monday = this.getSlotId(this.getStringValue(theoryObject, "monday"), Course.TYPE_THEORY);
+                    theory.tuesday = this.getSlotId(this.getStringValue(theoryObject, "tuesday"), Course.TYPE_THEORY);
+                    theory.wednesday = this.getSlotId(this.getStringValue(theoryObject, "wednesday"), Course.TYPE_THEORY);
+                    theory.thursday = this.getSlotId(this.getStringValue(theoryObject, "thursday"), Course.TYPE_THEORY);
+                    theory.friday = this.getSlotId(this.getStringValue(theoryObject, "friday"), Course.TYPE_THEORY);
+                    theory.saturday = this.getSlotId(this.getStringValue(theoryObject, "saturday"), Course.TYPE_THEORY);
 
                     /*
                         Formatting time in 24-hour in-case it's given in 12-hour format because VIT
