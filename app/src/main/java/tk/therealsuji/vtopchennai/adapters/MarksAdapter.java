@@ -14,6 +14,7 @@ import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -107,9 +108,21 @@ public class MarksAdapter extends RecyclerView.Adapter<MarksAdapter.ViewHolder> 
 
         private void addChips() {
             this.courseTypes.removeAllViews();
-            List<String> courseTypes = new ArrayList<>(this.marks.keySet());
+            List<String> courseTypes = new ArrayList<>();
 
-            for (int i = 0; i < courseTypes.size(); ++i) {
+            if (this.marks.containsKey("theory")) {
+                courseTypes.add("theory");
+            }
+
+            if (this.marks.containsKey("lab")) {
+                courseTypes.add("lab");
+            }
+
+            if (this.marks.containsKey("project")) {
+                courseTypes.add("project");
+            }
+
+            for (int i = 0; i < this.marks.size(); ++i) {
                 String courseType = courseTypes.get(i);
                 Chip chip = new Chip(this.markGroups.getContext());
                 chip.setCheckable(true);
@@ -165,7 +178,15 @@ public class MarksAdapter extends RecyclerView.Adapter<MarksAdapter.ViewHolder> 
         }
 
         public void displayMarks() {
-            this.markGroups.setAdapter(new MarksGroupAdapter(new ArrayList<>(this.marks.values())));
+            List<List<Mark.AllData>> markGroups = new ArrayList<>();
+
+            markGroups.add(this.marks.get("theory"));
+            markGroups.add(this.marks.get("lab"));
+            markGroups.add(this.marks.get("project"));
+
+            markGroups.removeAll(Collections.singleton(null));
+
+            this.markGroups.setAdapter(new MarksGroupAdapter(markGroups));
         }
 
         public void displayError(String errorMessage) {
