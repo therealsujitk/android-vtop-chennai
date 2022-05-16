@@ -23,9 +23,7 @@ public class BootReceiver extends BroadcastReceiver {
             return;
         }
 
-        boolean isSignedIn = SettingsRepository.getSharedPreferences(context).getBoolean("isSignedIn", false);
-
-        if (!isSignedIn) {
+        if (!SettingsRepository.isSignedIn(context)) {
             return;
         }
 
