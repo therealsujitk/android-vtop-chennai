@@ -1929,7 +1929,7 @@ public class VTOPService extends Service {
                 "        while (receiptIndex < cells.length && amountIndex < cells.length && dateIndex < cells.length) {" +
                 "            var receipt = {};" +
                 "            receipt.number = parseInt(cells[receiptIndex].innerText.trim()) || null;" +
-                "            receipt.amount = parseFloat(cells[amountIndex].innerText.trim()) || null;" +
+                "            receipt.amount = parseFloat(cells[amountIndex].innerText.trim()) || 0;" +
                 "            receipt.date = cells[dateIndex].innerText.trim();" +
                 "            response.receipts.push(receipt);" +
                 "            receiptIndex += headings.length;" +
@@ -1948,6 +1948,11 @@ public class VTOPService extends Service {
                 for (int i = 0; i < receiptsArray.length(); ++i) {
                     JSONObject receiptsObject = receiptsArray.getJSONObject(i);
                     Receipt receipt = new Receipt();
+
+                    // If this is true, there's a web scrapping issue
+                    if (receiptsObject.isNull("number")) {
+                        continue;
+                    }
 
                     receipt.number = receiptsObject.getInt("number");
                     receipt.amount = this.getDoubleValue(receiptsObject, "amount");
