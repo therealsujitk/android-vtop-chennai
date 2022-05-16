@@ -147,20 +147,23 @@ public class VTOPHelper {
                         webView.evaluateJavascript("(function() {" +
                                 "var body = document.getElementsByTagName('body')[0];" +
                                 "body.style.backgroundColor = 'transparent';" +
+                                "body.style.visibility = 'hidden';" +
                                 "var children = body.children;" +
-                                "for (var i = 0; i < children.length - 1; ++i) {" +
+                                "for (var i = 0; i < children.length; ++i) {" +
                                 "    children[i].style.display = 'none';" +
                                 "}" +
                                 "var captchaInterval = setInterval(function() {" +
                                 "    var children = document.getElementsByTagName('body')[0].children;" +
                                 "    var captcha = children[children.length - 1];" +
-                                "    if (captcha.children[0] != undefined && captcha.children[1] != undefined) {" +
-                                "        clearInterval(captchaInterval);" +
+                                "    if (captcha.children.length >= 2) {" +
                                 "        captcha.children[0].style.display = 'none';" +
                                 "        captcha.children[1].style.transform = 'scale(" + scale + ")';" +
                                 "        captcha.children[1].style.transformOrigin = '0 0';" +
+                                "        captcha.style.display = 'block';" +
+                                "        body.style.visibility = 'visible';" +
+                                "        clearInterval(captchaInterval);" +
                                 "    }" +
-                                "}, 200);" +
+                                "}, 500);" +
                                 "})();", value -> {
                             reCaptchaDialogFragment = new ReCaptchaDialogFragment(webView, () -> {
                                 try {
