@@ -16,6 +16,7 @@ import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -48,10 +49,6 @@ public class CoursesItemAdapter extends RecyclerView.Adapter<CoursesItemAdapter.
 
             courseTypes.add(courseItem.courseType);
 
-            if (courseItem.courseType.equals("project")) {
-                continue;
-            }
-
             if (!courseMap.containsKey(courseItem.courseType)) {
                 courseItem.slots = new ArrayList<>();
                 courseMap.put(courseItem.courseType, courseItem);
@@ -60,7 +57,13 @@ public class CoursesItemAdapter extends RecyclerView.Adapter<CoursesItemAdapter.
             Objects.requireNonNull(courseMap.get(courseItem.courseType)).slots.add(courseItem.slot);
         }
 
-        this.course = new ArrayList<>(courseMap.values());
+        this.course = new ArrayList<>();
+
+        this.course.add(courseMap.get("theory"));
+        this.course.add(courseMap.get("lab"));
+        this.course.add(courseMap.get("project"));
+
+        this.course.removeAll(Collections.singleton(null));
     }
 
     @NonNull
@@ -87,9 +90,9 @@ public class CoursesItemAdapter extends RecyclerView.Adapter<CoursesItemAdapter.
         if (position == 0) {
             holder.setCourseTitle(
                     this.course.get(0).courseTitle,
+                    this.courseTypes.contains("theory"),
                     this.courseTypes.contains("lab"),
-                    this.courseTypes.contains("project"),
-                    this.courseTypes.contains("theory")
+                    this.courseTypes.contains("project")
             );
         } else {
             holder.setCourseItem(this.course.get(position - 1));
@@ -119,11 +122,19 @@ public class CoursesItemAdapter extends RecyclerView.Adapter<CoursesItemAdapter.
             this.courseItem = (LinearLayout) itemView;
         }
 
-        public void setCourseTitle(String courseTitle, boolean lab, boolean project, boolean theory) {
+        public void setCourseTitle(String courseTitle, boolean theory, boolean lab, boolean project) {
             TextView title = this.courseItem.findViewById(R.id.text_view_course_title);
             ChipGroup courseTypes = this.courseItem.findViewById(R.id.chip_group_course_types);
 
             title.setText(courseTitle);
+
+            if (theory) {
+                Chip chip = new Chip(this.courseItem.getContext());
+                chip.setChipIconResource(R.drawable.ic_theory);
+                chip.setText(R.string.theory);
+
+                courseTypes.addView(chip);
+            }
 
             if (lab) {
                 Chip chip = new Chip(this.courseItem.getContext());
@@ -137,14 +148,6 @@ public class CoursesItemAdapter extends RecyclerView.Adapter<CoursesItemAdapter.
                 Chip chip = new Chip(this.courseItem.getContext());
                 chip.setChipIconResource(R.drawable.ic_project);
                 chip.setText(R.string.project);
-
-                courseTypes.addView(chip);
-            }
-
-            if (theory) {
-                Chip chip = new Chip(this.courseItem.getContext());
-                chip.setChipIconResource(R.drawable.ic_theory);
-                chip.setText(R.string.theory);
 
                 courseTypes.addView(chip);
             }
@@ -166,6 +169,8 @@ public class CoursesItemAdapter extends RecyclerView.Adapter<CoursesItemAdapter.
 
             if (courseItem.courseType.equals("lab")) {
                 chipIconResource = R.drawable.ic_lab;
+            } else if (courseItem.courseType.equals("project")) {
+                chipIconResource = R.drawable.ic_project;
             }
 
             for (int i = 0; i < courseItem.slots.size(); ++i) {
@@ -174,6 +179,11 @@ public class CoursesItemAdapter extends RecyclerView.Adapter<CoursesItemAdapter.
                 slot.setText(courseItem.slots.get(i));
 
                 slots.addView(slot);
+            }
+
+            if (courseItem.courseType.equals("project")) {
+                this.courseItem.findViewById(R.id.linear_layout_attendance).setVisibility(View.GONE);
+                return;
             }
 
             attendanceText.setText(String.format(Locale.getDefault(), "%d%%", courseItem.attendancePercentage));
