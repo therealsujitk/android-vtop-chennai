@@ -41,7 +41,7 @@ the [good first issues](https://github.com/therealsujitk/android-vtop-chennai/la
 ## License
 
 ```
-Copyright 2021 Sujit Kumar
+Copyright 2022 Sujit Kumar
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
