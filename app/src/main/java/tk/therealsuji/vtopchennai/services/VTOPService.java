@@ -1186,15 +1186,14 @@ public class VTOPService extends Service {
                     attendanceItem.courseId = this.getCourseId(attendanceObject.getString("slot"), courseType);
                     attendanceItem.attended = this.getIntegerValue(attendanceObject, "attended");
                     attendanceItem.total = this.getIntegerValue(attendanceObject, "total");
-                    attendanceItem.percentage = this.getIntegerValue(attendanceObject, "percentage");
 
-                    attendance.add(attendanceItem);
-                    if (attendanceItem.total != 0) {
+                    if (attendanceItem.attended != null && attendanceItem.total != null && attendanceItem.total != 0) {
+                        attendanceItem.percentage = (attendanceItem.attended * 100) / attendanceItem.total;
                         overallAttendance += attendanceItem.percentage;
                         ++attendanceLength;
-                    } else {
-                        attendanceItem.percentage = null;
                     }
+
+                    attendance.add(attendanceItem);
                 }
 
                 if (attendanceLength != 0) {

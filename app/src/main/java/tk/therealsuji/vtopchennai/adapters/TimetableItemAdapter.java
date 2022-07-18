@@ -163,8 +163,13 @@ public class TimetableItemAdapter extends RecyclerView.Adapter<TimetableItemAdap
 
                             slot.setText(course.slot);
 
-                            attendanceText.setText(new DecimalFormat("#'%'").format(course.attendancePercentage));
-                            attendanceProgress.setProgress(course.attendancePercentage);
+                            if (course.attendancePercentage == null) {
+                                attendanceText.setText(context.getString(R.string.na));
+                                attendanceProgress.setProgress(0);
+                            } else {
+                                attendanceText.setText(new DecimalFormat("#'%'").format(course.attendancePercentage));
+                                attendanceProgress.setProgress(course.attendancePercentage);
+                            }
 
                             bottomSheetLayout.findViewById(R.id.progress_bar_loading).setVisibility(View.GONE);
                             bottomSheetLayout.findViewById(R.id.linear_layout_container).setVisibility(View.VISIBLE);

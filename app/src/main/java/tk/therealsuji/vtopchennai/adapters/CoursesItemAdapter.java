@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -187,7 +188,7 @@ public class CoursesItemAdapter extends RecyclerView.Adapter<CoursesItemAdapter.
                 return;
             }
 
-            attendanceText.setText(String.format(Locale.getDefault(), "%d%%", courseItem.attendancePercentage));
+            attendanceText.setText(new DecimalFormat("#'%'").format(courseItem.attendancePercentage));
             attendanceProgress.setProgress(courseItem.attendancePercentage);
 
             attendanceText.setOnClickListener(view -> {
