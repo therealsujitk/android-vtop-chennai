@@ -1203,23 +1203,32 @@ public class VTOPService extends Service {
                 sharedPreferences.edit().putInt("overallAttendance", (int) overallAttendance).apply();
 
                 AttendanceDao attendanceDao = appDatabase.attendanceDao();
-                attendanceDao
-                        .insert(attendance)
+                Observable<Object> deleteObservable = Observable.fromCompletable(attendanceDao.delete());
+                Observable<Object> insertObservable = Observable.fromCompletable(attendanceDao.insert(attendance));
+
+                Observable
+                        .concat(deleteObservable, insertObservable)
                         .subscribeOn(Schedulers.single())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(new CompletableObserver() {
+                        .subscribe(new Observer<Object>() {
                             @Override
                             public void onSubscribe(@NonNull Disposable d) {
+
                             }
 
                             @Override
-                            public void onComplete() {
-                                downloadMarks();
+                            public void onNext(@NonNull Object o) {
+
                             }
 
                             @Override
                             public void onError(@NonNull Throwable e) {
                                 error(602, e.getLocalizedMessage());
+                            }
+
+                            @Override
+                            public void onComplete() {
+                                downloadMarks();
                             }
                         });
             } catch (Exception e) {
