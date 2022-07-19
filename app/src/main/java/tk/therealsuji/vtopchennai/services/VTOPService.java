@@ -1519,7 +1519,10 @@ public class VTOPService extends Service {
                     JSONObject gradesObject = gradesArray.getJSONObject(i);
 
                     String courseCode = this.getStringValue(gradesObject, "course_code");
-                    Objects.requireNonNull(this.cumulativeMarks.get(courseCode)).grade = gradesObject.getString("grade");
+
+                    if (this.cumulativeMarks.containsKey(courseCode)) {
+                        Objects.requireNonNull(this.cumulativeMarks.get(courseCode)).grade = gradesObject.getString("grade");
+                    }
                 }
 
                 this.sharedPreferences.edit().putString("gpa", response.getString("gpa")).apply();
