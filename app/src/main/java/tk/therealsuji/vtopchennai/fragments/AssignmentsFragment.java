@@ -320,12 +320,13 @@ public class AssignmentsFragment extends Fragment implements SwipeRefreshLayout.
                             assignmentGroups.setAdapter(new EmptyStateAdapter(EmptyStateAdapter.TYPE_NO_ASSIGNMENTS));
                         } else {
                             displayAssignments(assignments);
-                            AppDatabase.getInstance(requireContext().getApplicationContext())
-                                    .assignmentsDao()
-                                    .insert(assignments)
-                                    .subscribeOn(Schedulers.io())
-                                    .subscribe();
                         }
+
+                        AppDatabase.getInstance(requireContext().getApplicationContext())
+                                .assignmentsDao()
+                                .insert(assignments)
+                                .subscribeOn(Schedulers.io())
+                                .subscribe();
 
                         setLoading(false);
                     }
@@ -459,7 +460,9 @@ public class AssignmentsFragment extends Fragment implements SwipeRefreshLayout.
 
                         @Override
                         public void onSuccess(@NonNull List<Assignment> assignments) {
-                            if (assignments.size() != 0) {
+                            if (assignments.size() == 0) {
+                                assignmentGroups.setAdapter(new EmptyStateAdapter(EmptyStateAdapter.TYPE_FETCHING_ASSIGNMENTS));
+                            } else {
                                 displayAssignments(assignments);
                             }
 
