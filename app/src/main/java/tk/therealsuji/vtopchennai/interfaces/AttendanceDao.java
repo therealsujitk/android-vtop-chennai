@@ -2,6 +2,7 @@ package tk.therealsuji.vtopchennai.interfaces;
 
 import androidx.room.Dao;
 import androidx.room.Insert;
+import androidx.room.Query;
 
 import java.util.List;
 
@@ -12,4 +13,7 @@ import tk.therealsuji.vtopchennai.models.Attendance;
 public interface AttendanceDao {
     @Insert
     Completable insert(List<Attendance> attendance);
+
+    @Query("DELETE FROM assignments")
+    Completable delete();
 }
