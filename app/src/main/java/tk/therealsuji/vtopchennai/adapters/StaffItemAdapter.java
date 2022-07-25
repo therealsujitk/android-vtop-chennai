@@ -80,6 +80,18 @@ public class StaffItemAdapter extends RecyclerView.Adapter<StaffItemAdapter.View
                     intent.setData(Uri.parse("tel:" + staffItem.value));
                     view.getContext().startActivity(intent);
                 });
+                
+                 this.staffItem.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View view) {
+                        ClipboardManager clipboard = (ClipboardManager)
+                                view.getContext().getSystemService(Context.CLIPBOARD_SERVICE);
+                        ClipData clip = ClipData.newPlainText("Phone no.", staffItem.value.toString());
+                        clipboard.setPrimaryClip(clip);
+                        Toast.makeText(view.getContext(),"Phone number copied to clipboard",Toast.LENGTH_SHORT).show();
+                        return true;
+                    }
+                });
             } else if (staffItem.key.toLowerCase().contains("mail")) {
                 this.staffItem.setClickable(true);
                 this.staffItem.setFocusable(true);
@@ -91,6 +103,18 @@ public class StaffItemAdapter extends RecyclerView.Adapter<StaffItemAdapter.View
                     Intent intent = new Intent(Intent.ACTION_SENDTO);
                     intent.setData(Uri.parse("mailto:" + staffItem.value));
                     view.getContext().startActivity(intent);
+                });
+                
+                this.staffItem.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View view) {
+                        ClipboardManager clipboard = (ClipboardManager)
+                                view.getContext().getSystemService(Context.CLIPBOARD_SERVICE);
+                        ClipData clip = ClipData.newPlainText("Email", staffItem.value.toString());
+                        clipboard.setPrimaryClip(clip);
+                        Toast.makeText(view.getContext(),"Email id copied to clipboard",Toast.LENGTH_SHORT).show();
+                        return true;
+                    }
                 });
             }
         }
