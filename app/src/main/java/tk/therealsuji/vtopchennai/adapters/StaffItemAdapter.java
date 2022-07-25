@@ -1,5 +1,8 @@
 package tk.therealsuji.vtopchennai.adapters;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.view.LayoutInflater;
@@ -8,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
@@ -80,17 +84,13 @@ public class StaffItemAdapter extends RecyclerView.Adapter<StaffItemAdapter.View
                     intent.setData(Uri.parse("tel:" + staffItem.value));
                     view.getContext().startActivity(intent);
                 });
-                
-                 this.staffItem.setOnLongClickListener(new View.OnLongClickListener() {
-                    @Override
-                    public boolean onLongClick(View view) {
-                        ClipboardManager clipboard = (ClipboardManager)
-                                view.getContext().getSystemService(Context.CLIPBOARD_SERVICE);
-                        ClipData clip = ClipData.newPlainText("Phone no.", staffItem.value.toString());
-                        clipboard.setPrimaryClip(clip);
-                        Toast.makeText(view.getContext(),"Phone number copied to clipboard",Toast.LENGTH_SHORT).show();
-                        return true;
-                    }
+
+                this.staffItem.setOnLongClickListener(view -> {
+                    ClipboardManager clipboard = (ClipboardManager) view.getContext().getSystemService(Context.CLIPBOARD_SERVICE);
+                    ClipData clipData = ClipData.newPlainText("Mobile number", staffItem.value);
+                    clipboard.setPrimaryClip(clipData);
+                    Toast.makeText(view.getContext(), "Mobile number copied to clipboard", Toast.LENGTH_SHORT).show();
+                    return true;
                 });
             } else if (staffItem.key.toLowerCase().contains("mail")) {
                 this.staffItem.setClickable(true);
@@ -104,17 +104,13 @@ public class StaffItemAdapter extends RecyclerView.Adapter<StaffItemAdapter.View
                     intent.setData(Uri.parse("mailto:" + staffItem.value));
                     view.getContext().startActivity(intent);
                 });
-                
-                this.staffItem.setOnLongClickListener(new View.OnLongClickListener() {
-                    @Override
-                    public boolean onLongClick(View view) {
-                        ClipboardManager clipboard = (ClipboardManager)
-                                view.getContext().getSystemService(Context.CLIPBOARD_SERVICE);
-                        ClipData clip = ClipData.newPlainText("Email", staffItem.value.toString());
-                        clipboard.setPrimaryClip(clip);
-                        Toast.makeText(view.getContext(),"Email id copied to clipboard",Toast.LENGTH_SHORT).show();
-                        return true;
-                    }
+
+                this.staffItem.setOnLongClickListener(view -> {
+                    ClipboardManager clipboard = (ClipboardManager) view.getContext().getSystemService(Context.CLIPBOARD_SERVICE);
+                    ClipData clipData = ClipData.newPlainText("Email", staffItem.value);
+                    clipboard.setPrimaryClip(clipData);
+                    Toast.makeText(view.getContext(), "Email copied to clipboard", Toast.LENGTH_SHORT).show();
+                    return true;
                 });
             }
         }
