@@ -1,5 +1,9 @@
 package tk.therealsuji.vtopchennai.fragments;
 
+import static tk.therealsuji.vtopchennai.helpers.SettingsRepository.THEME_DAY;
+import static tk.therealsuji.vtopchennai.helpers.SettingsRepository.THEME_SYSTEM_DAY;
+import static tk.therealsuji.vtopchennai.helpers.SettingsRepository.getTheme;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -8,6 +12,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
@@ -23,11 +29,19 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
+import java.util.List;
+import io.reactivex.rxjava3.annotations.NonNull;
+import io.reactivex.rxjava3.core.SingleObserver;
+import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 import tk.therealsuji.vtopchennai.R;
 import tk.therealsuji.vtopchennai.activities.LoginActivity;
 import tk.therealsuji.vtopchennai.adapters.AnnouncementItemAdapter;
 import tk.therealsuji.vtopchennai.adapters.ProfileGroupAdapter;
+import tk.therealsuji.vtopchennai.helpers.AppDatabase;
 import tk.therealsuji.vtopchennai.helpers.SettingsRepository;
+import tk.therealsuji.vtopchennai.interfaces.TimetableDao;
+import tk.therealsuji.vtopchennai.models.Timetable;
 
 public class ProfileFragment extends Fragment {
     /*
@@ -89,6 +103,7 @@ public class ProfileFragment extends Fragment {
     /*
         Application Related Profile Items
      */
+    @SuppressLint("UseCompatLoadingForDrawables")
     private final ItemData[] applicationProfileItems = {
             new ItemData(
                     R.drawable.ic_appearance,
@@ -146,6 +161,61 @@ public class ProfileFragment extends Fragment {
                     },
                     null
             ),
+
+            new ItemData(
+                    android.R.drawable.ic_lock_idle_alarm,
+                    R.string.notification_interval,
+                    context -> {
+
+                        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context);
+                        builder.setTitle("Set Notification Timing");
+                        View viewInflated = LayoutInflater.from(getContext()).inflate(R.layout.frame_notification_interval, (ViewGroup) getView(), false);
+                        final EditText input = viewInflated.findViewById(R.id.input);
+                        ImageView image=viewInflated.findViewById(R.id.image_info);
+                        SharedPreferences sharedPreferences=SettingsRepository.getSharedPreferences(context);
+                        if (getTheme(getContext())==THEME_DAY || getTheme(getContext())==THEME_SYSTEM_DAY) image.setImageDrawable(context.getDrawable(R.drawable.ic_info_dark));
+                        else image.setImageDrawable(context.getDrawable(R.drawable.ic_info_light));
+
+                        input.setText(String.valueOf(sharedPreferences.getInt("notification_interval",30)));
+                        builder.setView(viewInflated);
+
+                        builder.setPositiveButton(android.R.string.ok, (dialog, which) -> {
+                            if (Integer.parseInt(input.getText().toString())>=5 && Integer.parseInt(input.getText().toString())<=60){
+                                sharedPreferences.edit().putInt("notification_interval",Integer.parseInt(input.getText().toString())).apply();
+                                SettingsRepository.clearTimetableNotifications(context);
+                                AppDatabase appDatabase = AppDatabase.getInstance(context);
+                                TimetableDao timetableDao = appDatabase.timetableDao();
+                                timetableDao.getTimetable().subscribeOn(Schedulers.single())
+                                        .subscribe(new SingleObserver<List<Timetable>>() {
+                                            @Override
+                                            public void onSubscribe(@NonNull Disposable d) {
+                                            }
+
+                                            @Override
+                                            public void onSuccess(@NonNull List<Timetable> timetable) {
+                                                for (int i = 0; i < timetable.size(); ++i) {
+                                                    try {
+                                                        SettingsRepository.setTimetableNotifications(context, timetable.get(i));
+                                                    } catch (Exception ignored) {
+                                                    }
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onError(@NonNull Throwable e) {
+                                            }
+                                        });
+                            }
+                            else{
+                                Toast.makeText(context, "Invalid input", Toast.LENGTH_SHORT).show();
+                            }
+                            dialog.dismiss();
+                        });
+                        builder.setNegativeButton(android.R.string.cancel, (dialog, which) -> dialog.cancel());
+                        builder.show();
+                    },
+                    null
+            ),
             new ItemData(
                     R.drawable.ic_privacy,
                     R.string.privacy,
@@ -166,7 +236,8 @@ public class ProfileFragment extends Fragment {
                         bottomSheetLayout.findViewById(R.id.text_view_request_feature).setOnClickListener(view -> SettingsRepository.openBrowser(context, SettingsRepository.GITHUB_FEATURE_URL));
 
                         BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(context);
-                        bottomSheetDialog.setContentView(bottomSheetLayout);
+                        //Cast to BottomSheetDialog
+                        ((BottomSheetDialog)bottomSheetDialog).setContentView(bottomSheetLayout);
                         bottomSheetDialog.show();
                     },
                     null

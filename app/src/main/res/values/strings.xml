@@ -70,7 +70,8 @@
     <string name="receipts">Receipts</string>
     <string name="staff">Staff</string>
     <string name="sync_data">Sync Data</string>
-    <string name="notifications">Notifications</string>
+    <string name="notifications">System Notifications</string>
+    <string name="notification_interval">Set Notification Timing</string>
     <string name="share">Share App</string>
 
     <!-- Download Strings: Strings used while downloading data -->
@@ -151,4 +152,5 @@
     <string name="permission_granted">Permission Granted</string>
     <string name="permission_denied">Permission Denied</string>
     <string name="downloading_file">Downloading &lt;b>%s&lt;/b></string>
+    <string name="info_set_notification_time">Enter the time in minutes before the class you wish to receive the notification</string>
 </resources>

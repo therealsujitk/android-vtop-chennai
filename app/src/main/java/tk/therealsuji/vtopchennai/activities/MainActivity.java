@@ -3,6 +3,7 @@ package tk.therealsuji.vtopchennai.activities;
 import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Build;
@@ -210,6 +211,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        addNotificationInterval();
 
         WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
 
@@ -416,5 +418,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         compositeDisposable.dispose();
+    }
+
+    private void addNotificationInterval(){
+        SharedPreferences sharedPreferences=SettingsRepository.getSharedPreferences(this);
+        if (!sharedPreferences.contains("notification_interval")){
+            sharedPreferences.edit().putInt("notification_interval",30).apply();
+        }
     }
 }

@@ -3,6 +3,7 @@ package tk.therealsuji.vtopchennai.receivers;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -24,7 +25,8 @@ public class NotificationReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         Calendar calendar = Calendar.getInstance();
         Calendar calendarFuture = Calendar.getInstance();
-        calendarFuture.add(Calendar.MINUTE, 30);
+        SharedPreferences sharedPreferences=SettingsRepository.getSharedPreferences(context.getApplicationContext());
+        calendarFuture.add(Calendar.MINUTE , sharedPreferences.getInt("notification_interval",30));
 
         SimpleDateFormat hour24 = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
 
