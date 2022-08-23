@@ -62,6 +62,7 @@
             android:resource="@array/preloaded_fonts" />
 
         <receiver android:name=".receivers.NotificationReceiver" />
+        <receiver android:name=".receivers.AlarmReceiver" />
 
         <receiver
             android:name=".receivers.BootReceiver"

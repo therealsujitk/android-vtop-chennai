@@ -241,17 +241,12 @@ public class SettingsRepository {
         Intent alarmIntent = new Intent(context, AlarmReceiver.class);
 
         int alarmCount = sharedPreferences.getInt("alarmCount", 0);
-        //int count = sharedPreferences.getInt("count",0);
         while (alarmCount >= 0) {
             PendingIntent pendingIntent = PendingIntent.getBroadcast(context, --alarmCount, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
             alarmManager.cancel(pendingIntent);
             PendingIntent pendingAlarmIntent = PendingIntent.getBroadcast(context, --alarmCount, alarmIntent, PendingIntent.FLAG_IMMUTABLE);
             alarmManager.cancel(pendingAlarmIntent);
         }
-//        while (count >= 0){
-//
-//        }
-        //sharedPreferences.edit().remove("count").apply();
         sharedPreferences.edit().remove("alarmCount").apply();
     }
 
@@ -281,8 +276,6 @@ public class SettingsRepository {
         Date today = dateFormat.parse(dateFormat.format(calendar.getTime()));
         Date now = hour24.parse(hour24.format(calendar.getTime()));
 
-        Calendar check=Calendar.getInstance();
-        check.setTime(today);
         for (int i = 0; i < slots.length; ++i) {
             if (slots[i] == null) {
                 continue;
@@ -292,12 +285,13 @@ public class SettingsRepository {
             Calendar alarm = Calendar.getInstance();
             alarm.setTime(today);
             Calendar alarmFinish = Calendar.getInstance();
-            alarm.setTime(today);
+            alarmFinish.setTime(today);
 
             if (i == day) {
                 Date startTime = hour24.parse(timetable.startTime);
                 Date finishTime = hour24.parse(timetable.endTime);
                 assert startTime != null;
+                assert finishTime != null;
 
                 if (startTime.before(now) && finishTime.before(now)) {
                     alarm.add(Calendar.DATE, 7);
@@ -317,20 +311,17 @@ public class SettingsRepository {
             alarmFinish.set(Calendar.MINUTE, Integer.parseInt(timetable.endTime.split(":")[1]));
 
             PendingIntent pendingIntent = PendingIntent.getBroadcast(context, alarmCount++, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
-            PendingIntent pendingIntentAlarm = PendingIntent.getBroadcast(context, alarmCount++, alarmIntent, PendingIntent.FLAG_IMMUTABLE);
             alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, alarm.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
-            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, alarm.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntentAlarm);
-            if (!check.equals(alarm)) {
-                pendingIntentAlarm = PendingIntent.getBroadcast(context, alarmCount++, alarmIntent, PendingIntent.FLAG_IMMUTABLE);
-                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, alarmFinish.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntentAlarm);
-            }
-            else {
-                Log.w("Setting Repository",check+" "+alarm);
-            }
+            alarmIntent.setAction(AlarmReceiver.ACTION_RINGER_SILENT);
+            PendingIntent pendingIntentAlarm = PendingIntent.getBroadcast(context, alarmCount++, alarmIntent, PendingIntent.FLAG_IMMUTABLE);
+            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, alarm.getTimeInMillis(), AlarmManager.INTERVAL_DAY*7, pendingIntentAlarm);
+            alarmIntent.setAction(AlarmReceiver.ACTION_RINGER_NORMAL);
+            pendingIntentAlarm = PendingIntent.getBroadcast(context, alarmCount++, alarmIntent, PendingIntent.FLAG_IMMUTABLE);
+            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, alarmFinish.getTimeInMillis() , AlarmManager.INTERVAL_DAY * 7, pendingIntentAlarm);
+            Log.w("Setting Repository",new Date(alarm.getTimeInMillis())+"\n"+new Date(alarmFinish.getTimeInMillis()));
             alarm.add(Calendar.MINUTE, -sharedPreferences.getInt("notification_interval",30));
             pendingIntent = PendingIntent.getBroadcast(context, alarmCount++, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
             alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, alarm.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
-            check=alarmFinish;
         }
 
         sharedPreferences.edit().putInt("alarmCount", alarmCount).apply();
