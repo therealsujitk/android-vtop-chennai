@@ -65,6 +65,7 @@ public class NotificationHelper extends ContextWrapper {
                     NotificationManager.IMPORTANCE_HIGH
             );
             ongoing.enableVibration(true);
+            ongoing.setBypassDnd(true);
             ongoing.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
 
             getManager().createNotificationChannel(ongoing);
