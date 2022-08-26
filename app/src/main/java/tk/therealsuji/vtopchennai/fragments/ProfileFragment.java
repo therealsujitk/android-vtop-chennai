@@ -1,14 +1,17 @@
 package tk.therealsuji.vtopchennai.fragments;
 
+import static android.content.Context.NOTIFICATION_SERVICE;
 import static tk.therealsuji.vtopchennai.helpers.SettingsRepository.THEME_DAY;
 import static tk.therealsuji.vtopchennai.helpers.SettingsRepository.THEME_SYSTEM_DAY;
 import static tk.therealsuji.vtopchennai.helpers.SettingsRepository.getTheme;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +21,8 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.DrawableRes;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AlertDialog;
@@ -44,6 +49,7 @@ import tk.therealsuji.vtopchennai.interfaces.TimetableDao;
 import tk.therealsuji.vtopchennai.models.Timetable;
 
 public class ProfileFragment extends Fragment {
+    ActivityResultLauncher<Intent> forActivityResult;
     /*
         User Related Profile Items
      */
@@ -161,7 +167,6 @@ public class ProfileFragment extends Fragment {
                     },
                     null
             ),
-
             new ItemData(
                     android.R.drawable.ic_lock_idle_alarm,
                     R.string.notification_interval,
@@ -213,6 +218,62 @@ public class ProfileFragment extends Fragment {
                         });
                         builder.setNegativeButton(android.R.string.cancel, (dialog, which) -> dialog.cancel());
                         builder.show();
+                    },
+                    null
+            ),
+            new ItemData(
+                    R.drawable.ic_dnd,
+                    R.string.dnd,
+                    context -> {
+                        String[] dnd_mode = {
+                                context.getString(R.string.dnd_off),
+                                context.getString(R.string.dnd_vibrate),
+                                context.getString(R.string.dnd_silent)
+                        };
+
+                        SharedPreferences sharedPreferences = SettingsRepository.getSharedPreferences(context);
+
+                        int checkedItem = 0;
+                        String dnd = sharedPreferences.getString("dnd", "off");
+
+                        if (dnd.equals("vibrate")) {
+                            checkedItem = 1;
+                        }
+                        else if (dnd.equals("silent")){
+                            checkedItem = 2;
+                        }
+                        NotificationManager manager=(NotificationManager)context.getSystemService(NOTIFICATION_SERVICE);
+                        new MaterialAlertDialogBuilder(context)
+                                .setNegativeButton(R.string.cancel, (dialogInterface, i) -> dialogInterface.cancel())
+                                .setSingleChoiceItems(dnd_mode, checkedItem, (dialogInterface, i) -> {
+                                    if (i == 0) {
+                                        sharedPreferences.edit().putString("dnd", "off").apply();
+                                        refreshTimetable(context);
+                                    } else if (i == 1) {
+                                        sharedPreferences.edit().putString("dnd", "vibrate").apply();
+                                        if (!manager.isNotificationPolicyAccessGranted()) {
+                                            //startActivity(new Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS));
+                                            Intent intent = new Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS);
+                                            forActivityResult.launch(intent);
+                                        }
+                                        else{
+                                            refreshTimetable(context);
+                                        }
+                                    } else if (i == 2) {
+                                        sharedPreferences.edit().putString("dnd", "silent").apply();
+                                        if (!manager.isNotificationPolicyAccessGranted()) {
+                                            //startActivity(new Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS));
+                                            Intent intent = new Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS);
+                                            forActivityResult.launch(intent);
+                                        }
+                                        else{
+                                            refreshTimetable(context);
+                                        }
+                                    }
+                                    dialogInterface.dismiss();
+                                })
+                                .setTitle(R.string.dnd)
+                                .show();
                     },
                     null
             ),
@@ -366,10 +427,53 @@ public class ProfileFragment extends Fragment {
         RecyclerView announcements = profileFragment.findViewById(R.id.recycler_view_announcements);
         RecyclerView profileGroups = profileFragment.findViewById(R.id.recycler_view_profile_groups);
 
+        forActivityResult = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    SharedPreferences sharedPreferences = SettingsRepository.getSharedPreferences(getContext());
+                    NotificationManager manager=(NotificationManager)getContext().getSystemService(NOTIFICATION_SERVICE);
+                    if (!manager.isNotificationPolicyAccessGranted()) {
+                        sharedPreferences.edit().putString("dnd", "off").apply();
+                    }
+                    else {
+                        refreshTimetable(getContext());
+                    }
+                });
+
         announcements.setAdapter(new AnnouncementItemAdapter(announcementItems));
         profileGroups.setAdapter(new ProfileGroupAdapter(this.profileGroups, this.profileItems));
 
         return profileFragment;
+    }
+
+    public void refreshTimetable(Context context){
+        SettingsRepository.clearTimetableNotifications(context);
+
+        AppDatabase appDatabase = AppDatabase.getInstance(context);
+        TimetableDao timetableDao = appDatabase.timetableDao();
+
+        timetableDao
+                .getTimetable()
+                .subscribeOn(Schedulers.single())
+                .subscribe(new SingleObserver<List<Timetable>>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+                    }
+
+                    @Override
+                    public void onSuccess(@NonNull List<Timetable> timetable) {
+                        for (int i = 0; i < timetable.size(); ++i) {
+                            try {
+                                SettingsRepository.setTimetableNotifications(context, timetable.get(i));
+                            } catch (Exception ignored) {
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                    }
+                });
     }
 
     public static class ItemData {

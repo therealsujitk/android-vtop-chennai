@@ -314,14 +314,24 @@ public class SettingsRepository {
             alarmFinish.set(Calendar.HOUR_OF_DAY, Integer.parseInt(timetable.endTime.split(":")[0]));
             alarmFinish.set(Calendar.MINUTE, Integer.parseInt(timetable.endTime.split(":")[1]));
 
+            if (!sharedPreferences.getString("dnd", "off").equals("off")) {
+                PendingIntent pendingIntentAlarm;
+                if (sharedPreferences.getString("dnd","off").equals("silent")){
+                    alarmIntent.setAction(AlarmReceiver.ACTION_RINGER_SILENT);
+                    pendingIntentAlarm = PendingIntent.getBroadcast(context, alarmCount++, alarmIntent, PendingIntent.FLAG_IMMUTABLE);
+                    alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, alarm.getTimeInMillis(), AlarmManager.INTERVAL_DAY*7, pendingIntentAlarm);
+                }
+                else if (sharedPreferences.getString("dnd","off").equals("vibrate")){
+                    alarmIntent.setAction(AlarmReceiver.ACTION_RINGER_VIBRATE);
+                    pendingIntentAlarm = PendingIntent.getBroadcast(context, alarmCount++, alarmIntent, PendingIntent.FLAG_IMMUTABLE);
+                    alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, alarm.getTimeInMillis(), AlarmManager.INTERVAL_DAY*7, pendingIntentAlarm);
+                }
+                alarmIntent.setAction(AlarmReceiver.ACTION_RINGER_NORMAL);
+                pendingIntentAlarm = PendingIntent.getBroadcast(context, alarmCount++, alarmIntent, PendingIntent.FLAG_IMMUTABLE);
+                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, alarmFinish.getTimeInMillis() , AlarmManager.INTERVAL_DAY * 7, pendingIntentAlarm);
+            }
             PendingIntent pendingIntent = PendingIntent.getBroadcast(context, alarmCount++, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
             alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, alarm.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
-            alarmIntent.setAction(AlarmReceiver.ACTION_RINGER_SILENT);
-            PendingIntent pendingIntentAlarm = PendingIntent.getBroadcast(context, alarmCount++, alarmIntent, PendingIntent.FLAG_IMMUTABLE);
-            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, alarm.getTimeInMillis(), AlarmManager.INTERVAL_DAY*7, pendingIntentAlarm);
-            alarmIntent.setAction(AlarmReceiver.ACTION_RINGER_NORMAL);
-            pendingIntentAlarm = PendingIntent.getBroadcast(context, alarmCount++, alarmIntent, PendingIntent.FLAG_IMMUTABLE);
-            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, alarmFinish.getTimeInMillis() , AlarmManager.INTERVAL_DAY * 7, pendingIntentAlarm);
             alarm.add(Calendar.MINUTE, -sharedPreferences.getInt("notification_interval",30));
             pendingIntent = PendingIntent.getBroadcast(context, alarmCount++, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
             alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, alarm.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);

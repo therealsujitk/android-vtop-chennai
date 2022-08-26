@@ -1,6 +1,5 @@
 package tk.therealsuji.vtopchennai.activities;
 
-import android.app.NotificationManager;
 import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
@@ -9,7 +8,6 @@ import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.view.WindowManager;
 import android.widget.Toast;
 
@@ -225,11 +223,6 @@ public class MainActivity extends AppCompatActivity {
         customInsets.putInt("systemWindowInsetRight", 0);
         customInsets.putInt("systemWindowInsetBottom", 0);
         customInsets.putInt("bottomNavigationHeight", 0);
-
-        NotificationManager manager=(NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        if (!manager.isNotificationPolicyAccessGranted()) {
-            startActivity(new Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS));
-        }
 
         findViewById(R.id.frame_layout_fragment_container)
                 .setOnApplyWindowInsetsListener((view, windowInsets) -> {

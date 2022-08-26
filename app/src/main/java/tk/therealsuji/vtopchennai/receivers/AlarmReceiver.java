@@ -11,6 +11,7 @@ public class AlarmReceiver extends BroadcastReceiver {
     private static final String TAG="Alarm Receiver";
     public static final String ACTION_RINGER_NORMAL="normal";
     public static final String ACTION_RINGER_SILENT="silent";
+    public static final String ACTION_RINGER_VIBRATE="vibrate";
 
 
     @Override
@@ -22,6 +23,10 @@ public class AlarmReceiver extends BroadcastReceiver {
         if (intent.getAction().equals(ACTION_RINGER_SILENT)) {
             ((AudioManager) context.getSystemService(Context.AUDIO_SERVICE))
                     .setRingerMode(AudioManager.RINGER_MODE_SILENT);
+        }
+        if (intent.getAction().equals(ACTION_RINGER_VIBRATE)) {
+            ((AudioManager) context.getSystemService(Context.AUDIO_SERVICE))
+                    .setRingerMode(AudioManager.RINGER_MODE_VIBRATE);
         }
     }
 }
