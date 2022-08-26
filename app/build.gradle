@@ -4,11 +4,11 @@ android {
     compileSdkVersion 32
 
     defaultConfig {
-        applicationId "tk.therealsuji.vtopchennai"
+        applicationId "com.ashish.vtopchennai"
         minSdkVersion 24
         targetSdkVersion 32
-        versionCode 23
-        versionName "4.0.2"
+        versionCode 24
+        versionName "4.2.2"
     }
 
     buildTypes {
@@ -17,7 +17,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-    namespace 'tk.therealsuji.vtopchennai'
+    namespace 'com.ashish.vtopchennai'
 }
 
 dependencies {

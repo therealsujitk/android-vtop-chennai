@@ -43,7 +43,7 @@
                     android:layout_height="wrap_content"
                     android:padding="10dp">
 
-                    <tk.therealsuji.vtopchennai.widgets.PerformanceCard
+                    <com.ashish.vtopchennai.widgets.PerformanceCard
                         android:id="@+id/performance_card_overall"
                         android:layout_width="140dp"
                         android:layout_height="match_parent"
@@ -51,7 +51,7 @@
                         android:layout_marginEnd="10dp"
                         app:title="@string/overall_course_score" />
 
-                    <tk.therealsuji.vtopchennai.widgets.PerformanceCard
+                    <com.ashish.vtopchennai.widgets.PerformanceCard
                         android:id="@+id/performance_card_theory"
                         android:layout_width="140dp"
                         android:layout_height="match_parent"
@@ -59,7 +59,7 @@
                         android:layout_marginEnd="10dp"
                         app:title="@string/theory_weightage" />
 
-                    <tk.therealsuji.vtopchennai.widgets.PerformanceCard
+                    <com.ashish.vtopchennai.widgets.PerformanceCard
                         android:id="@+id/performance_card_lab"
                         android:layout_width="140dp"
                         android:layout_height="match_parent"
@@ -67,7 +67,7 @@
                         android:layout_marginEnd="10dp"
                         app:title="@string/lab_weightage" />
 
-                    <tk.therealsuji.vtopchennai.widgets.PerformanceCard
+                    <com.ashish.vtopchennai.widgets.PerformanceCard
                         android:id="@+id/performance_card_project"
                         android:layout_width="140dp"
                         android:layout_height="match_parent"

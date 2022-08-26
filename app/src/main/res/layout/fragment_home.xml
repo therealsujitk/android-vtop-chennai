@@ -79,21 +79,21 @@
                     android:paddingStart="10dp"
                     android:paddingEnd="10dp">
 
-                    <tk.therealsuji.vtopchennai.widgets.InfoCard
+                    <com.ashish.vtopchennai.widgets.InfoCard
                         android:id="@+id/info_card_attendance"
                         android:layout_width="150dp"
                         android:layout_height="150dp"
                         android:layout_margin="10dp"
                         app:key="@string/overall_attendance" />
 
-                    <tk.therealsuji.vtopchennai.widgets.InfoCard
+                    <com.ashish.vtopchennai.widgets.InfoCard
                         android:id="@+id/info_card_credits"
                         android:layout_width="150dp"
                         android:layout_height="150dp"
                         android:layout_margin="10dp"
                         app:key="@string/total_credits" />
 
-                    <tk.therealsuji.vtopchennai.widgets.InfoCard
+                    <com.ashish.vtopchennai.widgets.InfoCard
                         android:id="@+id/info_card_cgpa"
                         android:layout_width="150dp"
                         android:layout_height="150dp"
