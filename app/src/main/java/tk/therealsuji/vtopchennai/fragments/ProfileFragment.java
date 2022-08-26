@@ -252,7 +252,6 @@ public class ProfileFragment extends Fragment {
                                     } else if (i == 1) {
                                         sharedPreferences.edit().putString("dnd", "vibrate").apply();
                                         if (!manager.isNotificationPolicyAccessGranted()) {
-                                            //startActivity(new Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS));
                                             Intent intent = new Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS);
                                             forActivityResult.launch(intent);
                                         }
@@ -262,7 +261,6 @@ public class ProfileFragment extends Fragment {
                                     } else if (i == 2) {
                                         sharedPreferences.edit().putString("dnd", "silent").apply();
                                         if (!manager.isNotificationPolicyAccessGranted()) {
-                                            //startActivity(new Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS));
                                             Intent intent = new Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS);
                                             forActivityResult.launch(intent);
                                         }
