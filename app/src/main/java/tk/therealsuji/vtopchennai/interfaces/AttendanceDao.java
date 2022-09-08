@@ -14,6 +14,6 @@ public interface AttendanceDao {
     @Insert
     Completable insert(List<Attendance> attendance);
 
-    @Query("DELETE FROM assignments")
+    @Query("DELETE FROM attendance")
     Completable delete();
 }
