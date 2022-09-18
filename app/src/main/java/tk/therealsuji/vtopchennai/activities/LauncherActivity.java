@@ -27,13 +27,19 @@ public class LauncherActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
 
-        if (SettingsRepository.isSignedIn(this.getApplicationContext())) {
-            startActivity(new Intent(LauncherActivity.this, MainActivity.class));
-        } else {
-            SettingsRepository.signOut(this.getApplicationContext());   // Delete old data
-            startActivity(new Intent(LauncherActivity.this, LoginActivity.class));
+        Intent intent = new Intent();
+        if (this.getIntent().getExtras() != null) {
+            intent.putExtras(this.getIntent().getExtras());
         }
 
+        if (SettingsRepository.isSignedIn(this.getApplicationContext())) {
+            intent.setClass(LauncherActivity.this, MainActivity.class);
+        } else {
+            SettingsRepository.signOut(this.getApplicationContext());   // Delete old data
+            intent.setClass(LauncherActivity.this, LoginActivity.class);
+        }
+
+        startActivity(intent);
         finish();
     }
 }

@@ -27,10 +27,10 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Serializable;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.concurrent.Callable;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.annotations.NonNull;
@@ -302,9 +302,15 @@ public class MainActivity extends AppCompatActivity {
         });
 
         int selectedItem = R.id.item_home;
+        Serializable launchFragment = this.getIntent().getSerializableExtra("launchFragment");
 
         if (savedInstanceState != null) {
             selectedItem = savedInstanceState.getInt("selectedItem");
+        } else if (launchFragment != null) {
+            // If the application is launched from notifications
+            if (AssignmentsFragment.class.equals(launchFragment)) {
+                selectedItem = R.id.item_assignments;
+            }
         }
 
         this.bottomNavigationView.setSelectedItemId(selectedItem);
@@ -325,17 +331,17 @@ public class MainActivity extends AppCompatActivity {
             Check for updates
          */
         Context context = this;
-        Observable.fromCallable((Callable<Integer>) () -> {
-            try {
-                StringBuilder sb = new StringBuilder();
-                URL url = new URL(SettingsRepository.APP_ABOUT_URL + "?v=" + BuildConfig.VERSION_NAME);
-                HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
-                InputStream in = httpURLConnection.getInputStream();
-                InputStreamReader reader = new InputStreamReader(in);
-                int data = reader.read();
+        Observable.fromCallable(() -> {
+                    try {
+                        StringBuilder sb = new StringBuilder();
+                        URL url = new URL(SettingsRepository.APP_ABOUT_URL + "?v=" + BuildConfig.VERSION_NAME);
+                        HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+                        InputStream in = httpURLConnection.getInputStream();
+                        InputStreamReader reader = new InputStreamReader(in);
+                        int data = reader.read();
 
-                while (data != -1) {
-                    char current = (char) data;
+                        while (data != -1) {
+                            char current = (char) data;
                     sb.append(current);
                     data = reader.read();
                 }

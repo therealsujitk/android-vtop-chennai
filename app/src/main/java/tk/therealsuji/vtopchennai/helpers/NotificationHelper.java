@@ -20,7 +20,8 @@ import java.text.ParseException;
 import java.util.Calendar;
 
 import tk.therealsuji.vtopchennai.R;
-import tk.therealsuji.vtopchennai.activities.MainActivity;
+import tk.therealsuji.vtopchennai.activities.LauncherActivity;
+import tk.therealsuji.vtopchennai.fragments.HomeFragment;
 import tk.therealsuji.vtopchennai.models.Timetable;
 
 public class NotificationHelper extends ContextWrapper {
@@ -97,7 +98,8 @@ public class NotificationHelper extends ContextWrapper {
         PendingIntent pendingIntent = PendingIntent.getActivity(
                 this,
                 0,
-                new Intent(this, MainActivity.class),
+                new Intent(this, LauncherActivity.class)
+                        .putExtra("launchFragment", HomeFragment.class),
                 PendingIntent.FLAG_IMMUTABLE
         );
         String title = "Upcoming: " +
@@ -138,7 +140,8 @@ public class NotificationHelper extends ContextWrapper {
         PendingIntent pendingIntent = PendingIntent.getActivity(
                 this,
                 0,
-                new Intent(this, MainActivity.class),
+                new Intent(this, LauncherActivity.class)
+                        .putExtra("launchFragment", HomeFragment.class),
                 PendingIntent.FLAG_IMMUTABLE
         );
         String title = "Ongoing: " +
