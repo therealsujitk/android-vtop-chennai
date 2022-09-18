@@ -64,6 +64,7 @@ public abstract class AppDatabase extends RoomDatabase {
 
         instance = null;
         context.deleteDatabase("vit_student");
+        context.deleteDatabase("vtop"); // Delete the deprecated database (used till < v4.0)
     }
 
     public abstract AssignmentsDao assignmentsDao();
