@@ -106,7 +106,9 @@ public class TimetableItemAdapter extends RecyclerView.Adapter<TimetableItemAdap
             courseCode.setText(timetableItem.courseCode);
             setTimings(timetableItem.startTime, timetableItem.endTime, status);
 
-            if (timetableItem.attendancePercentage != null && timetableItem.attendancePercentage < 75) {
+            float cgpa = SettingsRepository.getCGPA(this.timetableItem.getContext());
+
+            if (cgpa < 9 && timetableItem.attendancePercentage != null && timetableItem.attendancePercentage < 75) {
                 ImageView endDrawable = this.timetableItem.findViewById(R.id.image_view_failed_attendance);
                 endDrawable.setImageDrawable(ContextCompat.getDrawable(this.timetableItem.getContext(), R.drawable.ic_feedback));
                 DrawableCompat.setTint(
@@ -144,6 +146,7 @@ public class TimetableItemAdapter extends RecyclerView.Adapter<TimetableItemAdap
                             TextView courseCode = bottomSheetLayout.findViewById(R.id.text_view_course_code);
                             TextView faculty = bottomSheetLayout.findViewById(R.id.text_view_faculty);
                             TextView venue = bottomSheetLayout.findViewById(R.id.text_view_venue);
+                            TextView attendanceExcessText = bottomSheetLayout.findViewById(R.id.text_view_attendance_excess);
                             TextView attendanceText = bottomSheetLayout.findViewById(R.id.text_view_attendance);
 
                             Chip slot = bottomSheetLayout.findViewById(R.id.chip_slot);
@@ -169,6 +172,25 @@ public class TimetableItemAdapter extends RecyclerView.Adapter<TimetableItemAdap
                             } else {
                                 attendanceText.setText(new DecimalFormat("#'%'").format(course.attendancePercentage));
                                 attendanceProgress.setProgress(course.attendancePercentage);
+
+                                if (SettingsRepository.getCGPA(timetableItem.getContext()) < 9) {
+                                    int attendanceExcess = 4 * course.attendanceAttended - 3 * course.attendanceTotal;
+
+                                    if (course.attendancePercentage < 75) {
+                                        attendanceProgress.setSecondaryProgress(75);
+                                    } else {
+                                        attendanceExcess /= 3;
+                                    }
+
+                                    attendanceExcessText.setVisibility(View.VISIBLE);
+                                    attendanceExcessText.setText(new DecimalFormat("+#;-#").format(attendanceExcess));
+
+                                    if (attendanceExcess < 0) {
+                                        attendanceExcessText.setTextColor(MaterialColors.getColor(attendanceExcessText, R.attr.colorError));
+                                    } else if (attendanceExcess == 0) {
+                                        attendanceExcessText.setTextColor(MaterialColors.getColor(attendanceExcessText, R.attr.colorSecondary));
+                                    }
+                                }
                             }
 
                             bottomSheetLayout.findViewById(R.id.progress_bar_loading).setVisibility(View.GONE);

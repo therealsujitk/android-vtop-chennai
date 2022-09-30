@@ -25,7 +25,7 @@ public interface CoursesDao {
     @Query("SELECT DISTINCT code FROM courses")
     Single<List<String>> getCourseCodes();
 
-    @Query("SELECT title AS courseTitle, code AS courseCode, type AS courseType, faculty, slot, venue, percentage AS attendancePercentage " +
+    @Query("SELECT title AS courseTitle, code AS courseCode, type AS courseType, faculty, slot, venue, attended AS attendanceAttended, total AS attendanceTotal, percentage AS attendancePercentage " +
             "FROM slots, courses, attendance WHERE slots.id = :slotId AND courses.id = slots.course_id AND attendance.course_id = courses.id")
     Single<Course.AllData> getCourse(int slotId);
 

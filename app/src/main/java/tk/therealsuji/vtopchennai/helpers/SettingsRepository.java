@@ -86,6 +86,10 @@ public class SettingsRepository {
         }
     }
 
+    public static float getCGPA(Context context) {
+        return getSharedPreferences(context).getFloat("cgpa", 0);
+    }
+
     public static boolean isRefreshRequired(Context context) {
         Calendar c = Calendar.getInstance();
         c.add(Calendar.DATE, -7);
