@@ -23,14 +23,14 @@ android {
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
 
-    implementation 'androidx.appcompat:appcompat:1.4.2'
+    implementation 'androidx.appcompat:appcompat:1.5.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation 'androidx.room:room-runtime:2.4.2'
-    implementation 'androidx.room:room-rxjava3:2.4.2'
+    implementation 'androidx.room:room-runtime:2.4.3'
+    implementation 'androidx.room:room-rxjava3:2.4.3'
     implementation 'androidx.security:security-crypto:1.1.0-alpha03'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
 
-    implementation 'com.google.android.material:material:1.7.0-alpha03'
+    implementation 'com.google.android.material:material:1.8.0-alpha01'
     implementation 'com.squareup.retrofit2:adapter-rxjava3:2.9.0'
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
 
@@ -40,5 +40,5 @@ dependencies {
 
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.8.1'
 
-    annotationProcessor 'androidx.room:room-compiler:2.4.2'
+    annotationProcessor 'androidx.room:room-compiler:2.4.3'
 }
