@@ -665,7 +665,7 @@ public class VTOPService extends Service {
                 "                }" +
                 "                var cells = tables[i].getElementsByTagName('td');" +
                 "                response.cgpa = parseFloat(cells[cgpaIndex].innerText) || 0;" +
-                "                response.total_credits = parseInt(cells[creditsIndex].innerText) || 0;" +
+                "                response.total_credits = parseFloat(cells[creditsIndex].innerText) || 0;" +
                 "                break;" +
                 "            }" +
                 "        }" +
@@ -676,7 +676,7 @@ public class VTOPService extends Service {
             try {
                 JSONObject response = new JSONObject(responseString);
                 this.sharedPreferences.edit().putFloat("cgpa", (float) response.getDouble("cgpa")).apply();
-                this.sharedPreferences.edit().putInt("totalCredits", response.getInt("total_credits")).apply();
+                this.sharedPreferences.edit().putFloat("totalCredits", (float) response.getDouble("total_credits")).apply();
 
                 this.downloadCourses();
             } catch (Exception e) {
