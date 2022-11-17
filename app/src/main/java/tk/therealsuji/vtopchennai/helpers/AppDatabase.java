@@ -40,8 +40,7 @@ import tk.therealsuji.vtopchennai.models.Timetable;
                 Staff.class,
                 Timetable.class
         },
-        version = 1,
-        exportSchema = false
+        version = 1
 )
 public abstract class AppDatabase extends RoomDatabase {
     public static AppDatabase instance;

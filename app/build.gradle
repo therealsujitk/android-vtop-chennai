@@ -5,6 +5,11 @@ android {
 
     defaultConfig {
         applicationId "tk.therealsuji.vtopchennai"
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments += ["room.schemaLocation": "$projectDir/schemas".toString()]
+            }
+        }
         minSdkVersion 24
         targetSdkVersion 32
         versionCode 24
