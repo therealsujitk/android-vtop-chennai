@@ -73,13 +73,20 @@ public class SettingsRepository {
 
     public static int getTheme(Context context) {
         String appearance = getSharedPreferences(context).getString("appearance", "system");
-        int currentNightMode = context.getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
 
         if (appearance.equals("dark")) {
             return THEME_NIGHT;
         } else if (appearance.equals("light")) {
             return THEME_DAY;
-        } else if (currentNightMode == Configuration.UI_MODE_NIGHT_YES) {
+        }
+
+        return getSystemTheme(context);
+    }
+
+    public static int getSystemTheme(Context context) {
+        int currentNightMode = context.getApplicationContext().getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
+
+        if (currentNightMode == Configuration.UI_MODE_NIGHT_YES) {
             return THEME_SYSTEM_NIGHT;
         } else {
             return THEME_SYSTEM_DAY;
