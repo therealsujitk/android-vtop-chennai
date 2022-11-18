@@ -67,6 +67,7 @@
     <string name="personal">Personal</string>
     <string name="application">Application</string>
     <string name="courses">Courses</string>
+    <string name="exam_schedule">Exam Schedule</string>
     <string name="receipts">Receipts</string>
     <string name="staff">Staff</string>
     <string name="sync_data">Sync Data</string>
@@ -146,7 +147,10 @@
     <string name="go_back">Go Back</string>
     <string name="submit">Submit</string>
     <string name="faculty">Faculty: &lt;b>%s&lt;/b></string>
+    <string name="slot">Slot: &lt;b>%s&lt;/b></string>
     <string name="venue">Venue: &lt;b>%s&lt;/b></string>
+    <string name="date">Date: &lt;b>%s&lt;/b></string>
+    <string name="timings">Timings: &lt;b>%s - %s&lt;/b></string>
     <string name="attendance">Attendance</string>
     <string name="na">NA</string>
     <string name="permission_granted">Permission Granted</string>
