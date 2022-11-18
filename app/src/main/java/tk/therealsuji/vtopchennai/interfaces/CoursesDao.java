@@ -22,7 +22,7 @@ public interface CoursesDao {
     @Query("DELETE FROM courses")
     Completable deleteAll();
 
-    @Query("SELECT DISTINCT code FROM courses")
+    @Query("SELECT DISTINCT code FROM courses, slots WHERE slots.course_id = courses.id ORDER BY slot")
     Single<List<String>> getCourseCodes();
 
     @Query("SELECT title AS courseTitle, code AS courseCode, type AS courseType, faculty, slot, venue, attended AS attendanceAttended, total AS attendanceTotal, percentage AS attendancePercentage " +
