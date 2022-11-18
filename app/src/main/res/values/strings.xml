@@ -89,6 +89,7 @@
     <string name="downloading_staff">Downloading Staff Info</string>
     <string name="downloading_attendance">Downloading Attendance</string>
     <string name="downloading_marks">Downloading Marks</string>
+    <string name="downloading_exam_schedule">Downloading Exam Schedule</string>
     <string name="downloading_spotlight">Downloading Spotlight</string>
     <string name="downloading_receipts">Downloading Receipts</string>
     <string name="completing_download">Completing download</string>
