@@ -141,8 +141,22 @@ public class HomeFragment extends Fragment {
         InfoCard credits = homeFragment.findViewById(R.id.info_card_credits);
         InfoCard cgpa = homeFragment.findViewById(R.id.info_card_cgpa);
 
+        float totalCredits;
+
+        try {
+            // Support old integer based credits
+            totalCredits = sharedPreferences.getInt("totalCredits", 0);
+        } catch (Exception ignored) {
+            totalCredits = sharedPreferences.getFloat("totalCredits", 0);
+        }
+
+        if (totalCredits == (int) totalCredits) {
+            credits.setValue(String.valueOf((int) totalCredits));
+        } else {
+            credits.setValue(String.valueOf(totalCredits));
+        }
+
         attendance.setValue(sharedPreferences.getInt("overallAttendance", 0) + "%");
-        credits.setValue(String.valueOf(sharedPreferences.getFloat("totalCredits", 0)));
         cgpa.setValue(new DecimalFormat("#.00").format(sharedPreferences.getFloat("cgpa", 0)));
 
         TabLayout days = homeFragment.findViewById(R.id.tab_layout_days);
