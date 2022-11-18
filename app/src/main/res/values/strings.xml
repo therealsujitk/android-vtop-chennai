@@ -147,7 +147,6 @@
     <string name="go_back">Go Back</string>
     <string name="submit">Submit</string>
     <string name="faculty">Faculty: &lt;b>%s&lt;/b></string>
-    <string name="slot">Slot: &lt;b>%s&lt;/b></string>
     <string name="venue">Venue: &lt;b>%s&lt;/b></string>
     <string name="date">Date: &lt;b>%s&lt;/b></string>
     <string name="timings">Timings: &lt;b>%s - %s&lt;/b></string>

@@ -10,6 +10,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -81,15 +84,14 @@ public class ExamsItemAdapter extends RecyclerView.Adapter<ExamsItemAdapter.View
         public void setExamItem(Exam.AllData examItem) {
             TextView courseTitle = this.examItem.findViewById(R.id.text_view_course_title);
             TextView courseCode = this.examItem.findViewById(R.id.text_view_course_code);
-            TextView slot = this.examItem.findViewById(R.id.text_view_slot);
             TextView date = this.examItem.findViewById(R.id.text_view_date);
             TextView timings = this.examItem.findViewById(R.id.text_view_timings);
             TextView venue = this.examItem.findViewById(R.id.text_view_venue);
+            ChipGroup slots = this.examItem.findViewById(R.id.chip_group_slots);
 
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MMM-yyyy", Locale.getDefault());
             SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
 
-            slot.setText(Html.fromHtml(this.examItem.getContext().getString(R.string.slot, String.join(" + ", examItem.slots)), Html.FROM_HTML_MODE_LEGACY));
             courseTitle.setText(examItem.courseTitle);
             courseCode.setText(examItem.courseCode);
 
@@ -112,7 +114,7 @@ public class ExamsItemAdapter extends RecyclerView.Adapter<ExamsItemAdapter.View
                 timings.setVisibility(View.VISIBLE);
 
                 if (Calendar.getInstance().getTime().after(new Date(examItem.endTime))) {
-                    this.examItem.setAlpha(0.6f);
+                    this.examItem.setAlpha(0.7f);
                 }
             }
 
@@ -129,6 +131,14 @@ public class ExamsItemAdapter extends RecyclerView.Adapter<ExamsItemAdapter.View
 
                 venue.setText(Html.fromHtml(this.examItem.getContext().getString(R.string.venue, venueString), Html.FROM_HTML_MODE_LEGACY));
                 venue.setVisibility(View.VISIBLE);
+            }
+
+            for (int i = 0; i < examItem.slots.size(); ++i) {
+                Chip slot = new Chip(this.examItem.getContext());
+                slot.setChipIconResource(R.drawable.ic_theory);
+                slot.setText(examItem.slots.get(i));
+
+                slots.addView(slot);
             }
         }
     }
