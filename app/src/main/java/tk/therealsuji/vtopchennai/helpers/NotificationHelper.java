@@ -131,6 +131,7 @@ public class NotificationHelper extends ContextWrapper {
         calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(timetableItem.startTime.split(":")[0]));
         calendar.set(Calendar.MINUTE, Integer.parseInt(timetableItem.startTime.split(":")[1]));
 
+        this.manager.cancel(SettingsRepository.NOTIFICATION_ID_TIMETABLE);
         return new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID_UPCOMING)
                 .setColor(this.getNotificationColor(true))
                 .setContentIntent(pendingIntent)
@@ -138,7 +139,6 @@ public class NotificationHelper extends ContextWrapper {
                 .setContentTitle(title)
                 .setSmallIcon(R.drawable.ic_timetable)
                 .setLargeIcon(SettingsRepository.getBitmapFromVectorDrawable(largeIcon))
-                .setTimeoutAfter(0L)    // Resetting the timeout duration
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setWhen(calendar.getTimeInMillis());
     }
@@ -175,6 +175,7 @@ public class NotificationHelper extends ContextWrapper {
         calendarEnd.set(Calendar.HOUR_OF_DAY, Integer.parseInt(timetableItem.endTime.split(":")[0]));
         calendarEnd.set(Calendar.MINUTE, Integer.parseInt(timetableItem.endTime.split(":")[1]));
 
+        this.manager.cancel(SettingsRepository.NOTIFICATION_ID_TIMETABLE);
         return new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID_ONGOING)
                 .setColor(this.getNotificationColor(true))
                 .setContentIntent(pendingIntent)
