@@ -45,6 +45,16 @@ public class ProfileFragment extends Fragment {
                     null
             ),
             new ItemData(
+                    R.drawable.ic_exams,
+                    R.string.exam_schedule,
+                    context -> SettingsRepository.openViewPagerFragment(
+                            (FragmentActivity) context,
+                            R.string.exam_schedule,
+                            ViewPagerFragment.TYPE_EXAMS
+                    ),
+                    null
+            ),
+            new ItemData(
                     R.drawable.ic_receipts,
                     R.string.receipts,
                     context -> SettingsRepository.openRecyclerViewFragment(

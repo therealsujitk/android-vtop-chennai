@@ -25,14 +25,17 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 import tk.therealsuji.vtopchennai.R;
 import tk.therealsuji.vtopchennai.adapters.CoursesAdapter;
 import tk.therealsuji.vtopchennai.adapters.EmptyStateAdapter;
+import tk.therealsuji.vtopchennai.adapters.ExamsAdapter;
 import tk.therealsuji.vtopchennai.adapters.StaffAdapter;
 import tk.therealsuji.vtopchennai.helpers.AppDatabase;
 import tk.therealsuji.vtopchennai.interfaces.CoursesDao;
+import tk.therealsuji.vtopchennai.interfaces.ExamsDao;
 import tk.therealsuji.vtopchennai.interfaces.StaffDao;
 
 public class ViewPagerFragment extends Fragment {
     public static final int TYPE_COURSES = 1;
-    public static final int TYPE_STAFF = 2;
+    public static final int TYPE_EXAMS = 2;
+    public static final int TYPE_STAFF = 3;
 
     AppDatabase appDatabase;
     TabLayout tabLayout;
@@ -40,6 +43,108 @@ public class ViewPagerFragment extends Fragment {
 
     public ViewPagerFragment() {
         // Required empty public constructor
+    }
+
+    private void attachCourses() {
+        CoursesDao coursesDao = this.appDatabase.coursesDao();
+        float pixelDensity = this.getResources().getDisplayMetrics().density;
+
+        coursesDao
+                .getCourseCodes()
+                .subscribeOn(Schedulers.single())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new SingleObserver<List<String>>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+                    }
+
+                    @Override
+                    public void onSuccess(@NonNull List<String> courseCodes) {
+                        if (courseCodes.size() == 0) {
+                            displayEmptyState(EmptyStateAdapter.TYPE_NO_DATA, null);
+                            return;
+                        }
+
+                        viewPager.setAdapter(new CoursesAdapter(courseCodes));
+
+                        new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {
+                            tab.setText(courseCodes.get(position));
+                            TooltipCompat.setTooltipText(tab.view, null);
+                        }).attach();
+
+                        for (int i = 0; i < tabLayout.getTabCount(); ++i) {
+                            View day = ((ViewGroup) tabLayout.getChildAt(0)).getChildAt(i);
+                            ViewGroup.MarginLayoutParams tabParams = (ViewGroup.MarginLayoutParams) day.getLayoutParams();
+
+                            if (i == 0) {
+                                tabParams.setMarginStart((int) (20 * pixelDensity));
+                                tabParams.setMarginEnd((int) (5 * pixelDensity));
+                            } else if (i == tabLayout.getTabCount() - 1) {
+                                tabParams.setMarginStart((int) (5 * pixelDensity));
+                                tabParams.setMarginEnd((int) (20 * pixelDensity));
+                            } else {
+                                tabParams.setMarginStart((int) (5 * pixelDensity));
+                                tabParams.setMarginEnd((int) (5 * pixelDensity));
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                        displayEmptyState(EmptyStateAdapter.TYPE_ERROR, "Error: " + e.getLocalizedMessage());
+                    }
+                });
+    }
+
+    private void attachExams() {
+        ExamsDao examsDao = this.appDatabase.examsDao();
+        float pixelDensity = this.getResources().getDisplayMetrics().density;
+
+        examsDao
+                .getExamTitles()
+                .subscribeOn(Schedulers.single())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new SingleObserver<List<String>>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+                    }
+
+                    @Override
+                    public void onSuccess(@NonNull List<String> examTitles) {
+                        if (examTitles.size() == 0) {
+                            displayEmptyState(EmptyStateAdapter.TYPE_NO_DATA, null);
+                            return;
+                        }
+
+                        viewPager.setAdapter(new ExamsAdapter(examTitles));
+
+                        new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {
+                            tab.setText(examTitles.get(position));
+                            TooltipCompat.setTooltipText(tab.view, null);
+                        }).attach();
+
+                        for (int i = 0; i < tabLayout.getTabCount(); ++i) {
+                            View day = ((ViewGroup) tabLayout.getChildAt(0)).getChildAt(i);
+                            ViewGroup.MarginLayoutParams tabParams = (ViewGroup.MarginLayoutParams) day.getLayoutParams();
+
+                            if (i == 0) {
+                                tabParams.setMarginStart((int) (20 * pixelDensity));
+                                tabParams.setMarginEnd((int) (5 * pixelDensity));
+                            } else if (i == tabLayout.getTabCount() - 1) {
+                                tabParams.setMarginStart((int) (5 * pixelDensity));
+                                tabParams.setMarginEnd((int) (20 * pixelDensity));
+                            } else {
+                                tabParams.setMarginStart((int) (5 * pixelDensity));
+                                tabParams.setMarginEnd((int) (5 * pixelDensity));
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                        displayEmptyState(EmptyStateAdapter.TYPE_ERROR, "Error: " + e.getLocalizedMessage());
+                    }
+                });
     }
 
     private void attachStaff() {
@@ -78,57 +183,6 @@ public class ViewPagerFragment extends Fragment {
                                 tabParams.setMarginEnd((int) (20 * pixelDensity));
                                 break;
                             }
-
-                            if (i == 0) {
-                                tabParams.setMarginStart((int) (20 * pixelDensity));
-                                tabParams.setMarginEnd((int) (5 * pixelDensity));
-                            } else if (i == tabLayout.getTabCount() - 1) {
-                                tabParams.setMarginStart((int) (5 * pixelDensity));
-                                tabParams.setMarginEnd((int) (20 * pixelDensity));
-                            } else {
-                                tabParams.setMarginStart((int) (5 * pixelDensity));
-                                tabParams.setMarginEnd((int) (5 * pixelDensity));
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void onError(@NonNull Throwable e) {
-                        displayEmptyState(EmptyStateAdapter.TYPE_ERROR, "Error: " + e.getLocalizedMessage());
-                    }
-                });
-    }
-
-    private void attachCourses() {
-        CoursesDao coursesDao = this.appDatabase.coursesDao();
-        float pixelDensity = this.getResources().getDisplayMetrics().density;
-
-        coursesDao
-                .getCourseCodes()
-                .subscribeOn(Schedulers.single())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new SingleObserver<List<String>>() {
-                    @Override
-                    public void onSubscribe(@NonNull Disposable d) {
-                    }
-
-                    @Override
-                    public void onSuccess(@NonNull List<String> courseCodes) {
-                        if (courseCodes.size() == 0) {
-                            displayEmptyState(EmptyStateAdapter.TYPE_NO_DATA, null);
-                            return;
-                        }
-
-                        viewPager.setAdapter(new CoursesAdapter(courseCodes));
-
-                        new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {
-                            tab.setText(courseCodes.get(position));
-                            TooltipCompat.setTooltipText(tab.view, null);
-                        }).attach();
-
-                        for (int i = 0; i < tabLayout.getTabCount(); ++i) {
-                            View day = ((ViewGroup) tabLayout.getChildAt(0)).getChildAt(i);
-                            ViewGroup.MarginLayoutParams tabParams = (ViewGroup.MarginLayoutParams) day.getLayoutParams();
 
                             if (i == 0) {
                                 tabParams.setMarginStart((int) (20 * pixelDensity));
@@ -220,6 +274,9 @@ public class ViewPagerFragment extends Fragment {
         switch (contentType) {
             case TYPE_COURSES:
                 this.attachCourses();
+                break;
+            case TYPE_EXAMS:
+                this.attachExams();
                 break;
             case TYPE_STAFF:
                 this.attachStaff();

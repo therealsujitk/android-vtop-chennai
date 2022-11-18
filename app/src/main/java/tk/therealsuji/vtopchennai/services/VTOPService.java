@@ -37,6 +37,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.annotations.NonNull;
@@ -51,6 +53,7 @@ import tk.therealsuji.vtopchennai.helpers.NotificationHelper;
 import tk.therealsuji.vtopchennai.helpers.SettingsRepository;
 import tk.therealsuji.vtopchennai.interfaces.AttendanceDao;
 import tk.therealsuji.vtopchennai.interfaces.CoursesDao;
+import tk.therealsuji.vtopchennai.interfaces.ExamsDao;
 import tk.therealsuji.vtopchennai.interfaces.MarksDao;
 import tk.therealsuji.vtopchennai.interfaces.ReceiptsDao;
 import tk.therealsuji.vtopchennai.interfaces.StaffDao;
@@ -58,6 +61,7 @@ import tk.therealsuji.vtopchennai.interfaces.TimetableDao;
 import tk.therealsuji.vtopchennai.models.Attendance;
 import tk.therealsuji.vtopchennai.models.Course;
 import tk.therealsuji.vtopchennai.models.CumulativeMark;
+import tk.therealsuji.vtopchennai.models.Exam;
 import tk.therealsuji.vtopchennai.models.Mark;
 import tk.therealsuji.vtopchennai.models.Receipt;
 import tk.therealsuji.vtopchennai.models.Slot;
@@ -131,7 +135,7 @@ public class VTOPService extends Service {
             this.startForeground(SettingsRepository.NOTIFICATION_ID_VTOP_DOWNLOAD, this.notification.build());
 
             this.counter = 0;
-            this.maxProgress = 11;
+            this.maxProgress = 12;
 
             SharedPreferences encryptedSharedPreferences = SettingsRepository.getEncryptedSharedPreferences(getApplicationContext());
 
@@ -257,7 +261,7 @@ public class VTOPService extends Service {
     /**
      * Function to handle errors.
      */
-    public void error(final int errorCode, final String errorMessage) {
+    private void error(final int errorCode, final String errorMessage) {
         Toast.makeText(getApplicationContext(), "Error " + errorCode + ". " + errorMessage, Toast.LENGTH_SHORT).show();
         this.reloadPage();
     }
@@ -581,7 +585,7 @@ public class VTOPService extends Service {
     /**
      * Function to save the name of the user in SharedPreferences.
      */
-    public void getName() {
+    private void getName() {
         updateProgress(R.string.downloading_profile);
 
         /*
@@ -629,7 +633,7 @@ public class VTOPService extends Service {
     /**
      * Function to sve the earned credits and CGPA in SharedPreferences.
      */
-    public void getCreditsCGPA() {
+    private void getCreditsCGPA() {
         this.updateProgress(null);
 
         /*
@@ -688,7 +692,7 @@ public class VTOPService extends Service {
     /**
      * Function to download the course info from the timetable page.
      */
-    public void downloadCourses() {
+    private void downloadCourses() {
         this.updateProgress(R.string.downloading_courses);
 
         /*
@@ -864,7 +868,7 @@ public class VTOPService extends Service {
     /**
      * Function to download the timetable.
      */
-    public void downloadTimetable() {
+    private void downloadTimetable() {
         updateProgress(R.string.downloading_timetable);
 
         /*
@@ -1097,7 +1101,7 @@ public class VTOPService extends Service {
     /**
      * Function to download the attendance.
      */
-    public void downloadAttendance() {
+    private void downloadAttendance() {
         updateProgress(R.string.downloading_attendance);
 
         /*
@@ -1240,7 +1244,7 @@ public class VTOPService extends Service {
     /**
      * Function to download the marks.
      */
-    public void downloadMarks() {
+    private void downloadMarks() {
         updateProgress(R.string.downloading_marks);
 
         /*
@@ -1453,7 +1457,7 @@ public class VTOPService extends Service {
     /**
      * Function to download the grades.
      */
-    public void downloadGrades() {
+    private void downloadGrades() {
         updateProgress(null);
 
         /*
@@ -1565,7 +1569,7 @@ public class VTOPService extends Service {
 
                             @Override
                             public void onComplete() {
-                                downloadProctor();
+                                downloadExamSchedule();
                             }
                         });
             } catch (Exception e) {
@@ -1575,9 +1579,191 @@ public class VTOPService extends Service {
     }
 
     /**
+     * Function to download the exam schedule.
+     */
+    private void downloadExamSchedule() {
+        updateProgress(R.string.downloading_exam_schedule);
+
+        /*
+         *  JSON response format
+         *
+         *  {
+         *      "FAT": [
+         *          {
+         *              "slot": "A1",
+         *              "date": "01-JAN-2020",
+         *              "start_time": "9:30 AM",
+         *              "end_time": "12:30 PM",
+         *              "venue": "DB-101",
+         *              "seat_location": "R1C1",
+         *              "seat_number": 1
+         *          },
+         *          ...
+         *      ],
+         *      ...
+         *  }
+         */
+        webView.evaluateJavascript("(function() {" +
+                "var data = 'semesterSubId=' + '" + semesterID + "' + '&authorizedID=' + $('#authorizedIDX').val();" +
+                "var response = {};" +
+                "$.ajax({" +
+                "    type: 'POST'," +
+                "    url: 'examinations/doSearchExamScheduleForStudent'," +
+                "    data: data," +
+                "    async: false," +
+                "    success: function(res) {" +
+                "        if(res.toLowerCase().includes('not found')) {" +
+                "            return;" +
+                "        }" +
+                "        var doc = new DOMParser().parseFromString(res, 'text/html');" +
+                "        var slotIndex, dateIndex, timingIndex, venueIndex, locationIndex, numberIndex;" +
+                "        var columns = doc.getElementsByTagName('tr')[0].getElementsByTagName('td');" +
+                "        for (var i = 0; i < columns.length; ++i) {" +
+                "            var heading = columns[i].innerText.toLowerCase();" +
+                "            if (heading.includes('slot')) {" +
+                "                slotIndex = i;" +
+                "            } else if (heading.includes('date')) {" +
+                "                dateIndex = i;" +
+                "            } else if (heading.includes('exam') && heading.includes('time')) {" +
+                "                timingIndex = i;" +
+                "            } else if (heading.includes('venue')) {" +
+                "                venueIndex = i;" +
+                "            } else if (heading.includes('location')) {" +
+                "                locationIndex = i;" +
+                "            } else if (heading.includes('seat') && heading.includes('no.')) {" +
+                "                numberIndex = i;" +
+                "            }" +
+                "        }" +
+                "        var examTitle = '', exam = {}, cells = doc.getElementsByTagName('td');" +
+                "        for (var i = columns.length; i < cells.length; ++i) {" +
+                "            if (cells[i].colSpan > 1) {" +
+                "                examTitle = cells[i].innerText.trim();" +
+                "                response[examTitle] = [];" +
+                "                continue;" +
+                "            }" +
+                "            var index = (i - Object.keys(response).length) % columns.length;" +
+                "            if (index == slotIndex) {" +
+                "                exam.slot = cells[i].innerText.trim().split('+')[0];" +
+                "            } else if (index == dateIndex) {" +
+                "                var date = cells[i].innerText.trim().toUpperCase();" +
+                "                exam.date = date == '' ? null : date;" +
+                "            } else if (index == timingIndex) {" +
+                "                var timings = cells[i].innerText.trim().split('-');" +
+                "                if (timings.length == 2) {" +
+                "                    exam.start_time = timings[0].trim();" +
+                "                    exam.end_time = timings[1].trim();" +
+                "                } else {" +
+                "                    exam.start_time = null;" +
+                "                    exam.end_time = null;" +
+                "                }" +
+                "            } else if (index == venueIndex) {" +
+                "                var venue = cells[i].innerText.trim();" +
+                "                exam.venue = venue.replace(/-/g,'') == '' ? null : venue;" +
+                "            } else if (index == locationIndex) {" +
+                "                var location = cells[i].innerText.trim();" +
+                "                exam.seat_location = location.replace(/-/g,'') == '' ? null : location;" +
+                "            } else if (index == numberIndex) {" +
+                "                var number = cells[i].innerText.trim();" +
+                "                exam.seat_number = number.replace(/-/g,'') == '' ? null : parseInt(number);" +
+                "            }" +
+                "            if (Object.keys(exam).length == 7) {" +
+                "                response[examTitle].push(exam);" +
+                "                exam = {};" +
+                "            }" +
+                "        }" +
+                "    }" +
+                "});" +
+                "return response;" +
+                "})();", responseString -> {
+            try {
+                JSONObject response = new JSONObject(responseString);
+                Iterator<String> keys = response.keys();
+                List<Exam> exams = new ArrayList<>();
+
+                SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MMM-yyyy", Locale.getDefault());
+                SimpleDateFormat dateTimeFormat = new SimpleDateFormat("dd-MMM-yyyy hh:mm a", Locale.getDefault());
+
+                int index = 1;
+
+                while (keys.hasNext()) {
+                    String key = keys.next();
+                    JSONArray examsArray = response.getJSONArray(key);
+
+                    for (int i = 0; i < examsArray.length(); ++i) {
+                        JSONObject examObject = examsArray.getJSONObject(i);
+                        Exam exam = new Exam();
+                        Pattern pattern = Pattern.compile("\\d");
+                        Matcher matcher = pattern.matcher(key);
+
+                        exam.id = ++index;
+                        exam.courseId = getCourseId(examObject.getString("slot"), Course.TYPE_THEORY);
+                        exam.title = key;
+
+                        if (matcher.find()) {
+                            exam.title = new StringBuilder(key).insert(matcher.start(), " ").toString().trim().replaceAll(" +", " ");
+                        }
+
+                        if (!examObject.isNull("date")) {
+                            if (!examObject.isNull("start_time")) {
+                                exam.startTime = Objects.requireNonNull(dateTimeFormat.parse(examObject.getString("date") + " " + examObject.getString("start_time"))).getTime();
+                            } else {
+                                exam.startTime = Objects.requireNonNull(dateFormat.parse(examObject.getString("date"))).getTime();
+                            }
+
+                            if (!examObject.isNull("end_time")) {
+                                exam.endTime = Objects.requireNonNull(dateTimeFormat.parse(examObject.getString("date") + " " + examObject.getString("end_time"))).getTime();
+                            }
+                        }
+
+                        exam.venue = getStringValue(examObject, "venue");
+                        exam.seatLocation = getStringValue(examObject, "seat_location");
+                        exam.seatNumber = getIntegerValue(examObject, "seat_number");
+
+                        exams.add(exam);
+                    }
+                }
+
+                ExamsDao examsDao = appDatabase.examsDao();
+
+                Observable<Object> deleteAllObservable = Observable.fromCompletable(examsDao.deleteAll());
+                Observable<Object> insertExamsObservable = Observable.fromCompletable(examsDao.insert(exams));
+
+                Observable
+                        .concat(
+                                deleteAllObservable,
+                                insertExamsObservable
+                        )
+                        .subscribeOn(Schedulers.single())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new Observer<Object>() {
+                            @Override
+                            public void onSubscribe(@NonNull Disposable d) {
+                            }
+
+                            @Override
+                            public void onNext(@NonNull Object o) {
+                            }
+
+                            @Override
+                            public void onError(@NonNull Throwable e) {
+                                error(902, e.getLocalizedMessage());
+                            }
+
+                            @Override
+                            public void onComplete() {
+                                downloadProctor();
+                            }
+                        });
+            } catch (Exception e) {
+                error(901, e.getLocalizedMessage());
+            }
+        });
+    }
+
+    /**
      * Function to download the proctor info. (1 / 2 - Staff info)
      */
-    public void downloadProctor() {
+    private void downloadProctor() {
         updateProgress(R.string.downloading_staff);
         /*
          *  JSON response format
@@ -1658,7 +1844,7 @@ public class VTOPService extends Service {
 
                             @Override
                             public void onError(@NonNull Throwable e) {
-                                error(902, e.getLocalizedMessage());
+                                error(1002, e.getLocalizedMessage());
                             }
 
                             @Override
@@ -1667,7 +1853,7 @@ public class VTOPService extends Service {
                             }
                         });
             } catch (Exception e) {
-                error(901, e.getLocalizedMessage());
+                error(1001, e.getLocalizedMessage());
             }
         });
     }
@@ -1675,7 +1861,7 @@ public class VTOPService extends Service {
     /**
      * Function to download the HOD & Dean info. (2 / 2 - Staff info)
      */
-    public void downloadDeanHOD(final int lastIndex) {
+    private void downloadDeanHOD(final int lastIndex) {
         updateProgress(null);
         /*
          *  JSON response format
@@ -1775,11 +1961,11 @@ public class VTOPService extends Service {
 
                             @Override
                             public void onError(@NonNull Throwable e) {
-                                error(904, e.getLocalizedMessage());
+                                error(1004, e.getLocalizedMessage());
                             }
                         });
             } catch (Exception e) {
-                error(903, e.getLocalizedMessage());
+                error(1003, e.getLocalizedMessage());
             }
         });
     }
@@ -1787,7 +1973,7 @@ public class VTOPService extends Service {
     /**
      * Function to download the spotlight.
      */
-    public void downloadSpotlight() {
+    private void downloadSpotlight() {
         updateProgress(R.string.downloading_spotlight);
 
         /*
@@ -1885,11 +2071,11 @@ public class VTOPService extends Service {
 
                             @Override
                             public void onError(@NonNull Throwable e) {
-                                error(1002, e.getLocalizedMessage());
+                                error(1102, e.getLocalizedMessage());
                             }
                         });
             } catch (Exception e) {
-                error(1001, e.getLocalizedMessage());
+                error(1101, e.getLocalizedMessage());
             }
         });
     }
@@ -1897,7 +2083,7 @@ public class VTOPService extends Service {
     /**
      * Function to download the payment receipts.
      */
-    public void downloadReceipts() {
+    private void downloadReceipts() {
         updateProgress(R.string.downloading_receipts);
 
         /*
@@ -1996,7 +2182,7 @@ public class VTOPService extends Service {
 
                             @Override
                             public void onError(@NonNull Throwable e) {
-                                error(1102, e.getLocalizedMessage());
+                                error(1202, e.getLocalizedMessage());
                             }
 
                             @Override
@@ -2005,7 +2191,7 @@ public class VTOPService extends Service {
                             }
                         });
             } catch (Exception e) {
-                error(1101, e.getLocalizedMessage());
+                error(1201, e.getLocalizedMessage());
             }
         });
     }
@@ -2013,7 +2199,7 @@ public class VTOPService extends Service {
     /**
      * Function to check for any payment dues.
      */
-    public void checkDues() {
+    private void checkDues() {
         updateProgress(null);
 
         /*
@@ -2051,7 +2237,7 @@ public class VTOPService extends Service {
                     sharedPreferences.edit().remove("duePayments").apply();
                 }
             } catch (Exception e) {
-                error(1103, e.getLocalizedMessage());
+                error(1203, e.getLocalizedMessage());
             }
 
             finishUp();
@@ -2061,7 +2247,7 @@ public class VTOPService extends Service {
     /**
      * Function to make final changes before signing the user in.
      */
-    public void finishUp() {
+    private void finishUp() {
         this.notification.setContentTitle(getString(R.string.completing_download));
         this.notification.setProgress(0, 0, true);
         this.notification.setContentText(null);
