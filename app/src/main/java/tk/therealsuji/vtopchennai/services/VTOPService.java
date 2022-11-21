@@ -10,6 +10,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Binder;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.util.Base64;
@@ -22,6 +23,8 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
+
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -2256,6 +2259,9 @@ public class VTOPService extends Service {
 
         this.sharedPreferences.edit().putBoolean("isVTOPSignedIn", true).apply();
         this.sharedPreferences.edit().putLong("lastRefreshed", Calendar.getInstance().getTimeInMillis()).apply();
+
+        // Firebase Analytics Logging
+        FirebaseAnalytics.getInstance(this).logEvent("data_sync", new Bundle());
 
         try {
             this.callback.onComplete();
