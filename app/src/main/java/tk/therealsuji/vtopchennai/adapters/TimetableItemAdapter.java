@@ -38,6 +38,7 @@ import tk.therealsuji.vtopchennai.R;
 import tk.therealsuji.vtopchennai.helpers.AppDatabase;
 import tk.therealsuji.vtopchennai.helpers.SettingsRepository;
 import tk.therealsuji.vtopchennai.interfaces.CoursesDao;
+import tk.therealsuji.vtopchennai.interfaces.ExamsDao;
 import tk.therealsuji.vtopchennai.models.Course;
 import tk.therealsuji.vtopchennai.models.Timetable;
 
@@ -213,43 +214,71 @@ public class TimetableItemAdapter extends RecyclerView.Adapter<TimetableItemAdap
             } catch (Exception ignored) {
             }
 
-            SimpleDateFormat hour24 = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
+            Calendar calendarMidnight = Calendar.getInstance();
+            calendarMidnight.set(Calendar.HOUR_OF_DAY, 23);
+            calendarMidnight.set(Calendar.MINUTE, 59);
 
-            try {
-                Date startTimeDate = hour24.parse(startTime);
-                Date endTimeDate = hour24.parse(endTime);
+            AppDatabase appDatabase = AppDatabase.getInstance(this.timetableItem.getContext().getApplicationContext());
+            ExamsDao examsDao = appDatabase.examsDao();
 
-                if (startTimeDate != null && endTimeDate != null) {
-                    if (status == STATUS_PAST) {
-                        this.classProgress.setProgress(100);
-                    } else if (status == STATUS_PRESENT) {
-                        Date now = hour24.parse(hour24.format(Calendar.getInstance().getTime()));
-
-                        if (now == null) {
-                            return;
+            examsDao
+                    .isExamsOngoing(calendarMidnight.getTimeInMillis())
+                    .subscribeOn(Schedulers.single())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new SingleObserver<Boolean>() {
+                        @Override
+                        public void onSubscribe(@io.reactivex.rxjava3.annotations.NonNull Disposable d) {
                         }
 
-                        if (now.after(endTimeDate)) {
-                            this.classProgress.setProgress(100);
-                        } else if (now.after(startTimeDate)) {
-                            long duration = endTimeDate.getTime() - startTimeDate.getTime();
-                            long durationComplete = now.getTime() - startTimeDate.getTime();
-                            long durationPending = endTimeDate.getTime() - now.getTime();
+                        @Override
+                        public void onSuccess(@io.reactivex.rxjava3.annotations.NonNull Boolean isOngoing) {
+                            if (isOngoing) {
+                                return;
+                            }
 
-                            this.setMaxClassProgress(duration);
-                            this.setClassProgressComplete(durationComplete);
-                            this.setClassProgressPending(durationPending, 0);
-                        } else {
-                            long duration = endTimeDate.getTime() - startTimeDate.getTime();
-                            long durationPending = startTimeDate.getTime() - now.getTime();
+                            SimpleDateFormat hour24 = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
 
-                            this.setMaxClassProgress(duration);
-                            this.setClassProgressPending(duration, durationPending);
+                            try {
+                                Date startTimeDate = hour24.parse(startTime);
+                                Date endTimeDate = hour24.parse(endTime);
+
+                                if (startTimeDate != null && endTimeDate != null) {
+                                    if (status == STATUS_PAST) {
+                                        classProgress.setProgress(100);
+                                    } else if (status == STATUS_PRESENT) {
+                                        Date now = hour24.parse(hour24.format(Calendar.getInstance().getTime()));
+
+                                        if (now == null) {
+                                            return;
+                                        }
+
+                                        if (now.after(endTimeDate)) {
+                                            classProgress.setProgress(100);
+                                        } else if (now.after(startTimeDate)) {
+                                            long duration = endTimeDate.getTime() - startTimeDate.getTime();
+                                            long durationComplete = now.getTime() - startTimeDate.getTime();
+                                            long durationPending = endTimeDate.getTime() - now.getTime();
+
+                                            setMaxClassProgress(duration);
+                                            setClassProgressComplete(durationComplete);
+                                            setClassProgressPending(durationPending, 0);
+                                        } else {
+                                            long duration = endTimeDate.getTime() - startTimeDate.getTime();
+                                            long durationPending = startTimeDate.getTime() - now.getTime();
+
+                                            setMaxClassProgress(duration);
+                                            setClassProgressPending(duration, durationPending);
+                                        }
+                                    }
+                                }
+                            } catch (Exception ignored) {
+                            }
                         }
-                    }
-                }
-            } catch (Exception ignored) {
-            }
+
+                        @Override
+                        public void onError(@io.reactivex.rxjava3.annotations.NonNull Throwable e) {
+                        }
+                    });
         }
 
         private void setClassProgressPending(long duration, long delay) {

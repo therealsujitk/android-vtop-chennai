@@ -21,6 +21,11 @@ public interface ExamsDao {
     @Query("SELECT * FROM exams")
     Single<List<Exam>> getExams();
 
+    @Query("SELECT CASE " +
+            "WHEN (SELECT title FROM exams WHERE start_time < :time ORDER BY start_time DESC LIMIT 1) = (SELECT title FROM exams WHERE start_time > :time ORDER BY start_time ASC LIMIT 1) " +
+            "THEN 1 ELSE 0 END AS exams_ongoing")
+    Single<Boolean> isExamsOngoing(long time);
+
     @Query("SELECT code AS courseCode, slot, courses.title AS courseTitle, start_time AS startTime, end_time AS endTime, exams.venue AS venue, seat_location AS seatLocation, seat_number AS seatNumber " +
             "FROM courses, slots, exams WHERE exams.course_id = courses.id AND slots.course_id = courses.id AND exams.title = :examTitle ORDER BY start_time")
     Single<List<Exam.AllData>> getExams(String examTitle);
