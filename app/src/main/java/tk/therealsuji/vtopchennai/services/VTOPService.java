@@ -991,7 +991,7 @@ public class VTOPService extends Service {
                 JSONArray labArray = response.getJSONArray("lab");
                 JSONArray theoryArray = response.getJSONArray("theory");
 
-                SettingsRepository.clearTimetableNotifications(this.getApplicationContext());
+                SettingsRepository.clearNotificationPendingIntents(this.getApplicationContext());
 
                 List<Timetable> timetable = new ArrayList<>();
 
@@ -1730,6 +1730,8 @@ public class VTOPService extends Service {
                         exams.add(exam);
                     }
                 }
+
+                SettingsRepository.setExamNotifications(this.getApplicationContext(), exams);
 
                 ExamsDao examsDao = appDatabase.examsDao();
 
