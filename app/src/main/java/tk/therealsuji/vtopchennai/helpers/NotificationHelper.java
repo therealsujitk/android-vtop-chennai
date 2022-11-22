@@ -18,10 +18,13 @@ import androidx.core.graphics.drawable.DrawableCompat;
 
 import java.text.ParseException;
 import java.util.Calendar;
+import java.util.Date;
 
 import tk.therealsuji.vtopchennai.R;
 import tk.therealsuji.vtopchennai.activities.LauncherActivity;
 import tk.therealsuji.vtopchennai.fragments.HomeFragment;
+import tk.therealsuji.vtopchennai.fragments.ProfileFragment;
+import tk.therealsuji.vtopchennai.models.Exam;
 import tk.therealsuji.vtopchennai.models.Timetable;
 
 public class NotificationHelper extends ContextWrapper {
@@ -33,6 +36,9 @@ public class NotificationHelper extends ContextWrapper {
 
     public static final String CHANNEL_ID_ONGOING = "ongoing";
     public static final String CHANNEL_NAME_ONGOING = "Ongoing Classes";
+
+    public static final String CHANNEL_ID_EXAMS = "exams";
+    public static final String CHANNEL_NAME_EXAMS = "Exam Schedule";
 
     private NotificationManager manager;
     private final int notificationColor;
@@ -70,6 +76,16 @@ public class NotificationHelper extends ContextWrapper {
             ongoing.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
 
             getManager().createNotificationChannel(ongoing);
+
+            NotificationChannel exams = new NotificationChannel(
+                    CHANNEL_ID_EXAMS,
+                    CHANNEL_NAME_EXAMS,
+                    NotificationManager.IMPORTANCE_HIGH
+            );
+            exams.enableVibration(true);
+            exams.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
+
+            getManager().createNotificationChannel(exams);
         }
 
         TypedValue typedValue = new TypedValue();
@@ -184,6 +200,41 @@ public class NotificationHelper extends ContextWrapper {
                 .setLargeIcon(SettingsRepository.getBitmapFromVectorDrawable(largeIcon))
                 .setSmallIcon(R.drawable.ic_timetable)
                 .setTimeoutAfter(calendarEnd.getTimeInMillis() - calendarStart.getTimeInMillis())
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                .setWhen(calendarStart.getTimeInMillis());
+    }
+
+    public NotificationCompat.Builder notifyExam(Exam.AllData examItem) {
+        Drawable largeIcon = ContextCompat.getDrawable(this, R.drawable.ic_theory);
+        PendingIntent pendingIntent = PendingIntent.getActivity(
+                this,
+                0,
+                new Intent(this, LauncherActivity.class)
+                        .putExtra("launchFragment", ProfileFragment.class),
+                PendingIntent.FLAG_IMMUTABLE
+        );
+        String title = "All the best for your exam!";
+        String message = examItem.courseCode + " - " + examItem.courseTitle;
+
+        assert largeIcon != null;
+        largeIcon = DrawableCompat.wrap(largeIcon);
+        DrawableCompat.setTint(largeIcon, this.getNotificationColor(false));
+
+        Calendar calendarStart = Calendar.getInstance();
+        calendarStart.setTime(new Date(examItem.startTime));
+
+        Calendar calendarEnd = Calendar.getInstance();
+        calendarEnd.setTime(new Date(examItem.endTime));
+
+        this.manager.cancel(SettingsRepository.NOTIFICATION_ID_EXAMS);
+        return new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID_EXAMS)
+                .setColor(this.getNotificationColor(true))
+                .setContentIntent(pendingIntent)
+                .setContentText(message)
+                .setContentTitle(title)
+                .setLargeIcon(SettingsRepository.getBitmapFromVectorDrawable(largeIcon))
+                .setSmallIcon(R.drawable.ic_exams)
+                .setTimeoutAfter(calendarEnd.getTimeInMillis() - Calendar.getInstance().getTimeInMillis())
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setWhen(calendarStart.getTimeInMillis());
     }

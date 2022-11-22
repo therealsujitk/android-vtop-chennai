@@ -83,7 +83,10 @@
     <string name="verifying_human">Verifying if you are human</string>
     <string name="select_semester">Select a semester</string>
     <string name="select">Select</string>
+    <string name="server_connect">Connecting to server</string>
+    <string name="captcha_wait">Waiting for captcha</string>
     <string name="sign_in_attempt">Attempting to sign you in</string>
+    <string name="semester_wait">Waiting for semester</string>
     <string name="downloading_profile">Downloading Profile</string>
     <string name="downloading_timetable">Downloading Timetable</string>
     <string name="downloading_courses">Downloading Course Info</string>
@@ -93,7 +96,7 @@
     <string name="downloading_exam_schedule">Downloading Exam Schedule</string>
     <string name="downloading_spotlight">Downloading Spotlight</string>
     <string name="downloading_receipts">Downloading Receipts</string>
-    <string name="completing_download">Completing download</string>
+    <string name="completing_sync">Completing sync</string>
 
     <!-- Update Dialog Strings -->
     <string name="update_title">Update Available</string>
