@@ -61,6 +61,10 @@
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
 
+        <meta-data
+            android:name="google_analytics_automatic_screen_reporting_enabled"
+            android:value="false" />
+
         <receiver android:name=".receivers.ExamNotificationReceiver" />
         <receiver android:name=".receivers.TimetableNotificationReceiver" />
 

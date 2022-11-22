@@ -19,6 +19,7 @@ import com.google.android.material.badge.BadgeUtils;
 import com.google.android.material.badge.ExperimentalBadgeUtils;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -38,8 +39,14 @@ public class HomeFragment extends Fragment {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void onResume() {
+        super.onResume();
+
+        // Firebase Analytics Logging
+        Bundle bundle = new Bundle();
+        bundle.putString(FirebaseAnalytics.Param.SCREEN_CLASS, "HomeFragment");
+        bundle.putString(FirebaseAnalytics.Param.SCREEN_NAME, "Home");
+        FirebaseAnalytics.getInstance(this.requireContext()).logEvent(FirebaseAnalytics.Event.SCREEN_VIEW, bundle);
     }
 
     @Override

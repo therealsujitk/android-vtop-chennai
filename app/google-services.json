@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "539771298090",
+    "project_id": "vit-student",
+    "storage_bucket": "vit-student.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:539771298090:android:a6eb9db58d10b87547fe53",
+        "android_client_info": {
+          "package_name": "tk.therealsuji.vtopchennai"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "539771298090-jck5f90j4h8lqd0rfhfbitu4oec0rtqo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCqiSXHMOq1ty-4adzcFDchAI6ziiQYRnY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "539771298090-jck5f90j4h8lqd0rfhfbitu4oec0rtqo.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

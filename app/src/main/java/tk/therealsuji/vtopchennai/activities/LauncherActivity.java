@@ -10,6 +10,9 @@ import com.google.android.material.color.DynamicColors;
 
 import tk.therealsuji.vtopchennai.helpers.SettingsRepository;
 
+/**
+ * A trampoline activity to navigate the user to the right screen
+ */
 public class LauncherActivity extends AppCompatActivity {
 
     @Override

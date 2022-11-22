@@ -20,6 +20,7 @@ import androidx.fragment.app.Fragment;
 import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 import org.apache.commons.io.FileUtils;
 import org.json.JSONObject;
@@ -212,6 +213,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
+
+        // Firebase Analytics Logging
+        Bundle bundle = new Bundle();
+        bundle.putBoolean("recently_synced", !SettingsRepository.isRefreshRequired(this));
+        FirebaseAnalytics.getInstance(this).logEvent("app_data", bundle);
 
         this.bottomNavigationView = findViewById(R.id.bottom_navigation);
 

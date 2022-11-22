@@ -14,6 +14,7 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.util.List;
 
@@ -217,6 +218,35 @@ public class ViewPagerFragment extends Fragment {
         Bundle bottomNavigationVisibility = new Bundle();
         bottomNavigationVisibility.putBoolean("isVisible", false);
         getParentFragmentManager().setFragmentResult("bottomNavigationVisibility", bottomNavigationVisibility);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        String screenName = "RecyclerView Fragment";
+        Bundle arguments = this.getArguments();
+
+        if (arguments != null) {
+            int contentType = arguments.getInt("content_type", 0);
+            switch (contentType) {
+                case TYPE_COURSES:
+                    screenName = "Courses";
+                    break;
+                case TYPE_EXAMS:
+                    screenName = "Exams";
+                    break;
+                case TYPE_STAFF:
+                    screenName = "Staff";
+                    break;
+            }
+        }
+
+        // Firebase Analytics Logging
+        Bundle bundle = new Bundle();
+        bundle.putString(FirebaseAnalytics.Param.SCREEN_CLASS, "RecyclerViewFragment");
+        bundle.putString(FirebaseAnalytics.Param.SCREEN_NAME, screenName);
+        FirebaseAnalytics.getInstance(this.requireContext()).logEvent(FirebaseAnalytics.Event.SCREEN_VIEW, bundle);
     }
 
     @SuppressLint("ClickableViewAccessibility")

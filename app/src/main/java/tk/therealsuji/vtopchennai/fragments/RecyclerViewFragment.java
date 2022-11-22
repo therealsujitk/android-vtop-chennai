@@ -7,9 +7,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.util.List;
 
@@ -106,12 +107,38 @@ public class RecyclerViewFragment extends Fragment {
     }
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         Bundle bottomNavigationVisibility = new Bundle();
         bottomNavigationVisibility.putBoolean("isVisible", false);
         getParentFragmentManager().setFragmentResult("bottomNavigationVisibility", bottomNavigationVisibility);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        String screenName = "RecyclerView Fragment";
+        Bundle arguments = this.getArguments();
+
+        if (arguments != null) {
+            int contentType = arguments.getInt("content_type", 0);
+            switch (contentType) {
+                case TYPE_RECEIPTS:
+                    screenName = "Receipts";
+                    break;
+                case TYPE_SPOTLIGHT:
+                    screenName = "Spotlight";
+                    break;
+            }
+        }
+
+        // Firebase Analytics Logging
+        Bundle bundle = new Bundle();
+        bundle.putString(FirebaseAnalytics.Param.SCREEN_CLASS, "RecyclerViewFragment");
+        bundle.putString(FirebaseAnalytics.Param.SCREEN_NAME, screenName);
+        FirebaseAnalytics.getInstance(this.requireContext()).logEvent(FirebaseAnalytics.Event.SCREEN_VIEW, bundle);
     }
 
     @SuppressLint("ClickableViewAccessibility")
