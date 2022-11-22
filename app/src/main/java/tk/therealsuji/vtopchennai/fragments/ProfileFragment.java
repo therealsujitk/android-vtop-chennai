@@ -280,6 +280,18 @@ public class ProfileFragment extends Fragment {
         bundle.putString(FirebaseAnalytics.Param.SCREEN_CLASS, "ProfileFragment");
         bundle.putString(FirebaseAnalytics.Param.SCREEN_NAME, "Profile");
         FirebaseAnalytics.getInstance(this.requireContext()).logEvent(FirebaseAnalytics.Event.SCREEN_VIEW, bundle);
+
+        getParentFragmentManager().setFragmentResultListener("launchSubFragment", this, (requestKey, result) -> {
+            String subFragment = result.getString("subFragment");
+
+            if (subFragment.equals("ExamSchedule")) {
+                SettingsRepository.openViewPagerFragment(
+                        requireActivity(),
+                        R.string.exam_schedule,
+                        ViewPagerFragment.TYPE_EXAMS
+                );
+            }
+        });
     }
 
     @Override

@@ -31,6 +31,8 @@ public class LauncherActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         Intent intent = new Intent();
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
         if (this.getIntent().getExtras() != null) {
             intent.putExtras(this.getIntent().getExtras());
         }

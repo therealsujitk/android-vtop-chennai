@@ -135,14 +135,14 @@ public class MainActivity extends AppCompatActivity {
         this.bottomNavigationView.clearAnimation();
         this.bottomNavigationView.post(() -> this.bottomNavigationView.animate().translationY(bottomNavigationView.getMeasuredHeight()));
 
-        int gestureLeft = 0;
-
         if (Build.VERSION.SDK_INT >= 29) {
-            gestureLeft = this.getWindow().getDecorView().getRootWindowInsets().getSystemGestureInsets().left;
-        }
+            this.getWindow().getDecorView().post(() -> {
+                int gestureLeft = this.getWindow().getDecorView().getRootWindowInsets().getSystemGestureInsets().left;
 
-        if (gestureLeft == 0) {
-            this.getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+                if (gestureLeft == 0) {
+                    this.getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+                }
+            });
         }
     }
 
@@ -165,9 +165,9 @@ public class MainActivity extends AppCompatActivity {
         Bundle unreadCount = new Bundle();
 
         Observable.concat(
-                Observable.fromSingle(appDatabase.spotlightDao().getUnreadCount()),
-                Observable.fromSingle(appDatabase.marksDao().getMarksUnreadCount())
-        )
+                        Observable.fromSingle(appDatabase.spotlightDao().getUnreadCount()),
+                        Observable.fromSingle(appDatabase.marksDao().getMarksUnreadCount())
+                )
                 .subscribeOn(Schedulers.single())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<Integer>() {
@@ -264,6 +264,8 @@ public class MainActivity extends AppCompatActivity {
         getSupportFragmentManager().setFragmentResultListener("syncData", this, (requestKey, result) -> this.syncData());
         getSupportFragmentManager().setFragmentResultListener("getUnreadCount", this, (requestKey, result) -> this.getUnreadCount());
 
+        this.getUnreadCount();
+
         this.bottomNavigationView.setOnItemSelectedListener(item -> {
             Fragment selectedFragment;
             String selectedFragmentTag;
@@ -309,13 +311,20 @@ public class MainActivity extends AppCompatActivity {
 
         int selectedItem = R.id.item_home;
         Serializable launchFragment = this.getIntent().getSerializableExtra("launchFragment");
+        String launchSubFragment = this.getIntent().getStringExtra("launchSubFragment");
 
         if (savedInstanceState != null) {
             selectedItem = savedInstanceState.getInt("selectedItem");
         } else if (launchFragment != null) {
             // If the application is launched from notifications
-            if (AssignmentsFragment.class.equals(launchFragment)) {
-                selectedItem = R.id.item_assignments;
+            if (launchFragment.equals(ProfileFragment.class)) {
+                selectedItem = R.id.item_profile;
+            }
+
+            if (launchSubFragment != null) {
+                Bundle launchSubFragmentBundle = new Bundle();
+                launchSubFragmentBundle.putString("subFragment", launchSubFragment);
+                getSupportFragmentManager().setFragmentResult("launchSubFragment", launchSubFragmentBundle);
             }
         }
 
@@ -348,18 +357,18 @@ public class MainActivity extends AppCompatActivity {
 
                         while (data != -1) {
                             char current = (char) data;
-                    sb.append(current);
-                    data = reader.read();
-                }
+                            sb.append(current);
+                            data = reader.read();
+                        }
 
-                String result = sb.toString();
-                JSONObject about = new JSONObject(result);
+                        String result = sb.toString();
+                        JSONObject about = new JSONObject(result);
 
-                return about.getInt("versionCode");
-            } catch (Exception ignored) {
-                return 0;
-            }
-        })
+                        return about.getInt("versionCode");
+                    } catch (Exception ignored) {
+                        return 0;
+                    }
+                })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<Integer>() {

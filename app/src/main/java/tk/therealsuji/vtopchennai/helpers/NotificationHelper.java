@@ -126,7 +126,7 @@ public class NotificationHelper extends ContextWrapper {
                 0,
                 new Intent(this, LauncherActivity.class)
                         .putExtra("launchFragment", HomeFragment.class),
-                PendingIntent.FLAG_IMMUTABLE
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
         );
         String title = "Upcoming: " +
                 SettingsRepository.getSystemFormattedTime(this, timetableItem.startTime) + " - " +
@@ -166,7 +166,7 @@ public class NotificationHelper extends ContextWrapper {
                 0,
                 new Intent(this, LauncherActivity.class)
                         .putExtra("launchFragment", HomeFragment.class),
-                PendingIntent.FLAG_IMMUTABLE
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
         );
         String title = "Ongoing: " +
                 SettingsRepository.getSystemFormattedTime(this, timetableItem.startTime) + " - " +
@@ -210,8 +210,9 @@ public class NotificationHelper extends ContextWrapper {
                 this,
                 0,
                 new Intent(this, LauncherActivity.class)
-                        .putExtra("launchFragment", ProfileFragment.class),
-                PendingIntent.FLAG_IMMUTABLE
+                        .putExtra("launchFragment", ProfileFragment.class)
+                        .putExtra("launchSubFragment", "ExamSchedule"),
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
         );
         String title = "All the best for your exam!";
         String message = examItem.courseCode + " - " + examItem.courseTitle;
