@@ -231,7 +231,7 @@ public class VTOPService extends Service {
         this.isOpened = false;
         this.progress = -1;
 
-        this.notification.setContentTitle(getString(R.string.sign_in_attempt));
+        this.notification.setContentTitle(getString(R.string.server_connect));
         this.notification.setContentText(null);
         this.notification.setProgress(0, 0, true);
         this.notificationManager.notify(SettingsRepository.NOTIFICATION_ID_VTOP_DOWNLOAD, this.notification.build());
@@ -326,6 +326,8 @@ public class VTOPService extends Service {
                 "})();", responseString -> {
             try {
                 JSONObject response = new JSONObject(responseString);
+                this.notification.setContentTitle(getString(R.string.captcha_wait));
+                this.notificationManager.notify(SettingsRepository.NOTIFICATION_ID_VTOP_DOWNLOAD, notification.build());
 
                 if (response.getString("captcha_type").equals("local")) {
                     getCaptcha();
@@ -415,6 +417,9 @@ public class VTOPService extends Service {
      */
     @JavascriptInterface
     public void signIn(final String captcha) {
+        this.notification.setContentTitle(getString(R.string.sign_in_attempt));
+        this.notificationManager.notify(SettingsRepository.NOTIFICATION_ID_VTOP_DOWNLOAD, notification.build());
+
         new Handler(getApplicationContext().getMainLooper())
                 .post(() -> {
                     try {
@@ -563,6 +568,9 @@ public class VTOPService extends Service {
                 }
 
                 try {
+                    this.notification.setContentTitle(getString(R.string.semester_wait));
+                    this.notificationManager.notify(SettingsRepository.NOTIFICATION_ID_VTOP_DOWNLOAD, notification.build());
+
                     String[] semesters = this.semesters.keySet().toArray(new String[0]);
                     this.callback.onRequestSemester(semesters);
                 } catch (Exception ignored) {
@@ -2248,7 +2256,7 @@ public class VTOPService extends Service {
      * Function to make final changes before signing the user in.
      */
     private void finishUp() {
-        this.notification.setContentTitle(getString(R.string.completing_download));
+        this.notification.setContentTitle(getString(R.string.completing_sync));
         this.notification.setProgress(0, 0, true);
         this.notification.setContentText(null);
 
