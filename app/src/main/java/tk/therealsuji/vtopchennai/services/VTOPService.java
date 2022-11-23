@@ -266,13 +266,12 @@ public class VTOPService extends Service {
      * Function to handle errors.
      */
     private void error(final int errorCode, final String errorMessage) {
-        String error = "Error " + errorCode + ". " + errorMessage;
-        Toast.makeText(getApplicationContext(), error, Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), "Error " + errorCode + ". " + errorMessage, Toast.LENGTH_SHORT).show();
         this.reloadPage();
 
         // Firebase Crashlytics Logging
         FirebaseCrashlytics crashlytics = FirebaseCrashlytics.getInstance();
-        crashlytics.log(error);
+        crashlytics.log("VTOP error " + errorCode + ". " + errorMessage);
     }
 
     /**

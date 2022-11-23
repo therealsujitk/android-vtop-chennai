@@ -14,6 +14,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.android.material.color.MaterialColors;
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -347,9 +348,13 @@ public class AssignmentsFragment extends Fragment implements SwipeRefreshLayout.
     }
 
     private void throwErrorIfExists(JSONObject jsonObject) throws Exception {
+        FirebaseCrashlytics crashlytics = FirebaseCrashlytics.getInstance();
+
         if (jsonObject.has("error")) {
+            crashlytics.log("Moodle error. " + jsonObject.getString("error"));
             throw new Exception(jsonObject.getString("error"));
         } else if (jsonObject.has("message")) {
+            crashlytics.log("Moodle error. " + jsonObject.getString("message"));
             throw new Exception(jsonObject.getString("message"));
         }
     }
