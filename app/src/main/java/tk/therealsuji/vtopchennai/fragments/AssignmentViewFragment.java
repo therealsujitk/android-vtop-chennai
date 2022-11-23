@@ -560,8 +560,8 @@ public class AssignmentViewFragment extends Fragment implements SwipeRefreshLayo
             }
 
             if (assignment.dueDate != null) {
-                SimpleDateFormat date = new SimpleDateFormat("EEEE, d MMMM yyyy", Locale.getDefault());
-                SimpleDateFormat time = new SimpleDateFormat("HH:mm", Locale.getDefault());
+                SimpleDateFormat date = new SimpleDateFormat("EEEE, d MMMM yyyy", Locale.ENGLISH);
+                SimpleDateFormat time = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
 
                 try {
                     String dueDateString = date.format(assignment.dueDate) + ", " + SettingsRepository.getSystemFormattedTime(

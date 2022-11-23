@@ -89,8 +89,8 @@ public class ExamsItemAdapter extends RecyclerView.Adapter<ExamsItemAdapter.View
             TextView venue = this.examItem.findViewById(R.id.text_view_venue);
             ChipGroup slots = this.examItem.findViewById(R.id.chip_group_slots);
 
-            SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MMM-yyyy", Locale.getDefault());
-            SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH);
+            SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
 
             courseTitle.setText(examItem.courseTitle);
             courseCode.setText(examItem.courseCode);

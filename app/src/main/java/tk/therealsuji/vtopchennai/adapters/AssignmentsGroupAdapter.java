@@ -47,7 +47,7 @@ public class AssignmentsGroupAdapter extends RecyclerView.Adapter<AssignmentsGro
 
         this.assignments = new HashMap<>();
         this.dates = new ArrayList<>();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
 
         for (int i = 0; i < assignments.size(); ++i) {
             Assignment assignment = assignments.get(i);
@@ -106,7 +106,7 @@ public class AssignmentsGroupAdapter extends RecyclerView.Adapter<AssignmentsGro
             if (date == null) {
                 dateView.setText(R.string.no_due_date);
             } else {
-                SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, d MMMM yyyy", Locale.getDefault());
+                SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, d MMMM yyyy", Locale.ENGLISH);
                 dateView.setText(dateFormat.format(date));
             }
 

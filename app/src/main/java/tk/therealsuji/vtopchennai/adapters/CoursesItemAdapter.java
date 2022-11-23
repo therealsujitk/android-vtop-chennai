@@ -200,9 +200,9 @@ public class CoursesItemAdapter extends RecyclerView.Adapter<CoursesItemAdapter.
                 TextView attendanceText1 = (TextView) view;
 
                 if (attendanceText1.getText().toString().contains("%")) {
-                    attendanceText1.setText(String.format(Locale.getDefault(), "%d/%d", courseItem.attendanceAttended, courseItem.attendanceTotal));
+                    attendanceText1.setText(String.format(Locale.ENGLISH, "%d/%d", courseItem.attendanceAttended, courseItem.attendanceTotal));
                 } else {
-                    attendanceText1.setText(String.format(Locale.getDefault(), "%d%%", courseItem.attendancePercentage));
+                    attendanceText1.setText(String.format(Locale.ENGLISH, "%d%%", courseItem.attendancePercentage));
                 }
             });
         }

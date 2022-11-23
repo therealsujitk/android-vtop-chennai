@@ -1691,8 +1691,8 @@ public class VTOPService extends Service {
                 Iterator<String> keys = response.keys();
                 List<Exam> exams = new ArrayList<>();
 
-                SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MMM-yyyy", Locale.getDefault());
-                SimpleDateFormat dateTimeFormat = new SimpleDateFormat("dd-MMM-yyyy hh:mm a", Locale.getDefault());
+                SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH);
+                SimpleDateFormat dateTimeFormat = new SimpleDateFormat("dd-MMM-yyyy hh:mm a", Locale.ENGLISH);
 
                 int index = 1;
 
