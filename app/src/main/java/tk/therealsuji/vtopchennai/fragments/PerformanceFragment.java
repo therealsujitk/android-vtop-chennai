@@ -20,7 +20,6 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.annotations.NonNull;
@@ -55,12 +54,15 @@ public class PerformanceFragment extends Fragment {
         // Disable app bar scrolling behaviour
         CoordinatorLayout.LayoutParams layoutParams = (CoordinatorLayout.LayoutParams) this.appBarLayout.getLayoutParams();
         AppBarLayout.Behavior behavior = (AppBarLayout.Behavior) layoutParams.getBehavior();
-        Objects.requireNonNull(behavior).setDragCallback(new AppBarLayout.Behavior.DragCallback() {
-            @Override
-            public boolean canDrag(@androidx.annotation.NonNull AppBarLayout appBarLayout) {
-                return false;
-            }
-        });
+
+        if (behavior != null) {
+            behavior.setDragCallback(new AppBarLayout.Behavior.DragCallback() {
+                @Override
+                public boolean canDrag(@androidx.annotation.NonNull AppBarLayout appBarLayout) {
+                    return false;
+                }
+            });
+        }
     }
 
     @Override
