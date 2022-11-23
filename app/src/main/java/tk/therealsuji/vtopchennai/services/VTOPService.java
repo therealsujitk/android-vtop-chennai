@@ -25,6 +25,7 @@ import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -265,8 +266,13 @@ public class VTOPService extends Service {
      * Function to handle errors.
      */
     private void error(final int errorCode, final String errorMessage) {
-        Toast.makeText(getApplicationContext(), "Error " + errorCode + ". " + errorMessage, Toast.LENGTH_SHORT).show();
+        String error = "Error " + errorCode + ". " + errorMessage;
+        Toast.makeText(getApplicationContext(), error, Toast.LENGTH_SHORT).show();
         this.reloadPage();
+
+        // Firebase Crashlytics Logging
+        FirebaseCrashlytics crashlytics = FirebaseCrashlytics.getInstance();
+        crashlytics.log(error);
     }
 
     /**
@@ -2495,15 +2501,18 @@ public class VTOPService extends Service {
  * Error 801    Error downloading grades
  * Error 802    Error saving grades to the database
  *
- * Error 901    Error downloading proctor info
- * Error 902    Error saving proctor info to the database
- * Error 903    Error downloading dean & hod info
- * Error 904    Error saving dean & hod info to the database
+ * Error 901    Error downloading exam schedule
+ * Error 902    Error saving exam schedule to the database
  *
- * Error 1001   Error downloading spotlight
- * Error 1002   Error saving spotlight to the database
+ * Error 1001   Error downloading proctor info
+ * Error 1002   Error saving proctor info to the database
+ * Error 1003   Error downloading dean & hod info
+ * Error 1004   Error saving dean & hod info to the database
  *
- * Error 1101   Error downloading receipts
- * Error 1102   Error saving receipts to the database
- * Error 1103   Error checking for due payments
+ * Error 1101   Error downloading spotlight
+ * Error 1102   Error saving spotlight to the database
+ *
+ * Error 1201   Error downloading receipts
+ * Error 1202   Error saving receipts to the database
+ * Error 1203   Error checking for due payments
  */
