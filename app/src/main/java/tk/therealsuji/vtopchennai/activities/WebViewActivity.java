@@ -20,9 +20,8 @@ public class WebViewActivity extends AppCompatActivity {
 
         findViewById(R.id.image_button_back).setOnClickListener(view -> finish());
 
-        Bundle extras = getIntent().getExtras();
-        String title = extras.getString("title");
-        String url = getIntent().getExtras().getString("url");
+        String title = getIntent().getStringExtra("title") + "";
+        String url = getIntent().getStringExtra("url") + "";
 
         TextView titleView = findViewById(R.id.text_view_title);
         titleView.setText(title);
@@ -36,8 +35,7 @@ public class WebViewActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        Bundle extras = getIntent().getExtras();
-        String title = extras.getString("title");
+        String title = getIntent().getStringExtra("title") + "";
 
         // Firebase Analytics Logging
         Bundle bundle = new Bundle();

@@ -192,9 +192,9 @@ public class SettingsRepository {
     }
 
     public static void openWebViewActivity(Context context, String title, String url) {
-        Intent intent = new Intent(context, WebViewActivity.class);
-        intent.putExtra("url", url);
-        intent.putExtra("title", title);
+        Intent intent = new Intent(context, WebViewActivity.class)
+                .putExtra("url", url)
+                .putExtra("title", title);
         context.startActivity(intent);
     }
 
