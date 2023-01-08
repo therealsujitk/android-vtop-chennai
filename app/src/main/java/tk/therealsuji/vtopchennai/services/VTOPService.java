@@ -482,9 +482,12 @@ public class VTOPService extends Service {
                             "            } else if(pageContent.includes('your account is locked')) {" +
                             "                response.error_message = 'Your Account is Locked';" +
                             "                response.error_code = 4;" +
+                            "            } else if(pageContent.includes('maximum fail attempts reached')) {" +
+                            "                response.error_message = 'Maximum login attempts reached, open VTOP in your browser to reset password';" +
+                            "                response.error_code = 5;" +
                             "            } else {" +
                             "                response.error_message = 'Unknown error';" +
-                            "                response.error_code = 5;" +
+                            "                response.error_code = 6;" +
                             "            }" +
                             "        }" +
                             "    }" +
