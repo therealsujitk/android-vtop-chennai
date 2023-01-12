@@ -44,6 +44,10 @@ public class MoodleLoginDialogFragment extends DialogFragment {
     Function<Object, Object> callback;
     MoodleApi moodleApi;
 
+    public MoodleLoginDialogFragment() {
+        // Required empty public constructor
+    }
+
     public MoodleLoginDialogFragment(Function<Object, Object> callback) {
         this.callback = callback;
     }

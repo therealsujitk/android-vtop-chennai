@@ -138,6 +138,7 @@ public class PerformanceCard extends LinearLayout {
 
     public void setScore(Double score, Double max) {
         score = Math.ceil(score);
+        max = Math.ceil(max);
 
         this.scoreProgress.setProgress(score.intValue(), true);
         this.scoreProgress.setSecondaryProgress(max.intValue());

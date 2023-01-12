@@ -38,6 +38,7 @@ import tk.therealsuji.vtopchennai.R;
 import tk.therealsuji.vtopchennai.helpers.AppDatabase;
 import tk.therealsuji.vtopchennai.helpers.SettingsRepository;
 import tk.therealsuji.vtopchennai.interfaces.CoursesDao;
+import tk.therealsuji.vtopchennai.interfaces.ExamsDao;
 import tk.therealsuji.vtopchennai.models.Course;
 import tk.therealsuji.vtopchennai.models.Timetable;
 
@@ -106,7 +107,9 @@ public class TimetableItemAdapter extends RecyclerView.Adapter<TimetableItemAdap
             courseCode.setText(timetableItem.courseCode);
             setTimings(timetableItem.startTime, timetableItem.endTime, status);
 
-            if (timetableItem.attendancePercentage != null && timetableItem.attendancePercentage < 75) {
+            float cgpa = SettingsRepository.getCGPA(this.timetableItem.getContext());
+
+            if (cgpa < 9 && timetableItem.attendancePercentage != null && timetableItem.attendancePercentage < 75) {
                 ImageView endDrawable = this.timetableItem.findViewById(R.id.image_view_failed_attendance);
                 endDrawable.setImageDrawable(ContextCompat.getDrawable(this.timetableItem.getContext(), R.drawable.ic_feedback));
                 DrawableCompat.setTint(
@@ -144,6 +147,7 @@ public class TimetableItemAdapter extends RecyclerView.Adapter<TimetableItemAdap
                             TextView courseCode = bottomSheetLayout.findViewById(R.id.text_view_course_code);
                             TextView faculty = bottomSheetLayout.findViewById(R.id.text_view_faculty);
                             TextView venue = bottomSheetLayout.findViewById(R.id.text_view_venue);
+                            TextView attendanceExcessText = bottomSheetLayout.findViewById(R.id.text_view_attendance_excess);
                             TextView attendanceText = bottomSheetLayout.findViewById(R.id.text_view_attendance);
 
                             Chip slot = bottomSheetLayout.findViewById(R.id.chip_slot);
@@ -169,6 +173,25 @@ public class TimetableItemAdapter extends RecyclerView.Adapter<TimetableItemAdap
                             } else {
                                 attendanceText.setText(new DecimalFormat("#'%'").format(course.attendancePercentage));
                                 attendanceProgress.setProgress(course.attendancePercentage);
+
+                                if (SettingsRepository.getCGPA(timetableItem.getContext()) < 9) {
+                                    int attendanceExcess = 4 * course.attendanceAttended - 3 * course.attendanceTotal;
+
+                                    if (course.attendancePercentage < 75) {
+                                        attendanceProgress.setSecondaryProgress(75);
+                                    } else {
+                                        attendanceExcess /= 3;
+                                    }
+
+                                    attendanceExcessText.setVisibility(View.VISIBLE);
+                                    attendanceExcessText.setText(new DecimalFormat("+#;-#").format(attendanceExcess));
+
+                                    if (attendanceExcess < 0) {
+                                        attendanceExcessText.setTextColor(MaterialColors.getColor(attendanceExcessText, R.attr.colorError));
+                                    } else if (attendanceExcess == 0) {
+                                        attendanceExcessText.setTextColor(MaterialColors.getColor(attendanceExcessText, R.attr.colorSecondary));
+                                    }
+                                }
                             }
 
                             bottomSheetLayout.findViewById(R.id.progress_bar_loading).setVisibility(View.GONE);
@@ -191,43 +214,71 @@ public class TimetableItemAdapter extends RecyclerView.Adapter<TimetableItemAdap
             } catch (Exception ignored) {
             }
 
-            SimpleDateFormat hour24 = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
+            Calendar calendarMidnight = Calendar.getInstance();
+            calendarMidnight.set(Calendar.HOUR_OF_DAY, 23);
+            calendarMidnight.set(Calendar.MINUTE, 59);
 
-            try {
-                Date startTimeDate = hour24.parse(startTime);
-                Date endTimeDate = hour24.parse(endTime);
+            AppDatabase appDatabase = AppDatabase.getInstance(this.timetableItem.getContext().getApplicationContext());
+            ExamsDao examsDao = appDatabase.examsDao();
 
-                if (startTimeDate != null && endTimeDate != null) {
-                    if (status == STATUS_PAST) {
-                        this.classProgress.setProgress(100);
-                    } else if (status == STATUS_PRESENT) {
-                        Date now = hour24.parse(hour24.format(Calendar.getInstance().getTime()));
-
-                        if (now == null) {
-                            return;
+            examsDao
+                    .isExamsOngoing(calendarMidnight.getTimeInMillis())
+                    .subscribeOn(Schedulers.single())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new SingleObserver<Boolean>() {
+                        @Override
+                        public void onSubscribe(@io.reactivex.rxjava3.annotations.NonNull Disposable d) {
                         }
 
-                        if (now.after(endTimeDate)) {
-                            this.classProgress.setProgress(100);
-                        } else if (now.after(startTimeDate)) {
-                            long duration = endTimeDate.getTime() - startTimeDate.getTime();
-                            long durationComplete = now.getTime() - startTimeDate.getTime();
-                            long durationPending = endTimeDate.getTime() - now.getTime();
+                        @Override
+                        public void onSuccess(@io.reactivex.rxjava3.annotations.NonNull Boolean isOngoing) {
+                            if (isOngoing) {
+                                return;
+                            }
 
-                            this.setMaxClassProgress(duration);
-                            this.setClassProgressComplete(durationComplete);
-                            this.setClassProgressPending(durationPending, 0);
-                        } else {
-                            long duration = endTimeDate.getTime() - startTimeDate.getTime();
-                            long durationPending = startTimeDate.getTime() - now.getTime();
+                            SimpleDateFormat hour24 = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
 
-                            this.setMaxClassProgress(duration);
-                            this.setClassProgressPending(duration, durationPending);
+                            try {
+                                Date startTimeDate = hour24.parse(startTime);
+                                Date endTimeDate = hour24.parse(endTime);
+
+                                if (startTimeDate != null && endTimeDate != null) {
+                                    if (status == STATUS_PAST) {
+                                        classProgress.setProgress(100);
+                                    } else if (status == STATUS_PRESENT) {
+                                        Date now = hour24.parse(hour24.format(Calendar.getInstance().getTime()));
+
+                                        if (now == null) {
+                                            return;
+                                        }
+
+                                        if (now.after(endTimeDate)) {
+                                            classProgress.setProgress(100);
+                                        } else if (now.after(startTimeDate)) {
+                                            long duration = endTimeDate.getTime() - startTimeDate.getTime();
+                                            long durationComplete = now.getTime() - startTimeDate.getTime();
+                                            long durationPending = endTimeDate.getTime() - now.getTime();
+
+                                            setMaxClassProgress(duration);
+                                            setClassProgressComplete(durationComplete);
+                                            setClassProgressPending(durationPending, 0);
+                                        } else {
+                                            long duration = endTimeDate.getTime() - startTimeDate.getTime();
+                                            long durationPending = startTimeDate.getTime() - now.getTime();
+
+                                            setMaxClassProgress(duration);
+                                            setClassProgressPending(duration, durationPending);
+                                        }
+                                    }
+                                }
+                            } catch (Exception ignored) {
+                            }
                         }
-                    }
-                }
-            } catch (Exception ignored) {
-            }
+
+                        @Override
+                        public void onError(@io.reactivex.rxjava3.annotations.NonNull Throwable e) {
+                        }
+                    });
         }
 
         private void setClassProgressPending(long duration, long delay) {

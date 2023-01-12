@@ -70,6 +70,17 @@
                 android:gravity="center_horizontal"
                 android:orientation="vertical">
 
+                <TextView
+                    android:id="@+id/text_view_attendance_excess"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="6dp"
+                    android:layout_marginBottom="-8dp"
+                    android:textAlignment="textEnd"
+                    android:textColor="?attr/colorPrimary"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+
                 <RelativeLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content">

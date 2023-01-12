@@ -99,7 +99,7 @@ public class MarksAdapter extends RecyclerView.Adapter<MarksAdapter.ViewHolder> 
                     LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
                     int scrollPosition = Objects.requireNonNull(layoutManager).findFirstVisibleItemPosition();
 
-                    if (scrollPosition < courseTypes.getChildCount()) {
+                    if (courseTypes.getChildAt(scrollPosition) != null) {
                         ((Chip) courseTypes.getChildAt(scrollPosition)).setChecked(true);
                     }
                 }

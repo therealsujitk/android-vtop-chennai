@@ -30,6 +30,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
@@ -42,9 +43,11 @@ import tk.therealsuji.vtopchennai.R;
 import tk.therealsuji.vtopchennai.activities.WebViewActivity;
 import tk.therealsuji.vtopchennai.fragments.RecyclerViewFragment;
 import tk.therealsuji.vtopchennai.fragments.ViewPagerFragment;
+import tk.therealsuji.vtopchennai.models.Exam;
 import tk.therealsuji.vtopchennai.models.Timetable;
+import tk.therealsuji.vtopchennai.receivers.ExamNotificationReceiver;
+import tk.therealsuji.vtopchennai.receivers.TimetableNotificationReceiver;
 import tk.therealsuji.vtopchennai.receivers.AlarmReceiver;
-import tk.therealsuji.vtopchennai.receivers.NotificationReceiver;
 
 public class SettingsRepository {
     public static final String APP_BASE_URL = "https://vtopchennai.therealsuji.tk";
@@ -69,22 +72,34 @@ public class SettingsRepository {
     public static final int THEME_SYSTEM_DAY = 3;
     public static final int THEME_SYSTEM_NIGHT = 4;
 
-    public static final int NOTIFICATION_ID_TIMETABLE = 1;
-    public static final int NOTIFICATION_ID_VTOP_DOWNLOAD = 2;
+    public static final int NOTIFICATION_ID_EXAMS = 1;
+    public static final int NOTIFICATION_ID_TIMETABLE = 2;
+    public static final int NOTIFICATION_ID_VTOP_DOWNLOAD = 3;
 
     public static int getTheme(Context context) {
         String appearance = getSharedPreferences(context).getString("appearance", "system");
-        int currentNightMode = context.getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
 
         if (appearance.equals("dark")) {
             return THEME_NIGHT;
         } else if (appearance.equals("light")) {
             return THEME_DAY;
-        } else if (currentNightMode == Configuration.UI_MODE_NIGHT_YES) {
+        }
+
+        return getSystemTheme(context);
+    }
+
+    public static int getSystemTheme(Context context) {
+        int currentNightMode = context.getApplicationContext().getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
+
+        if (currentNightMode == Configuration.UI_MODE_NIGHT_YES) {
             return THEME_SYSTEM_NIGHT;
         } else {
             return THEME_SYSTEM_DAY;
         }
+    }
+
+    public static float getCGPA(Context context) {
+        return getSharedPreferences(context).getFloat("cgpa", 0);
     }
 
     public static boolean isRefreshRequired(Context context) {
@@ -178,9 +193,9 @@ public class SettingsRepository {
     }
 
     public static void openWebViewActivity(Context context, String title, String url) {
-        Intent intent = new Intent(context, WebViewActivity.class);
-        intent.putExtra("url", url);
-        intent.putExtra("title", title);
+        Intent intent = new Intent(context, WebViewActivity.class)
+                .putExtra("url", url)
+                .putExtra("title", title);
         context.startActivity(intent);
     }
 
@@ -233,10 +248,10 @@ public class SettingsRepository {
         return bitmap;
     }
 
-    public static void clearTimetableNotifications(Context context) {
+    public static void clearNotificationPendingIntents(Context context) {
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         SharedPreferences sharedPreferences = getSharedPreferences(context);
-        Intent notificationIntent = new Intent(context, NotificationReceiver.class);
+        Intent notificationIntent = new Intent(context, TimetableNotificationReceiver.class);
         Intent alarmIntent = new Intent(context, AlarmReceiver.class);
 
         int alarmCount = sharedPreferences.getInt("alarmCount", 0);
@@ -257,7 +272,7 @@ public class SettingsRepository {
     public static void setTimetableNotifications(Context context, Timetable timetable) throws ParseException {
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Calendar calendar = Calendar.getInstance();
-        Intent notificationIntent = new Intent(context, NotificationReceiver.class);
+        Intent notificationIntent = new Intent(context, TimetableNotificationReceiver.class);
         Intent alarmIntent = new Intent(context, AlarmReceiver.class);
         SharedPreferences sharedPreferences = getSharedPreferences(context);
 
@@ -314,6 +329,7 @@ public class SettingsRepository {
             alarmFinish.set(Calendar.HOUR_OF_DAY, Integer.parseInt(timetable.endTime.split(":")[0]));
             alarmFinish.set(Calendar.MINUTE, Integer.parseInt(timetable.endTime.split(":")[1]));
 
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(context, alarmCount++, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
             if (!sharedPreferences.getString("dnd", "off").equals("off")) {
                 PendingIntent pendingIntentAlarm;
                 if (sharedPreferences.getString("dnd","off").equals("silent")){
@@ -330,11 +346,39 @@ public class SettingsRepository {
                 pendingIntentAlarm = PendingIntent.getBroadcast(context, alarmCount++, alarmIntent, PendingIntent.FLAG_IMMUTABLE);
                 alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, alarmFinish.getTimeInMillis() , AlarmManager.INTERVAL_DAY * 7, pendingIntentAlarm);
             }
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(context, alarmCount++, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
+
             alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, alarm.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
             alarm.add(Calendar.MINUTE, -sharedPreferences.getInt("notification_interval",30));
             pendingIntent = PendingIntent.getBroadcast(context, alarmCount++, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
             alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, alarm.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
+        }
+
+        sharedPreferences.edit().putInt("alarmCount", alarmCount).apply();
+    }
+
+    public static void setExamNotifications(Context context, List<Exam> exams) {
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        Calendar calendar = Calendar.getInstance();
+        Intent notificationIntent = new Intent(context, ExamNotificationReceiver.class);
+        SharedPreferences sharedPreferences = getSharedPreferences(context);
+
+        int alarmCount = sharedPreferences.getInt("alarmCount", 0);
+
+        Date now = calendar.getTime();
+
+        for (int i = 0; i < exams.size(); ++i) {
+            Exam exam = exams.get(i);
+
+            if (exam.startTime == null || now.after(new Date(exam.startTime))) {
+                continue;
+            }
+
+            Calendar alarm = Calendar.getInstance();
+            alarm.setTime(new Date(exam.startTime));
+            alarm.add(Calendar.MINUTE, -30);
+
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(context, alarmCount++, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, alarm.getTimeInMillis(), pendingIntent);
         }
 
         sharedPreferences.edit().putInt("alarmCount", alarmCount).apply();

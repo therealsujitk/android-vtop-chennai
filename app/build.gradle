@@ -1,14 +1,24 @@
-apply plugin: 'com.android.application'
+plugins {
+    id 'com.android.application'
+    id 'com.google.firebase.crashlytics'
+    id 'com.google.firebase.firebase-perf'
+    id 'com.google.gms.google-services'
+}
 
 android {
-    compileSdkVersion 32
+    compileSdkVersion 33
 
     defaultConfig {
         applicationId "tk.therealsuji.vtopchennai"
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments += ["room.schemaLocation": "$projectDir/schemas".toString()]
+            }
+        }
         minSdkVersion 24
-        targetSdkVersion 32
-        versionCode 23
-        versionName "4.0.2"
+        targetSdkVersion 33
+        versionCode 26
+        versionName "4.2.1"
     }
 
     buildTypes {
@@ -23,14 +33,19 @@ android {
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
 
-    implementation 'androidx.appcompat:appcompat:1.5.0'
+    implementation 'androidx.appcompat:appcompat:1.5.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'androidx.room:room-runtime:2.4.3'
     implementation 'androidx.room:room-rxjava3:2.4.3'
-    implementation 'androidx.security:security-crypto:1.1.0-alpha03'
+    implementation 'androidx.security:security-crypto:1.1.0-alpha04'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
 
-    implementation 'com.google.android.material:material:1.7.0-beta01'
+    implementation platform('com.google.firebase:firebase-bom:31.1.0')
+    implementation 'com.google.android.material:material:1.8.0-alpha02'
+    implementation 'com.google.firebase:firebase-analytics'
+    implementation 'com.google.firebase:firebase-crashlytics'
+    implementation 'com.google.firebase:firebase-perf'
+
     implementation 'com.squareup.retrofit2:adapter-rxjava3:2.9.0'
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
 

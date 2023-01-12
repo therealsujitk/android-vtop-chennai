@@ -16,17 +16,22 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 import tk.therealsuji.vtopchennai.helpers.AppDatabase;
 import tk.therealsuji.vtopchennai.helpers.NotificationHelper;
 import tk.therealsuji.vtopchennai.helpers.SettingsRepository;
+import tk.therealsuji.vtopchennai.interfaces.ExamsDao;
 import tk.therealsuji.vtopchennai.interfaces.TimetableDao;
 import tk.therealsuji.vtopchennai.models.Timetable;
 
-public class NotificationReceiver extends BroadcastReceiver {
+public class TimetableNotificationReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
         Calendar calendar = Calendar.getInstance();
         Calendar calendarFuture = Calendar.getInstance();
+        Calendar calendarMidnight = Calendar.getInstance();
+
         SharedPreferences sharedPreferences=SettingsRepository.getSharedPreferences(context.getApplicationContext());
         calendarFuture.add(Calendar.MINUTE , sharedPreferences.getInt("notification_interval",30));
+        calendarMidnight.set(Calendar.HOUR_OF_DAY, 23);
+        calendarMidnight.set(Calendar.MINUTE, 59);
 
         SimpleDateFormat hour24 = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
 
@@ -35,32 +40,25 @@ public class NotificationReceiver extends BroadcastReceiver {
         String futureTime = hour24.format(calendarFuture.getTime());
 
         AppDatabase appDatabase = AppDatabase.getInstance(context);
+        ExamsDao examsDao = appDatabase.examsDao();
         TimetableDao timetableDao = appDatabase.timetableDao();
 
-        timetableDao
-                .getUpcoming(day, currentTime, futureTime)
+        examsDao
+                .isExamsOngoing(calendarMidnight.getTimeInMillis())
                 .subscribeOn(Schedulers.single())
-                .subscribe(new SingleObserver<Timetable.AllData>() {
+                .subscribe(new SingleObserver<Boolean>() {
                     @Override
                     public void onSubscribe(@NonNull Disposable d) {
                     }
 
                     @Override
-                    public void onSuccess(Timetable.@NonNull AllData timetableItem) {
-                        try {
-                            NotificationHelper notificationHelper = new NotificationHelper(context);
-                            notificationHelper.getManager().notify(
-                                    SettingsRepository.NOTIFICATION_ID_TIMETABLE,
-                                    notificationHelper.notifyUpcoming(timetableItem).build()
-                            );
-                        } catch (Exception ignored) {
+                    public void onSuccess(@NonNull Boolean isOngoing) {
+                        if (isOngoing) {
+                            return;
                         }
-                    }
 
-                    @Override
-                    public void onError(@NonNull Throwable e) {
                         timetableDao
-                                .getOngoing(day, currentTime)
+                                .getUpcoming(day, currentTime, futureTime)
                                 .subscribeOn(Schedulers.single())
                                 .subscribe(new SingleObserver<Timetable.AllData>() {
                                     @Override
@@ -73,7 +71,7 @@ public class NotificationReceiver extends BroadcastReceiver {
                                             NotificationHelper notificationHelper = new NotificationHelper(context);
                                             notificationHelper.getManager().notify(
                                                     SettingsRepository.NOTIFICATION_ID_TIMETABLE,
-                                                    notificationHelper.notifyOngoing(timetableItem).build()
+                                                    notificationHelper.notifyUpcoming(timetableItem).build()
                                             );
                                         } catch (Exception ignored) {
                                         }
@@ -81,8 +79,36 @@ public class NotificationReceiver extends BroadcastReceiver {
 
                                     @Override
                                     public void onError(@NonNull Throwable e) {
+                                        timetableDao
+                                                .getOngoing(day, currentTime)
+                                                .subscribeOn(Schedulers.single())
+                                                .subscribe(new SingleObserver<Timetable.AllData>() {
+                                                    @Override
+                                                    public void onSubscribe(@NonNull Disposable d) {
+                                                    }
+
+                                                    @Override
+                                                    public void onSuccess(Timetable.@NonNull AllData timetableItem) {
+                                                        try {
+                                                            NotificationHelper notificationHelper = new NotificationHelper(context);
+                                                            notificationHelper.getManager().notify(
+                                                                    SettingsRepository.NOTIFICATION_ID_TIMETABLE,
+                                                                    notificationHelper.notifyOngoing(timetableItem).build()
+                                                            );
+                                                        } catch (Exception ignored) {
+                                                        }
+                                                    }
+
+                                                    @Override
+                                                    public void onError(@NonNull Throwable e) {
+                                                    }
+                                                });
                                     }
                                 });
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
                     }
                 });
     }

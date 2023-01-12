@@ -20,6 +20,10 @@ public class ReCaptchaDialogFragment extends DialogFragment {
     OnCancelListener onCancelListener;
     WebView webView;
 
+    public ReCaptchaDialogFragment() {
+        // Required empty public constructor
+    }
+
     public ReCaptchaDialogFragment(@NonNull WebView webView, @NonNull OnCancelListener onCancelListener) {
         this.onCancelListener = onCancelListener;
         this.webView = webView;

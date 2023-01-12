@@ -33,6 +33,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.util.List;
 import io.reactivex.rxjava3.annotations.NonNull;
@@ -61,6 +62,16 @@ public class ProfileFragment extends Fragment {
                             (FragmentActivity) context,
                             R.string.courses,
                             ViewPagerFragment.TYPE_COURSES
+                    ),
+                    null
+            ),
+            new ItemData(
+                    R.drawable.ic_exams,
+                    R.string.exam_schedule,
+                    context -> SettingsRepository.openViewPagerFragment(
+                            (FragmentActivity) context,
+                            R.string.exam_schedule,
+                            ViewPagerFragment.TYPE_EXAMS
                     ),
                     null
             ),
@@ -187,7 +198,7 @@ public class ProfileFragment extends Fragment {
                         builder.setPositiveButton(android.R.string.ok, (dialog, which) -> {
                             if (Integer.parseInt(input.getText().toString())>=5 && Integer.parseInt(input.getText().toString())<=60){
                                 sharedPreferences.edit().putInt("notification_interval",Integer.parseInt(input.getText().toString())).apply();
-                                SettingsRepository.clearTimetableNotifications(context);
+                                SettingsRepository.clearNotificationPendingIntents(context);
                                 AppDatabase appDatabase = AppDatabase.getInstance(context);
                                 TimetableDao timetableDao = appDatabase.timetableDao();
                                 timetableDao.getTimetable().subscribeOn(Schedulers.single())
@@ -391,6 +402,29 @@ public class ProfileFragment extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+
+        // Firebase Analytics Logging
+        Bundle bundle = new Bundle();
+        bundle.putString(FirebaseAnalytics.Param.SCREEN_CLASS, "ProfileFragment");
+        bundle.putString(FirebaseAnalytics.Param.SCREEN_NAME, "Profile");
+        FirebaseAnalytics.getInstance(this.requireContext()).logEvent(FirebaseAnalytics.Event.SCREEN_VIEW, bundle);
+
+        getParentFragmentManager().setFragmentResultListener("launchSubFragment", this, (requestKey, result) -> {
+            String subFragment = result.getString("subFragment");
+
+            if (subFragment.equals("ExamSchedule")) {
+                SettingsRepository.openViewPagerFragment(
+                        requireActivity(),
+                        R.string.exam_schedule,
+                        ViewPagerFragment.TYPE_EXAMS
+                );
+            }
+        });
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View profileFragment = inflater.inflate(R.layout.fragment_profile, container, false);
 
@@ -445,7 +479,7 @@ public class ProfileFragment extends Fragment {
     }
 
     public void refreshTimetable(Context context){
-        SettingsRepository.clearTimetableNotifications(context);
+        SettingsRepository.clearNotificationPendingIntents(context);
 
         AppDatabase appDatabase = AppDatabase.getInstance(context);
         TimetableDao timetableDao = appDatabase.timetableDao();
