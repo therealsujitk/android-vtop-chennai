@@ -173,9 +173,13 @@ public class VTOPHelper {
                             });
 
                             FragmentManager fragmentManager = ((FragmentActivity) context).getSupportFragmentManager();
-                            FragmentTransaction transaction = fragmentManager.beginTransaction();
-                            transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-                            transaction.add(android.R.id.content, reCaptchaDialogFragment).addToBackStack(null).commit();
+
+                            if (!fragmentManager.isDestroyed()) {
+                                fragmentManager
+                                        .beginTransaction()
+                                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                                        .add(android.R.id.content, reCaptchaDialogFragment).addToBackStack(null).commit();
+                            }
                         });
                     }
                 }

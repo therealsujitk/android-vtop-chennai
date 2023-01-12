@@ -12,7 +12,9 @@ import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import tk.therealsuji.vtopchennai.helpers.AppDatabase;
 import tk.therealsuji.vtopchennai.helpers.SettingsRepository;
+import tk.therealsuji.vtopchennai.interfaces.ExamsDao;
 import tk.therealsuji.vtopchennai.interfaces.TimetableDao;
+import tk.therealsuji.vtopchennai.models.Exam;
 import tk.therealsuji.vtopchennai.models.Timetable;
 
 public class BootReceiver extends BroadcastReceiver {
@@ -27,10 +29,11 @@ public class BootReceiver extends BroadcastReceiver {
             return;
         }
 
-        SettingsRepository.clearTimetableNotifications(context);
+        SettingsRepository.clearNotificationPendingIntents(context);
 
         AppDatabase appDatabase = AppDatabase.getInstance(context);
         TimetableDao timetableDao = appDatabase.timetableDao();
+        ExamsDao examsDao = appDatabase.examsDao();
 
         timetableDao
                 .getTimetable()
@@ -48,6 +51,24 @@ public class BootReceiver extends BroadcastReceiver {
                             } catch (Exception ignored) {
                             }
                         }
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                    }
+                });
+
+        examsDao
+                .getExams()
+                .subscribeOn(Schedulers.single())
+                .subscribe(new SingleObserver<List<Exam>>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+                    }
+
+                    @Override
+                    public void onSuccess(@NonNull List<Exam> exams) {
+                        SettingsRepository.setExamNotifications(context, exams);
                     }
 
                     @Override

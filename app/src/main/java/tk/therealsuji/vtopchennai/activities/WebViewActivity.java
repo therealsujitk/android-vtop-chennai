@@ -7,6 +7,8 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
+
 import tk.therealsuji.vtopchennai.R;
 
 public class WebViewActivity extends AppCompatActivity {
@@ -18,9 +20,8 @@ public class WebViewActivity extends AppCompatActivity {
 
         findViewById(R.id.image_button_back).setOnClickListener(view -> finish());
 
-        Bundle extras = getIntent().getExtras();
-        String title = extras.getString("title");
-        String url = getIntent().getExtras().getString("url");
+        String title = getIntent().getStringExtra("title") + "";
+        String url = getIntent().getStringExtra("url") + "";
 
         TextView titleView = findViewById(R.id.text_view_title);
         titleView.setText(title);
@@ -28,5 +29,18 @@ public class WebViewActivity extends AppCompatActivity {
         WebView webView = findViewById(R.id.web_view);
         webView.setWebViewClient(new WebViewClient());
         webView.loadUrl(url);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        String title = getIntent().getStringExtra("title") + "";
+
+        // Firebase Analytics Logging
+        Bundle bundle = new Bundle();
+        bundle.putString(FirebaseAnalytics.Param.SCREEN_CLASS, "WebViewActivity");
+        bundle.putString(FirebaseAnalytics.Param.SCREEN_NAME, title);
+        FirebaseAnalytics.getInstance(this).logEvent(FirebaseAnalytics.Event.SCREEN_VIEW, bundle);
     }
 }

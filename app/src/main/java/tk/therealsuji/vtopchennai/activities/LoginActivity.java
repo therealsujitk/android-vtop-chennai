@@ -10,6 +10,8 @@ import android.widget.EditText;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
+
 import tk.therealsuji.vtopchennai.R;
 import tk.therealsuji.vtopchennai.helpers.SettingsRepository;
 import tk.therealsuji.vtopchennai.helpers.VTOPHelper;
@@ -98,6 +100,16 @@ public class LoginActivity extends AppCompatActivity {
         if (!this.vtopHelper.isBound() && this.sharedPreferences.getBoolean("isSignedIn", false)) {
             this.startMainActivity();
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // Firebase Analytics Logging
+        Bundle bundle = new Bundle();
+        bundle.putString(FirebaseAnalytics.Param.SCREEN_CLASS, "LoginActivity");
+        FirebaseAnalytics.getInstance(this).logEvent(FirebaseAnalytics.Event.SCREEN_VIEW, bundle);
     }
 
     @Override

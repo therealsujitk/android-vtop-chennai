@@ -66,17 +66,17 @@ public class AttachmentsItemAdapter extends RecyclerView.Adapter<AttachmentsItem
             TextView fileSize = this.attachment.findViewById(R.id.text_view_file_size);
 
             float fileSizeFloat = attachment.size;
-            String fileSizeString = String.format(Locale.getDefault(), "%.1f B", fileSizeFloat);
+            String fileSizeString = String.format(Locale.ENGLISH, "%.1f B", fileSizeFloat);
 
             fileSizeFloat /= 1000;
 
             if (fileSizeFloat > 1) {
-                fileSizeString = String.format(Locale.getDefault(), "%.1f KB", fileSizeFloat);
+                fileSizeString = String.format(Locale.ENGLISH, "%.1f KB", fileSizeFloat);
 
                 fileSizeFloat /= 1000;
 
                 if (fileSizeFloat > 1) {
-                    fileSizeString = String.format(Locale.getDefault(), "%.1f MB", fileSizeFloat);
+                    fileSizeString = String.format(Locale.ENGLISH, "%.1f MB", fileSizeFloat);
                 }
             }
 

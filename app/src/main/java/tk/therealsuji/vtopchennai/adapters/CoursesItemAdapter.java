@@ -26,6 +26,7 @@ import java.util.Objects;
 import java.util.Set;
 
 import tk.therealsuji.vtopchennai.R;
+import tk.therealsuji.vtopchennai.helpers.SettingsRepository;
 import tk.therealsuji.vtopchennai.models.Course;
 
 /**
@@ -191,13 +192,17 @@ public class CoursesItemAdapter extends RecyclerView.Adapter<CoursesItemAdapter.
             attendanceText.setText(new DecimalFormat("#'%'").format(courseItem.attendancePercentage));
             attendanceProgress.setProgress(courseItem.attendancePercentage);
 
+            if (SettingsRepository.getCGPA(this.courseItem.getContext()) < 9 && courseItem.attendancePercentage < 75) {
+                attendanceProgress.setSecondaryProgress(75);
+            }
+
             attendanceText.setOnClickListener(view -> {
                 TextView attendanceText1 = (TextView) view;
 
                 if (attendanceText1.getText().toString().contains("%")) {
-                    attendanceText1.setText(String.format(Locale.getDefault(), "%d/%d", courseItem.attendanceAttended, courseItem.attendanceTotal));
+                    attendanceText1.setText(String.format(Locale.ENGLISH, "%d/%d", courseItem.attendanceAttended, courseItem.attendanceTotal));
                 } else {
-                    attendanceText1.setText(String.format(Locale.getDefault(), "%d%%", courseItem.attendancePercentage));
+                    attendanceText1.setText(String.format(Locale.ENGLISH, "%d%%", courseItem.attendancePercentage));
                 }
             });
         }

@@ -25,6 +25,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.google.android.material.color.MaterialColors;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 import org.apache.commons.io.FileUtils;
 import org.json.JSONArray;
@@ -423,6 +424,17 @@ public class AssignmentViewFragment extends Fragment implements SwipeRefreshLayo
         this.getSubmissionStatus();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        // Firebase Analytics Logging
+        Bundle bundle = new Bundle();
+        bundle.putString(FirebaseAnalytics.Param.SCREEN_CLASS, "AssignmentsViewFragment");
+        bundle.putString(FirebaseAnalytics.Param.SCREEN_NAME, "Assignments View");
+        FirebaseAnalytics.getInstance(this.requireContext()).logEvent(FirebaseAnalytics.Event.SCREEN_VIEW, bundle);
+    }
+
     @SuppressLint("ClickableViewAccessibility")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -548,8 +560,8 @@ public class AssignmentViewFragment extends Fragment implements SwipeRefreshLayo
             }
 
             if (assignment.dueDate != null) {
-                SimpleDateFormat date = new SimpleDateFormat("EEEE, d MMMM yyyy", Locale.getDefault());
-                SimpleDateFormat time = new SimpleDateFormat("HH:mm", Locale.getDefault());
+                SimpleDateFormat date = new SimpleDateFormat("EEEE, d MMMM yyyy", Locale.ENGLISH);
+                SimpleDateFormat time = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
 
                 try {
                     String dueDateString = date.format(assignment.dueDate) + ", " + SettingsRepository.getSystemFormattedTime(

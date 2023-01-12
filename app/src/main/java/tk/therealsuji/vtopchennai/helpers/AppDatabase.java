@@ -2,6 +2,7 @@ package tk.therealsuji.vtopchennai.helpers;
 
 import android.content.Context;
 
+import androidx.room.AutoMigration;
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
@@ -9,6 +10,7 @@ import androidx.room.RoomDatabase;
 import tk.therealsuji.vtopchennai.interfaces.AssignmentsDao;
 import tk.therealsuji.vtopchennai.interfaces.AttendanceDao;
 import tk.therealsuji.vtopchennai.interfaces.CoursesDao;
+import tk.therealsuji.vtopchennai.interfaces.ExamsDao;
 import tk.therealsuji.vtopchennai.interfaces.MarksDao;
 import tk.therealsuji.vtopchennai.interfaces.ReceiptsDao;
 import tk.therealsuji.vtopchennai.interfaces.SpotlightDao;
@@ -19,6 +21,7 @@ import tk.therealsuji.vtopchennai.models.Attachment;
 import tk.therealsuji.vtopchennai.models.Attendance;
 import tk.therealsuji.vtopchennai.models.Course;
 import tk.therealsuji.vtopchennai.models.CumulativeMark;
+import tk.therealsuji.vtopchennai.models.Exam;
 import tk.therealsuji.vtopchennai.models.Mark;
 import tk.therealsuji.vtopchennai.models.Receipt;
 import tk.therealsuji.vtopchennai.models.Slot;
@@ -33,6 +36,7 @@ import tk.therealsuji.vtopchennai.models.Timetable;
                 Attendance.class,
                 Course.class,
                 CumulativeMark.class,
+                Exam.class,
                 Mark.class,
                 Receipt.class,
                 Slot.class,
@@ -40,8 +44,10 @@ import tk.therealsuji.vtopchennai.models.Timetable;
                 Staff.class,
                 Timetable.class
         },
-        version = 1,
-        exportSchema = false
+        version = 2,
+        autoMigrations = {
+                @AutoMigration(from = 1, to = 2),
+        }
 )
 public abstract class AppDatabase extends RoomDatabase {
     public static AppDatabase instance;
@@ -64,6 +70,7 @@ public abstract class AppDatabase extends RoomDatabase {
 
         instance = null;
         context.deleteDatabase("vit_student");
+        context.deleteDatabase("vtop"); // Delete the deprecated database (used till < v4.0)
     }
 
     public abstract AssignmentsDao assignmentsDao();
@@ -71,6 +78,8 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract AttendanceDao attendanceDao();
 
     public abstract CoursesDao coursesDao();
+
+    public abstract ExamsDao examsDao();
 
     public abstract MarksDao marksDao();
 
