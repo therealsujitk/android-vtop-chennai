@@ -175,7 +175,7 @@ public class ProfileFragment extends Fragment {
                     null
             ),
             new ItemData(
-                    R.drawable.ic_edit_notifications,
+                    R.drawable.ic_notification_edit,
                     R.string.notification_interval,
                     context -> {
 
@@ -255,20 +255,16 @@ public class ProfileFragment extends Fragment {
                                 .setSingleChoiceItems(themes, checkedItem, (dialogInterface, i) -> {
                                     if (i == 0) {
                                         sharedPreferences.edit().putInt("notification_interval",5).apply();
-                                        refreshTimeTableNotifications(sharedPreferences, context, 5);
                                     } else if (i == 1) {
                                         sharedPreferences.edit().putInt("notification_interval",10).apply();
-                                        refreshTimeTableNotifications(sharedPreferences, context, 10);
                                     } else if (i == 2) {
                                         sharedPreferences.edit().putInt("notification_interval",20).apply();
-                                        refreshTimeTableNotifications(sharedPreferences, context, 20);
                                     } else if (i == 3) {
                                         sharedPreferences.edit().putInt("notification_interval",30).apply();
-                                        refreshTimeTableNotifications(sharedPreferences, context, 30);
                                     } else {
                                         sharedPreferences.edit().putInt("notification_interval",45).apply();
-                                        refreshTimeTableNotifications(sharedPreferences, context, 45);
                                     }
+                                    refreshTimetable(context);
                                     dialogInterface.dismiss();
                                 })
                                 .setTitle("Set Notification Timing")
@@ -552,32 +548,6 @@ public class ProfileFragment extends Fragment {
                 });
     }
 
-    public void refreshTimeTableNotifications(SharedPreferences sharedPreferences, Context context, int interval){
-        sharedPreferences.edit().putInt("notification_interval", interval).apply();
-        SettingsRepository.clearNotificationPendingIntents(context);
-        AppDatabase appDatabase = AppDatabase.getInstance(context);
-        TimetableDao timetableDao = appDatabase.timetableDao();
-        timetableDao.getTimetable().subscribeOn(Schedulers.single())
-                .subscribe(new SingleObserver<List<Timetable>>() {
-                    @Override
-                    public void onSubscribe(@NonNull Disposable d) {
-                    }
-
-                    @Override
-                    public void onSuccess(@NonNull List<Timetable> timetable) {
-                        for (int i = 0; i < timetable.size(); ++i) {
-                            try {
-                                SettingsRepository.setTimetableNotifications(context, timetable.get(i));
-                            } catch (Exception ignored) {
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void onError(@NonNull Throwable e) {
-                    }
-                });
-    }
 
     public static class ItemData {
         public final int iconId, titleId;

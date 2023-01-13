@@ -375,7 +375,7 @@ public class SettingsRepository {
 
             Calendar alarm = Calendar.getInstance();
             alarm.setTime(new Date(exam.startTime));
-            alarm.add(Calendar.MINUTE, -30);
+            alarm.add(Calendar.MINUTE, -sharedPreferences.getInt("notification_interval",30));
 
             PendingIntent pendingIntent = PendingIntent.getBroadcast(context, alarmCount++, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
             alarmManager.setExact(AlarmManager.RTC_WAKEUP, alarm.getTimeInMillis(), pendingIntent);
