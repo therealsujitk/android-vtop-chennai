@@ -178,55 +178,6 @@ public class ProfileFragment extends Fragment {
                     R.drawable.ic_notification_edit,
                     R.string.notification_interval,
                     context -> {
-
-//                        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context);
-//                        builder.setTitle("Set Notification Timing");
-//                        View viewInflated = LayoutInflater.from(getContext()).inflate(R.layout.frame_notification_interval, (ViewGroup) getView(), false);
-//                        final EditText input = viewInflated.findViewById(R.id.input);
-//                        ImageView image=viewInflated.findViewById(R.id.image_info);
-//                        SharedPreferences sharedPreferences=SettingsRepository.getSharedPreferences(context);
-//                        //if (getTheme(getContext())==THEME_DAY || getTheme(getContext())==THEME_SYSTEM_DAY) image.setImageDrawable(context.getDrawable(R.drawable.ic_info_dark));
-//                        //else image.setImageDrawable(context.getDrawable(R.drawable.ic_info_light));
-//                        image.setImageDrawable(context.getDrawable(R.drawable.ic_info));
-//
-//                        input.setText(String.valueOf(sharedPreferences.getInt("notification_interval",30)));
-//                        builder.setView(viewInflated);
-//
-//                        builder.setPositiveButton(android.R.string.ok, (dialog, which) -> {
-//                            if (Integer.parseInt(input.getText().toString())>=5 && Integer.parseInt(input.getText().toString())<=60){
-//                                sharedPreferences.edit().putInt("notification_interval",Integer.parseInt(input.getText().toString())).apply();
-//                                SettingsRepository.clearNotificationPendingIntents(context);
-//                                AppDatabase appDatabase = AppDatabase.getInstance(context);
-//                                TimetableDao timetableDao = appDatabase.timetableDao();
-//                                timetableDao.getTimetable().subscribeOn(Schedulers.single())
-//                                        .subscribe(new SingleObserver<List<Timetable>>() {
-//                                            @Override
-//                                            public void onSubscribe(@NonNull Disposable d) {
-//                                            }
-//
-//                                            @Override
-//                                            public void onSuccess(@NonNull List<Timetable> timetable) {
-//                                                for (int i = 0; i < timetable.size(); ++i) {
-//                                                    try {
-//                                                        SettingsRepository.setTimetableNotifications(context, timetable.get(i));
-//                                                    } catch (Exception ignored) {
-//                                                    }
-//                                                }
-//                                            }
-//
-//                                            @Override
-//                                            public void onError(@NonNull Throwable e) {
-//                                            }
-//                                        });
-//                            }
-//                            else{
-//                                Toast.makeText(context, "Invalid input", Toast.LENGTH_SHORT).show();
-//                            }
-//                            dialog.dismiss();
-//                        });
-//                        builder.setNegativeButton(android.R.string.cancel, (dialog, which) -> dialog.cancel());
-//                        builder.show();
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                         String[] themes = {
                                 "5 min",
                                 "10 min",
