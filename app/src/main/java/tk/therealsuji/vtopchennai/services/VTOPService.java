@@ -81,11 +81,12 @@ public class VTOPService extends Service {
 
     AppDatabase appDatabase;
     Binder serviceBinder = new ServiceBinder();
-    boolean isOpened, isWebViewDestroyed;
+    boolean isWebViewDestroyed;
     Callback callback;
     Integer counter, maxProgress, progress;
     NotificationCompat.Builder notification;
     NotificationManager notificationManager;
+    PageState pageState;
     SharedPreferences sharedPreferences;
     WebView webView;
 
@@ -144,11 +145,11 @@ public class VTOPService extends Service {
             SharedPreferences encryptedSharedPreferences = SettingsRepository.getEncryptedSharedPreferences(getApplicationContext());
 
             if (encryptedSharedPreferences == null) {
-                error(102, "Failed to fetching credentials.");
+                error(102, "Failed to fetch credentials.");
             } else {
                 this.username = encryptedSharedPreferences.getString("username", null);
                 this.password = encryptedSharedPreferences.getString("password", null);
-                this.reloadPage();
+                this.reloadPage("/login", true);
             }
         }
 
@@ -170,17 +171,63 @@ public class VTOPService extends Service {
         this.webView.setWebViewClient(new WebViewClient() {
             @Override
             public void onPageFinished(WebView view, String url) {
-                if (!isOpened) {
-                    if (counter >= 10) {
-                        error(101, "Couldn't connect to the server.");
-                        endService(true);
-                        return;
-                    }
+                /*
+                 *  JSON response format
+                 *  {
+                 *      "page_type": "LANDING"|"HOME"|"LOGIN"
+                 *  }
+                 */
+                view.evaluateJavascript("(function() {" +
+                        "const response = {" +
+                        "   page_type: 'LANDING'" +
+                        "};" +
+                        "if ($('input[id=\"authorizedIDX\"]').length === 1) {" +
+                        "   response.page_type = 'HOME';" +
+                        "} if ($(document).text().toLowerCase().includes('vtop login')) {" +
+                        "   response.page_type = 'LOGIN';" +
+                        "}" +
+                        "return response;" +
+                        "})();", responseString -> {
+                    try {
+                        JSONObject response = new JSONObject(responseString);
+                        String pageType = response.getString("page_type");
 
-                    isOpened = true;
-                    openSignIn();
-                    ++counter;
-                }
+                        switch (pageType) {
+                            case "LANDING":
+                                if (counter >= 10) {
+                                    error(101, "Couldn't connect to the server.");
+                                    endService(true);
+                                    return;
+                                }
+
+                                openSignIn();
+                                ++counter;
+
+                                pageState = PageState.LANDING;
+                                break;
+                            case "LOGIN":
+                                if (pageState == PageState.LOGIN) {
+                                    break;
+                                }
+
+                                getCaptchaType();
+                                pageState = PageState.LOGIN;
+                                break;
+                            case "HOME":
+                                if (pageState == PageState.HOME) {
+                                    break;
+                                }
+
+                                getSemesters();
+                                pageState = PageState.HOME;
+                                break;
+                            default:
+                                throw new Error("Unknown page exception.");
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                });
             }
         });
     }
@@ -226,13 +273,13 @@ public class VTOPService extends Service {
     /**
      * Function to reload the page after clearing all cache and history.
      */
-    private void reloadPage() {
+    private void reloadPage(String path, boolean destroySession) {
         if (this.isWebViewDestroyed) {
             this.createWebView();
             this.isWebViewDestroyed = false;
         }
 
-        this.isOpened = false;
+        this.pageState = null;
         this.progress = -1;
 
         this.notification.setContentTitle(getString(R.string.server_connect));
@@ -240,10 +287,13 @@ public class VTOPService extends Service {
         this.notification.setProgress(0, 0, true);
         this.notificationManager.notify(SettingsRepository.NOTIFICATION_ID_VTOP_DOWNLOAD, this.notification.build());
 
-        CookieManager.getInstance().removeAllCookies(null);
-        this.webView.clearCache(true);
-        this.webView.clearHistory();
-        this.webView.loadUrl(SettingsRepository.VTOP_BASE_URL);
+        if (destroySession) {
+            CookieManager.getInstance().removeAllCookies(null);
+            this.webView.clearCache(true);
+            this.webView.clearHistory();
+        }
+
+        this.webView.loadUrl(SettingsRepository.VTOP_BASE_URL + path);
     }
 
     /**
@@ -267,7 +317,7 @@ public class VTOPService extends Service {
      */
     private void error(final int errorCode, final String errorMessage) {
         Toast.makeText(getApplicationContext(), "Error " + errorCode + ". " + errorMessage, Toast.LENGTH_SHORT).show();
-        this.reloadPage();
+        this.reloadPage("/login", true);
 
         // Firebase Crashlytics Logging
         FirebaseCrashlytics crashlytics = FirebaseCrashlytics.getInstance();
@@ -285,31 +335,22 @@ public class VTOPService extends Service {
          *  }
          */
         webView.evaluateJavascript("(function() {" +
-                "var response = {" +
+                "const response = {" +
                 "    success: false" +
                 "};" +
                 "$.ajax({" +
                 "    type: 'POST'," +
-                "    url: 'vtopLogin'," +
-                "    data: null," +
+                "    url: '/vtop/prelogin/setup'," +
+                "    data: $('#stdForm').serialize()," +
                 "    async: false," +
                 "    success: function(res) {" +
-                "        if(res.search('___INTERNAL___RESPONSE___') == -1 && res.includes('VTOP Login')) {" +
-                "            $('#page_outline').html(res);" +
-                "            response.success = true;" +
-                "        }" +
+                "        response.success = true;" +
                 "    }" +
                 "});" +
                 "return response;" +
                 "})();", responseString -> {
             try {
-                JSONObject response = new JSONObject(responseString);
-
-                if (response.getBoolean("success")) {
-                    getCaptchaType();
-                } else {
-                    reloadPage();
-                }
+                this.reloadPage("/login", false);
             } catch (Exception e) {
                 error(103, e.getLocalizedMessage());
             }
@@ -324,20 +365,24 @@ public class VTOPService extends Service {
          *  JSON response format
          *
          *  {
-         *      "captcha_type": "local"|"public"
+         *      "captcha_type": "DEFAULT"|"GRECAPTCHA"
          *  }
          */
         webView.evaluateJavascript("(function() {" +
-                "return {" +
-                "    captcha_type: x" +
+                "const response = {" +
+                "    captcha_type: 'DEFAULT'" +
                 "};" +
+                "if ($('input[id=\"gResponse\"]').length === 1) {" +
+                "   response.captcha_type = 'GRECAPTCHA';" +
+                "}" +
+                "return response;" +
                 "})();", responseString -> {
             try {
                 JSONObject response = new JSONObject(responseString);
                 this.notification.setContentTitle(getString(R.string.captcha_wait));
                 this.notificationManager.notify(SettingsRepository.NOTIFICATION_ID_VTOP_DOWNLOAD, notification.build());
 
-                if (response.getString("captcha_type").equals("local")) {
+                if (response.getString("captcha_type").equals("DEFAULT")) {
                     getCaptcha();
                 } else {
                     executeCaptcha();
@@ -361,15 +406,9 @@ public class VTOPService extends Service {
          *  }
          */
         this.webView.evaluateJavascript("(function() {" +
-                "var response = {};" +
-                "var images = document.getElementsByTagName('img');" +
-                "for(var i = 0; i < images.length; ++i) {" +
-                "    if(images[i].alt.toLowerCase().includes('captcha')) {" +
-                "        response.captcha = images[i].src;" +
-                "        break;" +
-                "    }" +
-                "}" +
-                "return response;" +
+                "return {" +
+                "   captcha: $('#captchaBlock img').get(0).src" +
+                "};" +
                 "})();", responseString -> {
             try {
                 JSONObject response = new JSONObject(responseString);
@@ -384,7 +423,6 @@ public class VTOPService extends Service {
                     this.endService(true);
                 }
             } catch (Exception e) {
-                e.printStackTrace();
                 error(105, e.getLocalizedMessage());
             }
         });
@@ -405,8 +443,8 @@ public class VTOPService extends Service {
         /*
             Overriding the existing onSubmit function and attempting to render the reCaptcha
          */
-        webView.evaluateJavascript("function onSubmit(token) {" +
-                "    Android.signIn('g-recaptcha-response=' + token);" +
+        webView.evaluateJavascript("function callBuiltValidation(token) {" +
+                "    Android.signIn(token);" +
                 "}" +
                 "(function() {" +
                 "var executeInterval = setInterval(function() {" +
@@ -452,6 +490,10 @@ public class VTOPService extends Service {
                             "if (typeof captchaInterval != 'undefined') clearInterval(captchaInterval);" +
                             "if (typeof executeInterval != 'undefined') clearInterval(executeInterval);" +
                             "var credentials = 'uname=" + username + "&passwd=' + encodeURIComponent('" + password + "') + '&" + captcha + "';" +
+                            "$('#vtopLoginForm [name=\"username\"]').val('" + username + "');" +
+                            "$('#vtopLoginForm [name=\"password\"]').val('" + password + "');" +
+                            "$('#vtopLoginForm [name=\"captchaStr\"]').val('" + captcha + "');" +
+                            "$('#vtopLoginForm [name=\"gResponse\"]').val('" + captcha + "');" +
                             "var response = {" +
                             "    authorised: false," +
                             "    error_message: null," +
@@ -459,8 +501,8 @@ public class VTOPService extends Service {
                             "};" +
                             "$.ajax({" +
                             "    type : 'POST'," +
-                            "    url : 'doLogin'," +
-                            "    data : credentials," +
+                            "    url : '/vtop/login'," +
+                            "    data : $('#vtopLoginForm').serialize()," +
                             "    async: false," +
                             "    success : function(res) {" +
                             "        if(res.search('___INTERNAL___RESPONSE___') == -1) {" +
@@ -499,7 +541,7 @@ public class VTOPService extends Service {
                             boolean isAuthorised = response.getBoolean("authorised");
 
                             if (isAuthorised) {
-                                getSemesters();
+                                this.reloadPage("/content", false);
                             } else {
                                 String errorMessage = response.getString("error_message");
                                 Toast.makeText(getApplicationContext(), errorMessage, Toast.LENGTH_SHORT).show();
@@ -540,7 +582,7 @@ public class VTOPService extends Service {
          *  }
          */
         webView.evaluateJavascript("(function() {" +
-                "var data = 'verifyMenu=true&winImage=' + $('#winImage').val() + '&authorizedID=' + $('#authorizedIDX').val() + '&nocache=@(new Date().getTime())';" +
+                "var data = 'verifyMenu=true&authorizedID=' + $('#authorizedIDX').val() + '&_csrf=' + $('input[name=\"_csrf\"]').val() + '&nocache=@(new Date().getTime())';" +
                 "var response = {};" +
                 "$.ajax({" +
                 "    type: 'POST'," +
@@ -615,7 +657,7 @@ public class VTOPService extends Service {
          *  }
          */
         webView.evaluateJavascript("(function() {" +
-                "var data = 'verifyMenu=true&winImage=' + $('#winImage').val() + '&authorizedID=' + $('#authorizedIDX').val() + '&nocache=@(new Date().getTime())';" +
+                "var data = 'verifyMenu=true&authorizedID=' + $('#authorizedIDX').val() + '&_csrf=' + $('input[name=\"_csrf\"]').val() + '&nocache=@(new Date().getTime())';" +
                 "var response = {};" +
                 "$.ajax({" +
                 "    type: 'POST'," +
@@ -664,7 +706,7 @@ public class VTOPService extends Service {
          *  }
          */
         webView.evaluateJavascript("(function() {" +
-                "var data = 'verifyMenu=true&winImage=' + $('#winImage').val() + '&authorizedID=' + $('#authorizedIDX').val() + '&nocache=@(new Date().getTime())';" +
+                "var data = 'verifyMenu=true&authorizedID=' + $('#authorizedIDX').val() + '&_csrf=' + $('input[name=\"_csrf\"]').val() + '&nocache=@(new Date().getTime())';" +
                 "var response = {};" +
                 "$.ajax({" +
                 "    type: 'POST'," +
@@ -736,7 +778,7 @@ public class VTOPService extends Service {
          *  }
          */
         webView.evaluateJavascript("(function() {" +
-                "var data = 'semesterSubId=' + '" + semesterID + "' + '&authorizedID=' + $('#authorizedIDX').val();" +
+                "var data = '_csrf=' + $('input[name=\"_csrf\"]').val() + '&semesterSubId=' + '" + semesterID + "' + '&authorizedID=' + $('#authorizedIDX').val();" +
                 "var response = {" +
                 "    courses: []" +
                 "};" +
@@ -925,7 +967,7 @@ public class VTOPService extends Service {
          *  }
          */
         webView.evaluateJavascript("(function() {" +
-                "var data = 'semesterSubId=' + '" + semesterID + "' + '&authorizedID=' + $('#authorizedIDX').val();" +
+                "var data = '_csrf=' + $('input[name=\"_csrf\"]').val() + '&semesterSubId=' + '" + semesterID + "' + '&authorizedID=' + $('#authorizedIDX').val();" +
                 "var response = {" +
                 "    lab: []," +
                 "    theory: []" +
@@ -1140,7 +1182,7 @@ public class VTOPService extends Service {
          *  }
          */
         webView.evaluateJavascript("(function() {" +
-                "var data = 'semesterSubId=' + '" + semesterID + "' + '&authorizedID=' + $('#authorizedIDX').val();" +
+                "var data = '_csrf=' + $('input[name=\"_csrf\"]').val() + '&semesterSubId=' + '" + semesterID + "' + '&authorizedID=' + $('#authorizedIDX').val();" +
                 "var response = {" +
                 "    attendance: []" +
                 "};" +
@@ -1287,7 +1329,7 @@ public class VTOPService extends Service {
          *  }
          */
         webView.evaluateJavascript("(function() {" +
-                "var data = 'semesterSubId=' + '" + semesterID + "' + '&authorizedID=' + $('#authorizedIDX').val();" +
+                "var data = 'semesterSubId=' + '" + semesterID + "' + '&authorizedID=' + $('#authorizedIDX').val()  + '&_csrf=' + $('input[name=\"_csrf\"]').val();" +
                 "var response = {" +
                 "    marks: []" +
                 "};" +
@@ -1494,7 +1536,7 @@ public class VTOPService extends Service {
          *  }
          */
         webView.evaluateJavascript("(function() {" +
-                "var data = 'semesterSubId=' + '" + semesterID + "' + '&authorizedID=' + $('#authorizedIDX').val();" +
+                "var data = 'semesterSubId=' + '" + semesterID + "' + '&authorizedID=' + $('#authorizedIDX').val() + '&_csrf=' + $('input[name=\"_csrf\"]').val();" +
                 "var response = {" +
                 "    grades: []," +
                 "    gpa: null" +
@@ -1623,7 +1665,7 @@ public class VTOPService extends Service {
          *  }
          */
         webView.evaluateJavascript("(function() {" +
-                "var data = 'semesterSubId=' + '" + semesterID + "' + '&authorizedID=' + $('#authorizedIDX').val();" +
+                "var data = 'semesterSubId=' + '" + semesterID + "' + '&authorizedID=' + $('#authorizedIDX').val()  + '&_csrf=' + $('input[name=\"_csrf\"]').val();" +
                 "var response = {};" +
                 "$.ajax({" +
                 "    type: 'POST'," +
@@ -1800,7 +1842,7 @@ public class VTOPService extends Service {
          *  }
          */
         webView.evaluateJavascript("(function() {" +
-                "var data = 'verifyMenu=true&winImage=' + $('#winImage').val() + '&authorizedID=' + $('#authorizedIDX').val() + '&nocache=@(new Date().getTime())';" +
+                "var data = 'verifyMenu=true&winImage=' + $('#winImage').val() + '&authorizedID=' + $('#authorizedIDX').val() + '&_csrf=' + $('input[name=\"_csrf\"]').val() + '&nocache=@(new Date().getTime())';" +
                 "var response = {" +
                 "    proctor: []" +
                 "};" +
@@ -1905,7 +1947,7 @@ public class VTOPService extends Service {
          *  }
          */
         webView.evaluateJavascript("(function() {" +
-                "var data = 'verifyMenu=true&winImage=' + $('#winImage').val() + '&authorizedID=' + $('#authorizedIDX').val() + '&nocache=@(new Date().getTime())';" +
+                "var data = 'verifyMenu=true&winImage=' + $('#winImage').val() + '&authorizedID=' + $('#authorizedIDX').val() + '&_csrf=' + $('input[name=\"_csrf\"]').val() + '&nocache=@(new Date().getTime())';" +
                 "var response = {};" +
                 "$.ajax({" +
                 "    type: 'POST'," +
@@ -2012,7 +2054,7 @@ public class VTOPService extends Service {
          *  }
          */
         webView.evaluateJavascript("(function() {" +
-                "var data = 'verifyMenu=true&winImage=' + $('#winImage').val() + '&authorizedID=' + $('#authorizedIDX').val() + '&nocache=@(new Date().getTime())';" +
+                "var data = 'verifyMenu=true&authorizedID=' + $('#authorizedIDX').val() + '&_csrf=' + $('input[name=\"_csrf\"]').val() + '&nocache=@(new Date().getTime())';" +
                 "var response = {" +
                 "    spotlight: []" +
                 "};" +
@@ -2121,7 +2163,7 @@ public class VTOPService extends Service {
          *  }
          */
         webView.evaluateJavascript("(function() {" +
-                "var data = 'verifyMenu=true&winImage=' + $('#winImage').val() + '&authorizedID=' + $('#authorizedIDX').val() + '&nocache=@(new Date().getTime())';" +
+                "var data = 'verifyMenu=true&winImage=' + $('#winImage').val() + '&authorizedID=' + $('#authorizedIDX').val() + '&_csrf=' + $('input[name=\"_csrf\"]').val() + '&nocache=@(new Date().getTime())';" +
                 "var response = {" +
                 "    receipts: []" +
                 "};" +
@@ -2231,7 +2273,7 @@ public class VTOPService extends Service {
          *  }
          */
         webView.evaluateJavascript("(function() {" +
-                "var data = 'verifyMenu=true&winImage=' + $('#winImage').val() + '&authorizedID=' + $('#authorizedIDX').val() + '&nocache=@(new Date().getTime())';" +
+                "var data = 'verifyMenu=true&winImage=' + $('#winImage').val() + '&authorizedID=' + $('#authorizedIDX').val() + '&_csrf=' + $('input[name=\"_csrf\"]').val() + '&nocache=@(new Date().getTime())';" +
                 "var response = {};" +
                 "$.ajax({" +
                 "    type: 'POST'," +
@@ -2239,10 +2281,10 @@ public class VTOPService extends Service {
                 "    data : data," +
                 "    async: false," +
                 "    success: function(res) {" +
-                "        if (res.toLowerCase().includes('pay now')) {" +
-                "            response.due_payments = true;" +
-                "        } else {" +
+                "        if (res.toLowerCase().includes('no payment dues')) {" +
                 "            response.due_payments = false;" +
+                "        } else {" +
+                "            response.due_payments = true;" +
                 "        }" +
                 "    }" +
                 "});" +
@@ -2471,6 +2513,8 @@ public class VTOPService extends Service {
             callback = mCallback;
         }
     }
+
+    private enum PageState {LANDING, LOGIN, HOME}
 }
 
 /*
