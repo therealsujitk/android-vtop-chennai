@@ -67,8 +67,8 @@ public class ReCaptchaDialogFragment extends DialogFragment {
     }
 
     @Override
-    public void dismiss() {
-        super.dismiss();
+    public void dismissAllowingStateLoss() {
+        super.dismissAllowingStateLoss();
         this.isDismissed = true;
     }
 
