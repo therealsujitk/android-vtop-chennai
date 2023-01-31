@@ -53,8 +53,7 @@ public class Assignment implements Parcelable {
         cutoffDate = in.readLong();
 
         introAttachments = new ArrayList<>();
-        in.readList(introAttachments, (ClassLoader) Attachment.CREATOR);
-
+        in.readList(introAttachments, Attachment.class.getClassLoader());
     }
 
     @Override

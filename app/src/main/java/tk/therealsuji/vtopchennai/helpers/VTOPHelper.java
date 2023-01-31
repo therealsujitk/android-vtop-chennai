@@ -84,7 +84,7 @@ public class VTOPHelper {
                                 .setTitle(R.string.solve_captcha)
                                 .setPositiveButton(R.string.submit, (dialogInterface, i) -> {
                                     TextView captchaText = captchaLayout.findViewById(R.id.edit_text_captcha);
-                                    vtopService.signIn("captchaCheck=" + captchaText.getText());
+                                    vtopService.signIn(captchaText.getText().toString());
                                 })
                                 .setView(captchaLayout)
                                 .create();
@@ -195,7 +195,7 @@ public class VTOPHelper {
                     }
 
                     if (reCaptchaDialogFragment != null) {
-                        reCaptchaDialogFragment.dismiss();
+                        reCaptchaDialogFragment.dismissAllowingStateLoss();
                     }
                 }
 
@@ -238,7 +238,7 @@ public class VTOPHelper {
                     }
 
                     if (reCaptchaDialogFragment != null) {
-                        reCaptchaDialogFragment.dismiss();
+                        reCaptchaDialogFragment.dismissAllowingStateLoss();
                     }
 
                     if (semesterDialog != null) {
@@ -289,7 +289,7 @@ public class VTOPHelper {
         }
 
         if (this.reCaptchaDialogFragment != null) {
-            this.reCaptchaDialogFragment.dismiss();
+            this.reCaptchaDialogFragment.dismissAllowingStateLoss();
         }
 
         if (this.isBound) {

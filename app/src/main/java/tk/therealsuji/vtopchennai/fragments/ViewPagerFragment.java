@@ -77,6 +77,12 @@ public class ViewPagerFragment extends Fragment {
                             View day = ((ViewGroup) tabLayout.getChildAt(0)).getChildAt(i);
                             ViewGroup.MarginLayoutParams tabParams = (ViewGroup.MarginLayoutParams) day.getLayoutParams();
 
+                            if (tabLayout.getTabCount() == 1) {
+                                tabParams.setMarginStart((int) (20 * pixelDensity));
+                                tabParams.setMarginEnd((int) (20 * pixelDensity));
+                                break;
+                            }
+
                             if (i == 0) {
                                 tabParams.setMarginStart((int) (20 * pixelDensity));
                                 tabParams.setMarginEnd((int) (5 * pixelDensity));
@@ -127,6 +133,12 @@ public class ViewPagerFragment extends Fragment {
                         for (int i = 0; i < tabLayout.getTabCount(); ++i) {
                             View day = ((ViewGroup) tabLayout.getChildAt(0)).getChildAt(i);
                             ViewGroup.MarginLayoutParams tabParams = (ViewGroup.MarginLayoutParams) day.getLayoutParams();
+
+                            if (tabLayout.getTabCount() == 1) {
+                                tabParams.setMarginStart((int) (20 * pixelDensity));
+                                tabParams.setMarginEnd((int) (20 * pixelDensity));
+                                break;
+                            }
 
                             if (i == 0) {
                                 tabParams.setMarginStart((int) (20 * pixelDensity));

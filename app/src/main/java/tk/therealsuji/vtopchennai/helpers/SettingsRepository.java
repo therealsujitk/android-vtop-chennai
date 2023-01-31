@@ -123,7 +123,12 @@ public class SettingsRepository {
     public static void signOut(Context context) {
         AppDatabase.deleteDatabase(context);
         getSharedPreferences(context).edit().clear().apply();
-        Objects.requireNonNull(getEncryptedSharedPreferences(context)).edit().clear().apply();
+
+        SharedPreferences encryptedSharedPreferences = getEncryptedSharedPreferences(context);
+
+        if (encryptedSharedPreferences != null) {
+            encryptedSharedPreferences.edit().clear().apply();
+        }
     }
 
     public static void signOutMoodle(Context context) {

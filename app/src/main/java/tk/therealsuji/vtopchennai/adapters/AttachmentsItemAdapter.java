@@ -1,6 +1,8 @@
 package tk.therealsuji.vtopchennai.adapters;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +11,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
@@ -16,6 +19,7 @@ import java.util.Locale;
 import java.util.Objects;
 
 import tk.therealsuji.vtopchennai.R;
+import tk.therealsuji.vtopchennai.activities.MainActivity;
 import tk.therealsuji.vtopchennai.fragments.AssignmentViewFragment;
 import tk.therealsuji.vtopchennai.helpers.SettingsRepository;
 import tk.therealsuji.vtopchennai.models.Attachment;
@@ -90,9 +94,16 @@ public class AttachmentsItemAdapter extends RecyclerView.Adapter<AttachmentsItem
             }
 
             this.attachment.findViewById(R.id.image_button_download).setOnClickListener(view -> {
-                Context applicationContext = this.attachment.getContext().getApplicationContext();
+                Context context = this.attachment.getContext();
+                Context applicationContext = context.getApplicationContext();
+
+                if (ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                    ((MainActivity) context).getRequestPermissionLauncher().launch(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+                    return;
+                }
+
                 String moodleToken = Objects.requireNonNull(SettingsRepository
-                        .getEncryptedSharedPreferences(applicationContext))
+                                .getEncryptedSharedPreferences(applicationContext))
                         .getString("moodleToken", null);
                 Uri uri = Uri.parse(attachment.url)
                         .buildUpon()
