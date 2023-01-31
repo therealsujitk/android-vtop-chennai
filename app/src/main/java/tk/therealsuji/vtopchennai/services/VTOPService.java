@@ -2054,13 +2054,13 @@ public class VTOPService extends Service {
          *  }
          */
         webView.evaluateJavascript("(function() {" +
-                "var data = 'verifyMenu=true&authorizedID=' + $('#authorizedIDX').val() + '&_csrf=' + $('input[name=\"_csrf\"]').val() + '&nocache=@(new Date().getTime())';" +
+                "var data = '_csrf=' + $('input[name=\"_csrf\"]').val() + '&authorizedID=' + $('#authorizedIDX').val() + '&x=';" +
                 "var response = {" +
                 "    spotlight: []" +
                 "};" +
                 "$.ajax({" +
                 "    type: 'POST'," +
-                "    url : 'spotlight/spotlightViewOld'," +
+                "    url : 'home'," +
                 "    data : data," +
                 "    async: false," +
                 "    success: function(res) {" +
@@ -2068,20 +2068,19 @@ public class VTOPService extends Service {
                 "        if(!doc.getElementsByClassName('box-info')) {" +
                 "            return;" +
                 "        }" +
-                "        var modals = doc.getElementsByClassName('modal-content');" +
-                "        for(var i = 0; i < modals.length; ++i) {" +
-                "            var category = modals[i].getElementsByTagName('h5')[0].innerText;" +
-                "            if (category.toLowerCase().includes('finance')) {" +
-                "                category = 'Others';" +
-                "            } else {" +
-                "                category = category.replace(/\\t/g,'').replace(/\\n/g,'').trim();" +
-                "                category = category.substring(0, category.length - 9).trim();" +
+                "        var sheets = doc.getElementsByClassName('offcanvas');" +
+                "        for(var i = 0; i < sheets.length; ++i) {" +
+                "            const header = sheets[i].getElementsByClassName('offcanvas-header')[0];" +
+                "            const title = header.getElementsByTagName('span')[0];" +
+                "            if (title === undefined) {" +
+                "                continue;" +
                 "            }" +
-                "            var announcements = modals[i].getElementsByTagName('li');" +
+                "            const category = title.textContent;" +
+                "            var announcements = sheets[i].getElementsByClassName('offcanvas-body')[0].getElementsByTagName('li');" +
                 "            for(var j = 0; j < announcements.length; ++j) {" +
                 "                var spotlightItem = {};" +
                 "                spotlightItem.category = category;" +
-                "                spotlightItem.announcement = announcements[j].innerText.replace(/\\t/g,'').replace(/\\n/g,' ').trim();" +
+                "                spotlightItem.announcement = announcements[j].textContent.replace(/\\t/g,'').replace(/\\n/g,' ').trim();" +
                 "                if (announcements[j].getElementsByTagName('a').length == 0) {" +
                 "                    spotlightItem.link = null;" +
                 "                } else {" +
