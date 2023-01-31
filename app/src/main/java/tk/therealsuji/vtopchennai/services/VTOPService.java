@@ -548,7 +548,7 @@ public class VTOPService extends Service {
 
                                 int errorCode = response.getInt("error_code");
                                 if (errorCode == 1) {
-                                    getCaptchaType();
+                                    this.reloadPage("/login", false);
                                 } else {
                                     this.endService(true);
                                 }
