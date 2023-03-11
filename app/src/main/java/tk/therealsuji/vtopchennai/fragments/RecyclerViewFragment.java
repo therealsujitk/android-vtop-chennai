@@ -16,6 +16,7 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.annotations.NonNull;
@@ -64,20 +65,17 @@ public class RecyclerViewFragment extends Fragment {
                             return;
                         }
 
-// Receipts are sorted by date in descending order(newest first) - Code Starts Here
                         Collections.sort(receipts, new Comparator<Receipt>() {
                             @Override
                             public int compare(Receipt r1, Receipt r2) {
-                                @SuppressLint("SimpleDateFormat") SimpleDateFormat format = new SimpleDateFormat("dd-MMM-yyyy");
+                                SimpleDateFormat format = new SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH);
                                 try {
-                                    return format.parse(r2.getDate()).compareTo(format.parse(r1.getDate()));
-                                } catch (Exception e) {
-                                    e.printStackTrace();
+                                    return format.parse(r2.date).compareTo(format.parse(r1.date));
+                                } catch (Exception ignored) {
                                 }
                                 return 0;
                             }
                         });
-// Code Ends Here
 
                         recyclerView.setAdapter(new ReceiptsItemAdapter(receipts));
                     }
