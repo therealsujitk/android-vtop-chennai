@@ -14,5 +14,4 @@ public class Receipt {
 
     @ColumnInfo(name = "date")
     public String date;
-
 }
