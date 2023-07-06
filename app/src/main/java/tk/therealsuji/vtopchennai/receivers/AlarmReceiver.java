@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.media.AudioManager;
 
 public class AlarmReceiver extends BroadcastReceiver {
-    private static final String TAG="Alarm Receiver";
     public static final String ACTION_RINGER_NORMAL="normal";
     public static final String ACTION_RINGER_SILENT="silent";
     public static final String ACTION_RINGER_VIBRATE="vibrate";

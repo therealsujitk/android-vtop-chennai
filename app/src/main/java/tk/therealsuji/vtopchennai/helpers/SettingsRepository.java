@@ -267,9 +267,16 @@ public class SettingsRepository {
             alarmIntent.setAction(AlarmReceiver.ACTION_RINGER_NORMAL);
             PendingIntent pendingAlarmIntent = PendingIntent.getBroadcast(context, alarmCount, alarmIntent, PendingIntent.FLAG_IMMUTABLE);
             alarmManager.cancel(pendingAlarmIntent);
-            alarmIntent.setAction(AlarmReceiver.ACTION_RINGER_SILENT);
-            pendingAlarmIntent = PendingIntent.getBroadcast(context, alarmCount, alarmIntent, PendingIntent.FLAG_IMMUTABLE);
-            alarmManager.cancel(pendingAlarmIntent);
+            if(sharedPreferences.getString("dnd","off").equals("silent")){
+                alarmIntent.setAction(AlarmReceiver.ACTION_RINGER_SILENT);
+                pendingAlarmIntent = PendingIntent.getBroadcast(context, alarmCount, alarmIntent, PendingIntent.FLAG_IMMUTABLE);
+                alarmManager.cancel(pendingAlarmIntent);
+            }
+            else if(sharedPreferences.getString("dnd","off").equals("vibrate")){
+                alarmIntent.setAction(AlarmReceiver.ACTION_RINGER_VIBRATE);
+                pendingAlarmIntent = PendingIntent.getBroadcast(context, alarmCount, alarmIntent, PendingIntent.FLAG_IMMUTABLE);
+                alarmManager.cancel(pendingAlarmIntent);
+            }
         }
         sharedPreferences.edit().remove("alarmCount").apply();
     }

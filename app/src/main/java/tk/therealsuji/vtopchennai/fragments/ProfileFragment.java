@@ -404,8 +404,8 @@ public class ProfileFragment extends Fragment {
         forActivityResult = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
-                    SharedPreferences sharedPreferences = SettingsRepository.getSharedPreferences(getContext());
-                    NotificationManager manager=(NotificationManager)getContext().getSystemService(NOTIFICATION_SERVICE);
+                    SharedPreferences sharedPreferences = SettingsRepository.getSharedPreferences(requireContext());
+                    NotificationManager manager=(NotificationManager)requireContext().getSystemService(NOTIFICATION_SERVICE);
                     if (!manager.isNotificationPolicyAccessGranted()) {
                         sharedPreferences.edit().putString("dnd", "off").apply();
                     }
