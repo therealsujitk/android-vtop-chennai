@@ -175,55 +175,6 @@ public class ProfileFragment extends Fragment {
                     null
             ),
             new ItemData(
-                    R.drawable.ic_notification_edit,
-                    R.string.notification_interval,
-                    context -> {
-                        String[] themes = {
-                                "5 min",
-                                "10 min",
-                                "20 min",
-                                "30 min",
-                                "45 min"
-                        };
-
-                        SharedPreferences sharedPreferences = SettingsRepository.getSharedPreferences(context);
-
-                        int checkedItem = 3;
-                        int theme = sharedPreferences.getInt("notification_interval",30);
-
-                        if (theme == 5) {
-                            checkedItem = 0;
-                        } else if (theme == 10) {
-                            checkedItem = 1;
-                        } else if (theme == 20) {
-                            checkedItem = 2;
-                        } else if (theme == 45) {
-                            checkedItem = 4;
-                        }
-
-                        new MaterialAlertDialogBuilder(context)
-                                .setNegativeButton(R.string.cancel, (dialogInterface, i) -> dialogInterface.cancel())
-                                .setSingleChoiceItems(themes, checkedItem, (dialogInterface, i) -> {
-                                    if (i == 0) {
-                                        sharedPreferences.edit().putInt("notification_interval",5).apply();
-                                    } else if (i == 1) {
-                                        sharedPreferences.edit().putInt("notification_interval",10).apply();
-                                    } else if (i == 2) {
-                                        sharedPreferences.edit().putInt("notification_interval",20).apply();
-                                    } else if (i == 3) {
-                                        sharedPreferences.edit().putInt("notification_interval",30).apply();
-                                    } else {
-                                        sharedPreferences.edit().putInt("notification_interval",45).apply();
-                                    }
-                                    refreshTimetable(context);
-                                    dialogInterface.dismiss();
-                                })
-                                .setTitle("Set Notification Timing")
-                                .show();
-                    },
-                    null
-            ),
-            new ItemData(
                     R.drawable.ic_dnd,
                     R.string.dnd,
                     context -> {

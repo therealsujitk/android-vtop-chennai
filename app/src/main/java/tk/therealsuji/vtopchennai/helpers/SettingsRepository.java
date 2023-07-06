@@ -353,7 +353,7 @@ public class SettingsRepository {
             }
 
             alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, alarm.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
-            alarm.add(Calendar.MINUTE, -sharedPreferences.getInt("notification_interval",30));
+            alarm.add(Calendar.MINUTE, -30);
             pendingIntent = PendingIntent.getBroadcast(context, alarmCount++, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
             alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, alarm.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pendingIntent);
         }
@@ -380,7 +380,7 @@ public class SettingsRepository {
 
             Calendar alarm = Calendar.getInstance();
             alarm.setTime(new Date(exam.startTime));
-            alarm.add(Calendar.MINUTE, -sharedPreferences.getInt("notification_interval",30));
+            alarm.add(Calendar.MINUTE, -30);
 
             PendingIntent pendingIntent = PendingIntent.getBroadcast(context, alarmCount++, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
             alarmManager.setExact(AlarmManager.RTC_WAKEUP, alarm.getTimeInMillis(), pendingIntent);

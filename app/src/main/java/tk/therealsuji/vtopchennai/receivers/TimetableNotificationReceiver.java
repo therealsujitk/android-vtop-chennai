@@ -3,7 +3,6 @@ package tk.therealsuji.vtopchennai.receivers;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -28,8 +27,7 @@ public class TimetableNotificationReceiver extends BroadcastReceiver {
         Calendar calendarFuture = Calendar.getInstance();
         Calendar calendarMidnight = Calendar.getInstance();
 
-        SharedPreferences sharedPreferences=SettingsRepository.getSharedPreferences(context.getApplicationContext());
-        calendarFuture.add(Calendar.MINUTE , sharedPreferences.getInt("notification_interval",30));
+        calendarFuture.add(Calendar.MINUTE , 30);
         calendarMidnight.set(Calendar.HOUR_OF_DAY, 23);
         calendarMidnight.set(Calendar.MINUTE, 59);
 
