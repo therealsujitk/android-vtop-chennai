@@ -3,6 +3,7 @@ package tk.therealsuji.vtopchennai.helpers;
 import static android.content.Context.DOWNLOAD_SERVICE;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.DownloadManager;
 import android.app.PendingIntent;
@@ -23,6 +24,9 @@ import android.widget.Toast;
 import androidx.fragment.app.FragmentActivity;
 import androidx.security.crypto.EncryptedSharedPreferences;
 import androidx.security.crypto.MasterKey;
+
+import com.google.android.material.color.DynamicColors;
+import com.google.android.material.color.DynamicColorsOptions;
 
 import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
@@ -95,6 +99,12 @@ public class SettingsRepository {
         } else {
             return THEME_SYSTEM_DAY;
         }
+    }
+
+    public static void applyDynamicColors(Activity activity, boolean amoledMode) {
+        DynamicColorsOptions.Builder dynamicColorsOptions = new DynamicColorsOptions.Builder();
+        if (amoledMode) dynamicColorsOptions.setThemeOverlay(R.style.ThemeOverlay_VTOP_Amoled);
+        DynamicColors.applyToActivityIfAvailable(activity, dynamicColorsOptions.build());
     }
 
     public static float getCGPA(Context context) {
