@@ -6,8 +6,6 @@ plugins {
 }
 
 android {
-    compileSdkVersion 33
-
     defaultConfig {
         applicationId "tk.therealsuji.vtopchennai"
         javaCompileOptions {
@@ -16,7 +14,8 @@ android {
             }
         }
         minSdkVersion 24
-        targetSdkVersion 33
+        targetSdkVersion 34
+        compileSdk 34
         versionCode 27
         versionName "4.2.2"
     }
@@ -33,15 +32,15 @@ android {
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
 
-    implementation 'androidx.appcompat:appcompat:1.6.0'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation 'androidx.room:room-runtime:2.5.0'
-    implementation 'androidx.room:room-rxjava3:2.5.0'
-    implementation 'androidx.security:security-crypto:1.1.0-alpha04'
+    implementation 'androidx.room:room-runtime:2.5.2'
+    implementation 'androidx.room:room-rxjava3:2.5.2'
+    implementation 'androidx.security:security-crypto:1.1.0-alpha06'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
 
     implementation platform('com.google.firebase:firebase-bom:31.1.0')
-    implementation 'com.google.android.material:material:1.9.0-alpha01'
+    implementation 'com.google.android.material:material:1.11.0-alpha01'
     implementation 'com.google.firebase:firebase-analytics'
     implementation 'com.google.firebase:firebase-crashlytics'
     implementation 'com.google.firebase:firebase-perf'
@@ -55,5 +54,5 @@ dependencies {
 
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.8.1'
 
-    annotationProcessor 'androidx.room:room-compiler:2.5.0'
+    annotationProcessor 'androidx.room:room-compiler:2.5.2'
 }
