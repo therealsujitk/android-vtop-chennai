@@ -14,5 +14,6 @@ jobs:
       - uses: actions/setup-java@v3
         with:
           java-version: '17.x'
+          distribution: 'oracle'
 
       - run: ./gradlew lint --stacktrace
