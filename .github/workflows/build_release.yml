@@ -12,7 +12,7 @@ jobs:
 
       - uses: actions/setup-java@v3
         with:
-          java-version: '17.x'
+          java-version: '17'
           distribution: 'oracle'
 
       - name: Build unsigned apk
