@@ -183,7 +183,7 @@ public class VTOPService extends Service {
                         "};" +
                         "if ($('input[id=\"authorizedIDX\"]').length === 1) {" +
                         "   response.page_type = 'HOME';" +
-                        "} if ($(document).text().toLowerCase().includes('vtop login')) {" +
+                        "} if ($('form[id=\"vtopLoginForm\"]').length === 1) {" +
                         "   response.page_type = 'LOGIN';" +
                         "}" +
                         "return response;" +
