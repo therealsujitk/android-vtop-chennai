@@ -29,6 +29,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.materialswitch.MaterialSwitch;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.util.List;
@@ -139,6 +140,16 @@ public class ProfileFragment extends Fragment {
                             checkedItem = 1;
                         }
 
+                        View appearanceView = getLayoutInflater().inflate(R.layout.layout_dialog_apperance, null);
+                        MaterialSwitch amoledSwitch = appearanceView.findViewById(R.id.switch_amoled_mode);
+                        amoledSwitch.setChecked(sharedPreferences.getBoolean("amoledMode", false));
+                        amoledSwitch.setOnCheckedChangeListener((compoundButton, isAmoledModeEnabled) -> {
+                            sharedPreferences.edit().putBoolean("amoledMode", isAmoledModeEnabled).apply();
+                            Bundle applyDynamicColors = new Bundle();
+                            applyDynamicColors.putBoolean("amoledMode", isAmoledModeEnabled);
+                            getParentFragmentManager().setFragmentResult("applyDynamicColors", applyDynamicColors);
+                        });
+
                         new MaterialAlertDialogBuilder(context)
                                 .setNegativeButton(R.string.cancel, (dialogInterface, i) -> dialogInterface.cancel())
                                 .setSingleChoiceItems(themes, checkedItem, (dialogInterface, i) -> {
@@ -155,6 +166,7 @@ public class ProfileFragment extends Fragment {
 
                                     dialogInterface.dismiss();
                                 })
+                                .setView(appearanceView)
                                 .setTitle(R.string.appearance)
                                 .show();
                     },

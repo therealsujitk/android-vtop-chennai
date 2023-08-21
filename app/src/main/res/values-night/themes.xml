@@ -12,4 +12,9 @@
         <item name="android:enforceNavigationBarContrast" tools:targetApi="q">false</item>
         <item name="android:fontFamily">@font/rubik</item>
     </style>
+
+    <style name="ThemeOverlay.VTOP.Amoled" parent="ThemeOverlay.Material3.DynamicColors.DayNight">
+        <item name="android:windowBackground">#000000</item>
+        <item name="colorSurface">#000000</item>
+    </style>
 </resources>

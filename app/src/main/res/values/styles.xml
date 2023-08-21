@@ -20,11 +20,6 @@
         <item name="android:textSize">18sp</item>
     </style>
 
-    <style name="Widget.VTOP.BottomNavigationView" parent="Widget.Material3.BottomNavigationView">
-        <item name="materialThemeOverlay">@style/ThemeOverlay.Material3.DynamicColors.DayNight
-        </item>
-    </style>
-
     <style name="Widget.VTOP.TabLayout" parent="Widget.Material3.TabLayout">
         <item name="android:layout_gravity">center</item>
         <item name="android:layout_marginTop">10dp</item>

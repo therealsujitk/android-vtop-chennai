@@ -113,6 +113,7 @@
     <string name="light">Light</string>
     <string name="dark">Dark</string>
     <string name="system">Set by System</string>
+    <string name="amoled_mode">AMOLED Mode</string>
 
     <!-- Sign Out Dialog Strings -->
     <string name="sign_out">Sign Out</string>
