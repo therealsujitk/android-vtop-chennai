@@ -108,7 +108,7 @@ public class AssignmentsFragment extends Fragment implements SwipeRefreshLayout.
      * Function to get a list of course ids
      */
     private void getCourses() {
-        this.moodleApi.getCourses(this.moodleToken)
+        this.moodleApi.getCourses(this.moodleToken, this.moodleUserId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SingleObserver<ResponseBody>() {
@@ -120,10 +120,14 @@ public class AssignmentsFragment extends Fragment implements SwipeRefreshLayout.
                     @Override
                     public void onSuccess(@NonNull ResponseBody responseBody) {
                         try {
-                            JSONObject response = new JSONObject(responseBody.string());
-                            throwErrorIfExists(response);
+                            String response = responseBody.string();
 
-                            JSONArray courses = response.getJSONArray("courses");
+                            if (response.startsWith("{")) {
+                                throwErrorIfExists(new JSONObject(response));
+                                throw new Exception("Unknown Error.");
+                            }
+
+                            JSONArray courses = new JSONArray(response);
                             List<Integer> courseIds = new ArrayList<>();
 
                             for (int i = 0; i < courses.length(); ++i) {

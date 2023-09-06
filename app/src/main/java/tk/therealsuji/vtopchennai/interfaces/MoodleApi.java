@@ -23,10 +23,10 @@ public interface MoodleApi {
     Single<ResponseBody> getUserId(@Query("wstoken") String moodleToken);
 
     @GET(SettingsRepository.MOODLE_WEBSERVICE_PATH +
-            "?wsfunction=core_course_get_enrolled_courses_by_timeline_classification" +
-            "&classification=inprogress" +
+            "?wsfunction=core_enrol_get_users_courses" +
             "&moodlewsrestformat=json")
-    Single<ResponseBody> getCourses(@Query("wstoken") String moodleToken);
+    Single<ResponseBody> getCourses(@Query("wstoken") String moodleToken,
+                                    @Query("userid") int userId);
 
     @GET(SettingsRepository.MOODLE_WEBSERVICE_PATH +
             "?wsfunction=mod_assign_get_assignments" +
