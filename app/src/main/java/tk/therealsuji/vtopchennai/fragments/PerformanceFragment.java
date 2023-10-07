@@ -167,7 +167,7 @@ public class PerformanceFragment extends Fragment {
                                 BadgeDrawable badgeDrawable = tab.getOrCreateBadge();
                                 badgeDrawable.setBadgeGravity(BadgeDrawable.TOP_END);
                                 badgeDrawable.setNumber(courses.get(position).unreadMarkCount);
-                                badgeDrawable.setHorizontalOffset((int) (-3 * pixelDensity));
+                                badgeDrawable.setHorizontalOffset((int) (6 * pixelDensity));
                                 badgeDrawable.setVerticalOffset((int) (-6 * pixelDensity));
 
                                 if (courses.get(position).unreadMarkCount > 9) {

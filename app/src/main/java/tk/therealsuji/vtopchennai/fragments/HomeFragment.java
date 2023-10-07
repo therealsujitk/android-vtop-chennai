@@ -123,8 +123,8 @@ public class HomeFragment extends Fragment {
 
         BadgeDrawable spotlightBadge = BadgeDrawable.create(requireContext());
         spotlightBadge.setBadgeGravity(BadgeDrawable.TOP_END);
-        spotlightBadge.setHorizontalOffset((int) (16 * pixelDensity));
-        spotlightBadge.setVerticalOffset((int) (16 * pixelDensity));
+        spotlightBadge.setHorizontalOffset((int) (24 * pixelDensity));
+        spotlightBadge.setVerticalOffset((int) (24 * pixelDensity));
         spotlightBadge.setVisible(false);
 
         spotlightButton.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
