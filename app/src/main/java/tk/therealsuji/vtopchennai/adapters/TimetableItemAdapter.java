@@ -214,15 +214,18 @@ public class TimetableItemAdapter extends RecyclerView.Adapter<TimetableItemAdap
             } catch (Exception ignored) {
             }
 
-            Calendar calendarMidnight = Calendar.getInstance();
-            calendarMidnight.set(Calendar.HOUR_OF_DAY, 23);
-            calendarMidnight.set(Calendar.MINUTE, 59);
+            Calendar calendarFirstHourToday = Calendar.getInstance();
+            Calendar calendarLastHourToday = Calendar.getInstance();
+            calendarFirstHourToday.set(Calendar.HOUR_OF_DAY, 0);
+            calendarFirstHourToday.set(Calendar.MINUTE, 0);
+            calendarLastHourToday.set(Calendar.HOUR_OF_DAY, 23);
+            calendarLastHourToday.set(Calendar.MINUTE, 59);
 
             AppDatabase appDatabase = AppDatabase.getInstance(this.timetableItem.getContext().getApplicationContext());
             ExamsDao examsDao = appDatabase.examsDao();
 
             examsDao
-                    .isExamsOngoing(calendarMidnight.getTimeInMillis())
+                    .isExamsOngoing(calendarFirstHourToday.getTimeInMillis(), calendarLastHourToday.getTimeInMillis())
                     .subscribeOn(Schedulers.single())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new SingleObserver<Boolean>() {

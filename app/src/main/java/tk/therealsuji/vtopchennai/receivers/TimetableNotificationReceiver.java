@@ -25,11 +25,15 @@ public class TimetableNotificationReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         Calendar calendar = Calendar.getInstance();
         Calendar calendarFuture = Calendar.getInstance();
-        Calendar calendarMidnight = Calendar.getInstance();
+
+        Calendar calendarFirstHourToday = Calendar.getInstance();
+        Calendar calendarLastHourToday = Calendar.getInstance();
 
         calendarFuture.add(Calendar.MINUTE, 30);
-        calendarMidnight.set(Calendar.HOUR_OF_DAY, 23);
-        calendarMidnight.set(Calendar.MINUTE, 59);
+        calendarFirstHourToday.set(Calendar.HOUR_OF_DAY, 0);
+        calendarFirstHourToday.set(Calendar.MINUTE, 0);
+        calendarLastHourToday.set(Calendar.HOUR_OF_DAY, 23);
+        calendarLastHourToday.set(Calendar.MINUTE, 59);
 
         SimpleDateFormat hour24 = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
 
@@ -42,7 +46,7 @@ public class TimetableNotificationReceiver extends BroadcastReceiver {
         TimetableDao timetableDao = appDatabase.timetableDao();
 
         examsDao
-                .isExamsOngoing(calendarMidnight.getTimeInMillis())
+                .isExamsOngoing(calendarFirstHourToday.getTimeInMillis(), calendarLastHourToday.getTimeInMillis())
                 .subscribeOn(Schedulers.single())
                 .subscribe(new SingleObserver<Boolean>() {
                     @Override
