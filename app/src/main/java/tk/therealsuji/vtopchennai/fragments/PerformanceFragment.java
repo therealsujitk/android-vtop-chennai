@@ -176,6 +176,21 @@ public class PerformanceFragment extends Fragment {
                             }
                         }).attach();
 
+                        // This is required to set the tooltip text again since it gets reset to the tab's text
+                        for (int i = 0; i < courseTabs.getTabCount(); ++i) {
+                            TabLayout.Tab tab = courseTabs.getTabAt(i);
+                            Course.AllData course = courses.get(i);
+
+                            if (tab == null) {
+                                continue;
+                            }
+
+                            tab.view.addOnLayoutChangeListener((view, i0, i1, i2, i3, i4, i5, i6, i7) -> {
+                                view.setContentDescription(course.courseTitle);
+                                TooltipCompat.setTooltipText(tab.view, course.courseTitle);
+                            });
+                        }
+
                         for (int i = 0; i < courseTabs.getTabCount(); ++i) {
                             View day = ((ViewGroup) courseTabs.getChildAt(0)).getChildAt(i);
                             ViewGroup.MarginLayoutParams tabParams = (ViewGroup.MarginLayoutParams) day.getLayoutParams();

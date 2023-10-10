@@ -73,6 +73,17 @@ public class ViewPagerFragment extends Fragment {
                             TooltipCompat.setTooltipText(tab.view, null);
                         }).attach();
 
+                        // This is required to set the tooltip text again since it gets reset to the tab's text
+                        for (int i = 0; i < tabLayout.getTabCount(); ++i) {
+                            TabLayout.Tab tab = tabLayout.getTabAt(i);
+
+                            if (tab == null) {
+                                continue;
+                            }
+
+                            tab.view.addOnLayoutChangeListener((view, i0, i1, i2, i3, i4, i5, i6, i7) -> TooltipCompat.setTooltipText(tab.view, null));
+                        }
+
                         for (int i = 0; i < tabLayout.getTabCount(); ++i) {
                             View day = ((ViewGroup) tabLayout.getChildAt(0)).getChildAt(i);
                             ViewGroup.MarginLayoutParams tabParams = (ViewGroup.MarginLayoutParams) day.getLayoutParams();
@@ -130,6 +141,17 @@ public class ViewPagerFragment extends Fragment {
                             TooltipCompat.setTooltipText(tab.view, null);
                         }).attach();
 
+                        // This is required to set the tooltip text again since it gets reset to the tab's text
+                        for (int i = 0; i < tabLayout.getTabCount(); ++i) {
+                            TabLayout.Tab tab = tabLayout.getTabAt(i);
+
+                            if (tab == null) {
+                                continue;
+                            }
+
+                            tab.view.addOnLayoutChangeListener((view, i0, i1, i2, i3, i4, i5, i6, i7) -> TooltipCompat.setTooltipText(tab.view, null));
+                        }
+
                         for (int i = 0; i < tabLayout.getTabCount(); ++i) {
                             View day = ((ViewGroup) tabLayout.getChildAt(0)).getChildAt(i);
                             ViewGroup.MarginLayoutParams tabParams = (ViewGroup.MarginLayoutParams) day.getLayoutParams();
@@ -186,6 +208,17 @@ public class ViewPagerFragment extends Fragment {
                             tab.setText(staffTypes.get(position).toUpperCase());
                             TooltipCompat.setTooltipText(tab.view, null);
                         }).attach();
+
+                        // This is required to set the tooltip text again since it gets reset to the tab's text
+                        for (int i = 0; i < tabLayout.getTabCount(); ++i) {
+                            TabLayout.Tab tab = tabLayout.getTabAt(i);
+
+                            if (tab == null) {
+                                continue;
+                            }
+
+                            tab.view.addOnLayoutChangeListener((view, i0, i1, i2, i3, i4, i5, i6, i7) -> TooltipCompat.setTooltipText(tab.view, null));
+                        }
 
                         for (int i = 0; i < tabLayout.getTabCount(); ++i) {
                             View day = ((ViewGroup) tabLayout.getChildAt(0)).getChildAt(i);

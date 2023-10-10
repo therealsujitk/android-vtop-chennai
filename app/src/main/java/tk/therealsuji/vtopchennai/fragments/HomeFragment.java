@@ -181,12 +181,24 @@ public class HomeFragment extends Fragment {
 
         new TabLayoutMediator(days, timetable, (tab, position) -> {
             tab.setText(dayStrings[position].substring(0, 1));
-
-            View day = tab.view;
-
-            TooltipCompat.setTooltipText(day, dayStrings[position]);
-            day.setContentDescription(dayStrings[position]);
+            tab.view.setContentDescription(dayStrings[position]);
+            TooltipCompat.setTooltipText(tab.view, dayStrings[position]);
         }).attach();
+
+        // This is required to set the tooltip text again since it gets reset to the tab's text
+        for (int i = 0; i < days.getTabCount(); ++i) {
+            TabLayout.Tab tab = days.getTabAt(i);
+            int position = i;
+
+            if (tab == null) {
+                continue;
+            }
+
+            tab.view.addOnLayoutChangeListener((view, i0, i1, i2, i3, i4, i5, i6, i7) -> {
+                view.setContentDescription(dayStrings[position]);
+                TooltipCompat.setTooltipText(tab.view, dayStrings[position]);
+            });
+        }
 
         for (int i = 0; i < days.getTabCount(); ++i) {
             View day = ((ViewGroup) days.getChildAt(0)).getChildAt(i);
