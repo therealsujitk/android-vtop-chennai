@@ -2,7 +2,6 @@ package tk.therealsuji.vtopchennai.adapters;
 
 import android.Manifest;
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -102,7 +101,7 @@ public class SpotlightItemAdapter extends RecyclerView.Adapter<SpotlightItemAdap
                 this.spotlightItem.setOnClickListener(view -> {
                     Context context = this.spotlightItem.getContext();
 
-                    if (ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                    if (!SettingsRepository.hasFileWritePermission(context)) {
                         ((MainActivity) context).getRequestPermissionLauncher().launch(Manifest.permission.WRITE_EXTERNAL_STORAGE);
                         return;
                     }

@@ -113,6 +113,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         InputStream inputStream = getContentResolver().openInputStream(uri);
+        assert inputStream != null;
         FileUtils.copyInputStreamToFile(inputStream, file);
 
         return file.getPath();

@@ -8,13 +8,13 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission
         android:name="android.permission.READ_EXTERNAL_STORAGE"
-        android:maxSdkVersion="32" />
+        android:maxSdkVersion="28" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
     <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-        tools:ignore="ScopedStorage" />
+        android:maxSdkVersion="28" />
 
     <application
         android:name=".VTOP"
@@ -34,25 +34,21 @@
             android:name=".activities.LauncherActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:exported="true">
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".activities.LoginActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:theme="@style/Theme.VTOP.Login"
             android:windowSoftInputMode="adjustPan" />
-
         <activity
             android:name=".activities.MainActivity"
             android:configChanges="orientation|screenSize"
             android:exported="true"
             android:windowSoftInputMode="adjustPan" />
-
         <activity
             android:name=".activities.WebViewActivity"
             android:exported="false" />
@@ -66,21 +62,19 @@
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
-
         <meta-data
             android:name="google_analytics_automatic_screen_reporting_enabled"
             android:value="false" />
 
         <receiver android:name=".receivers.ExamNotificationReceiver" />
         <receiver android:name=".receivers.TimetableNotificationReceiver" />
-
         <receiver
             android:name=".receivers.BootReceiver"
             android:exported="true">
-
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
     </application>
+
 </manifest>

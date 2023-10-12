@@ -2,7 +2,6 @@ package tk.therealsuji.vtopchennai.adapters;
 
 import android.Manifest;
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,7 +10,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
@@ -97,7 +95,7 @@ public class AttachmentsItemAdapter extends RecyclerView.Adapter<AttachmentsItem
                 Context context = this.attachment.getContext();
                 Context applicationContext = context.getApplicationContext();
 
-                if (ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                if (!SettingsRepository.hasFileWritePermission(context)) {
                     ((MainActivity) context).getRequestPermissionLauncher().launch(Manifest.permission.WRITE_EXTERNAL_STORAGE);
                     return;
                 }

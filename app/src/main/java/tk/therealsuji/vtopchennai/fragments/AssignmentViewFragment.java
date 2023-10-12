@@ -1,5 +1,6 @@
 package tk.therealsuji.vtopchennai.fragments;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.res.ColorStateList;
@@ -508,6 +509,7 @@ public class AssignmentViewFragment extends Fragment implements SwipeRefreshLayo
             List<File> files = new ArrayList<>();
             List<Attachment> tentativeAttachments = new ArrayList<>();
             List<String> filePaths = result.getStringArrayList("paths");
+            assert filePaths != null;
 
             for (String filePath : filePaths) {
                 File file = new File(filePath);
@@ -529,6 +531,11 @@ public class AssignmentViewFragment extends Fragment implements SwipeRefreshLayo
 
         back.setOnClickListener(view -> requireActivity().getSupportFragmentManager().popBackStack());
         addSubmission.setOnClickListener(view -> {
+            if (!SettingsRepository.hasFileReadPermission(this.requireContext())) {
+                ((MainActivity) this.requireContext()).getRequestPermissionLauncher().launch(Manifest.permission.READ_EXTERNAL_STORAGE);
+                return;
+            }
+
             Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
             intent.addCategory(Intent.CATEGORY_OPENABLE);
             intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
@@ -591,6 +598,8 @@ public class AssignmentViewFragment extends Fragment implements SwipeRefreshLayo
 
                 if (assignment.cutoffDate != null) {
                     allowLate.setVisibility(View.VISIBLE);
+                    int colorTertiary = MaterialColors.getColor(dueIn, R.attr.colorTertiary);
+                    TextViewCompat.setCompoundDrawableTintList(allowLate, ColorStateList.valueOf(colorTertiary));
 
                     if (assignment.cutoffDate > assignment.dueDate) {
                         long lateSubmission = assignment.cutoffDate - assignment.dueDate;

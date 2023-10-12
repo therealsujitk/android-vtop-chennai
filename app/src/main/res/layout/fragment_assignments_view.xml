@@ -123,7 +123,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
                         android:text="@string/no_late_submission"
-                        android:textColor="?attr/colorSecondary"
+                        android:textColor="?attr/colorTertiary"
                         android:textSize="16sp"
                         android:visibility="gone"
                         app:drawableStartCompat="@drawable/ic_feedback"

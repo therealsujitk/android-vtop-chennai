@@ -2,6 +2,7 @@ package tk.therealsuji.vtopchennai.helpers;
 
 import static android.content.Context.DOWNLOAD_SERVICE;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlarmManager;
@@ -10,17 +11,20 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.text.Html;
 import android.text.format.DateFormat;
 import android.widget.Toast;
 
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 import androidx.security.crypto.EncryptedSharedPreferences;
 import androidx.security.crypto.MasterKey;
@@ -167,6 +171,26 @@ public class SettingsRepository {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    public static boolean hasPermission(Context context, String permission) {
+        return ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED;
+    }
+
+    public static boolean hasFileReadPermission(Context context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            return true;
+        }
+
+        return hasPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE);
+    }
+
+    public static boolean hasFileWritePermission(Context context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            return true;
+        }
+
+        return hasPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE);
     }
 
     public static void openDownloadPage(Context context) {
