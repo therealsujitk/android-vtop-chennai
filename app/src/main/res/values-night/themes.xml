@@ -13,21 +13,8 @@
         <item name="android:fontFamily">@font/rubik</item>
     </style>
 
-    <style name="ThemeOverlay.VTOP.Amoled.Base" parent="ThemeOverlay.Material3.DynamicColors.DayNight">
-        <item name="android:windowBackground">#000000</item>
-        <item name="colorSurfaceContainer">#000000</item>
-        <item name="colorSurfaceContainerLow">#000000</item>
-        <item name="colorSurfaceContainerHigh">#000000</item>
-        <item name="colorSurfaceContainerLowest">#000000</item>
-        <item name="colorSurfaceContainerHighest">#000000</item>
-        <item name="colorSurface">#000000</item>
-        <item name="colorSurfaceDim">#000000</item>
-        <item name="colorSurfaceBright">#000000</item>
-    </style>
-
-<!--    Workaround for Bug #3622 - https://github.com/material-components/material-components-android/issues/3622
-        To be reverted once com.google.android.material:material is upgraded to 1.11.0-beta01 or higher -->
     <style name="ThemeOverlay.VTOP.Amoled" parent="ThemeOverlay.Material3.DynamicColors.DayNight">
-        <item name="contrastColorThemeOverlay">@style/ThemeOverlay.VTOP.Amoled.Base</item>
+        <item name="android:windowBackground">#000000</item>
+        <item name="colorSurface">#000000</item>
     </style>
 </resources>
