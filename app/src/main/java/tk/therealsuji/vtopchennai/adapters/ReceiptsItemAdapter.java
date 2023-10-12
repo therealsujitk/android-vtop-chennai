@@ -10,7 +10,9 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Locale;
 
 import tk.therealsuji.vtopchennai.R;
 import tk.therealsuji.vtopchennai.models.Receipt;
@@ -59,10 +61,11 @@ public class ReceiptsItemAdapter extends RecyclerView.Adapter<ReceiptsItemAdapte
             TextView number = this.receipt.findViewById(R.id.text_view_receipt_number);
             TextView amount = this.receipt.findViewById(R.id.text_view_amount);
             TextView date = this.receipt.findViewById(R.id.text_view_date);
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH);
 
             number.setText(String.valueOf(receipt.number));
             amount.setText(new DecimalFormat("₹ #.00/-").format(receipt.amount));
-            date.setText(receipt.date);
+            date.setText(dateFormat.format(receipt.date).toUpperCase(Locale.ENGLISH));
         }
     }
 }

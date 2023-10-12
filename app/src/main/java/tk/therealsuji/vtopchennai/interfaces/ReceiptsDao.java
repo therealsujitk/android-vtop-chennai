@@ -18,6 +18,6 @@ public interface ReceiptsDao {
     @Query("DELETE FROM receipts")
     Completable deleteAll();
 
-    @Query("SELECT * FROM receipts")
+    @Query("SELECT * FROM receipts ORDER BY date DESC, number DESC")
     Single<List<Receipt>> getReceipts();
 }

@@ -13,5 +13,5 @@ public class Receipt {
     public Double amount;
 
     @ColumnInfo(name = "date")
-    public String date;
+    public Long date;
 }

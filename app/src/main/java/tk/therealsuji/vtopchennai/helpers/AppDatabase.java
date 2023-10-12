@@ -2,10 +2,13 @@ package tk.therealsuji.vtopchennai.helpers;
 
 import android.content.Context;
 
+import androidx.annotation.NonNull;
 import androidx.room.AutoMigration;
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
+import androidx.room.migration.Migration;
+import androidx.sqlite.db.SupportSQLiteDatabase;
 
 import tk.therealsuji.vtopchennai.interfaces.AssignmentsDao;
 import tk.therealsuji.vtopchennai.interfaces.AttendanceDao;
@@ -44,7 +47,7 @@ import tk.therealsuji.vtopchennai.models.Timetable;
                 Staff.class,
                 Timetable.class
         },
-        version = 2,
+        version = 3,
         autoMigrations = {
                 @AutoMigration(from = 1, to = 2),
         }
@@ -56,6 +59,7 @@ public abstract class AppDatabase extends RoomDatabase {
         if (instance == null) {
             instance = Room.databaseBuilder(context.getApplicationContext(),
                     AppDatabase.class, "vit_student")
+                    .addMigrations(MIGRATION_2_3)
                     .fallbackToDestructiveMigration()
                     .build();
         }
@@ -90,4 +94,16 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract StaffDao staffDao();
 
     public abstract TimetableDao timetableDao();
+
+    // Manual Migrations
+    static final Migration MIGRATION_2_3 = new Migration(2, 3) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase database) {
+            database.execSQL("ALTER TABLE receipts RENAME TO receipts_old");
+            database.execSQL("CREATE TABLE receipts (number INTEGER NOT NULL PRIMARY KEY, amount REAL, date INTEGER)");
+            database.execSQL("INSERT INTO receipts (number, amount) SELECT number, amount FROM receipts_old");
+            database.execSQL("UPDATE receipts SET date = 0");
+            database.execSQL("DROP TABLE receipts_old");
+        }
+    };
 }

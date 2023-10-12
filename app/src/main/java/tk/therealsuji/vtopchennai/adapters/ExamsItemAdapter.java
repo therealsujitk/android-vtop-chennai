@@ -96,7 +96,7 @@ public class ExamsItemAdapter extends RecyclerView.Adapter<ExamsItemAdapter.View
             courseCode.setText(examItem.courseCode);
 
             if (examItem.startTime != null) {
-                date.setText(Html.fromHtml(this.examItem.getContext().getString(R.string.date, dateFormat.format(examItem.startTime).toUpperCase(Locale.ROOT)), Html.FROM_HTML_MODE_LEGACY));
+                date.setText(Html.fromHtml(this.examItem.getContext().getString(R.string.date, dateFormat.format(examItem.startTime).toUpperCase(Locale.ENGLISH)), Html.FROM_HTML_MODE_LEGACY));
                 date.setVisibility(View.VISIBLE);
             }
 

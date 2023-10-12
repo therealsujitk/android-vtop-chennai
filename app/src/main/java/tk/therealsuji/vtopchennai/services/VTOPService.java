@@ -2209,15 +2209,19 @@ public class VTOPService extends Service {
                 for (int i = 0; i < receiptsArray.length(); ++i) {
                     JSONObject receiptsObject = receiptsArray.getJSONObject(i);
                     Receipt receipt = new Receipt();
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH);
 
                     // If this is true, there's a web scrapping issue
                     if (receiptsObject.isNull("number")) {
                         continue;
                     }
 
+                    String receiptDateString = this.getStringValue(receiptsObject, "date");
+                    Date receiptDate = receiptDateString != null ? dateFormat.parse(receiptDateString) : null;
+
                     receipt.number = receiptsObject.getInt("number");
                     receipt.amount = this.getDoubleValue(receiptsObject, "amount");
-                    receipt.date = this.getStringValue(receiptsObject, "date");
+                    receipt.date = receiptDate != null ? receiptDate.getTime() : 0;
 
                     receipts.add(receipt);
                 }
