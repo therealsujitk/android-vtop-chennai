@@ -82,8 +82,8 @@ public class MarksItemAdapter extends RecyclerView.Adapter<MarksItemAdapter.View
                     @OptIn(markerClass = ExperimentalBadgeUtils.class)
                     @Override
                     public void onLayoutChange(View view, int i, int i1, int i2, int i3, int i4, int i5, int i6, int i7) {
-                        markBadge.setHorizontalOffset(-(((View) markTitle.getParent()).getPaddingStart() - markBadge.getIntrinsicWidth()) / 2);
-                        markBadge.setVerticalOffset((markTitle.getMeasuredHeight() - markBadge.getIntrinsicHeight()) / 2);
+                        markBadge.setHorizontalOffset(10 - ((View) markTitle.getParent()).getPaddingStart() / 2);
+                        markBadge.setVerticalOffset(10 + markTitle.getMeasuredHeight() / 2);
 
                         BadgeUtils.attachBadgeDrawable(markBadge, markTitle);
                         markTitle.removeOnLayoutChangeListener(this);

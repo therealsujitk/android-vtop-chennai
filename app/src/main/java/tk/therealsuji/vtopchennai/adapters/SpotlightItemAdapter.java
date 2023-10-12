@@ -135,8 +135,8 @@ public class SpotlightItemAdapter extends RecyclerView.Adapter<SpotlightItemAdap
                 float pixelDensity = announcementType.getContext().getResources().getDisplayMetrics().density;
                 BadgeDrawable announcementBadge = BadgeDrawable.create(announcementType.getContext());
                 announcementBadge.setBadgeGravity(BadgeDrawable.TOP_END);
-                announcementBadge.setHorizontalOffset((int) (6.5 * pixelDensity));
-                announcementBadge.setVerticalOffset((int) (6.5 * pixelDensity));
+                announcementBadge.setHorizontalOffset((int) (10 * pixelDensity));
+                announcementBadge.setVerticalOffset((int) (10 * pixelDensity));
 
                 announcementType.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
                     @OptIn(markerClass = ExperimentalBadgeUtils.class)
