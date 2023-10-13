@@ -86,6 +86,11 @@ public class LoginActivity extends AppCompatActivity {
             }
 
             @Override
+            public void onForceSignOut() {
+                // User is already signed out so do nothing
+            }
+
+            @Override
             public void onComplete() {
                 startMainActivity();
             }

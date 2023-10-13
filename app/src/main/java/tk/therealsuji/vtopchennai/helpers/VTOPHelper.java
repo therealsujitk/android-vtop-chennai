@@ -89,7 +89,7 @@ public class VTOPHelper {
                                 .setView(captchaLayout)
                                 .create();
 
-                        Drawable background = captchaDialog.getWindow().getDecorView().getBackground();
+                        Drawable background = Objects.requireNonNull(captchaDialog.getWindow()).getDecorView().getBackground();
                         if (background instanceof InsetDrawable) {
                             background = ((InsetDrawable) background).getDrawable();
 
@@ -249,6 +249,11 @@ public class VTOPHelper {
                 }
 
                 @Override
+                public void onForceSignOut() {
+                    initiator.onForceSignOut();
+                }
+
+                @Override
                 public void onComplete() {
                     initiator.onComplete();
                 }
@@ -310,6 +315,8 @@ public class VTOPHelper {
 
     public interface Initiator {
         void onLoading(boolean isLoading);
+
+        void onForceSignOut();
 
         void onComplete();
     }

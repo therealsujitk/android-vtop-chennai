@@ -512,24 +512,25 @@ public class VTOPService extends Service {
                             "                return;" +
                             "            }" +
                             "            var pageContent = res.toLowerCase();" +
-                            "            if (pageContent.includes('invalid captcha')) {" +
+                            "            var invalidCaptchaRegex = new RegExp(/invalid\\s*captcha/);" +
+                            "            var invalidCredentialsRegex = new RegExp(/invalid\\s*(user\\s*name|login\\s*id|user\\s*id)\\s*\\/\\s*password/);" +
+                            "            var accountLockedRegex = new RegExp(/account\\s*is\\s*locked/);" +
+                            "            var maxFailAttemptsRegex = new RegExp(/maximum\\s*fail\\s*attempts\\s*reached/);" +
+                            "            if (invalidCaptchaRegex.test(pageContent)) {" +
                             "                response.error_message = 'Invalid Captcha';" +
                             "                response.error_code = 1;" +
-                            "            } else if(pageContent.includes('invalid user id / password')) {" +
-                            "                response.error_message = 'Invalid User ID / Password';" +
+                            "            } else if(invalidCredentialsRegex.test(pageContent)) {" +
+                            "                response.error_message = 'Invalid Username / Password';" +
                             "                response.error_code = 2;" +
-                            "            } else if(pageContent.includes('user id not available')) {" +
-                            "                response.error_message = 'Invalid User ID';" +
-                            "                response.error_code = 3;" +
-                            "            } else if(pageContent.includes('your account is locked')) {" +
+                            "            } else if(accountLockedRegex.test(pageContent)) {" +
                             "                response.error_message = 'Your Account is Locked';" +
+                            "                response.error_code = 3;" +
+                            "            } else if(maxFailAttemptsRegex.test(pageContent)) {" +
+                            "                response.error_message = 'Maximum login attempts reached, open VTOP in your browser to reset your password';" +
                             "                response.error_code = 4;" +
-                            "            } else if(pageContent.includes('maximum fail attempts reached')) {" +
-                            "                response.error_message = 'Maximum login attempts reached, open VTOP in your browser to reset password';" +
-                            "                response.error_code = 5;" +
                             "            } else {" +
                             "                response.error_message = 'Unknown error';" +
-                            "                response.error_code = 6;" +
+                            "                response.error_code = 5;" +
                             "            }" +
                             "        }" +
                             "    }" +
@@ -550,6 +551,12 @@ public class VTOPService extends Service {
                                 if (errorCode == 1) {
                                     this.reloadPage("/login", false);
                                 } else {
+                                    if (errorCode == 2) {
+                                        try {
+                                            this.callback.onForceSignOut();
+                                        } catch (Exception ignored) {}
+                                    }
+
                                     this.endService(true);
                                 }
                             }
@@ -2504,6 +2511,8 @@ public class VTOPService extends Service {
         void onRequestSemester(String[] semesters);
 
         void onServiceEnd();
+
+        void onForceSignOut();
 
         void onComplete();
     }

@@ -161,6 +161,12 @@ public class MainActivity extends AppCompatActivity {
         finish();
     }
 
+    private void signOut() {
+        SettingsRepository.signOut(this);
+        this.startActivity(new Intent(this, LoginActivity.class));
+        this.finish();
+    }
+
     private void getUnreadCount() {
         AppDatabase appDatabase = AppDatabase.getInstance(this.getApplicationContext());
         Bundle unreadCount = new Bundle();
@@ -338,6 +344,11 @@ public class MainActivity extends AppCompatActivity {
             public void onLoading(boolean isLoading) {
                 syncDataState.putBoolean("isLoading", isLoading);
                 getSupportFragmentManager().setFragmentResult("syncDataState", syncDataState);
+            }
+
+            @Override
+            public void onForceSignOut() {
+                signOut();
             }
 
             @Override
