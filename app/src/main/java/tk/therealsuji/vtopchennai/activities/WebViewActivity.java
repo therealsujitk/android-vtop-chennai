@@ -1,5 +1,6 @@
 package tk.therealsuji.vtopchennai.activities;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -14,6 +15,7 @@ import tk.therealsuji.vtopchennai.R;
 public class WebViewActivity extends AppCompatActivity {
 
     @Override
+    @SuppressLint("SetJavaScriptEnabled")
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_web_view);
@@ -28,6 +30,7 @@ public class WebViewActivity extends AppCompatActivity {
 
         WebView webView = findViewById(R.id.web_view);
         webView.setWebViewClient(new WebViewClient());
+        webView.getSettings().setJavaScriptEnabled(true);
         webView.loadUrl(url);
     }
 
