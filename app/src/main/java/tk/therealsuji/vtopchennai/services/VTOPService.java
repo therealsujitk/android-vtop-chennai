@@ -1261,7 +1261,7 @@ public class VTOPService extends Service {
                     attendanceItem.total = this.getIntegerValue(attendanceObject, "total");
 
                     if (attendanceItem.attended != null && attendanceItem.total != null && attendanceItem.total != 0) {
-                        attendanceItem.percentage = (attendanceItem.attended * 100) / attendanceItem.total;
+                        attendanceItem.percentage = (int) Math.ceil((attendanceItem.attended * 100.0) / attendanceItem.total);
                         overallAttendance += attendanceItem.percentage;
                         ++attendanceLength;
                     }

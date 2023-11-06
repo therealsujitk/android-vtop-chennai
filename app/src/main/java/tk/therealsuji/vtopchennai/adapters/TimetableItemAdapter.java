@@ -174,13 +174,28 @@ public class TimetableItemAdapter extends RecyclerView.Adapter<TimetableItemAdap
                                 attendanceText.setText(new DecimalFormat("#'%'").format(course.attendancePercentage));
                                 attendanceProgress.setProgress(course.attendancePercentage);
 
+                                //
+                                //  percentage = attended * 100 / total
+                                //
+                                //  CALCULATING POSITIVE EXCESS
+                                //  (attended) * 100 / (total + x) = 74
+                                //  100 * attended = 74 * total + 74 * x
+                                //  x = (100 * attended - 74 * total) / 74
+                                //
+                                //  CALCULATING NEGATIVE EXCESS
+                                //  (attended + x) * 100 / (total + x) = 74
+                                //  100 * attended + 100 * x = 74 * total + 74 * x
+                                //  26 * x = 74 * total - 100 * attended
+                                //  x = (74 * total - 100 * attended) / 26
+                                //
                                 if (SettingsRepository.getCGPA(timetableItem.getContext()) < 9) {
-                                    int attendanceExcess = 4 * course.attendanceAttended - 3 * course.attendanceTotal;
+                                    double attendanceExcess = 100 * course.attendanceAttended - 74 * course.attendanceTotal;
 
                                     if (course.attendancePercentage < 75) {
+                                        attendanceExcess = Math.floor(attendanceExcess / 26) + 1;
                                         attendanceProgress.setSecondaryProgress(75);
                                     } else {
-                                        attendanceExcess /= 3;
+                                        attendanceExcess = Math.ceil(attendanceExcess / 74) - 1;
                                     }
 
                                     attendanceExcessText.setVisibility(View.VISIBLE);
