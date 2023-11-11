@@ -100,8 +100,9 @@
 
     <!-- Update Dialog Strings -->
     <string name="update_title">Update Available</string>
-    <string name="update_message">A new version of &app_name; has been released! The Update button bellow will take you to the download page.</string>
-    <string name="update">Update</string>
+    <string name="update_message">A new version of &app_name; (&lt;b>%s&lt;/b>) has been released! The Update button bellow will take you to the download page.</string>
+    <string name="cancel_update">I\'ll do this later</string>
+    <string name="download_update">Download Update</string>
 
     <!-- Sync Dialog Strings -->
     <string name="sync_title">Data Sync Required</string>

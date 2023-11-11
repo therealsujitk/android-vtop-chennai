@@ -32,6 +32,12 @@ import androidx.security.crypto.MasterKey;
 import com.google.android.material.color.DynamicColors;
 import com.google.android.material.color.DynamicColorsOptions;
 
+import org.json.JSONObject;
+
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
 import java.text.ParseException;
@@ -46,7 +52,11 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 import okhttp3.OkHttpClient;
+import tk.therealsuji.vtopchennai.BuildConfig;
 import tk.therealsuji.vtopchennai.R;
 import tk.therealsuji.vtopchennai.activities.WebViewActivity;
 import tk.therealsuji.vtopchennai.fragments.RecyclerViewFragment;
@@ -191,6 +201,32 @@ public class SettingsRepository {
         }
 
         return hasPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+    }
+
+    public static Observable<JSONObject> checkForUpdates() {
+        return Observable.fromCallable(() -> {
+                    try {
+                        StringBuilder sb = new StringBuilder();
+                        URL url = new URL(SettingsRepository.APP_ABOUT_URL + "?v=" + BuildConfig.VERSION_NAME);
+                        HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+                        InputStream in = httpURLConnection.getInputStream();
+                        InputStreamReader reader = new InputStreamReader(in);
+                        int data = reader.read();
+
+                        while (data != -1) {
+                            char current = (char) data;
+                            sb.append(current);
+                            data = reader.read();
+                        }
+
+                        String result = sb.toString();
+                        return new JSONObject(result);
+                    } catch (Exception ignored) {
+                        return new JSONObject();
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
     }
 
     public static void openDownloadPage(Context context) {

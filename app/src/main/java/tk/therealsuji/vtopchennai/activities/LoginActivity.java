@@ -9,15 +9,26 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
 
+import org.json.JSONObject;
+
+import io.reactivex.rxjava3.annotations.NonNull;
+import io.reactivex.rxjava3.core.Observer;
+import io.reactivex.rxjava3.disposables.CompositeDisposable;
+import io.reactivex.rxjava3.disposables.Disposable;
+import tk.therealsuji.vtopchennai.BuildConfig;
 import tk.therealsuji.vtopchennai.R;
+import tk.therealsuji.vtopchennai.fragments.dialogs.UpdateDialogFragment;
 import tk.therealsuji.vtopchennai.helpers.SettingsRepository;
 import tk.therealsuji.vtopchennai.helpers.VTOPHelper;
 
 public class LoginActivity extends AppCompatActivity {
     SharedPreferences encryptedSharedPreferences, sharedPreferences;
+    CompositeDisposable compositeDisposable = new CompositeDisposable();
     VTOPHelper vtopHelper;
 
     public void signIn() {
@@ -95,6 +106,42 @@ public class LoginActivity extends AppCompatActivity {
                 startMainActivity();
             }
         });
+
+        /*
+            Check for updates
+         */
+        SettingsRepository.checkForUpdates()
+                .subscribe(new Observer<JSONObject>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+                        compositeDisposable.add(d);
+                    }
+
+                    @Override
+                    public void onNext(@NonNull JSONObject about) {
+                        try {
+                            int versionCode = about.getInt("versionCode");
+                            String versionName = about.getString("tagName");
+                            String releaseNotes = about.getString("releaseNotes");
+
+                            if (versionCode > BuildConfig.VERSION_CODE) {
+                                FragmentManager fragmentManager = getSupportFragmentManager();
+                                FragmentTransaction transaction = fragmentManager.beginTransaction();
+                                transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                                transaction.add(android.R.id.content, new UpdateDialogFragment(versionName, releaseNotes)).addToBackStack(null).commit();
+                            }
+                        } catch (Exception ignored) {
+                        }
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                    }
+
+                    @Override
+                    public void onComplete() {
+                    }
+                });
     }
 
     @Override
@@ -121,5 +168,11 @@ public class LoginActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         this.vtopHelper.unbind();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        compositeDisposable.dispose();
     }
 }

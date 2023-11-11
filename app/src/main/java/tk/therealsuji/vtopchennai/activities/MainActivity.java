@@ -16,6 +16,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.WindowCompat;
 import androidx.documentfile.provider.DocumentFile;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -27,10 +29,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.Serializable;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
@@ -46,6 +45,7 @@ import tk.therealsuji.vtopchennai.fragments.AssignmentsFragment;
 import tk.therealsuji.vtopchennai.fragments.HomeFragment;
 import tk.therealsuji.vtopchennai.fragments.PerformanceFragment;
 import tk.therealsuji.vtopchennai.fragments.ProfileFragment;
+import tk.therealsuji.vtopchennai.fragments.dialogs.UpdateDialogFragment;
 import tk.therealsuji.vtopchennai.helpers.AppDatabase;
 import tk.therealsuji.vtopchennai.helpers.SettingsRepository;
 import tk.therealsuji.vtopchennai.helpers.VTOPHelper;
@@ -361,47 +361,32 @@ public class MainActivity extends AppCompatActivity {
             Check for updates
          */
         Context context = this;
-        Observable.fromCallable(() -> {
-                    try {
-                        StringBuilder sb = new StringBuilder();
-                        URL url = new URL(SettingsRepository.APP_ABOUT_URL + "?v=" + BuildConfig.VERSION_NAME);
-                        HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
-                        InputStream in = httpURLConnection.getInputStream();
-                        InputStreamReader reader = new InputStreamReader(in);
-                        int data = reader.read();
-
-                        while (data != -1) {
-                            char current = (char) data;
-                            sb.append(current);
-                            data = reader.read();
-                        }
-
-                        String result = sb.toString();
-                        JSONObject about = new JSONObject(result);
-
-                        return about.getInt("versionCode");
-                    } catch (Exception ignored) {
-                        return 0;
-                    }
-                })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<Integer>() {
+        SettingsRepository.checkForUpdates()
+                .subscribe(new Observer<JSONObject>() {
                     @Override
                     public void onSubscribe(@NonNull Disposable d) {
                         compositeDisposable.add(d);
                     }
 
                     @Override
-                    public void onNext(@NonNull Integer versionCode) {
-                        if (versionCode > BuildConfig.VERSION_CODE) {
-                            new MaterialAlertDialogBuilder(context)
-                                    .setMessage(R.string.update_message)
-                                    .setNegativeButton(R.string.cancel, (dialogInterface, i) -> dialogInterface.dismiss())
-                                    .setPositiveButton(R.string.update, (dialogInterface, i) -> SettingsRepository.openDownloadPage(context))
-                                    .setTitle(R.string.update_title)
-                                    .show();
-                        } else if (SettingsRepository.isRefreshRequired(context)) {
+                    public void onNext(@NonNull JSONObject about) {
+                        try {
+                            int versionCode = about.getInt("versionCode");
+                            String versionName = about.getString("tagName");
+                            String releaseNotes = about.getString("releaseNotes");
+
+                            if (versionCode > BuildConfig.VERSION_CODE) {
+                                FragmentManager fragmentManager = getSupportFragmentManager();
+                                FragmentTransaction transaction = fragmentManager.beginTransaction();
+                                transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                                transaction.add(android.R.id.content, new UpdateDialogFragment(versionName, releaseNotes)).addToBackStack(null).commit();
+
+                                return;
+                            }
+                        } catch (Exception ignored) {
+                        }
+
+                        if (SettingsRepository.isRefreshRequired(context)) {
                             new MaterialAlertDialogBuilder(context)
                                     .setMessage(R.string.sync_message)
                                     .setNegativeButton(R.string.cancel, (dialogInterface, i) -> dialogInterface.dismiss())

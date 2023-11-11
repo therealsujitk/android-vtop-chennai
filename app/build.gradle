@@ -51,6 +51,8 @@ dependencies {
 
     implementation 'commons-io:commons-io:2.6'
 
+    implementation 'io.noties.markwon:core:4.6.2'
+
     implementation 'io.reactivex.rxjava3:rxandroid:3.0.0'
 
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.8.1'
