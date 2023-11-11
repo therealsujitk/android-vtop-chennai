@@ -26,7 +26,7 @@
         android:networkSecurityConfig="@xml/network_security_config"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.VTOP"
+        android:theme="@style/Theme.VTOP.SplashScreen"
         tools:ignore="AllowBackup"
         tools:targetApi="s">
 
@@ -47,10 +47,12 @@
         <activity
             android:name=".activities.MainActivity"
             android:configChanges="orientation|screenSize"
-            android:exported="true"
-            android:windowSoftInputMode="adjustPan" />
+            android:theme="@style/Theme.VTOP"
+            android:windowSoftInputMode="adjustPan"
+            android:exported="true" />
         <activity
             android:name=".activities.WebViewActivity"
+            android:theme="@style/Theme.VTOP"
             android:exported="false" />
 
         <service
