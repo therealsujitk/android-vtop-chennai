@@ -47,7 +47,7 @@ public class AttachmentsItemAdapter extends RecyclerView.Adapter<AttachmentsItem
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.setReceipt(this.attachments.get(position));
+        holder.setAttachment(this.attachments.get(position));
     }
 
     @Override
@@ -63,7 +63,7 @@ public class AttachmentsItemAdapter extends RecyclerView.Adapter<AttachmentsItem
             this.attachment = (LinearLayout) itemView;
         }
 
-        public void setReceipt(Attachment attachment) {
+        public void setAttachment(Attachment attachment) {
             TextView fileName = this.attachment.findViewById(R.id.text_view_file_name);
             TextView fileSize = this.attachment.findViewById(R.id.text_view_file_size);
 
