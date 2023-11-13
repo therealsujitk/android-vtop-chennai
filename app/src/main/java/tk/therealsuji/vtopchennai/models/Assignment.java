@@ -52,6 +52,9 @@ public class Assignment implements Parcelable {
         dueDate = in.readLong();
         cutoffDate = in.readLong();
 
+        if (dueDate == 0) dueDate = null;
+        if (cutoffDate == 0) cutoffDate = null;
+
         introAttachments = new ArrayList<>();
         in.readList(introAttachments, Attachment.class.getClassLoader());
     }
@@ -67,8 +70,13 @@ public class Assignment implements Parcelable {
         parcel.writeString(course);
         parcel.writeString(title);
         parcel.writeString(intro);
+
         if (dueDate != null) parcel.writeLong(dueDate);
+        else parcel.writeLong(0);
+
         if (cutoffDate != null) parcel.writeLong(cutoffDate);
+        else parcel.writeLong(0);
+
         parcel.writeList(introAttachments);
     }
 }
