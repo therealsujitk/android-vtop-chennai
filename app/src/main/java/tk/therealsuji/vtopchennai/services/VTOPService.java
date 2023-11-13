@@ -2092,11 +2092,11 @@ public class VTOPService extends Service {
                 "                if (announcements[j].getElementsByTagName('a').length == 0) {" +
                 "                    spotlightItem.link = null;" +
                 "                } else {" +
-                "                    var link = announcements[j].getElementsByTagName('a')[0].href;" +
-                "                    if(link.includes('\\'')) {" +
-                "                        spotlightItem.link = link.split('\\'')[1];" +
+                "                    var link = announcements[j].getElementsByTagName('a')[0];" +
+                "                    if(link.getAttribute('onclick')) {" +
+                "                        spotlightItem.link = link.getAttribute('onclick').split('\\'')[1];" +
                 "                    } else {" +
-                "                        spotlightItem.link = link;" +
+                "                        spotlightItem.link = link.href;" +
                 "                    }" +
                 "                }" +
                 "                response.spotlight.push(spotlightItem);" +
