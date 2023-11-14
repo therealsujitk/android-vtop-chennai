@@ -801,7 +801,6 @@ public class VTOPService extends Service {
                 "        }" +
                 "        var table = doc.getElementById('studentDetailsList').getElementsByTagName('table')[0];" +
                 "        var headings = table.getElementsByTagName('th');" +
-                "        var offset = headings[0].innerText.toLowerCase().includes('invoice') ? -1 : 0;" +
                 "        var courseIndex, creditsIndex, slotVenueIndex, facultyIndex;" +
                 "        for(var i = 0; i < headings.length; ++i) {" +
                 "            var heading = headings[i].innerText.toLowerCase();" +
@@ -816,6 +815,9 @@ public class VTOPService extends Service {
                 "            }" +
                 "        }" +
                 "        var cells = table.getElementsByTagName('td');" +
+                "        var headingOffset = headings[0].innerText.toLowerCase().includes('invoice') ? -1 : 0;" +
+                "        var cellOffset = cells[0].innerText.toLowerCase().includes('invoice') ? 1 : 0;" +
+                "        var offset = headingOffset + cellOffset;" +
                 "        while (courseIndex < cells.length && creditsIndex < cells.length && slotVenueIndex < cells.length && facultyIndex < cells.length) {" +
                 "            var course = {};" +
                 "            var rawCourse = cells[courseIndex + offset].innerText.replace(/\\t/g,'').replace(/\\n/g,' ');" +
@@ -831,10 +833,10 @@ public class VTOPService extends Service {
                 "            course.venue = rawSlotVenue.slice(1, rawSlotVenue.length).join(' - ').trim();" +
                 "            course.faculty = rawFaculty[0].trim();" +
                 "            response.courses.push(course);" +
-                "            courseIndex += headings.length + offset;" +
-                "            creditsIndex += headings.length + offset;" +
-                "            slotVenueIndex += headings.length + offset;" +
-                "            facultyIndex += headings.length + offset;" +
+                "            courseIndex += headings.length + headingOffset;" +
+                "            creditsIndex += headings.length + headingOffset;" +
+                "            slotVenueIndex += headings.length + headingOffset;" +
+                "            facultyIndex += headings.length + headingOffset;" +
                 "        }" +
                 "    }" +
                 "});" +
