@@ -489,11 +489,10 @@ public class VTOPService extends Service {
                     webView.evaluateJavascript("(function() {" +
                             "if (typeof captchaInterval != 'undefined') clearInterval(captchaInterval);" +
                             "if (typeof executeInterval != 'undefined') clearInterval(executeInterval);" +
-                            "var credentials = 'uname=" + username + "&passwd=' + encodeURIComponent('" + password + "') + '&" + captcha + "';" +
-                            "$('#vtopLoginForm [name=\"username\"]').val('" + username + "');" +
-                            "$('#vtopLoginForm [name=\"password\"]').val('" + password + "');" +
-                            "$('#vtopLoginForm [name=\"captchaStr\"]').val('" + captcha + "');" +
-                            "$('#vtopLoginForm [name=\"gResponse\"]').val('" + captcha + "');" +
+                            "$('#vtopLoginForm [name=\"username\"]').val('" + username.replaceAll("'", "\\\\'") + "');" +
+                            "$('#vtopLoginForm [name=\"password\"]').val('" + password.replaceAll("'", "\\\\'") + "');" +
+                            "$('#vtopLoginForm [name=\"captchaStr\"]').val('" + captcha.replaceAll("'", "\\\\'") + "');" +
+                            "$('#vtopLoginForm [name=\"gResponse\"]').val('" + captcha.replaceAll("'", "\\\\'") + "');" +
                             "var response = {" +
                             "    authorised: false," +
                             "    error_message: null," +
