@@ -282,9 +282,10 @@ public class SettingsRepository {
         Toast.makeText(context, Html.fromHtml(context.getString(R.string.downloading_file, fileName), Html.FROM_HTML_MODE_LEGACY), Toast.LENGTH_SHORT).show();
 
         DownloadManager.Request request = new DownloadManager.Request(uri);
+        String encodedFilePath = Uri.encode("VIT Student/" + filePath + "/" + fileName);
         request.addRequestHeader("cookie", cookie);
         request.allowScanningByMediaScanner();
-        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "VIT Student/" + filePath + "/" + fileName);
+        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, encodedFilePath);
         request.setMimeType(mimetype);
         request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE | DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
         request.setTitle(fileName);
