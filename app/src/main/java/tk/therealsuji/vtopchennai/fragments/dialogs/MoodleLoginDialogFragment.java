@@ -22,7 +22,6 @@ import com.google.android.material.color.MaterialColors;
 import org.json.JSONObject;
 
 import java.util.Objects;
-import java.util.function.Function;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.SingleObserver;
@@ -41,15 +40,10 @@ public class MoodleLoginDialogFragment extends DialogFragment {
     EditText username, password;
 
     CompositeDisposable compositeDisposable = new CompositeDisposable();
-    Function<Object, Object> callback;
     MoodleApi moodleApi;
 
     public MoodleLoginDialogFragment() {
         // Required empty public constructor
-    }
-
-    public MoodleLoginDialogFragment(Function<Object, Object> callback) {
-        this.callback = callback;
     }
 
     private void signIn() {
@@ -152,7 +146,7 @@ public class MoodleLoginDialogFragment extends DialogFragment {
         super.onDestroyView();
 
         if (SettingsRepository.isMoodleSignedIn(requireContext())) {
-            this.callback.apply(null);
+            getParentFragmentManager().setFragmentResult("displayAssignmentsPage", new Bundle());
         }
 
         compositeDisposable.dispose();

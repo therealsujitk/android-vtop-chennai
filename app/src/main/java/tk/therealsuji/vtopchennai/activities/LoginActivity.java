@@ -128,7 +128,7 @@ public class LoginActivity extends AppCompatActivity {
                                 FragmentManager fragmentManager = getSupportFragmentManager();
                                 FragmentTransaction transaction = fragmentManager.beginTransaction();
                                 transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-                                transaction.add(android.R.id.content, new UpdateDialogFragment(versionName, releaseNotes)).addToBackStack(null).commit();
+                                transaction.add(android.R.id.content, UpdateDialogFragment.newInstance(versionName, releaseNotes)).addToBackStack(null).commit();
                             }
                         } catch (Exception ignored) {
                         }

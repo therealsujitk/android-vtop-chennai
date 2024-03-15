@@ -24,15 +24,27 @@ public class UpdateDialogFragment extends DialogFragment {
         // Required empty public constructor
     }
 
-    public UpdateDialogFragment(String versionName, String releaseNotes) {
-        this.versionName = versionName;
-        this.releaseNotes = releaseNotes;
+    public static UpdateDialogFragment newInstance(String versionName, String releaseNotes) {
+        Bundle args = new Bundle();
+        UpdateDialogFragment fragment = new UpdateDialogFragment();
+
+        args.putString("versionName", versionName);
+        args.putString("releaseNotes", releaseNotes);
+
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View dialogFragment = inflater.inflate(R.layout.layout_dialog_update, container, false);
+        Bundle args = getArguments();
+
+        if (args != null) {
+            this.versionName = args.getString("versionName");
+            this.releaseNotes = args.getString("releaseNotes");
+        }
 
         TextView description = dialogFragment.findViewById(R.id.text_view_description);
         description.setText(Html.fromHtml(this.requireContext().getString(R.string.update_message, this.versionName), Html.FROM_HTML_MODE_LEGACY));

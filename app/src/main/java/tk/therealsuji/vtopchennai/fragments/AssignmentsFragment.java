@@ -370,11 +370,7 @@ public class AssignmentsFragment extends Fragment implements SwipeRefreshLayout.
                 new EmptyStateAdapter.ButtonAttributes() {
                     @Override
                     public void onClick() {
-                        MoodleLoginDialogFragment moodleLoginDialogFragment = new MoodleLoginDialogFragment(o -> {
-                            displayAssignmentsPage();
-                            return null;
-                        });
-
+                        MoodleLoginDialogFragment moodleLoginDialogFragment = new MoodleLoginDialogFragment();
                         FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
                         FragmentTransaction transaction = fragmentManager.beginTransaction();
                         transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
@@ -463,6 +459,9 @@ public class AssignmentsFragment extends Fragment implements SwipeRefreshLayout.
             // Only one listener can be added per requestKey, so we create a duplicate
             getParentFragmentManager().setFragmentResult("customInsets2", result);
         });
+
+        // Display Assignments if triggered from MoodleLoginDialogFragment
+        getParentFragmentManager().setFragmentResultListener("displayAssignmentsPage", this, (requestKey, result) -> displayAssignmentsPage());
 
         this.swipeRefreshLayout.setColorSchemeColors(MaterialColors.getColor(this.swipeRefreshLayout, R.attr.colorSurface));
         this.swipeRefreshLayout.setProgressBackgroundColorSchemeColor(MaterialColors.getColor(this.swipeRefreshLayout, R.attr.colorPrimary));

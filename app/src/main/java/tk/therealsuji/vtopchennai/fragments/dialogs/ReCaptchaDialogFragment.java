@@ -24,6 +24,8 @@ public class ReCaptchaDialogFragment extends DialogFragment {
         // Required empty public constructor
     }
 
+    // TODO: Remove this constructor, android fragments should never be created using a non-empty
+    //       constructor as android can sometimes re-create them with the empty constructor.
     public ReCaptchaDialogFragment(@NonNull WebView webView, @NonNull OnCancelListener onCancelListener) {
         this.onCancelListener = onCancelListener;
         this.webView = webView;
