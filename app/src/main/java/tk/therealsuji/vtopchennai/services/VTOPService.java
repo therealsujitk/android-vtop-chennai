@@ -164,7 +164,7 @@ public class VTOPService extends Service {
         this.webView = new WebView(getApplicationContext());
         this.webView.addJavascriptInterface(this, "Android");
         this.webView.getSettings().setJavaScriptEnabled(true);
-        this.webView.getSettings().setUserAgentString("Mozilla/5.0 (Linux; Android 10) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.99 Mobile Safari/537.36");
+        this.webView.getSettings().setUserAgentString("Mozilla/5.0 (Android 14; Mobile; rv:123.0) Gecko/123.0 Firefox/123.0");
         this.webView.setBackgroundColor(Color.TRANSPARENT);
         this.webView.setHorizontalScrollBarEnabled(false);
         this.webView.setVerticalScrollBarEnabled(false);
