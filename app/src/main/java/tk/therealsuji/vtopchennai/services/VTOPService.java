@@ -164,9 +164,9 @@ public class VTOPService extends Service {
         this.webView = new WebView(getApplicationContext());
         this.webView.addJavascriptInterface(this, "Android");
         this.webView.getSettings().setJavaScriptEnabled(true);
-        // VTOP doesn't support using an old user agent (#105), if you face issues such as "You are not Authorised" or "This browser is not supported",
+        // VTOP doesn't support using an old user agent (#105 and #109), if you face issues such as "You are not Authorised" or "This browser is not supported",
         // try updating the string below with the latest user agent - https://www.whatismybrowser.com/guides/the-latest-user-agent/android
-        this.webView.getSettings().setUserAgentString("Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.6261.119 Mobile Safari/537.36");
+        this.webView.getSettings().setUserAgentString("Mozilla/5.0 (Android 14; Mobile; rv:123.0) Gecko/123.0 Firefox/123.0");
         this.webView.setBackgroundColor(Color.TRANSPARENT);
         this.webView.setHorizontalScrollBarEnabled(false);
         this.webView.setVerticalScrollBarEnabled(false);
