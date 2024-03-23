@@ -203,11 +203,11 @@ public class SettingsRepository {
         return hasPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE);
     }
 
-    public static Observable<JSONObject> checkForUpdates() {
+    public static Observable<JSONObject> fetchAboutJson(boolean useVersion) {
         return Observable.fromCallable(() -> {
                     try {
                         StringBuilder sb = new StringBuilder();
-                        URL url = new URL(SettingsRepository.APP_ABOUT_URL + "?v=" + BuildConfig.VERSION_NAME);
+                        URL url = new URL(SettingsRepository.APP_ABOUT_URL + (useVersion ? "?v=" + BuildConfig.VERSION_NAME : ""));
                         HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
                         InputStream in = httpURLConnection.getInputStream();
                         InputStreamReader reader = new InputStreamReader(in);

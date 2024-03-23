@@ -49,6 +49,7 @@ import io.reactivex.rxjava3.annotations.NonNull;
 import io.reactivex.rxjava3.core.CompletableObserver;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Observer;
+import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import tk.therealsuji.vtopchennai.R;
@@ -95,6 +96,7 @@ public class VTOPService extends Service {
     Map<String, Slot> theorySlots, labSlots, projectSlots;
     Map<String, String> semesters;
     String username, password, semesterID;
+    CompositeDisposable compositeDisposable;
 
     public void clearCallback() {
         this.callback = null;
@@ -119,10 +121,11 @@ public class VTOPService extends Service {
         this.notification.setOngoing(true);
         this.notification.setProgress(0, 0, true);
 
-        this.createWebView();
-
         this.appDatabase = AppDatabase.getInstance(getApplicationContext());
         this.sharedPreferences = SettingsRepository.getSharedPreferences(getApplicationContext());
+        this.compositeDisposable = new CompositeDisposable();
+
+        this.createWebView();
     }
 
     @Nullable
@@ -156,17 +159,23 @@ public class VTOPService extends Service {
         return START_NOT_STICKY;
     }
 
+    @Override
+    public void onDestroy() {
+        this.compositeDisposable.dispose();
+        super.onDestroy();
+    }
+
     /**
      * Function to create a fresh WebView
      */
     @SuppressLint("SetJavaScriptEnabled")
     private void createWebView() {
+        String authorisedUserAgent = this.sharedPreferences.getString("authorisedUserAgent", null);
+
         this.webView = new WebView(getApplicationContext());
         this.webView.addJavascriptInterface(this, "Android");
         this.webView.getSettings().setJavaScriptEnabled(true);
-        // VTOP doesn't support using an old user agent (#105), if you face issues such as "You are not Authorised" or "This browser is not supported",
-        // try updating the string below with the latest user agent - https://www.whatismybrowser.com/guides/the-latest-user-agent/android
-        this.webView.getSettings().setUserAgentString("Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.6261.119 Mobile Safari/537.36");
+        this.webView.getSettings().setUserAgentString(authorisedUserAgent);
         this.webView.setBackgroundColor(Color.TRANSPARENT);
         this.webView.setHorizontalScrollBarEnabled(false);
         this.webView.setVerticalScrollBarEnabled(false);
@@ -232,6 +241,39 @@ public class VTOPService extends Service {
                 });
             }
         });
+    }
+
+    /**
+     * VTOP randomly blocks user agents (I'm guessing to prevent people from using this app).
+     * If a user agent is blocked, a new authorised one is fetched from my server and stored in shared preferences.
+     */
+    private void updateUserAgent() {
+        SettingsRepository.fetchAboutJson(false)
+                .subscribe(new Observer<JSONObject>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+                        compositeDisposable.add(d);
+                    }
+
+                    @Override
+                    public void onNext(@NonNull JSONObject about) {
+                        try {
+                            String authorisedUserAgent = about.getString("authorisedUserAgent");
+                            sharedPreferences.edit().putString("authorisedUserAgent", authorisedUserAgent).apply();
+                            webView.getSettings().setUserAgentString(authorisedUserAgent);
+                        } catch (Exception ignored) {
+                        }
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        reloadPage("/login", true);
+                    }
+                });
     }
 
     /**
@@ -598,7 +640,10 @@ public class VTOPService extends Service {
                 "    data : data," +
                 "    async: false," +
                 "    success: function(res) {" +
-                "        if(res.toLowerCase().includes('time table')) {" +
+                "        if (res.toLowerCase().includes('not authorized')) {" +
+                "            response.error_code = 1;" +
+                "            response.error_message = 'Unauthorised user agent';" +
+                "        } else if (res.toLowerCase().includes('time table')) {" +
                 "            var doc = new DOMParser().parseFromString(res, 'text/html');" +
                 "            var options = doc.getElementById('semesterSubId').getElementsByTagName('option');" +
                 "            var semesters = [];" +
@@ -620,6 +665,15 @@ public class VTOPService extends Service {
                 "})();", responseString -> {
             try {
                 JSONObject response = new JSONObject(responseString);
+
+                if (response.has("error_code")) {
+                    if (response.getInt("error_code") == 1) {
+                        Toast.makeText(getApplicationContext(), "Error " + 107 + ". Unauthorised user agent, attempting to update. Report a bug if this issue prevails.", Toast.LENGTH_SHORT).show();
+                        updateUserAgent();
+                        return;
+                    }
+                }
+
                 JSONArray semesterArray = response.getJSONArray("semesters");
                 this.semesters = new HashMap<>();
 
@@ -2542,6 +2596,7 @@ public class VTOPService extends Service {
  * Error 104    Error getting captcha type
  * Error 105    Error getting default captcha image
  * Error 106    Error while attempting to sign in
+ * Error 107    Unauthorised user agent used
  *
  * Error 201    Error fetching list of semesters
  *

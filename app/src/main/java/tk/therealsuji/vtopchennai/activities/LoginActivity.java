@@ -110,7 +110,7 @@ public class LoginActivity extends AppCompatActivity {
         /*
             Check for updates
          */
-        SettingsRepository.checkForUpdates()
+        SettingsRepository.fetchAboutJson(true)
                 .subscribe(new Observer<JSONObject>() {
                     @Override
                     public void onSubscribe(@NonNull Disposable d) {

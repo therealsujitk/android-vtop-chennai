@@ -361,7 +361,7 @@ public class MainActivity extends AppCompatActivity {
             Check for updates
          */
         Context context = this;
-        SettingsRepository.checkForUpdates()
+        SettingsRepository.fetchAboutJson(true)
                 .subscribe(new Observer<JSONObject>() {
                     @Override
                     public void onSubscribe(@NonNull Disposable d) {
