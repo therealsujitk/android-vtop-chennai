@@ -1299,7 +1299,7 @@ public class VTOPService extends Service {
                 JSONArray attendanceArray = response.getJSONArray("attendance");
                 List<Attendance> attendance = new ArrayList<>();
 
-                float overallAttendance = 0;
+                int overallAttendance = 0;
 
                 int attendedClasses = 0;
                 int totalClasses = 0;
@@ -1320,6 +1320,7 @@ public class VTOPService extends Service {
                     attendanceItem.total = this.getIntegerValue(attendanceObject, "total");
 
                     if (attendanceItem.attended != null && attendanceItem.total != null && attendanceItem.total != 0) {
+                        attendanceItem.percentage = (int) Math.ceil((attendanceItem.attended * 100.0) / attendanceItem.total);
                         attendedClasses += attendanceItem.attended;
                         totalClasses += attendanceItem.total;
                     }
@@ -1328,7 +1329,7 @@ public class VTOPService extends Service {
                 }
 
                 if (totalClasses != 0) {
-                    overallAttendance = (attendedClasses * 100.0f) / totalClasses;
+                    overallAttendance = (int) ((attendedClasses * 100) / totalClasses);
                 }
 
                 sharedPreferences.edit().putInt("overallAttendance", (int) overallAttendance).apply();
