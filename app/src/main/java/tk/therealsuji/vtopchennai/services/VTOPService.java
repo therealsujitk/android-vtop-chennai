@@ -1299,8 +1299,8 @@ public class VTOPService extends Service {
                 JSONArray attendanceArray = response.getJSONArray("attendance");
                 List<Attendance> attendance = new ArrayList<>();
 
-                float overallAttendance = 0;
-                int attendanceLength = 0;
+                int attendedClasses = 0;
+                int totalClasses = 0;
 
                 for (int i = 0; i < attendanceArray.length(); ++i) {
                     JSONObject attendanceObject = attendanceArray.getJSONObject(i);
@@ -1319,18 +1319,20 @@ public class VTOPService extends Service {
 
                     if (attendanceItem.attended != null && attendanceItem.total != null && attendanceItem.total != 0) {
                         attendanceItem.percentage = (int) Math.ceil((attendanceItem.attended * 100.0) / attendanceItem.total);
-                        overallAttendance += attendanceItem.percentage;
-                        ++attendanceLength;
+                        attendedClasses += attendanceItem.attended;
+                        totalClasses += attendanceItem.total;
                     }
 
                     attendance.add(attendanceItem);
                 }
 
-                if (attendanceLength != 0) {
-                    overallAttendance /= attendanceLength;
+                int overallAttendance = 0;
+
+                if (totalClasses != 0) {
+                    overallAttendance = (attendedClasses * 100) / totalClasses;
                 }
 
-                sharedPreferences.edit().putInt("overallAttendance", (int) overallAttendance).apply();
+                sharedPreferences.edit().putInt("overallAttendance", overallAttendance).apply();
 
                 AttendanceDao attendanceDao = appDatabase.attendanceDao();
                 Observable<Object> deleteObservable = Observable.fromCompletable(attendanceDao.delete());
