@@ -636,7 +636,7 @@ public class VTOPService extends Service {
                 "var response = {};" +
                 "$.ajax({" +
                 "    type: 'POST'," +
-                "    url : 'academics/common/StudentTimeTable'," +
+                "    url : 'academics/common/StudentTimeTableChn'," +
                 "    data : data," +
                 "    async: false," +
                 "    success: function(res) {" +
