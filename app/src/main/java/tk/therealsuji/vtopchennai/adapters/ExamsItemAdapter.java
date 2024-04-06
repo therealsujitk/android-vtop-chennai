@@ -133,6 +133,8 @@ public class ExamsItemAdapter extends RecyclerView.Adapter<ExamsItemAdapter.View
                 venue.setVisibility(View.VISIBLE);
             }
 
+            slots.removeAllViews();
+
             for (int i = 0; i < examItem.slots.size(); ++i) {
                 Chip slot = new Chip(this.examItem.getContext());
                 slot.setChipIconResource(R.drawable.ic_theory);
