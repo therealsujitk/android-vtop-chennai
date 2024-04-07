@@ -107,7 +107,6 @@ public class MarksAdapter extends RecyclerView.Adapter<MarksAdapter.ViewHolder> 
         }
 
         private void addChips() {
-            this.courseTypes.removeAllViews();
             List<String> courseTypes = new ArrayList<>();
 
             if (this.marks.containsKey("theory")) {
@@ -121,6 +120,8 @@ public class MarksAdapter extends RecyclerView.Adapter<MarksAdapter.ViewHolder> 
             if (this.marks.containsKey("project")) {
                 courseTypes.add("project");
             }
+            
+            this.courseTypes.removeAllViews();
 
             for (int i = 0; i < this.marks.size(); ++i) {
                 String courseType = courseTypes.get(i);

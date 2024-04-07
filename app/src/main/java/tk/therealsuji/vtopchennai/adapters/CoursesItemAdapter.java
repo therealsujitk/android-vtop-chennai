@@ -129,6 +129,7 @@ public class CoursesItemAdapter extends RecyclerView.Adapter<CoursesItemAdapter.
             ChipGroup courseTypes = this.courseItem.findViewById(R.id.chip_group_course_types);
 
             title.setText(courseTitle);
+            courseTypes.removeAllViews();
 
             if (theory) {
                 Chip chip = new Chip(this.courseItem.getContext());
@@ -159,9 +160,7 @@ public class CoursesItemAdapter extends RecyclerView.Adapter<CoursesItemAdapter.
             TextView faculty = this.courseItem.findViewById(R.id.text_view_faculty);
             TextView venue = this.courseItem.findViewById(R.id.text_view_venue);
             TextView attendanceText = this.courseItem.findViewById(R.id.text_view_attendance);
-
             ChipGroup slots = this.courseItem.findViewById(R.id.chip_group_slots);
-
             ProgressBar attendanceProgress = this.courseItem.findViewById(R.id.progress_bar_attendance);
 
             faculty.setText(Html.fromHtml(this.courseItem.getContext().getString(R.string.faculty, courseItem.faculty), Html.FROM_HTML_MODE_LEGACY));
@@ -174,6 +173,8 @@ public class CoursesItemAdapter extends RecyclerView.Adapter<CoursesItemAdapter.
             } else if (courseItem.courseType.equals("project")) {
                 chipIconResource = R.drawable.ic_project;
             }
+
+            slots.removeAllViews();
 
             for (int i = 0; i < courseItem.slots.size(); ++i) {
                 Chip slot = new Chip(this.courseItem.getContext());

@@ -66,11 +66,13 @@ public class MarksItemAdapter extends RecyclerView.Adapter<MarksItemAdapter.View
         }
 
         public void setMarksItem(Mark.AllData marksItem) {
-            LinearLayout markDetails = this.marksItem.findViewById(R.id.linear_layout_details);
             AppCompatTextView markTitle = this.marksItem.findViewById(R.id.text_view_title);
+            AppCompatTextView averageText = this.marksItem.findViewById(R.id.text_view_average);
+            AppCompatTextView statusText = this.marksItem.findViewById(R.id.text_view_status);
             AppCompatTextView scoreText = this.marksItem.findViewById(R.id.text_view_score);
             ProgressBar scoreProgress = this.marksItem.findViewById(R.id.progress_bar_score);
             AppCompatTextView markType = this.marksItem.findViewById(R.id.text_view_mark_type);
+            Chip courseType = this.marksItem.findViewById(R.id.chip_course_type);
 
             markTitle.setText(marksItem.title);
 
@@ -115,20 +117,18 @@ public class MarksItemAdapter extends RecyclerView.Adapter<MarksItemAdapter.View
             }
 
             if (marksItem.average != null) {
-                markDetails.addView(this.createTextView(this.marksItem.getContext().getString(R.string.average, marksItem.average)));
+                averageText.setText(Html.fromHtml(this.marksItem.getContext().getString(R.string.average, marksItem.average), Html.FROM_HTML_MODE_LEGACY));
+                averageText.setVisibility(View.VISIBLE);
+            } else {
+                averageText.setVisibility(View.GONE);
             }
 
             if (marksItem.status != null) {
-                markDetails.addView(this.createTextView(this.marksItem.getContext().getString(R.string.status, marksItem.status)));
+                statusText.setText(Html.fromHtml(this.marksItem.getContext().getString(R.string.status, marksItem.status), Html.FROM_HTML_MODE_LEGACY));
+                statusText.setVisibility(View.VISIBLE);
+            } else {
+                statusText.setVisibility(View.GONE);
             }
-
-            Chip courseType = new Chip(this.marksItem.getContext());
-            courseType.setClickable(false);
-            courseType.setFocusable(false);
-            courseType.setLayoutParams(new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.WRAP_CONTENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT
-            ));
 
             if (marksItem.courseType.equals("lab")) {
                 courseType.setChipIconResource(R.drawable.ic_lab);
@@ -140,16 +140,6 @@ public class MarksItemAdapter extends RecyclerView.Adapter<MarksItemAdapter.View
                 courseType.setChipIconResource(R.drawable.ic_theory);
                 courseType.setText(R.string.theory);
             }
-
-            markDetails.addView(courseType);
-        }
-
-        AppCompatTextView createTextView(String text) {
-            AppCompatTextView textView = new AppCompatTextView(this.marksItem.getContext());
-            textView.setText(Html.fromHtml(text, Html.FROM_HTML_MODE_LEGACY));
-            textView.setTextSize(16);
-
-            return textView;
         }
     }
 }
