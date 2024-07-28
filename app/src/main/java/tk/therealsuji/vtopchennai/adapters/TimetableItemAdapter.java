@@ -178,24 +178,27 @@ public class TimetableItemAdapter extends RecyclerView.Adapter<TimetableItemAdap
                                 //  percentage = attended * 100 / total
                                 //
                                 //  CALCULATING POSITIVE EXCESS
-                                //  (attended) * 100 / (total + x) = 74
-                                //  100 * attended = 74 * total + 74 * x
-                                //  x = (100 * attended - 74 * total) / 74
+                                //  (attended) * 100 / (total + x) = 75
+                                //  100 * attended = 75 * total + 75 * x
+                                //  x = (100 * attended - 75 * total) / 75
+                                //  positiveExcess = floor(x)   <-- can afford these many days off
                                 //
                                 //  CALCULATING NEGATIVE EXCESS
-                                //  (attended + x) * 100 / (total + x) = 74
-                                //  100 * attended + 100 * x = 74 * total + 74 * x
-                                //  26 * x = 74 * total - 100 * attended
-                                //  x = (74 * total - 100 * attended) / 26
+                                //  (attended + x) * 100 / (total + x) = 75
+                                //  100 * attended + 100 * x = 75 * total + 75 * x
+                                //  25 * x = 75 * total - 100 * attended
+                                //  x = (75 * total - 100 * attended) / 25
+                                //  negativeExcess = ceil(x)    <-- requires these many extra classes
                                 //
                                 if (SettingsRepository.getCGPA(timetableItem.getContext()) < 9) {
-                                    double attendanceExcess = 100 * course.attendanceAttended - 74 * course.attendanceTotal;
+                                    double attendanceExcess = 100 * course.attendanceAttended - 75 * course.attendanceTotal;
 
                                     if (course.attendancePercentage < 75) {
-                                        attendanceExcess = Math.floor(attendanceExcess / 26) + 1;
+                                        // We use floor() instead of ceil() here because the argument is negative
+                                        attendanceExcess = Math.floor(attendanceExcess / 25);
                                         attendanceProgress.setSecondaryProgress(75);
                                     } else {
-                                        attendanceExcess = Math.ceil(attendanceExcess / 74) - 1;
+                                        attendanceExcess = Math.floor(attendanceExcess / 75);
                                     }
 
                                     attendanceExcessText.setVisibility(View.VISIBLE);
