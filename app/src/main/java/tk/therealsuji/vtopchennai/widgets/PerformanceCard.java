@@ -21,6 +21,8 @@ import tk.therealsuji.vtopchennai.R;
 import tk.therealsuji.vtopchennai.animations.AlphaAnimation;
 import tk.therealsuji.vtopchennai.animations.ResizeAnimation;
 
+import java.text.DecimalFormat;
+
 public class PerformanceCard extends LinearLayout {
     AppCompatTextView title, scoreText;
     Context context;
@@ -137,13 +139,12 @@ public class PerformanceCard extends LinearLayout {
     }
 
     public void setScore(Double score, Double max) {
-        score = Math.ceil(score);
         max = Math.ceil(max);
 
         this.scoreProgress.setProgress(score.intValue(), true);
         this.scoreProgress.setSecondaryProgress(max.intValue());
 
-        String scoreText = (max >= 100) ? score.intValue() + "%" : score.intValue() + "/" + max.intValue();
+        String scoreText = (max >= 100) ? new DecimalFormat("#.#").format(score) + "%" : new DecimalFormat("#.#").format(score) + "/" + max.intValue();
         this.scoreText.setText(scoreText);
     }
 
