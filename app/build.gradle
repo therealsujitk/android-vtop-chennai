@@ -14,8 +14,8 @@ android {
             }
         }
         minSdkVersion 24
-        targetSdkVersion 34
-        compileSdk 34
+        targetSdkVersion 36
+        compileSdkVersion 35
         versionCode 35
         versionName "4.3.7"
     }
@@ -32,30 +32,30 @@ android {
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
 
-    implementation 'androidx.appcompat:appcompat:1.7.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'androidx.appcompat:appcompat:1.7.1'
+    implementation 'androidx.constraintlayout:constraintlayout:2.2.1'
     implementation "androidx.core:core-splashscreen:1.0.1"
-    implementation 'androidx.room:room-runtime:2.6.1'
-    implementation 'androidx.room:room-rxjava3:2.6.1'
-    implementation 'androidx.security:security-crypto:1.1.0-alpha06'
+    implementation 'androidx.room:room-runtime:2.7.2'
+    implementation 'androidx.room:room-rxjava3:2.7.2'
+    implementation 'androidx.security:security-crypto:1.1.0'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
 
-    implementation platform('com.google.firebase:firebase-bom:31.1.0')
+    implementation platform('com.google.firebase:firebase-bom:34.1.0')
     implementation 'com.google.android.material:material:1.12.0'
     implementation 'com.google.firebase:firebase-analytics'
     implementation 'com.google.firebase:firebase-crashlytics'
     implementation 'com.google.firebase:firebase-perf'
 
-    implementation 'com.squareup.retrofit2:adapter-rxjava3:2.9.0'
-    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.squareup.retrofit2:adapter-rxjava3:3.0.0'
+    implementation 'com.squareup.retrofit2:retrofit:3.0.0'
 
-    implementation 'commons-io:commons-io:2.6'
+    implementation 'commons-io:commons-io:2.20.0'
 
     implementation 'io.noties.markwon:core:4.6.2'
 
-    implementation 'io.reactivex.rxjava3:rxandroid:3.0.0'
+    implementation 'io.reactivex.rxjava3:rxandroid:3.0.2'
 
-    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.8.1'
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.14'
 
-    annotationProcessor 'androidx.room:room-compiler:2.6.1'
+    annotationProcessor 'androidx.room:room-compiler:2.7.2'
 }
