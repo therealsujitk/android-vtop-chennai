@@ -236,7 +236,7 @@ public class VTOPService extends Service {
                                 throw new Error("Unknown page exception.");
                         }
                     } catch (JSONException e) {
-                        e.printStackTrace();
+                        Toast.makeText(VTOPService.this, "Error:" + e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
             }
@@ -1094,7 +1094,7 @@ public class VTOPService extends Service {
                 "                response[type].push({ start_time: content.trim() });" +
                 "            } else if (key == 'end') {" +
                 "                response[type][j++].end_time = content.trim();" +
-                "            } else if (cells[i].bgColor == '#CCFF33') {" +
+                "            } else if (content.split('-').length > 1) {" +
                 "                response[type][j++][key] = content.split('-')[0].trim();" +
                 "            } else {" +
                 "                response[type][j++][key] = null;" +
