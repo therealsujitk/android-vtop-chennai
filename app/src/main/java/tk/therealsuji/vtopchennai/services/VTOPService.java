@@ -1094,7 +1094,7 @@ public class VTOPService extends Service {
                 "                response[type].push({ start_time: content.trim() });" +
                 "            } else if (key == 'end') {" +
                 "                response[type][j++].end_time = content.trim();" +
-                "            } else if (cells[i].bgColor == '#CCFF33') {" +
+                "            } else if (cells[i].bgColor == '#FC6C85') {" +
                 "                response[type][j++][key] = content.split('-')[0].trim();" +
                 "            } else {" +
                 "                response[type][j++][key] = null;" +
