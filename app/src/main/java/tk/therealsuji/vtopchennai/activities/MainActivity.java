@@ -1,5 +1,6 @@
 package tk.therealsuji.vtopchennai.activities;
 
+import android.Manifest;
 import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
@@ -12,6 +13,7 @@ import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.WindowCompat;
 import androidx.documentfile.provider.DocumentFile;
@@ -69,6 +71,15 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
 
+    ActivityResultLauncher<String> requestNotificationPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+                if (isGranted) {
+                    Toast.makeText(this, R.string.notification_permission_granted, Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(this, R.string.notification_permission_denied, Toast.LENGTH_SHORT).show();
+                }
+            });
+
     ActivityResultLauncher<Intent> requestFileLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
@@ -93,7 +104,6 @@ public class MainActivity extends AppCompatActivity {
                         fileUri.putStringArrayList("paths", filePaths);
                         getSupportFragmentManager().setFragmentResult("file", fileUri);
                     } catch (Exception e) {
-                        e.printStackTrace();
                         Toast.makeText(this, "Error: " + e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
                     }
                 }
@@ -214,6 +224,7 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         boolean amoledMode = SettingsRepository.getSharedPreferences(this).getBoolean("amoledMode", false);
@@ -356,6 +367,11 @@ public class MainActivity extends AppCompatActivity {
                 restartActivity();
             }
         });
+
+        // Request for notification permissions on android 33 and above
+        if (!SettingsRepository.hasNotificationPermission(this)) {
+            requestNotificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
+        }
 
         /*
             Check for updates

@@ -159,5 +159,7 @@
     <string name="na">NA</string>
     <string name="permission_granted">Permission Granted</string>
     <string name="permission_denied">Permission Denied</string>
+    <string name="notification_permission_granted">Hurray! You will now receive notifications on upcoming classes, exams and other events.</string>
+    <string name="notification_permission_denied">Permission Denied. You will not receive notifications on upcoming classes, exams or other events.</string>
     <string name="downloading_file">Downloading &lt;b>%s&lt;/b></string>
 </resources>

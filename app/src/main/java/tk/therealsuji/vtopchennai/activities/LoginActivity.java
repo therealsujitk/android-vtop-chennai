@@ -1,13 +1,19 @@
 package tk.therealsuji.vtopchennai.activities;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -30,6 +36,15 @@ public class LoginActivity extends AppCompatActivity {
     SharedPreferences encryptedSharedPreferences, sharedPreferences;
     CompositeDisposable compositeDisposable = new CompositeDisposable();
     VTOPHelper vtopHelper;
+
+    ActivityResultLauncher<String> requestNotificationPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+                if (isGranted) {
+                    Toast.makeText(this, R.string.notification_permission_granted, Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(this, R.string.notification_permission_denied, Toast.LENGTH_SHORT).show();
+                }
+            });
 
     public void signIn() {
         hideKeyboard(this.getCurrentFocus());
@@ -61,6 +76,7 @@ public class LoginActivity extends AppCompatActivity {
         finish();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -106,6 +122,11 @@ public class LoginActivity extends AppCompatActivity {
                 startMainActivity();
             }
         });
+
+        // Request for notification permissions on android 33 and above
+        if (!SettingsRepository.hasNotificationPermission(this)) {
+            requestNotificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
+        }
 
         /*
             Check for updates
