@@ -192,9 +192,11 @@ public class VTOPService extends Service {
                         "const response = {" +
                         "   page_type: 'LANDING'" +
                         "};" +
-                        "if ($('input[id=\"authorizedIDX\"]').length === 1) {" +
+                        "if (document.body === null) {" +
+                        "   response.page_type = 'BODY_NOT_READY';" +
+                        "} else if ($('input[id=\"authorizedIDX\"]').length === 1) {" +
                         "   response.page_type = 'HOME';" +
-                        "} if ($('form[id=\"vtopLoginForm\"]').length === 1) {" +
+                        "} else if ($('form[id=\"vtopLoginForm\"]').length === 1) {" +
                         "   response.page_type = 'LOGIN';" +
                         "}" +
                         "return response;" +
@@ -232,11 +234,13 @@ public class VTOPService extends Service {
                                 getSemesters();
                                 pageState = PageState.HOME;
                                 break;
+                            case "BODY_NOT_READY":
+                                break;
                             default:
                                 throw new Error("Unknown page exception.");
                         }
                     } catch (JSONException e) {
-                        Toast.makeText(VTOPService.this, "Error:" + e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(VTOPService.this, "Error: " + e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
             }
