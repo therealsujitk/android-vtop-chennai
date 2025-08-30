@@ -96,7 +96,6 @@ public class VTOPHelper {
                             if (background instanceof MaterialShapeDrawable && ((MaterialShapeDrawable) background).getFillColor() != null) {
                                 // Getting the color and elevation of the dialog background
                                 int backgroundColor = Objects.requireNonNull(((MaterialShapeDrawable) background).getFillColor()).getDefaultColor();
-                                float backgroundElevation = ((MaterialShapeDrawable) background).getElevation();
                                 float[] colorMatrix = {
                                         0, 0, 0, 0, 255,    // red
                                         0, 0, 0, 0, 255,    // green
@@ -120,14 +119,8 @@ public class VTOPHelper {
                                     colorMatrix[14] = 0;
                                 }
 
-                                // Setting the alpha value for the captcha overlay
-                                int elevationOverlayColor = MaterialColors.getColor(context, R.attr.elevationOverlayColor, 0);
-                                ColorDrawable overlay = new ColorDrawable(elevationOverlayColor);
-                                overlay.setAlpha(new ElevationOverlayProvider(context).calculateOverlayAlpha(backgroundElevation));
-
                                 // Updating the captcha image colors and adding the overlay
                                 captchaImage.setColorFilter(new ColorMatrixColorFilter(colorMatrix));
-                                captchaImage.setForeground(overlay);
                             }
                         }
 
