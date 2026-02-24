@@ -11,3 +11,4 @@
 instructions.txt
 *.jks
 *.keystore
+*.idsig
