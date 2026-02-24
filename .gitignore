@@ -9,3 +9,5 @@
 .cxx
 
 instructions.txt
+*.jks
+*.keystore

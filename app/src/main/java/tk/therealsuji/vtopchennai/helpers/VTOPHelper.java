@@ -18,6 +18,7 @@ import android.view.View;
 import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
@@ -35,7 +36,6 @@ import tk.therealsuji.vtopchennai.fragments.dialogs.ReCaptchaDialogFragment;
 import tk.therealsuji.vtopchennai.services.VTOPService;
 import tk.therealsuji.vtopchennai.helpers.CaptchaHelper;
 
-// import android.widget.Toast;
 
 public class VTOPHelper {
     boolean isBound;
@@ -87,7 +87,7 @@ public class VTOPHelper {
                     if (captchaType == VTOPService.CAPTCHA_DEFAULT) {
                         
                         String captchaText = captchaHelper.solve(bitmap);
-                        // Toast.makeText(context, "Solved: " + captchaText, Toast.LENGTH_LONG).show();
+                        Toast.makeText(context, "Text captcha solved", Toast.LENGTH_LONG).show();
                         vtopService.signIn(captchaText);
 
                         // Var -----------------
