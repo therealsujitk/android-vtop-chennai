@@ -56,26 +56,26 @@ public class ProfileFragment extends Fragment {
                     ),
                     null
             ),
-            new ItemData(
-                    R.drawable.ic_receipts,
-                    R.string.receipts,
-                    context -> SettingsRepository.openRecyclerViewFragment(
-                            (FragmentActivity) context,
-                            R.string.receipts,
-                            RecyclerViewFragment.TYPE_RECEIPTS
-                    ),
-                    null
-            ),
-            new ItemData(
-                    R.drawable.ic_staff,
-                    R.string.staff,
-                    context -> SettingsRepository.openViewPagerFragment(
-                            (FragmentActivity) context,
-                            R.string.staff,
-                            ViewPagerFragment.TYPE_STAFF
-                    ),
-                    null
-            ),
+            // new ItemData(
+            //         R.drawable.ic_receipts,
+            //         R.string.receipts,
+            //         context -> SettingsRepository.openRecyclerViewFragment(
+            //                 (FragmentActivity) context,
+            //                 R.string.receipts,
+            //                 RecyclerViewFragment.TYPE_RECEIPTS
+            //         ),
+            //         null
+            // ),
+            // new ItemData(
+            //         R.drawable.ic_staff,
+            //         R.string.staff,
+            //         context -> SettingsRepository.openViewPagerFragment(
+            //                 (FragmentActivity) context,
+            //                 R.string.staff,
+            //                 ViewPagerFragment.TYPE_STAFF
+            //         ),
+            //         null
+            // ),
             new ItemData(
                     R.drawable.ic_sync,
                     R.string.sync_data,
@@ -102,59 +102,59 @@ public class ProfileFragment extends Fragment {
         Application Related Profile Items
      */
     private final ItemData[] applicationProfileItems = {
-            new ItemData(
-                    R.drawable.ic_appearance,
-                    R.string.appearance,
-                    context -> {
-                        String[] themes = {
-                                context.getString(R.string.light),
-                                context.getString(R.string.dark),
-                                context.getString(R.string.system)
-                        };
+            // new ItemData(
+            //         R.drawable.ic_appearance,
+            //         R.string.appearance,
+            //         context -> {
+            //             String[] themes = {
+            //                     context.getString(R.string.light),
+            //                     context.getString(R.string.dark),
+            //                     context.getString(R.string.system)
+            //             };
 
-                        SharedPreferences sharedPreferences = SettingsRepository.getSharedPreferences(context);
+            //             SharedPreferences sharedPreferences = SettingsRepository.getSharedPreferences(context);
 
-                        int checkedItem = 2;
-                        String theme = sharedPreferences.getString("appearance", "system");
+            //             int checkedItem = 2;
+            //             String theme = sharedPreferences.getString("appearance", "system");
 
-                        if (theme.equals("light")) {
-                            checkedItem = 0;
-                        } else if (theme.equals("dark")) {
-                            checkedItem = 1;
-                        }
+            //             if (theme.equals("light")) {
+            //                 checkedItem = 0;
+            //             } else if (theme.equals("dark")) {
+            //                 checkedItem = 1;
+            //             }
 
-                        View appearanceView = getLayoutInflater().inflate(R.layout.layout_dialog_apperance, null);
-                        MaterialSwitch amoledSwitch = appearanceView.findViewById(R.id.switch_amoled_mode);
-                        amoledSwitch.setChecked(sharedPreferences.getBoolean("amoledMode", false));
-                        amoledSwitch.setOnCheckedChangeListener((compoundButton, isAmoledModeEnabled) -> {
-                            sharedPreferences.edit().putBoolean("amoledMode", isAmoledModeEnabled).apply();
-                            Bundle applyDynamicColors = new Bundle();
-                            applyDynamicColors.putBoolean("amoledMode", isAmoledModeEnabled);
-                            getParentFragmentManager().setFragmentResult("applyDynamicColors", applyDynamicColors);
-                        });
+            //             View appearanceView = getLayoutInflater().inflate(R.layout.layout_dialog_apperance, null);
+            //             MaterialSwitch amoledSwitch = appearanceView.findViewById(R.id.switch_amoled_mode);
+            //             amoledSwitch.setChecked(sharedPreferences.getBoolean("amoledMode", false));
+            //             amoledSwitch.setOnCheckedChangeListener((compoundButton, isAmoledModeEnabled) -> {
+            //                 sharedPreferences.edit().putBoolean("amoledMode", isAmoledModeEnabled).apply();
+            //                 Bundle applyDynamicColors = new Bundle();
+            //                 applyDynamicColors.putBoolean("amoledMode", isAmoledModeEnabled);
+            //                 getParentFragmentManager().setFragmentResult("applyDynamicColors", applyDynamicColors);
+            //             });
 
-                        new MaterialAlertDialogBuilder(context)
-                                .setNegativeButton(R.string.cancel, (dialogInterface, i) -> dialogInterface.cancel())
-                                .setSingleChoiceItems(themes, checkedItem, (dialogInterface, i) -> {
-                                    if (i == 0) {
-                                        sharedPreferences.edit().putString("appearance", "light").apply();
-                                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-                                    } else if (i == 1) {
-                                        sharedPreferences.edit().putString("appearance", "dark").apply();
-                                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-                                    } else {
-                                        sharedPreferences.edit().remove("appearance").apply();
-                                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
-                                    }
+            //             new MaterialAlertDialogBuilder(context)
+            //                     .setNegativeButton(R.string.cancel, (dialogInterface, i) -> dialogInterface.cancel())
+            //                     .setSingleChoiceItems(themes, checkedItem, (dialogInterface, i) -> {
+            //                         if (i == 0) {
+            //                             sharedPreferences.edit().putString("appearance", "light").apply();
+            //                             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+            //                         } else if (i == 1) {
+            //                             sharedPreferences.edit().putString("appearance", "dark").apply();
+            //                             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+            //                         } else {
+            //                             sharedPreferences.edit().remove("appearance").apply();
+            //                             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
+            //                         }
 
-                                    dialogInterface.dismiss();
-                                })
-                                .setView(appearanceView)
-                                .setTitle(R.string.appearance)
-                                .show();
-                    },
-                    null
-            ),
+            //                         dialogInterface.dismiss();
+            //                     })
+            //                     .setView(appearanceView)
+            //                     .setTitle(R.string.appearance)
+            //                     .show();
+            //         },
+            //         null
+            // ),
             new ItemData(
                     R.drawable.ic_notifications,
                     R.string.notifications,

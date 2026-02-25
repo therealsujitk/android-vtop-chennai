@@ -110,7 +110,8 @@ public class HomeFragment extends Fragment {
         } catch (Exception ignored) {
         }
 
-        String name = sharedPreferences.getString("name", getString(R.string.name));
+        // String name = sharedPreferences.getString("name", getString(R.string.name));
+        String name = "Varshith";
         ((TextView) homeFragment.findViewById(R.id.text_view_name)).setText(name);
 
         View spotlightButton = homeFragment.findViewById(R.id.image_button_spotlight);
@@ -146,7 +147,7 @@ public class HomeFragment extends Fragment {
 
         InfoCard attendance = homeFragment.findViewById(R.id.info_card_attendance);
         InfoCard credits = homeFragment.findViewById(R.id.info_card_credits);
-        InfoCard cgpa = homeFragment.findViewById(R.id.info_card_cgpa);
+        // InfoCard cgpa = homeFragment.findViewById(R.id.info_card_cgpa);
 
         float totalCredits;
 
@@ -164,7 +165,7 @@ public class HomeFragment extends Fragment {
         }
 
         attendance.setValue(sharedPreferences.getInt("overallAttendance", 0) + "%");
-        cgpa.setValue(new DecimalFormat("#.00").format(sharedPreferences.getFloat("cgpa", 0)));
+        // cgpa.setValue(new DecimalFormat("#.00").format(sharedPreferences.getFloat("cgpa", 0)));
 
         TabLayout days = homeFragment.findViewById(R.id.tab_layout_days);
         String[] dayStrings = {

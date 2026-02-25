@@ -93,12 +93,12 @@
                         android:layout_margin="10dp"
                         app:key="@string/total_credits" />
 
-                    <tk.therealsuji.vtopchennai.widgets.InfoCard
+                    <!-- <tk.therealsuji.vtopchennai.widgets.InfoCard
                         android:id="@+id/info_card_cgpa"
                         android:layout_width="150dp"
                         android:layout_height="150dp"
                         android:layout_margin="10dp"
-                        app:key="@string/cgpa" />
+                        app:key="@string/cgpa" /> -->
                 </LinearLayout>
             </HorizontalScrollView>
         </LinearLayout>
