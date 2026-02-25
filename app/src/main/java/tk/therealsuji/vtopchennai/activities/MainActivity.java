@@ -43,7 +43,6 @@ import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import tk.therealsuji.vtopchennai.BuildConfig;
 import tk.therealsuji.vtopchennai.R;
-import tk.therealsuji.vtopchennai.fragments.AssignmentsFragment;
 import tk.therealsuji.vtopchennai.fragments.HomeFragment;
 import tk.therealsuji.vtopchennai.fragments.PerformanceFragment;
 import tk.therealsuji.vtopchennai.fragments.ProfileFragment;
@@ -59,7 +58,6 @@ public class MainActivity extends AppCompatActivity {
 
     static final String HOME_FRAGMENT_TAG = "HOME_FRAGMENT_TAG";
     static final String PERFORMANCE_FRAGMENT_TAG = "PERFORMANCE_FRAGMENT_TAG";
-    static final String ASSIGNMENTS_FRAGMENT_TAG = "ASSIGNMENTS_FRAGMENT_TAG";
     static final String PROFILE_FRAGMENT_TAG = "PROFILE_FRAGMENT_TAG";
 
     ActivityResultLauncher<String> requestPermissionLauncher =
@@ -297,13 +295,6 @@ public class MainActivity extends AppCompatActivity {
 
                 if (selectedFragment == null) {
                     selectedFragment = new PerformanceFragment();
-                }
-            } else if (item.getItemId() == R.id.item_assignments) {
-                selectedFragmentTag = ASSIGNMENTS_FRAGMENT_TAG;
-                selectedFragment = getSupportFragmentManager().findFragmentByTag(selectedFragmentTag);
-
-                if (selectedFragment == null) {
-                    selectedFragment = new AssignmentsFragment();
                 }
             } else if (item.getItemId() == R.id.item_profile) {
                 getSupportFragmentManager().setFragmentResult("syncDataState", syncDataState);

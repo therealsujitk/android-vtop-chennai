@@ -10,7 +10,6 @@ import androidx.room.RoomDatabase;
 import androidx.room.migration.Migration;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
-import tk.therealsuji.vtopchennai.interfaces.AssignmentsDao;
 import tk.therealsuji.vtopchennai.interfaces.AttendanceDao;
 import tk.therealsuji.vtopchennai.interfaces.CoursesDao;
 import tk.therealsuji.vtopchennai.interfaces.ExamsDao;
@@ -19,8 +18,6 @@ import tk.therealsuji.vtopchennai.interfaces.ReceiptsDao;
 import tk.therealsuji.vtopchennai.interfaces.SpotlightDao;
 import tk.therealsuji.vtopchennai.interfaces.StaffDao;
 import tk.therealsuji.vtopchennai.interfaces.TimetableDao;
-import tk.therealsuji.vtopchennai.models.Assignment;
-import tk.therealsuji.vtopchennai.models.Attachment;
 import tk.therealsuji.vtopchennai.models.Attendance;
 import tk.therealsuji.vtopchennai.models.Course;
 import tk.therealsuji.vtopchennai.models.CumulativeMark;
@@ -34,8 +31,6 @@ import tk.therealsuji.vtopchennai.models.Timetable;
 
 @Database(
         entities = {
-                Assignment.class,
-                Attachment.class,
                 Attendance.class,
                 Course.class,
                 CumulativeMark.class,
@@ -76,8 +71,6 @@ public abstract class AppDatabase extends RoomDatabase {
         context.deleteDatabase("vit_student");
         context.deleteDatabase("vtop"); // Delete the deprecated database (used till < v4.0)
     }
-
-    public abstract AssignmentsDao assignmentsDao();
 
     public abstract AttendanceDao attendanceDao();
 
