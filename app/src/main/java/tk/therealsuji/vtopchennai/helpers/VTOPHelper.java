@@ -18,6 +18,7 @@ import android.view.View;
 import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
@@ -33,6 +34,8 @@ import java.util.Objects;
 import tk.therealsuji.vtopchennai.R;
 import tk.therealsuji.vtopchennai.fragments.dialogs.ReCaptchaDialogFragment;
 import tk.therealsuji.vtopchennai.services.VTOPService;
+import tk.therealsuji.vtopchennai.helpers.CaptchaHelper;
+
 
 public class VTOPHelper {
     boolean isBound;
@@ -44,6 +47,8 @@ public class VTOPHelper {
 
     Dialog captchaDialog, semesterDialog;
     ReCaptchaDialogFragment reCaptchaDialogFragment;
+
+    CaptchaHelper captchaHelper;
 
     private final ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
@@ -65,64 +70,89 @@ public class VTOPHelper {
                  */
                 @Override
                 public void onRequestCaptcha(int captchaType, Bitmap bitmap, WebView webView) {
+
+                    /*
+                    int captchaType:
+                        CAPTCHA_DEFAULT    = 1 -> text captcha
+                        CAPTCHA_GRECATPCHA = 2 -> google recaptcha
+                    
+                    Bitmap bitmap:
+                        decodedImage -> decoded captcha image bitmap for text captcha
+                    
+                    WebView webView:
+                        webView -> google captcha window maybe ???
+                    
+                    */
+
                     if (captchaType == VTOPService.CAPTCHA_DEFAULT) {
-                        View captchaLayout = ((Activity) context).getLayoutInflater().inflate(R.layout.layout_dialog_captcha_default, null);
-                        ImageView captchaImage = captchaLayout.findViewById(R.id.image_view_captcha);
-                        captchaImage.setImageBitmap(bitmap);
+                        
+                        String captchaText = captchaHelper.solve(bitmap);
+                        Toast.makeText(context, "Text captcha solved", Toast.LENGTH_LONG).show();
+                        vtopService.signIn(captchaText);
 
-                        captchaDialog = new MaterialAlertDialogBuilder(context)
-                                .setNegativeButton(R.string.cancel, (dialogInterface, i) -> dialogInterface.cancel())
-                                .setOnCancelListener(dialogInterface -> {
-                                    try {
-                                        vtopService.endService(false);
-                                    } catch (Exception ignored) {
-                                    }
-                                })
-                                .setTitle(R.string.solve_captcha)
-                                .setPositiveButton(R.string.submit, (dialogInterface, i) -> {
-                                    TextView captchaText = captchaLayout.findViewById(R.id.edit_text_captcha);
-                                    vtopService.signIn(captchaText.getText().toString());
-                                })
-                                .setView(captchaLayout)
-                                .create();
+                        // Var -----------------
 
-                        Drawable background = Objects.requireNonNull(captchaDialog.getWindow()).getDecorView().getBackground();
-                        if (background instanceof InsetDrawable) {
-                            background = ((InsetDrawable) background).getDrawable();
+                        // View captchaLayout = ((Activity) context).getLayoutInflater().inflate(R.layout.layout_dialog_captcha_default, null);
+                        // ImageView captchaImage = captchaLayout.findViewById(R.id.image_view_captcha);
+                        // captchaImage.setImageBitmap(bitmap);
 
-                            if (background instanceof MaterialShapeDrawable && ((MaterialShapeDrawable) background).getFillColor() != null) {
-                                // Getting the color and elevation of the dialog background
-                                int backgroundColor = Objects.requireNonNull(((MaterialShapeDrawable) background).getFillColor()).getDefaultColor();
-                                float[] colorMatrix = {
-                                        0, 0, 0, 0, 255,    // red
-                                        0, 0, 0, 0, 255,    // green
-                                        0, 0, 0, 0, 255,    // blue
-                                        0, 0, 0, 1, 0,      // alpha
-                                };
+                        // captchaDialog = new MaterialAlertDialogBuilder(context)
+                        //         .setNegativeButton(R.string.cancel, (dialogInterface, i) -> dialogInterface.cancel())
+                        //         .setOnCancelListener(dialogInterface -> {
+                        //             try {
+                        //                 vtopService.endService(false);
+                        //             } catch (Exception ignored) {
+                        //             }
+                        //         })
+                        //         .setTitle(R.string.solve_captcha)
+                        //         .setPositiveButton(R.string.submit, (dialogInterface, i) -> {
+                        //             TextView captchaText = captchaLayout.findViewById(R.id.edit_text_captcha);
+                        //             vtopService.signIn(captchaText.getText().toString());
+                        //         })
+                        //         .setView(captchaLayout)
+                        //         .create();
 
-                                // Updating the color matrix based on the application theme
-                                int appearance = SettingsRepository.getTheme(context);
-                                if (appearance == SettingsRepository.THEME_NIGHT || appearance == SettingsRepository.THEME_SYSTEM_NIGHT) {
-                                    colorMatrix[0] = (Color.red(backgroundColor) - 255f) / 255f;
-                                    colorMatrix[6] = (Color.green(backgroundColor) - 255f) / 255f;
-                                    colorMatrix[12] = (Color.blue(backgroundColor) - 255f) / 255f;
-                                } else {
-                                    colorMatrix[0] = Color.red(backgroundColor) / 255f;
-                                    colorMatrix[6] = Color.green(backgroundColor) / 255f;
-                                    colorMatrix[12] = Color.blue(backgroundColor) / 255f;
 
-                                    colorMatrix[4] = 0;
-                                    colorMatrix[9] = 0;
-                                    colorMatrix[14] = 0;
-                                }
+                        // Drawable background = Objects.requireNonNull(captchaDialog.getWindow()).getDecorView().getBackground();
+                        // if (background instanceof InsetDrawable) {
+                        //     background = ((InsetDrawable) background).getDrawable();
 
-                                // Updating the captcha image colors and adding the overlay
-                                captchaImage.setColorFilter(new ColorMatrixColorFilter(colorMatrix));
-                            }
-                        }
+                        //     if (background instanceof MaterialShapeDrawable && ((MaterialShapeDrawable) background).getFillColor() != null) {
+                        //         // Getting the color and elevation of the dialog background
+                        //         int backgroundColor = Objects.requireNonNull(((MaterialShapeDrawable) background).getFillColor()).getDefaultColor();
+                        //         float[] colorMatrix = {
+                        //                 0, 0, 0, 0, 255,    // red
+                        //                 0, 0, 0, 0, 255,    // green
+                        //                 0, 0, 0, 0, 255,    // blue
+                        //                 0, 0, 0, 1, 0,      // alpha
+                        //         };
 
-                        captchaDialog.setCanceledOnTouchOutside(false);
-                        captchaDialog.show();
+                        //         // Updating the color matrix based on the application theme
+                        //         int appearance = SettingsRepository.getTheme(context);
+                        //         if (appearance == SettingsRepository.THEME_NIGHT || appearance == SettingsRepository.THEME_SYSTEM_NIGHT) {
+                        //             colorMatrix[0] = (Color.red(backgroundColor) - 255f) / 255f;
+                        //             colorMatrix[6] = (Color.green(backgroundColor) - 255f) / 255f;
+                        //             colorMatrix[12] = (Color.blue(backgroundColor) - 255f) / 255f;
+                        //         } else {
+                        //             colorMatrix[0] = Color.red(backgroundColor) / 255f;
+                        //             colorMatrix[6] = Color.green(backgroundColor) / 255f;
+                        //             colorMatrix[12] = Color.blue(backgroundColor) / 255f;
+
+                        //             colorMatrix[4] = 0;
+                        //             colorMatrix[9] = 0;
+                        //             colorMatrix[14] = 0;
+                        //         }
+
+                        //         // Updating the captcha image colors and adding the overlay
+                        //         captchaImage.setColorFilter(new ColorMatrixColorFilter(colorMatrix));
+                        //     }
+                        // }
+
+                        // captchaDialog.setCanceledOnTouchOutside(false);
+                        // captchaDialog.show();
+
+                    // Var -------------------------------------------------
+
                     } else {
                         DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
 
@@ -263,6 +293,7 @@ public class VTOPHelper {
         this.context = context;
         this.initiator = initiator;
         this.sharedPreferences = SettingsRepository.getSharedPreferences(context.getApplicationContext());
+        this.captchaHelper = new CaptchaHelper(context.getApplicationContext());
     }
 
     public void start() {

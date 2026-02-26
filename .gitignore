@@ -7,3 +7,8 @@
 /captures
 .externalNativeBuild
 .cxx
+
+instructions.txt
+*.jks
+*.keystore
+*.idsig
