@@ -31,6 +31,25 @@ public interface TimetableDao {
         }
     }
 
+    default List<Timetable.AllData> getForWidgetSync(int day) {
+        switch (day) {
+            case 1:
+                return getMondayForWidget();
+            case 2:
+                return getTuesdayForWidget();
+            case 3:
+                return getWednesdayForWidget();
+            case 4:
+                return getThursdayForWidget();
+            case 5:
+                return getFridayForWidget();
+            case 6:
+                return getSaturdayForWidget();
+            default:
+                return getSundayForWidget();
+        }
+    }
+
     default Single<Timetable.AllData> getOngoing(int day, String currentTime) {
         switch (day) {
             case 1:
@@ -172,4 +191,36 @@ public interface TimetableDao {
     @Query("SELECT slots.id AS slotId, courses.type AS courseType, start_time AS startTime, end_time AS endTime, code AS courseCode, title AS courseTitle  " +
             "FROM timetable, slots, courses WHERE start_time <= :futureTime AND start_time > :currentTime AND saturday = slots.id AND course_id = courses.id")
     Single<Timetable.AllData> getSaturdayUpcoming(String currentTime, String futureTime);
+
+
+    /*
+        Get timetable for a particular day (for widget - synchronous with venue)
+     */
+    @Query("SELECT slots.id AS slotId, courses.type AS courseType, start_time AS startTime, end_time AS endTime, code AS courseCode, title AS courseTitle, venue " +
+            "FROM timetable, slots, courses WHERE sunday = slots.id AND slots.course_id = courses.id ORDER BY start_time")
+    List<Timetable.AllData> getSundayForWidget();
+
+    @Query("SELECT slots.id AS slotId, courses.type AS courseType, start_time AS startTime, end_time AS endTime, code AS courseCode, title AS courseTitle, venue " +
+            "FROM timetable, slots, courses WHERE monday = slots.id AND slots.course_id = courses.id ORDER BY start_time")
+    List<Timetable.AllData> getMondayForWidget();
+
+    @Query("SELECT slots.id AS slotId, courses.type AS courseType, start_time AS startTime, end_time AS endTime, code AS courseCode, title AS courseTitle, venue " +
+            "FROM timetable, slots, courses WHERE tuesday = slots.id AND slots.course_id = courses.id ORDER BY start_time")
+    List<Timetable.AllData> getTuesdayForWidget();
+
+    @Query("SELECT slots.id AS slotId, courses.type AS courseType, start_time AS startTime, end_time AS endTime, code AS courseCode, title AS courseTitle, venue " +
+            "FROM timetable, slots, courses WHERE wednesday = slots.id AND slots.course_id = courses.id ORDER BY start_time")
+    List<Timetable.AllData> getWednesdayForWidget();
+
+    @Query("SELECT slots.id AS slotId, courses.type AS courseType, start_time AS startTime, end_time AS endTime, code AS courseCode, title AS courseTitle, venue " +
+            "FROM timetable, slots, courses WHERE thursday = slots.id AND slots.course_id = courses.id ORDER BY start_time")
+    List<Timetable.AllData> getThursdayForWidget();
+
+    @Query("SELECT slots.id AS slotId, courses.type AS courseType, start_time AS startTime, end_time AS endTime, code AS courseCode, title AS courseTitle, venue " +
+            "FROM timetable, slots, courses WHERE friday = slots.id AND slots.course_id = courses.id ORDER BY start_time")
+    List<Timetable.AllData> getFridayForWidget();
+
+    @Query("SELECT slots.id AS slotId, courses.type AS courseType, start_time AS startTime, end_time AS endTime, code AS courseCode, title AS courseTitle, venue " +
+            "FROM timetable, slots, courses WHERE saturday = slots.id AND slots.course_id = courses.id ORDER BY start_time")
+    List<Timetable.AllData> getSaturdayForWidget();
 }

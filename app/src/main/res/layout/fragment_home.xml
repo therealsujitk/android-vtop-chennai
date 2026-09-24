@@ -111,6 +111,7 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:contentDescription="@string/days"
+            app:tabMode="scrollable"
             app:tabMaxWidth="50dp" />
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -119,4 +120,17 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+    
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/button_assign_saturday"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="24dp"
+        android:contentDescription="@string/assign_saturday_title"
+        android:src="@drawable/ic_spotlight"
+        android:visibility="gone"
+        app:tint="?attr/colorOnSecondary"
+        app:backgroundTint="?attr/colorSecondary" />
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

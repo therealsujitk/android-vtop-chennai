@@ -1,11 +1,17 @@
 # VIT Student
 
-![CI](https://github.com/therealsujitk/android-vtop-chennai/actions/workflows/build_push.yml/badge.svg) ![License](https://img.shields.io/badge/license-GPL--3.0-orange) ![Release](https://vtopchennai.therealsuji.tk/release.svg) ![Downloads](https://vtopchennai.therealsuji.tk/downloads.svg)
+![CI](https://github.com/legitcoconut/android-vtop-chennai/actions/workflows/build_push.yml/badge.svg) ![License](https://img.shields.io/badge/license-GPL--3.0-orange) ![Release](https://legitcoconut.github.io/vtop/release.svg) ![Downloads](https://legitcoconut.github.io/vtop/downloads.svg)
 
 An android application for the students of VIT Chennai to
 access [VTOP](https://vtopcc.vit.ac.in/vtop) and [Moodle](https://lms.vit.ac.in/).
 
 ![Preview](/preview.gif)
+
+## What Extra ?
+
+| ![Preview 1](/public/assign.png)  Assign Saturday Timetable | ![Preview 2](/public/widget.png) Add Widgets |
+| :---: | :---: |
+
 
 ## Features
 
@@ -31,12 +37,12 @@ If you're interested in contributing to this project, make sure the issue you'd 
 open (if not, create one) and do not start resolving said issue until you've been assigned to it.
 Good knowledge in android development is recommended, you can always ask for directions if you're
 stuck or don't know where to start. If you're new here you can take a look at
-the [good first issues](https://github.com/therealsujitk/android-vtop-chennai/labels/good%20first%20issue).
+the [good first issues](https://github.com/legitcoconut/vtop/labels/good%20first%20issue).
 
 ## Links
 
-- [Download the APK](https://vtopchennai.therealsuji.tk/)
-- [View the privacy policy](https://vtopchennai.therealsuji.tk/privacy-policy)
+- [Download the APK](https://legitcoconut.github.io/vtop/)
+- [View the privacy policy](https://legitcoconut.github.io/vtop/privacy-policy.html)
 
 ## License
 

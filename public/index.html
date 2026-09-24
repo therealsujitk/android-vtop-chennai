@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VIT Student (Chennai)</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Roboto:wght@400;500&display=swap"
+        rel="stylesheet">
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+
+<body>
+    <header>
+        <div class="header-left">
+            <div class="avatar">
+                <img src="https://github.com/legitcoconut.png" alt="Profile">
+            </div>
+            <nav>
+                <a href="#">About Me</a>
+                <a href="#">Donate</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="hero-content">
+                <h1>VIT Student (Chennai)</h1>
+                <div class="handles">
+                    <a href="https://github.com/legitcoconut/vtop" class="handle">@legitcoconut</a>
+                    <span class="handle-separator">|</span>
+                    <span class="fork-text">forked from </span>
+                    <a href="https://github.com/therealsujitk/android-vtop-chennai" class="handle">@therealsujitk</a>
+                </div>
+                <div class="stats">
+                    <div class="stat-item">
+                        <span class="stat-value">157.8K</span>
+                        <span class="stat-label">Downloads</span>
+                    </div>
+                    <div class="stat-divider"></div>
+                    <div class="stat-item">
+                        <span class="stat-value">v4.4.0</span>
+                        <span class="stat-label">Version</span>
+                    </div>
+                    <div class="stat-divider"></div>
+                    <div class="stat-item">
+                        <span class="stat-value">11.4 MB</span>
+                        <span class="stat-label">Download Size</span>
+                    </div>
+                </div>
+
+                <div class="actions">
+                    <a href="vtop.apk" class="btn-download" download>Download</a>
+                    <button class="btn-share">
+                        <span class="material-icons">share</span>
+                        Share
+                    </button>
+                    <a href="https://github.com/legitcoconut/vtop" class="btn-repo" target="_blank">
+                        <span class="material-icons">code</span>
+                        Visit Repo
+                    </a>
+                </div>
+            </div>
+
+            <div class="app-icon">
+                <div class="icon-box">
+                    <span>VIT</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="details-grid">
+            <div class="screenshots-wrapper">
+                <button class="nav-btn left" onclick="scrollScreenshots(-1)">
+                    <span class="material-icons">chevron_left</span>
+                </button>
+                <div class="screenshots-container" id="screenshots">
+                    <div class="screenshot-item">
+                        <img src="home.png" alt="Home Screen">
+                        <p class="caption">Home Screen</p>
+                    </div>
+                    <div class="screenshot-item">
+                        <img src="mark.png" alt="Marks View">
+                        <p class="caption">Marks View</p>
+                    </div>
+                    <div class="screenshot-item">
+                        <img src="assign.png" alt="Assign Saturday">
+                        <p class="caption">Assign Saturday</p>
+                    </div>
+                    <div class="screenshot-item">
+                        <img src="widget.png" alt="Widget Support">
+                        <p class="caption">Widget Support</p>
+                    </div>
+                </div>
+                <button class="nav-btn right" onclick="scrollScreenshots(1)">
+                    <span class="material-icons">chevron_right</span>
+                </button>
+            </div>
+
+            <script>
+                function scrollScreenshots(direction) {
+                    const container = document.getElementById('screenshots');
+                    const scrollAmount = 300; // Adjust based on item width
+                    container.scrollBy({
+                        left: direction * scrollAmount,
+                        behavior: 'smooth'
+                    });
+                }
+            </script>
+
+            <div class="sidebar-info">
+                <div class="info-group">
+                    <div class="info-header">
+                        <h3>App support</h3>
+                        <span class="material-icons">expand_more</span>
+                    </div>
+                </div>
+
+                <div class="info-group">
+                    <h3>App info</h3>
+
+                    <div class="info-item">
+                        <span class="info-label">Requires</span>
+                        <span class="info-value">Android 7.0+</span>
+                    </div>
+
+                    <div class="info-item">
+                        <span class="info-label">Updated on</span>
+                        <span class="info-value">Jan 17, 2026</span>
+                    </div>
+
+                    <div class="info-item">
+                        <span class="info-label">Released on</span>
+                        <span class="info-value">Oct 18, 2020</span>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <section class="about-section">
+            <div class="section-header">
+                <h2>About this app</h2>
+                <span class="material-icons">arrow_forward</span>
+            </div>
+            <p class="description">
+                The ultimate companion for VIT Chennai students. Access your timetable, check attendance, view marks,
+                and stay updated with everything happening on campus. Now with Saturday timetable assignment and widget
+                support!
+            </p>
+        </section>
+    </main>
+</body>
+
+</html>

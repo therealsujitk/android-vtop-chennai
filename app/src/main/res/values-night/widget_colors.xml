@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Dark Theme Colors -->
+    <!-- Widget Background -->
+    <color name="widget_background">@android:color/system_neutral1_900</color>
+    
+    <!-- Item Backgrounds -->
+    <color name="widget_item_bg_upcoming">@android:color/system_accent1_700</color>
+    <color name="widget_item_bg_past">@android:color/system_neutral1_800</color>
+    
+    <!-- Text Colors -->
+    <color name="widget_text_primary">@android:color/system_neutral1_50</color>
+    <color name="widget_text_secondary">@android:color/system_neutral1_200</color>
+    <color name="widget_text_accent">@android:color/system_accent1_100</color>
+    
+    <!-- Hint/Empty Text -->
+    <color name="widget_text_hint">@android:color/system_neutral1_400</color>
+</resources>

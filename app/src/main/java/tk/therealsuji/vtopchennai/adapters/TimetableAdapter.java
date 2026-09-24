@@ -17,8 +17,10 @@ import io.reactivex.rxjava3.core.SingleObserver;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import tk.therealsuji.vtopchennai.helpers.AppDatabase;
+import tk.therealsuji.vtopchennai.helpers.SettingsRepository;
 import tk.therealsuji.vtopchennai.interfaces.TimetableDao;
 import tk.therealsuji.vtopchennai.models.Timetable;
+import android.widget.Toast;
 
 /**
  * ┬─── Timetable Hierarchy
@@ -54,9 +56,17 @@ public class TimetableAdapter extends RecyclerView.Adapter<TimetableAdapter.View
         AppDatabase appDatabase = AppDatabase.getInstance(this.applicationContext);
         TimetableDao timetableDao = appDatabase.timetableDao();
         int day = holder.getAdapterPosition();
+        int fetchDay = day;
+
+        if (day == 6) { // Saturday
+            int assignedDay = SettingsRepository.getAssignedSaturday(applicationContext);
+            if (assignedDay != -1) {
+                fetchDay = assignedDay;
+            }
+        }
 
         timetableDao
-                .get(day)
+                .get(fetchDay)
                 .subscribeOn(Schedulers.single())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SingleObserver<List<Timetable.AllData>>() {

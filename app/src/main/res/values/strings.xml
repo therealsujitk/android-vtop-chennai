@@ -34,6 +34,9 @@
     <string name="thursday">Thursday</string>
     <string name="friday">Friday</string>
     <string name="saturday">Saturday</string>
+    <string name="assign_saturday_title">Assign Saturday Timetable</string>
+    <string name="select_day">Select Day to Copy</string>
+    <string name="saturday_assigned_message">Saturday is currently showing %s\'s timetable.</string>
 
     <!-- PerformanceFragment Strings -->
     <string name="performance_header">Your Performance</string>
@@ -144,6 +147,12 @@
     <string name="no_data">There\'s nothing here :(</string>
     <string name="no_marks">There\'s nothing here yet :(</string>
     <string name="not_authenticated">Looks like you aren\'t signed in :(</string>
+
+    <!-- Widget Strings -->
+    <string name="timetable_widget_name">Today\'s Classes</string>
+    <string name="timetable_widget_description">Shows your classes for today</string>
+    <string name="no_classes_today">No classes today</string>
+    <string name="refresh">Refresh</string>
 
     <!-- Other Strings & Strings used in multiple locations -->
     <string name="lab">Lab</string>

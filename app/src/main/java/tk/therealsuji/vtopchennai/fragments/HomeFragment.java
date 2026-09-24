@@ -19,6 +19,11 @@ import com.google.android.material.badge.BadgeUtils;
 import com.google.android.material.badge.ExperimentalBadgeUtils;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import android.content.DialogInterface;
+import android.content.Intent;
+import tk.therealsuji.vtopchennai.widgets.TimetableWidgetProvider;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.text.DecimalFormat;
@@ -56,6 +61,7 @@ public class HomeFragment extends Fragment {
 
         AppBarLayout appBarLayout = homeFragment.findViewById(R.id.app_bar);
         ViewPager2 timetable = homeFragment.findViewById(R.id.view_pager_timetable);
+        FloatingActionButton assignSaturdayButton = homeFragment.findViewById(R.id.button_assign_saturday);
 
         getParentFragmentManager().setFragmentResultListener("customInsets", this, (requestKey, result) -> {
             int systemWindowInsetLeft = result.getInt("systemWindowInsetLeft");
@@ -76,6 +82,15 @@ public class HomeFragment extends Fragment {
                     systemWindowInsetRight,
                     (int) (bottomNavigationHeight + 20 * pixelDensity)
             ));
+
+            ViewGroup.MarginLayoutParams fabParams = (ViewGroup.MarginLayoutParams) assignSaturdayButton.getLayoutParams();
+            fabParams.setMargins(
+                    (int) (24 * pixelDensity),
+                    (int) (24 * pixelDensity),
+                    (int) (24 * pixelDensity),
+                    (int) (bottomNavigationHeight + 24 * pixelDensity)
+            );
+            assignSaturdayButton.setLayoutParams(fabParams);
 
             // Only one listener can be added per requestKey, so we create a duplicate
             getParentFragmentManager().setFragmentResult("customInsets2", result);
@@ -217,6 +232,56 @@ public class HomeFragment extends Fragment {
         }
 
         timetable.setCurrentItem(Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 1);
+
+        timetable.setCurrentItem(Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 1);
+
+        assignSaturdayButton.setOnClickListener(v -> {
+            String[] assignableDays = {
+                    getString(R.string.monday),
+                    getString(R.string.tuesday),
+                    getString(R.string.wednesday),
+                    getString(R.string.thursday),
+                    getString(R.string.friday)
+            };
+            // Map prompt selection index to TimetableDao day index (Monday=1...Friday=5)
+            // assignableDays[0] is Monday -> index 1
+            // assignableDays[4] is Friday -> index 5
+            
+            new MaterialAlertDialogBuilder(requireContext())
+                    .setTitle(R.string.assign_saturday_title)
+                    .setItems(assignableDays, (dialog, which) -> {
+                        int selectedDayIndex = which + 1; // 0->1 (Mon), 1->2 (Tue)...
+                        SettingsRepository.setAssignedSaturday(requireContext(), selectedDayIndex);
+                        
+                        // Notify adapter to refresh Saturday (index 6)
+                        if (timetable.getAdapter() != null) {
+                            timetable.getAdapter().notifyItemChanged(6);
+                        }
+                        
+                        // Update Widget
+                        Intent intent = new Intent(requireContext(), TimetableWidgetProvider.class);
+                        intent.setAction(TimetableWidgetProvider.ACTION_REFRESH);
+                        requireContext().sendBroadcast(intent);
+                    })
+                    .show();
+        });
+
+        timetable.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                super.onPageSelected(position);
+                if (position == 6) { // Saturday
+                    assignSaturdayButton.setVisibility(View.VISIBLE);
+                } else {
+                    assignSaturdayButton.setVisibility(View.GONE);
+                }
+            }
+        });
+
+        if (timetable.getCurrentItem() == 6) {
+            assignSaturdayButton.setVisibility(View.VISIBLE);
+        }
+
 
         return homeFragment;
     }
