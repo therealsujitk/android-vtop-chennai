@@ -2,7 +2,7 @@ spotless {
     format 'misc', {
         target '**/*.gradle', 'app/src/main/java/**/*.java', 'app/src/main/res/*/*.xml'
 
-        indentWithSpaces()
+        leadingTabsToSpaces()
         trimTrailingWhitespace()
         endWithNewline()
     }

@@ -32,16 +32,16 @@ android {
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
 
-    implementation 'androidx.appcompat:appcompat:1.7.1'
-    implementation 'androidx.constraintlayout:constraintlayout:2.2.1'
-    implementation "androidx.core:core-splashscreen:1.0.1"
-    implementation 'androidx.room:room-runtime:2.7.2'
-    implementation 'androidx.room:room-rxjava3:2.7.2'
+    implementation 'androidx.appcompat:appcompat:1.8.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.2.2'
+    implementation "androidx.core:core-splashscreen:1.2.0"
+    implementation 'androidx.room:room-runtime:2.8.5'
+    implementation 'androidx.room:room-rxjava3:2.8.5'
     implementation 'androidx.security:security-crypto:1.1.0'
-    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.2.0'
 
-    implementation platform('com.google.firebase:firebase-bom:34.1.0')
-    implementation 'com.google.android.material:material:1.12.0'
+    implementation platform('com.google.firebase:firebase-bom:34.19.0')
+    implementation 'com.google.android.material:material:1.14.0'
     implementation 'com.google.firebase:firebase-analytics'
     implementation 'com.google.firebase:firebase-crashlytics'
     implementation 'com.google.firebase:firebase-perf'
@@ -49,7 +49,7 @@ dependencies {
     implementation 'com.squareup.retrofit2:adapter-rxjava3:3.0.0'
     implementation 'com.squareup.retrofit2:retrofit:3.0.0'
 
-    implementation 'commons-io:commons-io:2.20.0'
+    implementation 'commons-io:commons-io:2.22.0'
 
     implementation 'io.noties.markwon:core:4.6.2'
 
@@ -57,5 +57,5 @@ dependencies {
 
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.14'
 
-    annotationProcessor 'androidx.room:room-compiler:2.7.2'
+    annotationProcessor 'androidx.room:room-compiler:2.8.5'
 }
