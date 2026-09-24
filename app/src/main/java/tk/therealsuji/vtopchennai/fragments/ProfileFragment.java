@@ -77,6 +77,17 @@ public class ProfileFragment extends Fragment {
                     null
             ),
             new ItemData(
+                    R.drawable.ic_calculator,
+                    R.string.gpa_calculator,
+                    context -> ((FragmentActivity) context).getSupportFragmentManager()
+                            .beginTransaction()
+                            .setCustomAnimations(R.anim.slide_in_right, 0, 0, R.anim.slide_out_right)
+                            .add(android.R.id.content, new GpaCalculatorFragment())
+                            .addToBackStack(null)
+                            .commit(),
+                    null
+            ),
+            new ItemData(
                     R.drawable.ic_sync,
                     R.string.sync_data,
                     context -> getParentFragmentManager().setFragmentResult("syncData", new Bundle()),

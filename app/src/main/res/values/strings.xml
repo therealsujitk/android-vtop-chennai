@@ -73,6 +73,30 @@
     <string name="sync_data">Sync Data</string>
     <string name="notifications">Notifications</string>
     <string name="share">Share App</string>
+    <string name="gpa_calculator">VIT GPA Calculator</string>
+    <string name="gpa_instructions_title">How to calculate your GPA</string>
+    <string name="gpa_instructions_text">Select a subject, choose the grade received and the credits earned, then add it to your semester list. Repeat for every subject and tap Calculate GPA.</string>
+    <string name="gpa_subject_hint">Subject name (optional)</string>
+    <string name="gpa_grade_label">Grade</string>
+    <string name="gpa_credits_label">Credits</string>
+    <string name="gpa_add_subject">Add Subject</string>
+    <string name="gpa_calculate">Calculate GPA</string>
+    <string name="gpa_empty_state">Add your subjects to see the calculation here.</string>
+    <string name="gpa_result_label">GPA</string>
+    <string name="gpa_total_grade_points">Total Grade Points</string>
+    <string name="gpa_total_credits">Total Credits</string>
+    <string name="gpa_scale_title">VIT Grade Scale</string>
+    <string name="gpa_remove_subject">Remove subject</string>
+    <string name="grade">Grade</string>
+    <string name="score_range">Score Range</string>
+    <string name="points">Points</string>
+    <plurals name="gpa_credit_quantity">
+        <item quantity="one">%d credit</item>
+        <item quantity="other">%d credits</item>
+    </plurals>
+    <string name="gpa_error_select_grade">Select a grade</string>
+    <string name="gpa_error_select_credits">Select the credits</string>
+    <string name="gpa_error_no_subjects">Add at least one subject first.</string>
 
     <!-- Download Strings: Strings used while downloading data -->
     <string name="vtop_service_description">Downloads data from VTOP.</string>
